@@ -251,7 +251,7 @@ jobs:
                   raise SystemExit("Official checksum sidecar audit did not PASS")
               if side_summary.get("checks_passed") != side_summary.get("checks_total") or side_summary.get("source_count") != 2:
                   raise SystemExit("Official checksum sidecar check count/source count mismatch")
-              if any(x.get("status") != "PASS" for x in side_summary.get("sources", [])) or len(side_summary.get("sources", [])) != 2:
+              if any(x.get("fetch_status") != "PASS" for x in side_summary.get("sources", [])) or len(side_summary.get("sources", [])) != 2:
                   raise SystemExit("A checksum source record is not PASS")
               for name, recorded in side_summary.get("outputs", {}).items():
                   path = folder / name
