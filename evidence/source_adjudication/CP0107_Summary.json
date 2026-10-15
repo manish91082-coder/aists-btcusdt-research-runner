@@ -1,42 +1,43 @@
 {
   "checkpoint": "CP-0107",
-  "project": "AISTS BTCUSDT historical source reconciliation",
-  "status": "PASS_ROW_DISPOSITION_DRAFT_ONLY",
+  "project": "AISTS BTCUSDT Research Audit",
+  "status": "EVIDENCE_DRAFT_VERIFIED_NOT_FINAL_ADJUDICATION",
   "parent_checkpoint": "CP-0106",
   "parent_run_id": 38730420808,
   "parent_commit_sha": "b6ddcc9ed6c486570dc0c2da8857dd013cba18ae",
   "parent_artifact_id": 11969978987,
   "parent_artifact_sha256": "cdddab3be37f5c593d5cd42ac6c6f72b53f5b3a3fc4dae1218c3bd833850adb4",
-  "main_head_at_resume": "a78b6e0dd531484a0d7f3e1345c420a76c115237",
-  "evidence_counts": {
-    "source_objects_verified": 66,
-    "feb_off_grid_segments": 10,
-    "feb_off_grid_rows": 450,
-    "feb_exact_counterpart_count": 0,
-    "dec2020_raw_window_rows": 59,
-    "dec2020_flat_zero_volume_zero_trade_rows": 16,
-    "dec2020_shared_close_time_rows": 8,
-    "dec2020_rollup_comparisons": 34,
-    "dec2020_rollup_review_required": 9,
-    "close_time_only_cases": 8
+  "main_head_at_audit": "a78b6e0dd531484a0d7f3e1345c420a76c115237",
+  "cp0107_branch": "cp-0107-row-disposition",
+  "cp0107_branch_commit_before_sync": "4c58ad0860041a3ba66a5674c7d3a6d60ecd792f",
+  "counts": {
+    "feb2018_offgrid_segments": 10,
+    "feb2018_rows": 450,
+    "dec2020_rows": 59,
+    "dec2020_rollups": 34,
+    "dec2020_rollups_review_required": 9,
+    "close_time_only_cases": 8,
+    "source_objects_in_cp0106_manifest": 66
   },
-  "dispositions": {
-    "feb_off_grid": "QUARANTINE_REVIEW_REQUIRED",
-    "dec2020_rows": "OPEN_REVIEW_REQUIRED",
-    "missing_child_rollups": "AGGREGATE_UNAVAILABLE_REVIEW_REQUIRED",
-    "close_time_only": "FIELD_LEVEL_PROPOSAL_ONLY_CASES_REMAIN_OPEN"
+  "artifacts_sha256": {
+    "CP0107_RowDisposition_Report_HI.md": "460e96fd3a6e73675bfc0e56fd4e4ae81be6903283a244f53985a659047c851c",
+    "CP0107_Dec2020_RowDisposition.csv": "16ecf3efb8bbe7a68f8fe22358177164f13ecfb1a6656e864f2b856578f1213c",
+    "CP0107_Dec2020_Rollup_Disposition.csv": "e36786f22bfac735a49c222af280932dfb549a5e1e7750b8213a0573601722d3",
+    "CP0107_Feb2018_OffGrid_RowDisposition.csv": "7bc9226d690b9e761588286316012df35e5e0e6656ef16b2002aff7d284f6878",
+    "CP0107_CloseTimeOnly_FieldDisposition.csv": "3ae1c162a00e370cd3c951fdeacdc4ff71d658e4d4936ed8aae1b3764dd00023",
+    "CP0107_SourceArchive_Manifest_66.csv": "015709030834ec87c6d76a0b0a4e892650bf7e0949cfc6e6d61ea8659a35a5a1"
   },
   "source_authority": "NOT_ASSIGNED",
   "canonical_sources_selected": 0,
-  "cases_closed": 0,
+  "source_cases_closed": 0,
   "raw_archive_mutation": false,
   "timestamp_shift_or_rounding": false,
   "synthetic_candles_created": false,
   "backtest_rerun": false,
   "strategy_promoted": false,
-  "frozen_rulebook": "NOT_FOUND_IN_CURRENT_REPOSITORY_TREE; locate before authority/threshold dependent decisions",
-  "source_disposition_ledger": "NOT_FOUND_IN_CURRENT_REPOSITORY_TREE; no claim of ledger reconciliation",
-  "research_gates": {
+  "frozen_rulebook_status": "Historical project-status artifacts describe CP-0040, but the full frozen rulebook is not a standalone file in this GitHub repo. Locate exact authoritative copy before threshold-dependent closure.",
+  "disposition_ledger_status": "CP-0041 worklists are referenced in Library artifacts; canonical ledger files are not in this GitHub repository tree and have not been synced here.",
+  "gates": {
     "G0": "BLOCKED_GLOBAL",
     "G1": "PARTIAL_SYSTEM_LEVEL",
     "G2": "FAIL_CURRENT_23_CANDIDATES",
@@ -46,9 +47,5 @@
     "G6": "NOT_BUILT",
     "G7": "LIVE_BLOCKED"
   },
-  "limitations": [
-    "CP-0106 segment inventory does not include all individual raw values for 450 February rows; those rows still need focused extraction.",
-    "CP-0106 run checkout commit differs from newer main HEAD; the run commit is a descendant ancestor relation, not the current HEAD."
-  ],
-  "next_action": "Locate frozen CP-0040 rulebook and disposition ledger; extract all 450 February off-grid monthly rows with hashes/raw rows and daily coverage using existing cache; then formalize evidence-supported dispositions."
+  "next_action": "Cache-only full-row extraction for 450 February off-grid rows after locating exact rulebook and ledger; retain official 16 daily ZIP/checksum pairs as 0/16 until actual ZIP and matching sidecar bytes are acquired and verified."
 }
