@@ -89,3 +89,9 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - CP-0040 G0 frozen rulebook requires unexplained/signal-influencing source conflicts to remain unresolved or be explicitly quarantined. Therefore all 450 rows remain `QUARANTINE_REVIEW_REQUIRED`; timestamp shifts remain diagnostic only, root cause OPEN, canonical source NONE, no case closed, no source bytes changed, no backtest rerun, no strategy promoted.
 - Full row crosswalk is retained locally as a downloadable working artifact; its SHA-256 is recorded in the canonical GitHub summary JSON. The run-scoped raw rows and source verification remain permanently in `evidence/source_adjudication/CP0107_Run_38735418645/`.
 - Separate global gates are unchanged. In particular, the separate CP-0092 official daily ZIP + `.CHECKSUM` acquisition queue remains 0/16; this CP-0107 targeted source crosswalk is not that acquisition task.
+
+
+## Row-level mapped-field count correction — CP-0107 (2026-10-15)
+
+- Corrected crosswalk counts from actual 450-row CSV: 448 mapped daily targets present, 2 absent; all 448 present rows have at least one non-open-field difference; 442 rows differ in the open-price field; 447 in close_time; 448 in volume. The former summary's generic `442 mapped-field differences` label was ambiguous/mislabeled and is superseded by field-specific counts.
+- Evidence reference remains crosswalk CSV SHA-256 `5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b`. This correction does not alter any raw bytes or disposition: 450/450 remain QUARANTINE_REVIEW_REQUIRED.
