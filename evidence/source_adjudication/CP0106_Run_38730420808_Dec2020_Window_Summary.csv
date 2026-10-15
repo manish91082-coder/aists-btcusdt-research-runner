@@ -1,0 +1,9 @@
+interval,source,window_rows,flat_zero_volume_trade_rows,bad_close_time_rows
+5m,MONTHLY,20,10,1
+5m,DAILY,16,0,1
+15m,MONTHLY,7,3,1
+15m,DAILY,6,0,1
+30m,MONTHLY,4,2,1
+30m,DAILY,3,0,1
+1h,MONTHLY,2,1,1
+1h,DAILY,1,0,1
