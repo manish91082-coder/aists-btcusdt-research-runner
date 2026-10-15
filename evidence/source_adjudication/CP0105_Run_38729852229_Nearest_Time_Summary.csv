@@ -1,0 +1,10 @@
+interval,source_side,unmatched_rows,nearest_rows_found,median_abs_time_delta_ms,max_abs_time_delta_ms,nearest_exact_ohlc_matches,nearest_exact_ohlcv_matches,nearest_exact_full_economic_matches
+5m,DAILY_ONLY,241,241,105211,300000,0,0,0
+5m,MONTHLY_ONLY,245,245,105211,1200000,0,0,0
+15m,DAILY_ONLY,81,81,105211,900000,0,0,0
+15m,MONTHLY_ONLY,82,82,105211,900000,0,0,0
+30m,DAILY_ONLY,86,86,105211,1800000,0,0,0
+30m,MONTHLY_ONLY,86,86,105211,1800000,0,0,0
+1h,DAILY_ONLY,43,43,1694789,3600000,0,0,0
+1h,MONTHLY_ONLY,44,44,1694789,3600000,0,0,0
+4h,DAILY_ONLY,1,1,14400000,14400000,0,0,0
