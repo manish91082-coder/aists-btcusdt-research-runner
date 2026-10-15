@@ -149,7 +149,7 @@ jobs:
           TASK: ${{ needs.run.outputs.task }}
         run: |
           python - <<'PY'
-          import csv, hashlib, json
+          import csv, hashlib, json, os
           from pathlib import Path
           root = Path("evidence_stage")
           folder = root / "cp0107_feb2018"
@@ -215,7 +215,7 @@ jobs:
               if len(rows("CP0107_Dec2020_5m_ChildCoverage.csv")) != 60 or len(rows("CP0107_Dec2020_ReviewRollup_ChildCoverage.csv")) != 9 or len(rows("CP0107_Dec2020_5m_SourceVerification.csv")) != 2:
                   raise SystemExit("December child audit CSV row-count mismatch")
           field_summary_path = folder / "CP0107_Dec2020_FieldReview_Summary.json"
-          if needs.run.outputs.task == "cp0107_field_review_hash_audit" and not field_summary_path.is_file():
+          if os.environ.get("TASK") == "cp0107_field_review_hash_audit" and not field_summary_path.is_file():
               raise SystemExit("Missing field-review hash summary; refusing repository write")
           if field_summary_path.is_file():
               field_summary = json.loads(field_summary_path.read_text(encoding="utf-8"))
