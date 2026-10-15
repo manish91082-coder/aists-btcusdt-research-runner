@@ -134,6 +134,9 @@ def main():
                 argv=[sys.executable,str(child),
                       "--source-dir","evidence/source_adjudication/CP0107_Run_38771593935",
                       "--monthly-cache",".cache/aists/binance-monthly-archives",
+                      "--reuse-dir","prior_daily_ref/cp0107_feb2018",
+                      "--reuse-run-id","38775174019","--reuse-artifact-id","11993600932",
+                      "--reuse-artifact-sha256","912267a36aed3f726be1aa08c207076303fca31d2ea5669e5d723825c0e6141b",
                       "--output-dir","results/cp0107_feb2018"]
                 timeout=2400
                 child_summary_path=output/"cp0107_feb2018"/"CP0107_CP0041_DailyReference_Acquisition_Summary.json"

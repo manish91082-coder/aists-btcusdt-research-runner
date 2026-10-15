@@ -41,6 +41,7 @@ jobs:
     timeout-minutes: 180
     permissions:
       contents: read
+      actions: read
     steps:
       - name: Checkout exact commit
         uses: actions/checkout@v4
@@ -89,6 +90,14 @@ jobs:
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
           echo "task=$TASK" >> "$GITHUB_OUTPUT"
+      - name: Reuse prior verified daily ZIP and checksum bytes (no repeat download)
+        if: steps.request_meta.outputs.task == 'cp0107_cp0041_daily_reference_acquisition_audit'
+        uses: actions/download-artifact@v4
+        with:
+          name: aists-run-38775174019-attempt-1
+          run-id: 38775174019
+          github-token: \${{ github.token }}
+          path: prior_daily_ref
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
