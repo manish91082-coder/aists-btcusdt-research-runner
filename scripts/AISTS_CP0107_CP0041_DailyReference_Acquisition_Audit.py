@@ -174,7 +174,7 @@ def main():
    if not prior_zip.is_file() or not prior_sidecar.is_file():
     raise FileNotFoundError("previous run artifact lacks acquired ZIP/sidecar; refusing repeat network download for "+filename)
    zipbytes=prior_zip.read_bytes();sidebytes=prior_sidecar.read_bytes()
-   zipfinal=zip_url;sidefinal=side_url;ziphttp=200;sidehttp=200
+   zipfinal="NOT_CAPTURED_IN_PRIOR_RUN_ARTIFACT";sidefinal="NOT_CAPTURED_IN_PRIOR_RUN_ARTIFACT";ziphttp=200;sidehttp=200
    retrieval_method="REUSED_VERIFIED_PRIOR_RUN_ARTIFACT"
   else:
    sidebytes,sidefinal,sidehttp=fetch_official(side_url,8192)
@@ -315,7 +315,7 @@ def main():
   "# CP-0107: CP-0041 daily-reference acquisition and raw-row audit","",
   "Status: "+status+"; checks "+str(summary["checks_passed"])+"/"+str(summary["checks_total"])+" PASS.","",
   "## Scope","",
-  "- Exactly 16 queued official daily ZIPs and their 16 .CHECKSUM files were fetched and persisted byte-for-byte.",
+  "- All 16 queued daily ZIPs and 16 .CHECKSUM files are persisted byte-for-byte. This run reuses the exact bytes captured by prior Actions run "+(args.reuse_run_id or "NONE")+" rather than repeating the downloads.",
   "- Fourteen existing monthly ZIPs were reused from GitHub Actions cache and checked against the frozen CP-0041 monthly manifest subset and ZIP CRC. Monthly ZIP downloads: zero.",
   "- Daily ZIP/.CHECKSUM bytes were reused from prior run "+(args.reuse_run_id or "NONE")+" artifact "+(args.reuse_artifact_id or "NONE")+"; every ZIP was rehashed against its own official sidecar token again. New daily network downloads: "+str(summary["official_daily_zip_downloads"])+".",
   "- Source package SHA-256: "+PACKAGE_SHA+"; original queue member SHA-256: "+QUEUE_SHA+"; monthly manifest member SHA-256: "+MONTHLY_MANIFEST_SHA+"; frozen CP-0040 rulebook SHA-256: "+RULEBOOK_SHA+".",
