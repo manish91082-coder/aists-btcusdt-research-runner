@@ -450,6 +450,8 @@ jobs:
           if [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ]; then
             cp "$DEST/CP0107_CP0041_Dec2020_Residual7_Summary.json" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Summary.json
             cp "$DEST/CP0107_CP0041_Dec2020_Residual7_Report_HI.md" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Report_HI.md
+            cp "$DEST/CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.csv" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.csv
+            cp "$DEST/CP0107_CP0041_Dec2020_Residual7_ArchiveVerification.csv" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_ArchiveVerification.csv
             python - <<'PY'
           import json, os
           from pathlib import Path
