@@ -44,12 +44,23 @@ def main():
     wf=wfdir/"python-runner.yml"
     wftext=wf.read_text(encoding="utf-8") if wf.exists() else ""
     forbidden=[]
+    scoped_publisher_write=False
     for path in sorted(list(wfdir.glob("*.yml"))+list(wfdir.glob("*.yaml"))):
         text=path.read_text(encoding="utf-8")
-        if any(token in text for token in ("custom_code:","script_content:","contents: write","actions: write","api.binance.com/api/")):
+        if any(token in text for token in ("custom_code:","script_content:","actions: write","api.binance.com/api/")):
             forbidden.append(path.name)
-    least_privilege=bool(re.search(r"(?m)^permissions:\s*\n\s+contents:\s*read\s*$",wftext))
-    check("workflow_least_privilege",least_privilege and not forbidden,f"contents_read={least_privilege}; forbidden={forbidden}")
+        writes=text.count("contents: write")
+        publisher=re.search(r"(?ms)^  publish_cp0107_evidence:\\n(.*?)(?=^  [A-Za-z0-9_]+:|\\Z)",text)
+        publisher_block=publisher.group(1) if publisher else ""
+        publisher_scoped=bool(re.search(r"(?m)^    permissions:\\s*\\n^      contents: write\\s*$",publisher_block)
+                              and re.search(r"(?m)^      if: needs\\.run\\.outputs\\.task == ['\"]cp0107_feb2018_raw_row_extract['\"]",publisher_block))
+        if writes and not (writes==1 and publisher_scoped):
+            forbidden.append(path.name+": unscoped contents: write")
+        if publisher_scoped:
+            scoped_publisher_write=True
+    least_privilege=bool(re.search(r"(?m)^permissions:\\s*\\n\\s+contents:\\s*read\\s*$",wftext))
+    check("workflow_least_privilege",least_privilege and not forbidden,
+          f"top_level_contents_read={least_privilege}; scoped_cp0107_publisher_write={scoped_publisher_write}; forbidden={forbidden}")
     pyfiles=sorted((ROOT/"scripts").glob("*.py"))
     syntax_errors=[]
     for path in pyfiles:
