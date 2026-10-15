@@ -123,9 +123,12 @@ def main():
         dt=core.from_us(bar["open_us"]); groups.setdefault((dt.year,dt.month),[]).append(bar)
     derived=[]
     for y,m in month_list():
+        # CP-0026 explicitly excludes the initial partial 2017-08 month from backtests.
+        if (y,m)==FIRST:
+            continue
         item=aggregate_month(groups.get((y,m),[]),y,m)
         if item: derived.append(item)
-    expected_month_count=110
+    expected_month_count=109
     monthly_direct_manifest=[]; monthly_direct_bars=[]; monthly_gets=0; monthly_issues=[]
     with ThreadPoolExecutor(max_workers=10) as pool:
         futs=[pool.submit(core.archive_one,"1mo",y,m,cache) for y,m in month_list()]
