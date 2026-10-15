@@ -16,6 +16,7 @@ on:
           - historical_reference_replay
           - monthly_derived_replay
           - legacy_pipeline
+          - source_adjudication_diagnostic
         default: legacy_pipeline
 
 permissions:
