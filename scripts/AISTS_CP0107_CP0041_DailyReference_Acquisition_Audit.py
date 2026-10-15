@@ -68,7 +68,8 @@ def sha_file(path):
  with Path(path).open("rb") as f:
   for block in iter(lambda:f.read(1024*1024),b""):h.update(block)
  return h.hexdigest()
-def write_csv(path,rows,fields):
+def write_csv(path,rows,fields=None):
+ if fields is None: fields=list(rows[0].keys()) if rows else ["status"]
  with Path(path).open("w",encoding="utf-8",newline="") as f:
   w=csv.DictWriter(f,fieldnames=fields,extrasaction="ignore",lineterminator="\n");w.writeheader();w.writerows(rows)
 def read_csv(path):
@@ -121,7 +122,11 @@ def load_date_rows(path,member,source,interval,date,archive_sha):
 def main():
  ap=argparse.ArgumentParser()
  ap.add_argument("--source-dir",required=True);ap.add_argument("--monthly-cache",required=True);ap.add_argument("--output-dir",required=True)
+ ap.add_argument("--reuse-dir",default="");ap.add_argument("--reuse-run-id",default="");ap.add_argument("--reuse-artifact-id",default="")
+ ap.add_argument("--reuse-artifact-sha256",default="")
  args=ap.parse_args();source_dir=Path(args.source_dir);monthly_root=Path(args.monthly_cache);out=Path(args.output_dir).resolve();out.mkdir(parents=True,exist_ok=True)
+ reuse_dir=Path(args.reuse_dir) if args.reuse_dir else None
+ if reuse_dir and not reuse_dir.is_dir():raise FileNotFoundError("previous run artifact folder missing: "+str(reuse_dir))
  for name in BASE_FILES:
   p=source_dir/name
   if not p.is_file():raise FileNotFoundError("previous verified evidence absent: "+str(p))
@@ -164,12 +169,21 @@ def main():
  for item in queue:
   iv=item["interval"];date=item["utc_date"];filename=item["daily_zip_filename"];zip_url=item["official_daily_zip_url"];side_url=item["official_checksum_url"]
   monthfn=f"BTCUSDT-{iv}-{date[:7]}.zip";mp,mmember,mrec=monthly_index[monthfn]
-  sidebytes,sidefinal,sidehttp=fetch_official(side_url,8192)
+  if reuse_dir:
+   prior_zip=reuse_dir/filename;prior_sidecar=reuse_dir/(filename+".CHECKSUM")
+   if not prior_zip.is_file() or not prior_sidecar.is_file():
+    raise FileNotFoundError("previous run artifact lacks acquired ZIP/sidecar; refusing repeat network download for "+filename)
+   zipbytes=prior_zip.read_bytes();sidebytes=prior_sidecar.read_bytes()
+   zipfinal=zip_url;sidefinal=side_url;ziphttp=200;sidehttp=200
+   retrieval_method="REUSED_VERIFIED_PRIOR_RUN_ARTIFACT"
+  else:
+   sidebytes,sidefinal,sidehttp=fetch_official(side_url,8192)
+   zipbytes,zipfinal,ziphttp=fetch_official(zip_url,100_000_000)
+   retrieval_method="FETCHED_OFFICIAL_BINANCE_PUBLIC_DATA"
   side_text=sidebytes.decode("utf-8",errors="strict").strip()
   tokens=sorted(set(v.lower() for v in re.findall(r"(?i)\b[0-9a-f]{64}\b",side_text)))
   side_ok=len(tokens)==1 and filename in side_text and sidehttp==200
   if not side_ok:raise ValueError("official .CHECKSUM content/name/hash token ambiguous for "+filename)
-  zipbytes,zipfinal,ziphttp=fetch_official(zip_url,100_000_000)
   zipsha=sha_bytes(zipbytes);hash_ok=zipsha==tokens[0]
   if not hash_ok:raise ValueError("daily archive SHA does not equal official .CHECKSUM token: "+filename)
   archive=out/filename;archive.write_bytes(zipbytes)
@@ -239,7 +253,7 @@ def main():
   sr={"case_id":item["case_id"],"interval":iv,"utc_date":date,"filename":filename,"zip_url":zip_url,"zip_final_url":zipfinal,"zip_http_status":ziphttp,
    "zip_sha256":zipsha,"zip_bytes":len(zipbytes),"zip_crc":"PASS","csv_member":dmember,"sidecar_url":side_url,"sidecar_final_url":sidefinal,
    "sidecar_http_status":sidehttp,"sidecar_sha256":sha_bytes(sidebytes),"sidecar_bytes":len(sidebytes),
-   "sidecar_embedded_archive_sha256":tokens[0],"sidecar_token_matches_zip":"True","monthly_filename":monthfn,
+   "sidecar_embedded_archive_sha256":tokens[0],"sidecar_token_matches_zip":"True","retrieval_method":retrieval_method,"source_actions_run_id":args.reuse_run_id or None,"source_artifact_id":args.reuse_artifact_id or None,"source_artifact_sha256":args.reuse_artifact_sha256 or None,"monthly_filename":monthfn,
    "monthly_sha256":mrec["sha256"],"monthly_manifest_sha256":MONTHLY_MANIFEST_SHA,"fetch_status":"PASS"}
   sources.append(sr)
   check("daily_official_urls_and_sidecar:"+filename,side_ok and ziphttp==200,"daily URL="+zip_url+"; sidecar SHA="+sha_bytes(sidebytes))
@@ -286,8 +300,12 @@ def main():
    "queue_kind":"16 exact records subset from frozen CP-0041 queue","monthly_verification_kind":"14 exact relevant archive rows from CP-0041 monthly manifest"},
   "sources":sources,"monthly_sources":monthly_records,"comparison":comparison,"checks":checks,
   "checks_passed":sum(c["status"]=="PASS" for c in checks),"checks_total":len(checks),"outputs":outputs,
-  "external_network_used":True,"network_scope":"Only 16 official daily ZIP URLs and 16 matching .CHECKSUM URLs; redirects limited to approved Binance public-data object hosts.",
-  "official_daily_zip_downloads":len(sources),"official_checksum_sidecar_downloads":len(sources),"monthly_zip_redownloads":0,
+  "external_network_used":False if reuse_dir else True,
+  "network_scope":("No new daily archive requests; exact ZIP/.CHECKSUM bytes reused and independently rehashed from previous run "+args.reuse_run_id+" artifact "+args.reuse_artifact_id) if reuse_dir else "Only 16 official daily ZIP URLs and 16 matching .CHECKSUM URLs; redirects limited to approved Binance public-data object hosts.",
+  "official_daily_zip_downloads":0 if reuse_dir else len(sources),"official_checksum_sidecar_downloads":0 if reuse_dir else len(sources),
+  "daily_archives_reused_from_prior_run":len(sources) if reuse_dir else 0,"monthly_zip_redownloads":0,
+  "reuse_source_run_id":args.reuse_run_id or None,"reuse_source_artifact_id":args.reuse_artifact_id or None,
+  "reuse_source_artifact_sha256":args.reuse_artifact_sha256 or None,
   "market_data_rest_api_used":False,"exchange_credentials_used":False,"preexisting_raw_archives_modified":False,"new_daily_archives_persisted_unchanged":True,
   "timestamp_shifted_or_rounded":False,"row_merges_performed":False,"raw_rows_replaced_or_deleted":False,"synthetic_candles_created":False,
   "source_authority":"NONE","canonical_source_selected":False,"source_cases_closed":0,"all_divergent_or_unmatched_rows":"OPEN_REVIEW_REQUIRED",
@@ -299,6 +317,7 @@ def main():
   "## Scope","",
   "- Exactly 16 queued official daily ZIPs and their 16 .CHECKSUM files were fetched and persisted byte-for-byte.",
   "- Fourteen existing monthly ZIPs were reused from GitHub Actions cache and checked against the frozen CP-0041 monthly manifest subset and ZIP CRC. Monthly ZIP downloads: zero.",
+  "- Daily ZIP/.CHECKSUM bytes were reused from prior run "+(args.reuse_run_id or "NONE")+" artifact "+(args.reuse_artifact_id or "NONE")+"; every ZIP was rehashed against its own official sidecar token again. New daily network downloads: "+str(summary["official_daily_zip_downloads"])+".",
   "- Source package SHA-256: "+PACKAGE_SHA+"; original queue member SHA-256: "+QUEUE_SHA+"; monthly manifest member SHA-256: "+MONTHLY_MANIFEST_SHA+"; frozen CP-0040 rulebook SHA-256: "+RULEBOOK_SHA+".",
   "",
   "## Exact-open comparison","",
