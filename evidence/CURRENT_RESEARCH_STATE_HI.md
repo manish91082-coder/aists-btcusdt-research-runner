@@ -216,3 +216,10 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Derived output validated 22/22 checks: 450 crosswalk-backed dispositions changed to QUARANTINE_REVIEW_REQUIRED; 546 other rows remained unchanged. All 996 non-disposition field sets and raw-source JSON hashes are unchanged.
 - Full derived view SHA-256 `137ad77bfafa7f7cd788db6f744e5567ad7dba889048b58feb743a34b863d9cb`; row audit SHA-256 `717125e5abd83f987139d76df7ba245b972ad52438d4c64bb2e8bf06901012aa`. Full files, summary, Hindi report and compact index saved in `/AISTS/CP0107/derived_worklist/`.
 - Original CP-0041 source pack/worklist/crosswalk/delta are unmodified; no source authority selected, no case closed, and no backtest or strategy promotion.
+
+
+## CP-0107 unmatched-909 provenance audit (2026-10-15)
+
+- Result: PASS_UNMATCHED_909_MANIFEST_PROVENANCE_AUDIT; 13/13 checks PASS; exact case ID/key/raw JSON matches 909/909; monthly archive manifest references 909/909; daily archive/sidecar/manifest references 909/909; original dispositions preserved 909/909.
+- Full audit CSV SHA-256 `b8ffd2a98f9296fdb04a2296f2190caca5387bbb286185a564717aadcb40d980`, 963,228 bytes, 909 rows. Library path `/AISTS/CP0107/unmatched_provenance/CP0107_CP0041_Unmatched_909_Provenance_Audit.csv`.
+- This is frozen-ledger/manifest-reference consistency, not a fresh re-download of all source archives. No source cases closed; canonical source NONE; root cause OPEN_NOT_ESTABLISHED. No backtest or strategy promotion.

@@ -1,0 +1,70 @@
+{
+  "checkpoint": "CP-0107",
+  "task": "cp0107_cp0041_unmatched_909_provenance_audit",
+  "status": "PASS_UNMATCHED_909_MANIFEST_PROVENANCE_AUDIT",
+  "checks_passed": 13,
+  "checks_total": 13,
+  "scope": {
+    "worklist_rows": 996,
+    "unmatched_rows": 909,
+    "daily_only_rows": 452,
+    "monthly_only_rows": 457,
+    "distinct_daily_archive_files": 19,
+    "distinct_monthly_archive_files": 13
+  },
+  "results": {
+    "source_side_raw_json_exact": 909,
+    "worklist_key_and_raw_json_exact": 909,
+    "monthly_archive_manifest_hash_match_rows": 909,
+    "daily_archive_sidecar_manifest_hash_match_rows": 909,
+    "existing_disposition_preserved_rows": 909,
+    "row_specific_errors": {}
+  },
+  "inputs": {
+    "source_pack_sha256": "23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc",
+    "worklist_sha256": "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f",
+    "unmatched_ledger_sha256": "11eb82994d5a17469eefee9f14d360537d5871c19d303ed0466c5df4f6c34021",
+    "daily_manifest_sha256": "recorded_in_CP0041_pack_manifest",
+    "monthly_manifest_sha256": "recorded_in_CP0041_pack_manifest"
+  },
+  "output": {
+    "name": "CP0107_CP0041_Unmatched_909_Provenance_Audit.csv",
+    "bytes": 963228,
+    "rows": 909,
+    "sha256": "b8ffd2a98f9296fdb04a2296f2190caca5387bbb286185a564717aadcb40d980",
+    "library_path": "/AISTS/CP0107/unmatched_provenance/CP0107_CP0041_Unmatched_909_Provenance_Audit.csv",
+    "library_file_id": "libfile_b665ba01c7e08191b47f893fa8fc5c6e"
+  },
+  "summary_output": {
+    "name": "CP0107_CP0041_Unmatched_909_Provenance_Audit_Summary.json",
+    "sha256": "aa8f410e40b5debcc181863f54b1d0c113b7965fcce7676c88a87d3ec374ec1f",
+    "library_path": "/AISTS/CP0107/unmatched_provenance/CP0107_CP0041_Unmatched_909_Provenance_Audit_Summary.json"
+  },
+  "report_output": {
+    "name": "CP0107_CP0041_Unmatched_909_Provenance_Audit_Report_HI.md",
+    "sha256": "6e4e6563556e77e5e9d03c7a808e3594604e7faf4a337736a5c018507632cfc3",
+    "library_path": "/AISTS/CP0107/unmatched_provenance/CP0107_CP0041_Unmatched_909_Provenance_Audit_Report_HI.md"
+  },
+  "decisions": {
+    "case_statuses_changed": 0,
+    "canonical_source_selected": false,
+    "source_cases_closed": 0,
+    "root_cause": "OPEN_NOT_ESTABLISHED",
+    "timestamp_shifted_or_rounded": false,
+    "raw_rows_merged_replaced_or_deleted": false,
+    "synthetic_candles_created": false,
+    "backtest_rerun": false,
+    "strategy_promoted": false
+  },
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "interpretation": "This verifies row-ledger to frozen archive-manifest reference consistency. It does not independently redownload or parse all 765 monthly and 240 daily archives in this turn, does not prove upstream cause, and does not assign canonical-source authority."
+}
