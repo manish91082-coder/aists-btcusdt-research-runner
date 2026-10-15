@@ -595,6 +595,8 @@ def main():
          "candidate_pair_rows":counts["candidate_pair_rows"]}
         for (schema,cluster_name,iv,status),counts in sorted(allrow_signature_summary_counts.items())
     ]
+    all_sources_ok=bool(archive_rows) and all(r.get("status")=="PASS" for r in archive_rows)
+    no_errors=not errors
     write_csv(out/"CP0104_AllRows_Signature_Candidates.csv",allrow_signature_candidate_rows)
     write_csv(out/"CP0104_AllRows_Signature_Pairs.csv",allrow_signature_pair_rows)
     write_csv(out/"CP0104_AllRows_Signature_Summary.csv",allrow_signature_summary_rows)
