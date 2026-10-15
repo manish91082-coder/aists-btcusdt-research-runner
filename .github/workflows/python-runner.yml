@@ -1,0 +1,105 @@
+name: 🐍 Python Research Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      script_content:
+        description: 'Python code to execute (inline)'
+        required: false
+        default: 'print("Hello from GitHub Actions!")'
+      script_file:
+        description: 'Script file path in repo (e.g., scripts/my_script.py)'
+        required: false
+        default: 'scripts/sample_research.py'
+      python_version:
+        description: 'Python version'
+        required: false
+        default: '3.11'
+        type: choice
+        options:
+          - '3.11'
+          - '3.12'
+          - '3.10'
+  push:
+    paths:
+      - 'scripts/**'
+      - 'requirements.txt'
+
+permissions:
+  contents: write
+  actions: write
+  checks: write
+  deployments: write
+  issues: write
+  packages: write
+  pages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write
+
+jobs:
+  run-python:
+    name: 🚀 Execute Python Research Script
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python ${{ github.event.inputs.python_version || '3.11' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ github.event.inputs.python_version || '3.11' }}
+          cache: 'pip'
+
+      - name: 📦 Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: 📁 Create Results Directory
+        run: mkdir -p results
+
+      - name: 🔬 Run Research Script (File)
+        if: ${{ github.event.inputs.script_file != '' && github.event.inputs.script_content == '' }}
+        run: |
+          echo "Running: ${{ github.event.inputs.script_file }}"
+          python ${{ github.event.inputs.script_file }} 2>&1 | tee results/output.txt
+
+      - name: 💻 Run Inline Python Code
+        if: ${{ github.event.inputs.script_content != '' }}
+        run: |
+          cat << 'PYEOF' > /tmp/inline_script.py
+          ${{ github.event.inputs.script_content }}
+          PYEOF
+          python /tmp/inline_script.py 2>&1 | tee results/output.txt
+
+      - name: 📊 Run Sample Script (default push)
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          python scripts/sample_research.py 2>&1 | tee results/output.txt
+
+      - name: 📤 Upload Results as Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: research-results-${{ github.run_number }}
+          path: results/
+          retention-days: 90
+
+      - name: 📝 Print Summary
+        if: always()
+        run: |
+          echo "## 🔬 Research Run Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run Number**: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Python Version**: ${{ github.event.inputs.python_version || '3.11' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Output Preview" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat results/output.txt 2>/dev/null | head -50 || echo "No output file found"
+          echo '```' >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,229 @@
+name: 📈 BTCUSDT Research & Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      symbol:
+        description: 'Trading Symbol'
+        required: false
+        default: 'BTCUSDT'
+      interval:
+        description: 'Kline Interval'
+        required: false
+        default: '1h'
+        type: choice
+        options:
+          - '1m'
+          - '5m'
+          - '15m'
+          - '1h'
+          - '4h'
+          - '1d'
+      limit:
+        description: 'Number of candles to fetch'
+        required: false
+        default: '500'
+      analysis_type:
+        description: 'Analysis type'
+        required: false
+        default: 'full'
+        type: choice
+        options:
+          - 'full'
+          - 'technical'
+          - 'statistical'
+          - 'custom'
+      custom_code:
+        description: 'Additional custom Python code to run after analysis'
+        required: false
+        default: ''
+  schedule:
+    - cron: '0 */6 * * *'   # Every 6 hours
+
+permissions:
+  contents: write
+  actions: write
+  checks: write
+  issues: write
+  pages: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  btcusdt-research:
+    name: 🔍 BTCUSDT Data Fetch & Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install Research Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install \
+            requests \
+            pandas \
+            numpy \
+            ta \
+            matplotlib \
+            seaborn \
+            scipy \
+            scikit-learn \
+            python-binance \
+            ccxt \
+            pyarrow \
+            plotly \
+            kaleido
+
+      - name: 📁 Create Output Directories
+        run: |
+          mkdir -p results/data
+          mkdir -p results/charts
+          mkdir -p results/reports
+
+      - name: 📊 Run BTCUSDT Research Script
+        env:
+          BINANCE_API_KEY: ${{ secrets.BINANCE_API_KEY }}
+          BINANCE_SECRET: ${{ secrets.BINANCE_SECRET }}
+          SYMBOL: ${{ github.event.inputs.symbol || 'BTCUSDT' }}
+          INTERVAL: ${{ github.event.inputs.interval || '1h' }}
+          LIMIT: ${{ github.event.inputs.limit || '500' }}
+          ANALYSIS_TYPE: ${{ github.event.inputs.analysis_type || 'full' }}
+        run: |
+          python << 'EOF'
+          import os, json, requests, datetime
+          import pandas as pd
+          import numpy as np
+
+          symbol   = os.environ.get("SYMBOL", "BTCUSDT")
+          interval = os.environ.get("INTERVAL", "1h")
+          limit    = int(os.environ.get("LIMIT", 500))
+          analysis = os.environ.get("ANALYSIS_TYPE", "full")
+
+          print(f"🚀 Starting research: {symbol} | Interval: {interval} | Candles: {limit}")
+
+          # Fetch OHLCV from Binance public API
+          url = f"https://api.binance.com/api/v3/klines"
+          params = {"symbol": symbol, "interval": interval, "limit": limit}
+          resp = requests.get(url, params=params, timeout=30)
+          resp.raise_for_status()
+          raw = resp.json()
+
+          cols = ["open_time","open","high","low","close","volume",
+                  "close_time","qav","num_trades","tbbav","tbqav","ignore"]
+          df = pd.DataFrame(raw, columns=cols)
+          for c in ["open","high","low","close","volume"]:
+              df[c] = df[c].astype(float)
+          df["open_time"] = pd.to_datetime(df["open_time"], unit="ms")
+          df.set_index("open_time", inplace=True)
+
+          print(f"✅ Data fetched: {len(df)} rows | Range: {df.index[0]} → {df.index[-1]}")
+
+          # Basic statistics
+          stats = {
+              "symbol": symbol,
+              "interval": interval,
+              "candles": len(df),
+              "from": str(df.index[0]),
+              "to": str(df.index[-1]),
+              "current_price": float(df["close"].iloc[-1]),
+              "high_24h": float(df["high"].tail(24).max()),
+              "low_24h": float(df["low"].tail(24).min()),
+              "volume_24h": float(df["volume"].tail(24).sum()),
+              "price_change_pct": float(((df["close"].iloc[-1] - df["close"].iloc[-24]) / df["close"].iloc[-24]) * 100),
+              "volatility": float(df["close"].pct_change().std() * 100),
+              "mean_price": float(df["close"].mean()),
+              "median_price": float(df["close"].median()),
+              "run_time": str(datetime.datetime.utcnow())
+          }
+
+          # Technical indicators (simple)
+          df["sma_20"]  = df["close"].rolling(20).mean()
+          df["sma_50"]  = df["close"].rolling(50).mean()
+          df["ema_12"]  = df["close"].ewm(span=12).mean()
+          df["ema_26"]  = df["close"].ewm(span=26).mean()
+          df["macd"]    = df["ema_12"] - df["ema_26"]
+          df["signal"]  = df["macd"].ewm(span=9).mean()
+          df["rsi"]     = 100 - (100 / (1 + df["close"].diff().clip(lower=0).rolling(14).mean() /
+                                         df["close"].diff().clip(upper=0).abs().rolling(14).mean()))
+          df["bb_mid"]  = df["close"].rolling(20).mean()
+          df["bb_upper"]= df["bb_mid"] + 2 * df["close"].rolling(20).std()
+          df["bb_lower"]= df["bb_mid"] - 2 * df["close"].rolling(20).std()
+
+          stats["rsi_current"]   = float(df["rsi"].iloc[-1])
+          stats["macd_current"]  = float(df["macd"].iloc[-1])
+          stats["signal_current"]= float(df["signal"].iloc[-1])
+          stats["sma_20"]        = float(df["sma_20"].iloc[-1])
+          stats["sma_50"]        = float(df["sma_50"].iloc[-1])
+          stats["bb_upper"]      = float(df["bb_upper"].iloc[-1])
+          stats["bb_lower"]      = float(df["bb_lower"].iloc[-1])
+
+          # Market signal
+          rsi = stats["rsi_current"]
+          if rsi < 30:
+              stats["rsi_signal"] = "OVERSOLD"
+          elif rsi > 70:
+              stats["rsi_signal"] = "OVERBOUGHT"
+          else:
+              stats["rsi_signal"] = "NEUTRAL"
+
+          macd_sig = "BULLISH" if stats["macd_current"] > stats["signal_current"] else "BEARISH"
+          stats["macd_signal"] = macd_sig
+          price = stats["current_price"]
+          stats["bb_signal"] = ("ABOVE_UPPER" if price > stats["bb_upper"] else
+                                "BELOW_LOWER" if price < stats["bb_lower"] else "INSIDE_BANDS")
+          stats["trend"] = "UPTREND" if stats["sma_20"] > stats["sma_50"] else "DOWNTREND"
+
+          # Save outputs
+          df.to_csv("results/data/ohlcv.csv")
+          with open("results/reports/stats.json", "w") as f:
+              json.dump(stats, f, indent=2)
+
+          # Print summary
+          print("\n" + "="*60)
+          print(f"📊 {symbol} RESEARCH SUMMARY")
+          print("="*60)
+          for k, v in stats.items():
+              print(f"  {k:25}: {v}")
+          print("="*60)
+          print("✅ Results saved to results/")
+          EOF
+
+      - name: 🧮 Run Custom Code (if provided)
+        if: ${{ github.event.inputs.custom_code != '' }}
+        run: |
+          echo "${{ github.event.inputs.custom_code }}" > /tmp/custom.py
+          python /tmp/custom.py 2>&1 | tee -a results/reports/custom_output.txt
+
+      - name: 📤 Upload All Research Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: btcusdt-research-${{ github.event.inputs.interval || '1h' }}-run${{ github.run_number }}
+          path: results/
+          retention-days: 90
+
+      - name: 📝 Write Job Summary
+        if: always()
+        run: |
+          echo "## 📈 BTCUSDT Research Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Parameter | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Symbol | ${{ github.event.inputs.symbol || 'BTCUSDT' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Interval | ${{ github.event.inputs.interval || '1h' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Candles | ${{ github.event.inputs.limit || '500' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Analysis | ${{ github.event.inputs.analysis_type || 'full' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Stats Output" >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          cat results/reports/stats.json 2>/dev/null || echo "No stats file"
+          echo '```' >> $GITHUB_STEP_SUMMARY
