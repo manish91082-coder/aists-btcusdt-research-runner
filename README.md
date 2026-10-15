@@ -1,122 +1,44 @@
-# 🤖 AISTS BTCUSDT Research Runner
+# AISTS BTCUSDT Research Runner
 
-> **AI-powered BTC/USDT research execution environment using GitHub Actions**
+A standalone GitHub Actions runner for reproducible, evidence-first BTCUSDT historical research.
 
-[![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-Enabled-2088FF?logo=github-actions&logoColor=white)](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions)
-[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Public Repo](https://img.shields.io/badge/Visibility-Public-green)](https://github.com/manish91082-coder/aists-btcusdt-research-runner)
+## Current safety posture
 
----
+- Public repository, using standard GitHub-hosted runners.
+- No Binance REST market-data API, exchange API key, signing, live order placement, or transaction broadcast.
+- Research data, when requested, must come from official downloadable archives on data.binance.vision with checksum and content validation.
+- The workflow has contents: read permissions. It does not accept arbitrary inline Python or execute custom code from workflow inputs.
+- The initial allowlisted task is smoke; additional research tasks must be implemented, tested and added to the explicit allowlist before use.
+- Each run records its request ID, commit SHA, run ID, checks, and SHA-256 hashes in a compact JSON/CSV artifact.
 
-## 📋 Overview
+## Execution
 
-This repository is a **dedicated GitHub Actions-powered Python research execution environment** for AISTS (AI-based Strategy & Trading System) BTCUSDT research tasks.
+### Automatic trigger
+A commit that changes requests/current.json on main triggers the workflow. Only a declared task in scripts/aists_runner.py can execute. Arbitrary code is not accepted from the request file.
 
-- ✅ Run Python scripts directly on GitHub's cloud infrastructure
-- ✅ Schedule automated research jobs via cron
-- ✅ Read and store results as GitHub Artifacts
-- ✅ Full Actions permissions for maximum flexibility
-- ✅ Completely isolated from other projects
+### Manual trigger
+Open Actions → AISTS Research Runner → Run workflow and select an allowlisted task.
 
----
+### Verifying an execution
+Each run should be checked by:
+1. Exact commit SHA and Actions run ID.
+2. Job/step conclusion, not only the workflow badge.
+3. run_summary.json from the artifact.
+4. Artifact ID, size and SHA-256 digest where provided by GitHub.
+5. The report's check totals, request ID, and source/network policy fields.
 
-## 🚀 Quick Start
+A workflow showing success is necessary but not sufficient for a research gate to pass.
 
-### Run a Python Script via GitHub Actions
+## Cost model
 
-1. Go to **Actions** tab → Select a workflow → Click **Run workflow**
-2. Pass your script/parameters as inputs
-3. Download results from **Artifacts** section
+GitHub documents standard GitHub-hosted runner usage as free and unlimited for public repositories. This statement does not imply that every artifact, cache, larger runner, or other GitHub service is unlimited/free. Keep artifacts small and short-lived; commit verified compact evidence separately when durable retention is needed.
 
-### Available Workflows
+## Roadmap
+1. Verify the runner, request-to-run chain, and artifact round trip.
+2. Add official archive acquisition with SHA-256/ZIP CRC/content QA.
+3. Rebuild only the frozen 4h, 1d, and 1mo candidate tests needed to investigate historical drawdown.
+4. Separate data defects, accounting/simulator defects, and strategy failures.
+5. Do not promote a strategy without out-of-sample evidence and frozen acceptance rules.
 
-| Workflow | Trigger | Description |
-|----------|---------|-------------|
-| `python-runner.yml` | Manual / Push | Run any Python research script |
-| `btcusdt-research.yml` | Manual / Scheduled | BTCUSDT data fetch & analysis |
-| `scheduled-runner.yml` | Cron (daily) | Automated daily research job |
-
----
-
-## 📁 Repository Structure
-
-```
-aists-btcusdt-research-runner/
-├── .github/
-│   └── workflows/
-│       ├── python-runner.yml        # General Python runner
-│       ├── btcusdt-research.yml     # BTCUSDT specific research
-│       └── scheduled-runner.yml     # Scheduled automation
-├── scripts/
-│   └── sample_research.py           # Sample research script
-├── results/                         # Output artifacts stored here
-├── requirements.txt                 # Python dependencies
-├── README.md
-└── LICENSE
-```
-
----
-
-## ⚙️ Configuration
-
-### Secrets & Variables
-Add these in **Settings → Secrets and variables → Actions**:
-
-| Secret Name | Description |
-|-------------|-------------|
-| `BINANCE_API_KEY` | Binance API key (optional) |
-| `BINANCE_SECRET` | Binance secret key (optional) |
-| `TELEGRAM_BOT_TOKEN` | Telegram alerts (optional) |
-
-### Permissions
-This repo has **maximum GitHub Actions permissions** enabled:
-- ✅ Read & Write for all scopes
-- ✅ Allow all actions and reusable workflows
-- ✅ Artifact uploads enabled
-- ✅ GitHub Pages deployable
-
----
-
-## 🔧 Usage Examples
-
-### Manual Trigger
-```yaml
-# In any workflow, use workflow_dispatch with inputs
-on:
-  workflow_dispatch:
-    inputs:
-      script_name:
-        description: 'Python script to run'
-        required: true
-```
-
-### Scheduled Research
-```yaml
-on:
-  schedule:
-    - cron: '0 0 * * *'  # Daily at midnight UTC
-```
-
----
-
-## 📊 Results & Artifacts
-
-- All outputs are saved as **GitHub Actions Artifacts** (retained 90 days)
-- Results can be downloaded via Actions UI or `gh` CLI:
-
-```bash
-gh run download --repo manish91082-coder/aists-btcusdt-research-runner
-```
-
----
-
-## 🤝 Contributing
-
-This is a personal research repository. Fork and adapt as needed.
-
----
-
-## 📄 License
-
-MIT License — see [LICENSE](LICENSE) for details.
+## License
+MIT.
