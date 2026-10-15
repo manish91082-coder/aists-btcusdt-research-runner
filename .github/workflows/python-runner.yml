@@ -13,6 +13,7 @@ on:
         type: choice
         options:
           - smoke
+          - historical_reference_replay
         default: smoke
 
 permissions:
@@ -24,9 +25,9 @@ concurrency:
 
 jobs:
   run:
-    name: Execute allowlisted research task
+    name: Execute allowlisted task
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 60
     permissions:
       contents: read
     steps:
@@ -34,12 +35,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
+      - name: Restore verified monthly archive cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/aists/binance-monthly-archives
+          key: aists-btcusdt-monthly-spot-v1-2017-08-2026-09
       - name: Prepare request for manual run
         if: github.event_name == 'workflow_dispatch'
         env:
@@ -54,7 +58,7 @@ jobs:
           request = {
               "request_id": "MANUAL-" + os.environ["RUN_ID_INPUT"],
               "task": os.environ["TASK_INPUT"],
-              "purpose": "Manual allowlisted runner verification",
+              "purpose": "Manual allowlisted runner execution",
               "created_at_utc": datetime.now(timezone.utc).isoformat(),
               "requested_commit_sha": os.environ["COMMIT_SHA_INPUT"]
           }
@@ -62,7 +66,6 @@ jobs:
               json.dump(request, f, indent=2)
               f.write("\n")
           PY
-
       - name: Execute task and generate evidence
         env:
           AISTS_RUN_ID: ${{ github.run_id }}
@@ -71,7 +74,6 @@ jobs:
           AISTS_REF: ${{ github.ref }}
           AISTS_EVENT: ${{ github.event_name }}
         run: python scripts/aists_runner.py --request requests/current.json --output-dir results
-
       - name: Upload compact evidence artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -80,19 +82,16 @@ jobs:
           path: results/
           if-no-files-found: warn
           retention-days: 7
-
-      - name: Publish job summary
+      - name: Publish run summary
         if: always()
         run: |
           echo "# AISTS Research Runner" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Workflow run: $GITHUB_RUN_ID" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Run: $GITHUB_RUN_ID" >> "$GITHUB_STEP_SUMMARY"
           echo "- Commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
           echo "- Event: $GITHUB_EVENT_NAME" >> "$GITHUB_STEP_SUMMARY"
           if [ -f results/run_summary.json ]; then
-            echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "Evidence summary JSON is included below and in the artifact." >> "$GITHUB_STEP_SUMMARY"
+            echo 'Evidence JSON is attached as artifact.' >> "$GITHUB_STEP_SUMMARY"
             cat results/run_summary.json >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "No run_summary.json generated." >> "$GITHUB_STEP_SUMMARY"
+            echo 'No run_summary.json generated.' >> "$GITHUB_STEP_SUMMARY"
           fi
