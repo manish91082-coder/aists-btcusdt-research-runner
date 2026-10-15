@@ -83,10 +83,21 @@ def main():
                 summary_name="historical_reference_replay_summary.json" if task=="historical_reference_replay" else "monthly_derived_replay_summary.json"
                 child_summary_path=output/task/summary_name
             try:
-                proc=subprocess.run(argv,cwd=str(ROOT),text=True,capture_output=True,timeout=timeout)
-                (output/f"{task}_stdout.txt").write_text(proc.stdout[-60000:],encoding="utf-8")
-                (output/f"{task}_stderr.txt").write_text(proc.stderr[-30000:],encoding="utf-8")
-                child_rc=proc.returncode
+                if task=="legacy_pipeline":
+                    log_path=output/f"{task}_stdout.txt"
+                    with log_path.open("w",encoding="utf-8") as log:
+                        proc=subprocess.Popen(argv,cwd=str(ROOT),text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,bufsize=1)
+                        assert proc.stdout is not None
+                        for line in proc.stdout:
+                            print(line,end="",flush=True)
+                            log.write(line);log.flush()
+                        child_rc=proc.wait()
+                    (output/f"{task}_stderr.txt").write_text("",encoding="utf-8")
+                else:
+                    proc=subprocess.run(argv,cwd=str(ROOT),text=True,capture_output=True,timeout=timeout)
+                    (output/f"{task}_stdout.txt").write_text(proc.stdout[-60000:],encoding="utf-8")
+                    (output/f"{task}_stderr.txt").write_text(proc.stderr[-30000:],encoding="utf-8")
+                    child_rc=proc.returncode
             except subprocess.TimeoutExpired as exc:
                 child_rc=124
                 (output/f"{task}_stdout.txt").write_text(str(exc.stdout or "")[-60000:],encoding="utf-8")
