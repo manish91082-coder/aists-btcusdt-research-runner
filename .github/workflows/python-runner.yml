@@ -15,7 +15,8 @@ on:
           - smoke
           - historical_reference_replay
           - monthly_derived_replay
-        default: smoke
+          - legacy_pipeline
+        default: legacy_pipeline
 
 permissions:
   contents: read
@@ -26,9 +27,9 @@ concurrency:
 
 jobs:
   run:
-    name: Execute allowlisted task
+    name: Verify source, build candidates and run legacy backtest
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 180
     permissions:
       contents: read
     steps:
@@ -40,11 +41,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Restore verified monthly archive cache
+      - name: Restore monthly archive cache
         uses: actions/cache@v4
         with:
           path: .cache/aists/binance-monthly-archives
-          key: aists-btcusdt-monthly-spot-v1-2017-08-2026-09
+          key: aists-btcusdt-monthly-spot-v2-7intervals-2017-08-2026-09
+          restore-keys: |
+            aists-btcusdt-monthly-spot-v1-2017-08-2026-09
+      - name: Install pinned backtest dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
       - name: Prepare request for manual run
         if: github.event_name == 'workflow_dispatch'
         env:
@@ -56,16 +61,18 @@ jobs:
           python - <<'PY'
           import json, os
           from datetime import datetime, timezone
-          request = {"request_id": "MANUAL-" + os.environ["RUN_ID_INPUT"],
-                     "task": os.environ["TASK_INPUT"],
-                     "purpose": "Manual allowlisted runner execution",
-                     "created_at_utc": datetime.now(timezone.utc).isoformat(),
-                     "requested_commit_sha": os.environ["COMMIT_SHA_INPUT"]}
+          request = {
+              "request_id": "MANUAL-" + os.environ["RUN_ID_INPUT"],
+              "task": os.environ["TASK_INPUT"],
+              "purpose": "Manual allowlisted AISTS research execution",
+              "created_at_utc": datetime.now(timezone.utc).isoformat(),
+              "requested_commit_sha": os.environ["COMMIT_SHA_INPUT"]
+          }
           with open("requests/current.json", "w", encoding="utf-8") as f:
               json.dump(request, f, indent=2)
               f.write("\n")
           PY
-      - name: Execute task and generate evidence
+      - name: Execute task
         env:
           AISTS_RUN_ID: ${{ github.run_id }}
           AISTS_RUN_ATTEMPT: ${{ github.run_attempt }}
@@ -89,8 +96,7 @@ jobs:
           echo "- Commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
           echo "- Event: $GITHUB_EVENT_NAME" >> "$GITHUB_STEP_SUMMARY"
           if [ -f results/run_summary.json ]; then
-            echo 'Evidence JSON is attached as artifact.' >> "$GITHUB_STEP_SUMMARY"
             cat results/run_summary.json >> "$GITHUB_STEP_SUMMARY"
           else
-            echo 'No run_summary.json generated.' >> "$GITHUB_STEP_SUMMARY"
+            echo "No results/run_summary.json generated." >> "$GITHUB_STEP_SUMMARY"
           fi
