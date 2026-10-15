@@ -1,6 +1,6 @@
 {
   "checkpoint": "CP-0107",
-  "status": "PASS_EXACT_CP0041_CROSSWALK_WITH_OPEN_SOURCE_DISPOSITION",
+  "status": "PASS_EXACT_CP0041_CROSSWALK_WITH_OPEN_SOURCE_DISPOSITION_METRICS_CORRECTED",
   "source_package": {
     "file": "AISTS_CP0041_Row_Level_Evidence_Disposition_Pack.zip",
     "sha256": "23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc",
@@ -28,7 +28,7 @@
   "mapped_daily_diagnostics": {
     "mapped_daily_rows_present_in_CP0107_coverage": 448,
     "mapped_daily_rows_absent_in_CP0107_coverage": 2,
-    "raw_mapped_field_value_differences": 442,
+    "raw_mapped_field_value_differences": 448,
     "CP0041_fixed_shift_diagnostics_no_daily_row_at_fixed_shift": 8,
     "of_those_8_found_in_CP0107_official_daily_coverage": 6,
     "of_those_8_still_absent_in_CP0107_daily_coverage": 2,
@@ -50,7 +50,13 @@
       "105211": 407,
       "1905211": 43
     },
-    "pattern_789000_rows": 450
+    "pattern_789000_rows": 450,
+    "mapped_rows_with_any_non_open_field_difference": 448,
+    "mapped_rows_with_open_field_difference": 442,
+    "mapped_rows_with_close_time_field_difference": 447,
+    "mapped_rows_with_volume_field_difference": 448,
+    "mapping_field_difference_semantics": "Field differences compare monthly raw row to the fixed-shift mapped official daily row, excluding the intentionally shifted open_time. Any differing non-open field: 448/448 present mapped rows; open price itself differs in 442; close_time differs in 447; volume differs in 448.",
+    "previous_summary_metric_correction": "A prior aggregate labelled 442 as total mapped-field-difference rows. Row-by-row CSV count shows 448 mapped rows have one or more non-open field differences; 442 specifically have an open-field difference. The row-level evidence and this corrected metric supersede the ambiguous aggregate."
   },
   "disposition": {
     "all_450": "QUARANTINE_REVIEW_REQUIRED",
