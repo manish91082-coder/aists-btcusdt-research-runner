@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "check_id": "request_json_parse",
+      "detail": "JSON parsed",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_schema_allowlist",
+      "detail": "unknown=[] missing=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_id_format",
+      "detail": "AISTS-CP0107-CP0041-DEC2020-RESIDUAL7-AUDIT-20261015-02",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_allowlist",
+      "detail": "task='cp0107_cp0041_dec2020_residual7_exact_key_audit'",
+      "status": "PASS"
+    },
+    {
+      "check_id": "purpose_bounded_text",
+      "detail": "140",
+      "status": "PASS"
+    },
+    {
+      "check_id": "workflow_least_privilege",
+      "detail": "top_level_contents_read=True; scoped_cp0107_publisher_write=True; forbidden=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_python_sources_parse",
+      "detail": "files=20 errors=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "commit_sha_present",
+      "detail": "17bedc3151fff525c4d58f58a196ccca4fc2c2c6",
+      "status": "PASS"
+    },
+    {
+      "check_id": "actions_run_id_present",
+      "detail": "38779041545",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_script_exists",
+      "detail": "/home/runner/work/aists-btcusdt-research-runner/aists-btcusdt-research-runner/scripts/AISTS_CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.py",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_exit_and_summary",
+      "detail": "exit=0; summary_exists=True",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 11,
+  "checks_total": 11,
+  "child_summary_sha256": "96b3dd7a232226c782470a6efc8d7036a532b625abee9fc30f783c01ed5f54e5",
+  "commit_sha": "17bedc3151fff525c4d58f58a196ccca4fc2c2c6",
+  "event": "push",
+  "exchange_credentials_used": false,
+  "generated_at_utc": "2026-10-15T17:38:50.581865+00:00",
+  "market_data_rest_api_used": false,
+  "project": "AISTS BTCUSDT Research Runner",
+  "raw_source_archives_modified": false,
+  "request_id": "AISTS-CP0107-CP0041-DEC2020-RESIDUAL7-AUDIT-20261015-02",
+  "request_sha256": "7b374096981fa3843a45591d5f9394bd8ce914627bcb385c65bcd6ab124e6770",
+  "research_task_status": "PASS_SEVEN_RESIDUAL_EXACT_KEY_AUDIT",
+  "run_attempt": "1",
+  "run_id": "38779041545",
+  "runner_sha256": "ea803a470c213a5b480a21f2ca9a260f59732b79c1a0728eaf96b1d9e4d2c9c3",
+  "runner_status": "PASS",
+  "schema_version": 1,
+  "source_selected": false,
+  "strategy_promoted": false,
+  "task": "cp0107_cp0041_dec2020_residual7_exact_key_audit",
+  "workflow_sha256": "ce1b3409c5840c6d0617d389c611aad1a653e457be0a5888c399e212e93e2d8a"
+}

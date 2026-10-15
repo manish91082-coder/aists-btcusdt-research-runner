@@ -1,0 +1,300 @@
+{
+  "aggregate_candles_created": false,
+  "backtest_rerun": false,
+  "canonical_source_selected": false,
+  "checkpoint": "CP-0107",
+  "checks": [
+    {
+      "check": "two_archives_match_official_sha_and_crc",
+      "detail": "Verified full cached monthly/daily 5m ZIP bytes.",
+      "status": "PASS"
+    },
+    {
+      "check": "daily_sidecar_rehashed_and_content_matched",
+      "detail": "Daily .CHECKSUM re-hash and content comparison.",
+      "status": "PASS"
+    },
+    {
+      "check": "exact_grid_coverage_rows",
+      "detail": "60",
+      "status": "PASS"
+    },
+    {
+      "check": "nine_rollups_rechecked_against_full_archives",
+      "detail": "9",
+      "status": "PASS"
+    },
+    {
+      "check": "no_synthetic_rows_or_aggregates",
+      "detail": "Only original 5m source rows and expected-key coverage are emitted.",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 5,
+  "checks_total": 5,
+  "exact_keys_absent": {
+    "DAILY": 14,
+    "MONTHLY": 10
+  },
+  "exact_keys_present": {
+    "DAILY": 16,
+    "MONTHLY": 20
+  },
+  "expected_grid_keys_per_source": 30,
+  "expected_grid_keys_total": 60,
+  "external_network_used": false,
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "generated_at_utc": "2026-10-15T15:01:47.220787+00:00",
+  "market_data_rest_api_used": false,
+  "outputs": {
+    "CP0107_Dec2020_5m_ActualRows_Window.csv": {
+      "bytes": 13302,
+      "sha256": "f397756fb22a267db0e9d2fe96a7bcadab8f4d29c8cd24b1c9397f3bbb89ce37"
+    },
+    "CP0107_Dec2020_5m_ChildCoverage.csv": {
+      "bytes": 13925,
+      "sha256": "dcfecaff37f53a017304603d696f6f84c35cdef60941abb59ad8dfa0936f8dc4"
+    },
+    "CP0107_Dec2020_5m_SourceVerification.csv": {
+      "bytes": 1150,
+      "sha256": "daab391c7680ca4e468ff344ffacbcad367be77958aea56519245ff1d207e7d7"
+    },
+    "CP0107_Dec2020_ReviewRollup_ChildCoverage.csv": {
+      "bytes": 6237,
+      "sha256": "5aed8326dd38921323e6ed6cf6590ec6dd5f73279187f522e4e0509c4dcee9ca"
+    }
+  },
+  "raw_archives_modified": false,
+  "review_rollups_checked": 9,
+  "rollup_child_coverage": [
+    {
+      "available": 2,
+      "expected": 3,
+      "interval": "15m",
+      "missing": [
+        "2020-12-21T14:10:00.000Z"
+      ],
+      "parent_open_time_utc": "2020-12-21T14:00:00.000Z",
+      "previously_flagged_keys_now_present": [],
+      "previously_flagged_keys_still_absent": [
+        "2020-12-21T14:10:00.000Z"
+      ],
+      "source": "MONTHLY",
+      "status": "CHILD_KEYS_MISSING_IN_VERIFIED_ARCHIVE"
+    },
+    {
+      "available": 1,
+      "expected": 3,
+      "interval": "15m",
+      "missing": [
+        "2020-12-21T13:50:00.000Z",
+        "2020-12-21T13:55:00.000Z"
+      ],
+      "parent_open_time_utc": "2020-12-21T13:45:00.000Z",
+      "previously_flagged_keys_now_present": [],
+      "previously_flagged_keys_still_absent": [
+        "2020-12-21T13:50:00.000Z",
+        "2020-12-21T13:55:00.000Z"
+      ],
+      "source": "DAILY",
+      "status": "CHILD_KEYS_MISSING_IN_VERIFIED_ARCHIVE"
+    },
+    {
+      "available": 0,
+      "expected": 3,
+      "interval": "15m",
+      "missing": [
+        "2020-12-21T14:00:00.000Z",
+        "2020-12-21T14:05:00.000Z",
+        "2020-12-21T14:10:00.000Z"
+      ],
+      "parent_open_time_utc": "2020-12-21T14:00:00.000Z",
+      "previously_flagged_keys_now_present": [],
+      "previously_flagged_keys_still_absent": [
+        "2020-12-21T14:00:00.000Z",
+        "2020-12-21T14:05:00.000Z",
+        "2020-12-21T14:10:00.000Z"
+      ],
+      "source": "DAILY",
+      "status": "CHILD_KEYS_MISSING_IN_VERIFIED_ARCHIVE"
+    },
+    {
+      "available": 2,
+      "expected": 6,
+      "interval": "30m",
+      "missing": [
+        "2020-12-21T14:10:00.000Z",
+        "2020-12-21T14:15:00.000Z",
+        "2020-12-21T14:20:00.000Z",
+        "2020-12-21T14:25:00.000Z"
+      ],
+      "parent_open_time_utc": "2020-12-21T14:00:00.000Z",
+      "previously_flagged_keys_now_present": [],
+      "previously_flagged_keys_still_absent": [
+        "2020-12-21T14:10:00.000Z",
+        "2020-12-21T14:15:00.000Z",
+        "2020-12-21T14:20:00.000Z",
+        "2020-12-21T14:25:00.000Z"
+      ],
+      "source": "MONTHLY",
+      "status": "CHILD_KEYS_MISSING_IN_VERIFIED_ARCHIVE"
+    },
+    {
+      "available": 4,
+      "expected": 6,
+      "interval": "30m",
+      "missing": [
+        "2020-12-21T13:50:00.000Z",
+        "2020-12-21T13:55:00.000Z"
+      ],
+      "parent_open_time_utc": "2020-12-21T13:30:00.000Z",
+      "previously_flagged_keys_now_present": [],
+      "previously_flagged_keys_still_absent": [
+        "2020-12-21T13:50:00.000Z",
+        "2020-12-21T13:55:00.000Z"
+      ],
+      "source": "DAILY",
+      "status": "CHILD_KEYS_MISSING_IN_VERIFIED_ARCHIVE"
+    },
+    {
+      "available": 0,
+      "expected": 6,
+      "interval": "30m",
+      "missing": [
+        "2020-12-21T14:00:00.000Z",
+        "2020-12-21T14:05:00.000Z",
+        "2020-12-21T14:10:00.000Z",
+        "2020-12-21T14:15:00.000Z",
+        "2020-12-21T14:20:00.000Z",
+        "2020-12-21T14:25:00.000Z"
+      ],
+      "parent_open_time_utc": "2020-12-21T14:00:00.000Z",
+      "previously_flagged_keys_now_present": [],
+      "previously_flagged_keys_still_absent": [
+        "2020-12-21T14:00:00.000Z",
+        "2020-12-21T14:05:00.000Z",
+        "2020-12-21T14:10:00.000Z",
+        "2020-12-21T14:15:00.000Z",
+        "2020-12-21T14:20:00.000Z",
+        "2020-12-21T14:25:00.000Z"
+      ],
+      "source": "DAILY",
+      "status": "CHILD_KEYS_MISSING_IN_VERIFIED_ARCHIVE"
+    },
+    {
+      "available": 2,
+      "expected": 12,
+      "interval": "1h",
+      "missing": [
+        "2020-12-21T14:10:00.000Z",
+        "2020-12-21T14:15:00.000Z",
+        "2020-12-21T14:20:00.000Z",
+        "2020-12-21T14:25:00.000Z",
+        "2020-12-21T14:30:00.000Z",
+        "2020-12-21T14:35:00.000Z",
+        "2020-12-21T14:40:00.000Z",
+        "2020-12-21T14:45:00.000Z",
+        "2020-12-21T14:50:00.000Z",
+        "2020-12-21T14:55:00.000Z"
+      ],
+      "parent_open_time_utc": "2020-12-21T14:00:00.000Z",
+      "previously_flagged_keys_now_present": [],
+      "previously_flagged_keys_still_absent": [
+        "2020-12-21T14:10:00.000Z",
+        "2020-12-21T14:15:00.000Z",
+        "2020-12-21T14:20:00.000Z",
+        "2020-12-21T14:25:00.000Z",
+        "2020-12-21T14:30:00.000Z",
+        "2020-12-21T14:35:00.000Z",
+        "2020-12-21T14:40:00.000Z",
+        "2020-12-21T14:45:00.000Z",
+        "2020-12-21T14:50:00.000Z",
+        "2020-12-21T14:55:00.000Z"
+      ],
+      "source": "MONTHLY",
+      "status": "CHILD_KEYS_MISSING_IN_VERIFIED_ARCHIVE"
+    },
+    {
+      "available": 10,
+      "expected": 12,
+      "interval": "1h",
+      "missing": [
+        "2020-12-21T13:50:00.000Z",
+        "2020-12-21T13:55:00.000Z"
+      ],
+      "parent_open_time_utc": "2020-12-21T13:00:00.000Z",
+      "previously_flagged_keys_now_present": [],
+      "previously_flagged_keys_still_absent": [
+        "2020-12-21T13:50:00.000Z",
+        "2020-12-21T13:55:00.000Z"
+      ],
+      "source": "DAILY",
+      "status": "CHILD_KEYS_MISSING_IN_VERIFIED_ARCHIVE"
+    },
+    {
+      "available": 0,
+      "expected": 12,
+      "interval": "1h",
+      "missing": [
+        "2020-12-21T14:00:00.000Z",
+        "2020-12-21T14:05:00.000Z",
+        "2020-12-21T14:10:00.000Z",
+        "2020-12-21T14:15:00.000Z",
+        "2020-12-21T14:20:00.000Z",
+        "2020-12-21T14:25:00.000Z",
+        "2020-12-21T14:30:00.000Z",
+        "2020-12-21T14:35:00.000Z",
+        "2020-12-21T14:40:00.000Z",
+        "2020-12-21T14:45:00.000Z",
+        "2020-12-21T14:50:00.000Z",
+        "2020-12-21T14:55:00.000Z"
+      ],
+      "parent_open_time_utc": "2020-12-21T14:00:00.000Z",
+      "previously_flagged_keys_now_present": [],
+      "previously_flagged_keys_still_absent": [
+        "2020-12-21T14:00:00.000Z",
+        "2020-12-21T14:05:00.000Z",
+        "2020-12-21T14:10:00.000Z",
+        "2020-12-21T14:15:00.000Z",
+        "2020-12-21T14:20:00.000Z",
+        "2020-12-21T14:25:00.000Z",
+        "2020-12-21T14:30:00.000Z",
+        "2020-12-21T14:35:00.000Z",
+        "2020-12-21T14:40:00.000Z",
+        "2020-12-21T14:45:00.000Z",
+        "2020-12-21T14:50:00.000Z",
+        "2020-12-21T14:55:00.000Z"
+      ],
+      "source": "DAILY",
+      "status": "CHILD_KEYS_MISSING_IN_VERIFIED_ARCHIVE"
+    }
+  ],
+  "rollup_child_status_counts": {
+    "CHILD_KEYS_MISSING_IN_VERIFIED_ARCHIVE": 9
+  },
+  "root_cause": "OPEN_NOT_ESTABLISHED",
+  "source_archive_sha256": {
+    "DAILY": "b21d0cdd4d29b8a8cfbfbaafd9f926e12989233290daeb0f4977eefb6489525b",
+    "MONTHLY": "c169b2a72cc188c8089abc9f3c6f9699e4759a5e7d0d7a7c69d9117b0da68049"
+  },
+  "source_archives_verified": 2,
+  "source_cases_closed": 0,
+  "source_rows_in_1230_to_1500_utc_window": {
+    "DAILY": 16,
+    "MONTHLY": 20
+  },
+  "status": "PASS_CACHE_ONLY_DEC2020_CHILD_AUDIT",
+  "strategy_promoted": false,
+  "synthetic_candles_created": false,
+  "task": "cp0107_dec2020_child_window_audit",
+  "timestamp_shift_or_rounding": false
+}

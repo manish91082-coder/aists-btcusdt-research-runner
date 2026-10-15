@@ -193,3 +193,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Exact delta: 450/450 crosswalk row IDs matched. Proposed disposition only: QUARANTINE_REVIEW_REQUIRED for those 450 rows. The other 546 rows remain unchanged in the original worklist.
 - Daily mapped records: 448 present with non-open-field differences, 2 absent; exact daily open-key counterparts 0/450. All remain quarantined, canonical source NONE, root cause OPEN_NOT_ESTABLISHED, no cases closed.
 - This is an append-only delta artifact; the original 996-row worklist/source pack is not rewritten. No timestamps shifted, no raw row replacement/merge/delete, no synthetic candles/backtest/promotion.
+
+
+## CP-0107 seven residual December 2020 monthly-only exact-key audit 38779041545
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38779041545; status PASS_SEVEN_RESIDUAL_EXACT_KEY_AUDIT; checks 30/30 PASS.
+- Seven residual CP-0041 worklist rows individually revalidated against cached monthly archive row tokens and cached daily archive exact open-time keys; archive SHA/CRC checked. Daily exact-key counterparts present: 0; absent: 7.
+- All seven monthly rows are flat OHLC 22646.53000000, zero volume/trades. The repeated close-time token and raw row snapshots are retained; nearest timestamps remain diagnostic only.
+- All seven remain OPEN; canonical source NONE; root cause OPEN_NOT_ESTABLISHED; cases closed 0. No raw modification, time shifting, synthetic candles, backtest rerun or promotion.
