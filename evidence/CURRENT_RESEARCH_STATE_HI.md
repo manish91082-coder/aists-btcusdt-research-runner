@@ -223,3 +223,10 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Result: PASS_UNMATCHED_909_MANIFEST_PROVENANCE_AUDIT; 13/13 checks PASS; exact case ID/key/raw JSON matches 909/909; monthly archive manifest references 909/909; daily archive/sidecar/manifest references 909/909; original dispositions preserved 909/909.
 - Full audit CSV SHA-256 `b8ffd2a98f9296fdb04a2296f2190caca5387bbb286185a564717aadcb40d980`, 963,228 bytes, 909 rows. Library path `/AISTS/CP0107/unmatched_provenance/CP0107_CP0041_Unmatched_909_Provenance_Audit.csv`.
 - This is frozen-ledger/manifest-reference consistency, not a fresh re-download of all source archives. No source cases closed; canonical source NONE; root cause OPEN_NOT_ESTABLISHED. No backtest or strategy promotion.
+
+
+## CP-0107 shared-60 raw-field provenance audit (2026-10-15)
+
+- PASS_SHARED_60_RAW_FIELD_PROVENANCE_AUDIT; 13/13 checks. 52 economic/trade-metric divergent rows and 8 metadata close-time rows were reproduced from frozen raw tokens; all 60 monthly and daily manifest/hash references and original worklist key/raw JSON links match.
+- Full audit CSV SHA-256 7647e5f72f4ee212e2d67aff0dd9851e2556b32e1f882da1dd290b3df1076187, 179,989 bytes, 60 rows. Library path /AISTS/CP0107/shared_conflicts/CP0107_CP0041_Shared_60_Raw_Field_Provenance_Audit.csv.
+- No source choice, disposition change, closure, raw repair or backtest. Next: official source archive-version/provenance research for the 52 economic conflicts; gates remain blocked.

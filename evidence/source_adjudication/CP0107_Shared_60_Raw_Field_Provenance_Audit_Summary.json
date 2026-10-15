@@ -1,0 +1,81 @@
+{
+  "checkpoint": "CP-0107",
+  "task": "cp0107_cp0041_shared_60_raw_field_provenance_audit",
+  "status": "PASS_SHARED_60_RAW_FIELD_PROVENANCE_AUDIT",
+  "checks_passed": 13,
+  "checks_total": 13,
+  "scope": {
+    "shared_open_conflict_rows": 60,
+    "economic_field_divergence_rows": 52,
+    "metadata_close_time_rows": 8,
+    "worklist_rows": 996,
+    "daily_reference_manifest_rows": 240,
+    "monthly_archive_manifest_rows": 765
+  },
+  "results": {
+    "case_keys_match_worklist": 60,
+    "row_json_pairs_match_worklist": 60,
+    "monthly_archive_manifest_hash_matches": 60,
+    "daily_archive_sidecar_manifest_matches": 60,
+    "dispositions_preserved": 60,
+    "row_specific_errors": {}
+  },
+  "raw_field_difference_counts": {
+    "volume": 52,
+    "quote_asset_volume": 52,
+    "number_of_trades": 52,
+    "taker_buy_base_asset_volume": 48,
+    "taker_buy_quote_asset_volume": 48,
+    "open": 10,
+    "high": 15,
+    "low": 12,
+    "close": 43,
+    "close_time": 12,
+    "ignore": 5
+  },
+  "inputs": {
+    "source_pack_sha256": "23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc",
+    "worklist_sha256": "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f",
+    "shared_conflict_ledger_sha256": "ad5fce519de380468999aa7ef98fb7397d3b74e4283013dfac5596e4de68a19e",
+    "cp0040_rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0"
+  },
+  "output": {
+    "name": "CP0107_CP0041_Shared_60_Raw_Field_Provenance_Audit.csv",
+    "bytes": 179989,
+    "rows": 60,
+    "sha256": "7647e5f72f4ee212e2d67aff0dd9851e2556b32e1f882da1dd290b3df1076187",
+    "library_path": "/AISTS/CP0107/shared_conflicts/CP0107_CP0041_Shared_60_Raw_Field_Provenance_Audit.csv",
+    "library_file_id": "libfile_6c104b7bf78c819195e8cb14a3983742"
+  },
+  "summary_output": {
+    "sha256": "c890721a431a759415fef7943d96779e4132468987b458aedb91a963f5149c83",
+    "library_path": "/AISTS/CP0107/shared_conflicts/CP0107_CP0041_Shared_60_Raw_Field_Provenance_Audit_Summary.json"
+  },
+  "report_output": {
+    "sha256": "9219a6eee6b0eded22923da7421a7dc54758835c36d797050f1639da84bf61b2",
+    "library_path": "/AISTS/CP0107/shared_conflicts/CP0107_CP0041_Shared_60_Raw_Field_Provenance_Audit_Report_HI.md"
+  },
+  "decisions": {
+    "source_choice_changed_fields": 0,
+    "canonical_source_selected": false,
+    "source_cases_closed": 0,
+    "root_cause": "OPEN_NOT_ESTABLISHED",
+    "raw_archives_modified": false,
+    "timestamp_shifted_or_rounded": false,
+    "rows_merged_replaced_or_deleted": false,
+    "synthetic_candles_created": false,
+    "backtest_rerun": false,
+    "strategy_promoted": false
+  },
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "interpretation": "Frozen-ledger/raw-token and archive-manifest-reference consistency only; not a fresh download/reparse of every archive; no canonical source selected."
+}
