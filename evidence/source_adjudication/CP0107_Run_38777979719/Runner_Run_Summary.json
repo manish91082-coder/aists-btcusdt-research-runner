@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "check_id": "request_json_parse",
+      "detail": "JSON parsed",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_schema_allowlist",
+      "detail": "unknown=[] missing=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_id_format",
+      "detail": "AISTS-CP0107-CP0041-WORKLIST-DISPOSITION-DELTA-20261015-02",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_allowlist",
+      "detail": "task='cp0107_cp0041_worklist_disposition_patch_audit'",
+      "status": "PASS"
+    },
+    {
+      "check_id": "purpose_bounded_text",
+      "detail": "148",
+      "status": "PASS"
+    },
+    {
+      "check_id": "workflow_least_privilege",
+      "detail": "top_level_contents_read=True; scoped_cp0107_publisher_write=True; forbidden=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_python_sources_parse",
+      "detail": "files=19 errors=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "commit_sha_present",
+      "detail": "4e67420f38a25e818d733db5d4f63bd88c9efc81",
+      "status": "PASS"
+    },
+    {
+      "check_id": "actions_run_id_present",
+      "detail": "38777979719",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_script_exists",
+      "detail": "/home/runner/work/aists-btcusdt-research-runner/aists-btcusdt-research-runner/scripts/AISTS_CP0107_CP0041_Worklist_Disposition_Patch_Audit.py",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_exit_and_summary",
+      "detail": "exit=0; summary_exists=True",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 11,
+  "checks_total": 11,
+  "child_summary_sha256": "1e7e0a6e9b6e1cae47e7d78c33b98332a41c75e09f97d2165cb8daf6155af218",
+  "commit_sha": "4e67420f38a25e818d733db5d4f63bd88c9efc81",
+  "event": "push",
+  "exchange_credentials_used": false,
+  "generated_at_utc": "2026-10-15T17:31:04.986412+00:00",
+  "market_data_rest_api_used": false,
+  "project": "AISTS BTCUSDT Research Runner",
+  "raw_source_archives_modified": false,
+  "request_id": "AISTS-CP0107-CP0041-WORKLIST-DISPOSITION-DELTA-20261015-02",
+  "request_sha256": "fb7ecc08e936c5eac8487d344d42d325b637e1d1547cb90af3512e831bf27cfc",
+  "research_task_status": "PASS_450_ROW_DISPOSITION_DELTA_READY",
+  "run_attempt": "1",
+  "run_id": "38777979719",
+  "runner_sha256": "7abee6e0814e64e2b47f84dd8d1027a6a4e65fd5c64a2c9ceea70be5933acfb9",
+  "runner_status": "PASS",
+  "schema_version": 1,
+  "source_selected": false,
+  "strategy_promoted": false,
+  "task": "cp0107_cp0041_worklist_disposition_patch_audit",
+  "workflow_sha256": "ef936e6f4c7cded2ff8a71440a3a17cfaab2041717922321c36c187f5c988c45"
+}

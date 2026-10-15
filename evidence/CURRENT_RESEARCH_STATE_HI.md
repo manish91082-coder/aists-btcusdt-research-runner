@@ -184,3 +184,12 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Input row comparison SHA-256 ac08f6839e172919634d2823ae1f6df4d74613e473419b8c00881527e40906ba, source member SHA-256 aba8bfeca2ea62f576075faf926e4c425c862d50428cd59732ab9db88a64442a, frozen CP-0040 rulebook SHA-256 5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0.
 - 11 residual buckets checked by exact open-time key across daily and monthly child/parent rows. Daily roll-up status counts: {"DAILY_CHILD_ROLLUP_MATCHES_DAILY_PARENT": 11}.
 - Every bucket stays UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT; source authority NONE, cases closed 0. No raw edits, timestamp normalization, synthetic candles, backtest or strategy promotion.
+
+
+## CP-0107 CP-0041 450-row worklist disposition delta 38777979719
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38777979719; status PASS_450_ROW_DISPOSITION_DELTA_READY; checks 11/11 PASS.
+- Frozen source member: CP-0041 996-row worklist SHA-256 f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f; source package SHA-256 23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc.
+- Exact delta: 450/450 crosswalk row IDs matched. Proposed disposition only: QUARANTINE_REVIEW_REQUIRED for those 450 rows. The other 546 rows remain unchanged in the original worklist.
+- Daily mapped records: 448 present with non-open-field differences, 2 absent; exact daily open-key counterparts 0/450. All remain quarantined, canonical source NONE, root cause OPEN_NOT_ESTABLISHED, no cases closed.
+- This is an append-only delta artifact; the original 996-row worklist/source pack is not rewritten. No timestamps shifted, no raw row replacement/merge/delete, no synthetic candles/backtest/promotion.
