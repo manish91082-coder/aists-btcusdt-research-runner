@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0105-NEAREST-TIME-ECONOMIC-DELTAS-20261015-02",
+  "request_id": "AISTS-CP0106-ROW-LEVEL-SOURCE-ADJUDICATION-20261015-01",
   "task": "source_adjudication_diagnostic",
-  "purpose": "Rerun the cache-only CP-0105 nearest-time numeric delta diagnostic for 909 unresolved rows. No archive re-acquisition, edits, source decisions or backtest.",
-  "created_at_utc": "2026-10-15T12:55:00Z"
+  "purpose": "Use checksum-verified caches to export CP-0106 raw rows for the Dec-2020 anomaly window and contiguous Feb-2018 timestamp regimes. No broad download, repair, source choice or backtest.",
+  "created_at_utc": "2026-10-15T13:10:00Z"
 }
