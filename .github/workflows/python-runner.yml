@@ -22,6 +22,7 @@ on:
           - cp0107_dec2020_child_window_audit
           - cp0107_field_review_hash_audit
           - cp0107_monthly_checksum_provenance_audit
+          - cp0107_cp0041_daily_reference_acquisition_audit
         default: legacy_pipeline
 
 permissions:
@@ -91,7 +92,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ]; then
+          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ]; then
             echo "CP-0107 cache-only extraction uses Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -126,7 +127,7 @@ jobs:
           fi
 
   publish_cp0107_evidence:
-    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit' || needs.run.outputs.task == 'cp0107_field_review_hash_audit' || needs.run.outputs.task == 'cp0107_monthly_checksum_provenance_audit')
+    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit' || needs.run.outputs.task == 'cp0107_field_review_hash_audit' || needs.run.outputs.task == 'cp0107_monthly_checksum_provenance_audit' || needs.run.outputs.task == 'cp0107_cp0041_daily_reference_acquisition_audit')
     needs: run
     runs-on: ubuntu-latest
     permissions:
@@ -259,6 +260,40 @@ jobs:
                       raise SystemExit("Sidecar audit output hash/size mismatch: " + name)
               if len(side_summary.get("checks", [])) < 5 or any(x.get("status") != "PASS" for x in side_summary.get("checks", [])):
                   raise SystemExit("Sidecar audit checks contain a failure")
+          acquisition_summary_path = folder / "CP0107_CP0041_DailyReference_Acquisition_Summary.json"
+          if os.environ.get("TASK") == "cp0107_cp0041_daily_reference_acquisition_audit" and not acquisition_summary_path.is_file():
+              raise SystemExit("Missing CP-0041 daily-reference acquisition summary; refusing repository write")
+          if acquisition_summary_path.is_file():
+              acquisition = json.loads(acquisition_summary_path.read_text(encoding="utf-8"))
+              if acquisition.get("status") != "PASS_DAILY_REFERENCE_ACQUIRED_AND_ROW_AUDIT_RECORDED":
+                  raise SystemExit("CP-0041 daily-reference acquisition status not PASS")
+              if acquisition.get("queue_count") != 16 or acquisition.get("daily_archive_count") != 16 or acquisition.get("daily_sidecar_count") != 16:
+                  raise SystemExit("Expected exactly 16 daily ZIPs and 16 sidecars")
+              if acquisition.get("monthly_archive_count") != 14:
+                  raise SystemExit("Expected exactly 14 cached monthly ZIPs")
+              if acquisition.get("checks_passed") != acquisition.get("checks_total"):
+                  raise SystemExit("Daily-reference evidence checks are not all PASS")
+              if len(acquisition.get("sources", [])) != 16 or any(x.get("fetch_status") != "PASS" for x in acquisition.get("sources", [])):
+                  raise SystemExit("One or more daily reference archive/sidecar records did not PASS")
+              if len(acquisition.get("monthly_sources", [])) != 14 or any(x.get("status") != "PASS" for x in acquisition.get("monthly_sources", [])):
+                  raise SystemExit("One or more cached monthly source records did not PASS")
+              checks = acquisition.get("checks", [])
+              if not checks or any(x.get("status") != "PASS" for x in checks):
+                  raise SystemExit("Acquisition check register contains a failure")
+              for name, recorded in acquisition.get("outputs", {}).items():
+                  path = folder / name
+                  if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != recorded.get("sha256") or path.stat().st_size != recorded.get("bytes"):
+                      raise SystemExit("Acquisition output hash/size mismatch: " + name)
+                  if recorded.get("rows") is not None and len(rows(name)) != recorded.get("rows"):
+                      raise SystemExit("Acquisition output row-count mismatch: " + name)
+              if len(rows("CP0107_CP0041_DailyReference_Queue_Snapshot.csv")) != 16:
+                  raise SystemExit("Queue snapshot must preserve all 16 requests")
+              if len(rows("CP0107_CP0041_MonthlyArchive_Manifest_Subset.csv")) != 14:
+                  raise SystemExit("Monthly archive manifest subset must include 14 records")
+              if len(rows("CP0107_CP0041_DailyReference_Period_Summary.csv")) != 16:
+                  raise SystemExit("Period summary must include all 16 requested archives")
+              if len(rows("CP0107_CP0041_DailyReference_Archive_Manifest.csv")) != 16:
+                  raise SystemExit("Acquired archive manifest must include all 16 daily ZIPs")
           if len(offgrid) != 450 or len(daily) != 1167 or len(source) != 16 or len(segments) != 12:
               raise SystemExit(f"Row-count mismatch: offgrid={len(offgrid)} daily={len(daily)} source={len(source)} coverage={len(segments)}")
           if any(x.get("status") != "PASS" for x in source):
@@ -298,6 +333,26 @@ jobs:
               state_path.write_text(state + note, encoding="utf-8")
           PY
           fi
+          if [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ]; then
+            cp "$DEST/CP0107_CP0041_DailyReference_Acquisition_Summary.json" evidence/source_adjudication/CP0107_CP0041_DailyReference_Acquisition_Summary.json
+            cp "$DEST/CP0107_CP0041_DailyReference_Acquisition_Report_HI.md" evidence/source_adjudication/CP0107_CP0041_DailyReference_Acquisition_Report_HI.md
+            python - <<'PY'
+          import json, os
+          from pathlib import Path
+          summary = json.loads(Path("evidence/source_adjudication/CP0107_CP0041_DailyReference_Acquisition_Summary.json").read_text(encoding="utf-8"))
+          state_path = Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state = state_path.read_text(encoding="utf-8")
+          marker = "CP-0107 CP-0041 exact-date daily-reference acquisition and raw-row audit " + os.environ["RUN_ID"]
+          if marker not in state:
+              note = "\n\n## " + marker + "\n\n"
+              note += "- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/" + os.environ["RUN_ID"] + "; status " + summary["status"] + "; checks " + str(summary["checks_passed"]) + "/" + str(summary["checks_total"]) + " PASS.\n"
+              note += "- Exact scope: 16 queued official daily ZIPs + 16 .CHECKSUM files. The 14 associated monthly ZIPs were reused from cache and verified against the frozen CP-0041 subset; monthly ZIP downloads: 0.\n"
+              note += "- Union key rows " + str(summary["comparison"]["union_open_key_rows"]) + "; shared " + str(summary["comparison"]["shared_open_keys"]) + "; exact raw pairs " + str(summary["comparison"]["exact_raw_row_pairs"]) + "; divergent pairs " + str(summary["comparison"]["divergent_raw_row_pairs"]) + "; daily-only " + str(summary["comparison"]["daily_only_keys"]) + "; monthly-only " + str(summary["comparison"]["monthly_only_keys"]) + ".\n"
+              note += "- All unequal/missing rows remain OPEN_REVIEW_REQUIRED. Canonical source NONE, cases closed 0, no timestamp shifts/rounding/merge/replace/delete, no synthetic bars/backtest/promotion.\n"
+              note += "- CP-0041 package SHA-256 " + summary["provenance"]["source_package_sha256"] + "; queue member SHA-256 " + summary["provenance"]["queue_member_sha256"] + "; rulebook SHA-256 " + summary["provenance"]["rulebook_sha256"] + ".\n"
+              state_path.write_text(state + note, encoding="utf-8")
+          PY
+          fi
           if [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ]; then
             cp "$DEST/CP0107_Monthly_Checksum_Provenance_Summary.json" evidence/source_adjudication/CP0107_Monthly_Checksum_Provenance_Summary.json
             cp "$DEST/CP0107_Monthly_Checksum_Provenance_Report_HI.md" evidence/source_adjudication/CP0107_Monthly_Checksum_Provenance_Report_HI.md
@@ -319,6 +374,8 @@ jobs:
           fi
           if [ -f evidence_stage/cp0107_field_review_hash_audit_stdout.txt ]; then
             cp evidence_stage/cp0107_field_review_hash_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
+          elif [ -f evidence_stage/cp0107_cp0041_daily_reference_acquisition_audit_stdout.txt ]; then
+            cp evidence_stage/cp0107_cp0041_daily_reference_acquisition_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
           elif [ -f evidence_stage/cp0107_feb2018_raw_row_extract_stdout.txt ]; then
             cp evidence_stage/cp0107_feb2018_raw_row_extract_stdout.txt "$DEST/Runner_Child_Stdout.txt"
           fi
@@ -350,6 +407,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [ "$TASK" = "cp0107_field_review_hash_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_Dec2020_FieldReview_Summary.json evidence/source_adjudication/CP0107_Dec2020_FieldReview_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
+          elif [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ]; then
+            git add "$DEST" evidence/source_adjudication/CP0107_CP0041_DailyReference_Acquisition_Summary.json evidence/source_adjudication/CP0107_CP0041_DailyReference_Acquisition_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_Monthly_Checksum_Provenance_Summary.json evidence/source_adjudication/CP0107_Monthly_Checksum_Provenance_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           else
