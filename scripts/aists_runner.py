@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-ALLOWED_TASKS={"smoke","historical_reference_replay","monthly_derived_replay","legacy_pipeline"}
+ALLOWED_TASKS={"smoke","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic"}
 REQUEST_KEYS={"request_id","task","purpose","created_at_utc","requested_commit_sha"}
 
 def file_sha(path):
@@ -64,10 +64,11 @@ def main():
     if task=="smoke":
         check("smoke_no_network",True,"No HTTP requests; standard library only.")
         child_status="SMOKE_ONLY"
-    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline"):
+    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic"):
         script_name={"historical_reference_replay":"historical_reference_replay.py",
                      "monthly_derived_replay":"monthly_derived_replay.py",
-                     "legacy_pipeline":"aists_legacy_pipeline.py"}[task]
+                     "legacy_pipeline":"aists_legacy_pipeline.py",
+                     "source_adjudication_diagnostic":"AISTS_CP0103_Source_Adjudication_Diagnostic.py"}[task]
         child=ROOT/"scripts"/script_name
         check("task_script_exists",child.exists(),str(child))
         if child.exists():
@@ -77,13 +78,19 @@ def main():
                       "--data-root",".aists_workspace/market_data/binance_spot/BTCUSDT"]
                 timeout=10500
                 child_summary_path=output/"legacy_pipeline"/"legacy_pipeline_summary.json"
+            elif task=="source_adjudication_diagnostic":
+                argv=[sys.executable,str(child),"--monthly-cache",".cache/aists/binance-monthly-archives",
+                      "--daily-cache",".cache/aists/binance-daily-references",
+                      "--output-dir","results/source_adjudication_diagnostic"]
+                timeout=1800
+                child_summary_path=output/"source_adjudication_diagnostic"/"CP0103_Run_Summary.json"
             else:
                 argv=[sys.executable,str(child),"--output-dir",f"results/{task}","--cache-dir",".cache/aists/binance-monthly-archives"]
                 timeout=3300
                 summary_name="historical_reference_replay_summary.json" if task=="historical_reference_replay" else "monthly_derived_replay_summary.json"
                 child_summary_path=output/task/summary_name
             try:
-                if task=="legacy_pipeline":
+                if task in ("legacy_pipeline","source_adjudication_diagnostic"):
                     log_path=output/f"{task}_stdout.txt"
                     with log_path.open("w",encoding="utf-8") as log:
                         proc=subprocess.Popen(argv,cwd=str(ROOT),text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,bufsize=1)
