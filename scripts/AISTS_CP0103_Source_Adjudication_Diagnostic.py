@@ -184,6 +184,11 @@ def classify_population_signature_match_count(count):
     if count == 0: return "NO_EXACT_COUNTERPART_IN_OPPOSITE_SOURCE_POPULATION"
     if count == 1: return "UNIQUE_EXACT_SIGNATURE_CANDIDATE_IN_OPPOSITE_SOURCE_POPULATION"
     return "AMBIGUOUS_MULTIPLE_EXACT_SIGNATURE_CANDIDATES_IN_OPPOSITE_SOURCE_POPULATION"
+def relative_abs_delta_percent(a,b):
+    left=Decimal(str(a)); right=Decimal(str(b))
+    scale=max(abs(left),abs(right))
+    if scale==0: return None
+    return abs(left-right)*Decimal("100")/scale
 def aggregate_children(children,parent_ms,interval):
     step=STEP_MS[interval]
     expected_n=step//STEP_MS["5m"]
@@ -213,6 +218,9 @@ def self_tests():
     add("population_signature_zero_candidates",classify_population_signature_match_count(0)=="NO_EXACT_COUNTERPART_IN_OPPOSITE_SOURCE_POPULATION")
     add("population_signature_unique_candidate",classify_population_signature_match_count(1)=="UNIQUE_EXACT_SIGNATURE_CANDIDATE_IN_OPPOSITE_SOURCE_POPULATION")
     add("population_signature_ambiguity",classify_population_signature_match_count(2)=="AMBIGUOUS_MULTIPLE_EXACT_SIGNATURE_CANDIDATES_IN_OPPOSITE_SOURCE_POPULATION")
+    add("relative_delta_exact_zero",relative_abs_delta_percent(Decimal("10"),Decimal("10"))==Decimal("0"))
+    add("relative_delta_reference_scale",relative_abs_delta_percent(Decimal("10"),Decimal("9"))==Decimal("10"))
+    add("relative_delta_both_zero_undefined",relative_abs_delta_percent(Decimal("0"),Decimal("0")) is None)
     return {"passed":sum(t["status"]=="PASS" for t in tests),"total":len(tests),"tests":tests}
 
 def main():
@@ -630,6 +638,135 @@ def main():
         "interpretation":"A unique signature match is only a candidate pointer to an existing row on the opposite source. It does not authorize changing/open-time remapping or choosing source authority."
     }
     (out/"CP0104_AllRows_Signature_Summary.json").write_text(json.dumps(allrow_summary,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
+
+    # CP-0105: compare actual numeric fields at the nearest opposite-side timestamp.
+    # Nearest-time rows remain diagnostics only; they are not asserted to be the same candle.
+    delta_fields=("open","high","low","close","volume","quote_asset_volume","number_of_trades",
+                  "taker_buy_base_asset_volume","taker_buy_quote_asset_volume")
+    price_fields=("open","high","low","close")
+    price_volume_fields=("open","high","low","close","volume")
+    nearest_delta_rows=[]
+    field_acc={}
+    interval_acc={}
+    def dec_text(value):
+        if value is None: return ""
+        if isinstance(value,Decimal): return format(value.normalize(),"f")
+        return str(value)
+    def median_decimal(values):
+        if not values: return None
+        ordered=sorted(values); middle=len(ordered)//2
+        if len(ordered)%2: return ordered[middle]
+        return (ordered[middle-1]+ordered[middle])/Decimal("2")
+
+    for item in unmatched_rows:
+        iv=item["interval"]; day=item["date"]
+        current_source="MONTHLY" if item["source_side"]=="MONTHLY_ONLY" else "DAILY"
+        opposite_source="DAILY" if current_source=="MONTHLY" else "MONTHLY"
+        current_ts=int(item["open_time_ms"])
+        current=raw_data_for_rollup[(day,iv,current_source)][current_ts]
+        raw_near=item.get("nearest_opposite_open_time_ms")
+        nearest_ts=int(raw_near) if raw_near not in (None,"") else None
+        nearest=raw_data_for_rollup[(day,iv,opposite_source)].get(nearest_ts) if nearest_ts is not None else None
+        row={
+            "date":day,"interval":iv,"source_side":item["source_side"],
+            "current_open_time_ms":current_ts,"current_open_time_utc":utc_iso(current_ts),
+            "current_open_time_raw":current["open_time_raw"],
+            "nearest_opposite_open_time_ms":nearest_ts if nearest_ts is not None else "",
+            "nearest_opposite_open_time_utc":utc_iso(nearest_ts) if nearest_ts is not None else "",
+            "nearest_opposite_open_time_raw":nearest["open_time_raw"] if nearest else "",
+            "nearest_timestamp_candidate_abs_delta_ms":abs(current_ts-nearest_ts) if nearest_ts is not None else "",
+            "current_minus_nearest_open_ms":current_ts-nearest_ts if nearest_ts is not None else "",
+            "monthly_minus_daily_open_ms":(current_ts-nearest_ts if current_source=="MONTHLY" else nearest_ts-current_ts) if nearest_ts is not None else "",
+            "candidate_is_exact_open_key":False,
+            "nearest_opposite_line_number":nearest["line_number"] if nearest else "",
+            "economic_fields_compared":json.dumps(delta_fields),
+        }
+        field_equal_count=0
+        different_fields=[]
+        abs_field_deltas={}
+        rel_field_deltas={}
+        if nearest is not None:
+            for field in delta_fields:
+                left=Decimal(str(current[field])); right=Decimal(str(nearest[field]))
+                delta=left-right
+                abs_delta=abs(delta)
+                rel=relative_abs_delta_percent(left,right)
+                row["current_"+field]=dec_text(left)
+                row["nearest_"+field]=dec_text(right)
+                row["delta_current_minus_nearest_"+field]=dec_text(delta)
+                row["abs_delta_"+field]=dec_text(abs_delta)
+                row["relative_abs_delta_pct_"+field]=dec_text(rel) if rel is not None else ""
+                abs_field_deltas[field]=abs_delta
+                rel_field_deltas[field]=rel
+                is_equal=left==right
+                field_equal_count+=int(is_equal)
+                if not is_equal: different_fields.append(field)
+                acc=field_acc.setdefault((iv,item["source_side"],field),{"n":0,"equal":0,"abs":[],"rel":[]})
+                acc["n"]+=1; acc["equal"]+=int(is_equal); acc["abs"].append(abs_delta)
+                if rel is not None: acc["rel"].append(rel)
+        row["economic_fields_equal_count"]=field_equal_count if nearest is not None else ""
+        row["economic_fields_different_json"]=json.dumps(different_fields)
+        row["nearest_ohlc_exact_match"]=bool(nearest is not None and all(current[k]==nearest[k] for k in price_fields))
+        row["nearest_ohlc_plus_base_volume_exact_match"]=bool(nearest is not None and all(current[k]==nearest[k] for k in price_volume_fields))
+        row["nearest_full_economic_exact_match"]=bool(nearest is not None and not different_fields and len(delta_fields)==field_equal_count)
+        row["nearest_current_close_boundary_delta_ms"]=current["close_time_ms"]-(current_ts+STEP_MS[iv]-1)
+        row["nearest_opposite_close_boundary_delta_ms"]=(nearest["close_time_ms"]-(nearest_ts+STEP_MS[iv]-1)) if nearest else ""
+        row["interpretation"]="Nearest timestamp only; exact key differs and fields must be evaluated independently. Not a join/source decision."
+        nearest_delta_rows.append(row)
+
+        key=(iv,item["source_side"])
+        ia=interval_acc.setdefault(key,{"n":0,"has_nearest":0,"abs_open_ms":[],"exact_ohlc":0,"exact_ohlcv":0,"exact_full":0})
+        ia["n"]+=1
+        if nearest is not None:
+            ia["has_nearest"]+=1
+            ia["abs_open_ms"].append(abs(current_ts-nearest_ts))
+            ia["exact_ohlc"]+=int(row["nearest_ohlc_exact_match"])
+            ia["exact_ohlcv"]+=int(row["nearest_ohlc_plus_base_volume_exact_match"])
+            ia["exact_full"]+=int(row["nearest_full_economic_exact_match"])
+
+    write_csv(out/"CP0105_NearestTime_Economic_Deltas.csv",nearest_delta_rows)
+    field_summary=[]
+    for (iv,side,field),acc in sorted(field_acc.items()):
+        field_summary.append({
+            "interval":iv,"source_side":side,"field":field,"rows_compared":acc["n"],
+            "exact_field_matches":acc["equal"],"field_differences":acc["n"]-acc["equal"],
+            "abs_delta_min":dec_text(min(acc["abs"])) if acc["abs"] else "",
+            "abs_delta_median":dec_text(median_decimal(acc["abs"])) if acc["abs"] else "",
+            "abs_delta_max":dec_text(max(acc["abs"])) if acc["abs"] else "",
+            "relative_abs_delta_pct_median":dec_text(median_decimal(acc["rel"])) if acc["rel"] else "",
+            "relative_abs_delta_pct_mean":dec_text(sum(acc["rel"],Decimal("0"))/Decimal(len(acc["rel"]))) if acc["rel"] else "",
+        })
+    write_csv(out/"CP0105_NearestTime_Field_Summary.csv",field_summary)
+    nearest_summary_rows=[]
+    for (iv,side),acc in sorted(interval_acc.items()):
+        nearest_summary_rows.append({
+            "interval":iv,"source_side":side,"unmatched_rows":acc["n"],"nearest_opposite_rows_found":acc["has_nearest"],
+            "abs_open_time_delta_ms_min":min(acc["abs_open_ms"]) if acc["abs_open_ms"] else "",
+            "abs_open_time_delta_ms_median":median_decimal([Decimal(x) for x in acc["abs_open_ms"]]) if acc["abs_open_ms"] else "",
+            "abs_open_time_delta_ms_max":max(acc["abs_open_ms"]) if acc["abs_open_ms"] else "",
+            "nearest_exact_ohlc_matches":acc["exact_ohlc"],
+            "nearest_exact_ohlc_plus_base_volume_matches":acc["exact_ohlcv"],
+            "nearest_exact_full_economic_matches":acc["exact_full"],
+        })
+    write_csv(out/"CP0105_NearestTime_Summary.csv",nearest_summary_rows)
+    nearest_summary={
+        "checkpoint":"CP-0105","parent_checkpoint":"CP-0104 full-population signature search",
+        "purpose":"Quantify numeric differences for the nearest opposite-side open-time row for each unmatched row; nearest timestamp is not treated as a candle match.",
+        "generated_at_utc":now_utc(),
+        "status":"PASS_DIAGNOSTICS_ONLY" if not errors and all_sources_ok and tests["passed"]==tests["total"] else "BLOCKED_SOURCE_OR_READ_ERROR",
+        "unmatched_rows":len(unmatched_rows),
+        "nearest_timestamp_pairs_compared":sum(1 for r in nearest_delta_rows if r["nearest_opposite_open_time_ms"]!=""),
+        "rows_without_nearest_opposite_timestamp":sum(1 for r in nearest_delta_rows if r["nearest_opposite_open_time_ms"]==""),
+        "numeric_fields_per_pair":len(delta_fields),
+        "exact_ohlc_pairs":sum(bool(r["nearest_ohlc_exact_match"]) for r in nearest_delta_rows),
+        "exact_ohlc_plus_base_volume_pairs":sum(bool(r["nearest_ohlc_plus_base_volume_exact_match"]) for r in nearest_delta_rows),
+        "exact_full_economic_pairs":sum(bool(r["nearest_full_economic_exact_match"]) for r in nearest_delta_rows),
+        "raw_archive_mutation":False,"timestamp_shift_or_rounding":False,
+        "canonical_source_selected":False,"source_cases_closed":0,"backtest_rerun":False,"strategy_promoted":False,
+        "exchange_rest_api_used":False,
+        "interpretation":"Small/zero numeric deltas may identify a review candidate but do not authorize joining rows. No matching rule or source authority is inferred from nearest timestamps."
+    }
+    (out/"CP0105_NearestTime_Summary.json").write_text(json.dumps(nearest_summary,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
     write_csv(out/"CP0103_Unmatched_Economic_Signature_Candidates.csv",signature_candidate_rows)
     write_csv(out/"CP0103_Unique_Economic_Signature_Pairs.csv",unique_signature_pairs)
     write_csv(out/"CP0103_Economic_Signature_Summary.csv",signature_summary_rows)
@@ -716,6 +853,7 @@ def main():
             hashes.append({"file":p.name,"bytes":p.stat().st_size,"sha256":sha256_file(p)})
     write_csv(out/"CP0103_Report_SHA256.csv",hashes,["file","bytes","sha256"])
     write_csv(out/"CP0104_Report_SHA256.csv",hashes,["file","bytes","sha256"])
+    write_csv(out/"CP0105_Report_SHA256.csv",hashes,["file","bytes","sha256"])
     print(json.dumps({"CP0103":summary,"CP0104_AllRows_Signature":allrow_summary},indent=2,ensure_ascii=False,sort_keys=True))
     return 0 if summary["status"]=="PASS_DIAGNOSTICS_ONLY" else 1
 
