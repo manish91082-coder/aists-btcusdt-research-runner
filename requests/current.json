@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0103-SOURCE-ADJUDICATION-20261015-02",
+  "request_id": "AISTS-CP0103-SOURCE-ADJUDICATION-20261015-03",
   "task": "source_adjudication_diagnostic",
-  "purpose": "Repeat the scoped CP-0103 cache-only diagnostic after correcting duplicate-row counters and off-grid residue-group summary labels. Do not acquire market ZIPs broadly or rerun a backtest.",
-  "created_at_utc": "2026-10-15T12:00:00Z"
+  "purpose": "Run cache-only CP-0103 with exact economic-signature candidate pairing added for the 909 unmatched timestamp rows. Preserve raw source data and do not select sources or rerun a backtest.",
+  "created_at_utc": "2026-10-15T12:10:00Z"
 }
