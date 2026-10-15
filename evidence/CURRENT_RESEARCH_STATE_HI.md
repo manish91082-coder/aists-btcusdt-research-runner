@@ -142,3 +142,10 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - The repeated close-time token `1608558440521` (13:47:20.521 UTC) appears on 8 rows across 5m/15m/30m/1h with different open keys and expected boundaries. Four are monthly flat/zero rows; four are daily non-flat rows. This is an anomaly fingerprint only, not proven upstream cause. Exact raw values and archive references are in `CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv`.
 - Full verified archives still lack 10 monthly and 14 daily expected 5m keys in the audited window; all 9 roll-up cases have missing required child keys. Detailed source-specific missing keys are in `CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv`.
 - Provenance gaps remain: no documented process/source explains the duplicated close-time token; relationship/independence of daily/monthly exports remains unknown; monthly sidecar bytes were not rehashed in the last run. All affected cases remain OPEN, source NONE, root cause OPEN; no data repair or backtest/promotion. Outputs are in `evidence/source_adjudication/`; their SHA-256 values are in `CP0107_Dec2020_FieldReview_Summary.json`.
+
+
+## Field-review output integrity metadata correction — 2026-10-15
+
+- Corrected shared 5m comparison CSV no longer includes the misleading boundary-label column. Its current Git blob SHA-1 is `92c9e97f5c4baea175f89e7b36493a18e0934829`; 16 rows.
+- The local SHA-256 routine failed its `abc` self-test. Therefore earlier SHA-256 values for the three derived CSVs and summary are superseded and not verified; the JSON now records `sha256: null`, verified Git blob SHA-1, byte count, row count, and an explicit recomputation status. Do not treat the old SHA-256 values as valid.
+- Evidence findings unchanged: 16 shared keys, 9 exact raw pairs, 7 mismatches, 8 shared close-time fingerprint rows, monthly 10 and daily 14 missing source keys, 9 affected parent roll-ups. All affected decisions remain OPEN.

@@ -95,3 +95,8 @@ CSV: `CP0107_CloseTimeOnly_FieldDisposition_Final.csv`, 8 rows; SHA-256 `473b149
 - Close-time fingerprint `1608558440521` occurs on 8 records across four intervals, mixing four flat/zero monthly rows and four non-flat daily rows. This shows a repeated token across different interval boundaries, not its causal mechanism. See `CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv`.
 - Exact absent child-key sets: monthly 10, daily 14 during the audited window. All 9 roll-up cases still lack required child keys in verified archives. See `CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv`.
 - Monthly ZIP official-manifest SHA and ZIP CRC pass, but monthly `.CHECKSUM` bytes were not re-fetched/rehashed. Daily ZIP plus cached `.CHECKSUM` were rehashed/content-matched. No source authority selected; root cause OPEN; no case closed.
+
+
+## Output hash integrity note
+
+The boundary-label column was removed from the shared-row comparison. Git blob SHA-1 IDs, byte counts and row counts are current and verified from GitHub. A local SHA-256 calculation did not pass its self-test, so prior SHA-256 values in this derived evidence should be treated as unverified and are explicitly marked null pending recomputation in a trusted runner. No source data or row dispositions changed.

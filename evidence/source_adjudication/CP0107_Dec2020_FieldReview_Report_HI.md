@@ -12,11 +12,11 @@
 
 ## Row-level files
 
-| File | Rows | Bytes | SHA-256 |
-|---|---:|---:|---|
-| `CP0107_Dec2020_Shared_5m_RawField_Comparison.csv` | 16 | 12387 | `c89e38fc02f36c2b64b29fc46ea3d522f4f2a5972b62ac4092cc37f7859641f0` |
-| `CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv` | 8 | 5671 | `8d8c3d4c2701878ac33cd37647f341c53883732bd9d15f01d82c062a8c253f12` |
-| `CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv` | 24 | 9222 | `da9f1db50042054ff84e672119ec447d6d100d8b5dce7139642d33ada6652269` |
+| File | Rows | Bytes | Git blob SHA-1 |
+| `CP0107_Dec2020_Shared_5m_RawField_Comparison.csv` | 16 | 12019 | `92c9e97f5c4baea175f89e7b36493a18e0934829` |
+| `CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv` | 8 | 5671 | `f16e44d15cdec9bf47d974acd85e54d2d8361e7c` |
+| `CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv` | 24 | 9222 | `4ce746db8ae8f9e6f1622e4c0bae17bf975348c1` |
+| `CP0107_Dec2020_FieldReview_Summary.json` | 1 | 8074 | current commit assigned after write |
 
 ## What remains unproven
 

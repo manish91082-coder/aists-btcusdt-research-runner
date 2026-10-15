@@ -130,19 +130,28 @@
   ],
   "outputs": {
     "CP0107_Dec2020_Shared_5m_RawField_Comparison.csv": {
-      "sha256": "c89e38fc02f36c2b64b29fc46ea3d522f4f2a5972b62ac4092cc37f7859641f0",
-      "bytes": 12387,
-      "rows": 16
+      "path": "evidence/source_adjudication/CP0107_Dec2020_Shared_5m_RawField_Comparison.csv",
+      "git_blob_sha1": "92c9e97f5c4baea175f89e7b36493a18e0934829",
+      "bytes": 12019,
+      "rows": 16,
+      "sha256": null,
+      "sha256_status": "NOT_RECOMPUTED_AFTER_CONTENT_CORRECTION"
     },
     "CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv": {
-      "sha256": "8d8c3d4c2701878ac33cd37647f341c53883732bd9d15f01d82c062a8c253f12",
+      "path": "evidence/source_adjudication/CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv",
+      "git_blob_sha1": "f16e44d15cdec9bf47d974acd85e54d2d8361e7c",
       "bytes": 5671,
-      "rows": 8
+      "rows": 8,
+      "sha256": null,
+      "sha256_status": "NOT_RECOMPUTED_AFTER_CONTENT_CORRECTION"
     },
     "CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv": {
-      "sha256": "da9f1db50042054ff84e672119ec447d6d100d8b5dce7139642d33ada6652269",
+      "path": "evidence/source_adjudication/CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv",
+      "git_blob_sha1": "4ce746db8ae8f9e6f1622e4c0bae17bf975348c1",
       "bytes": 9222,
-      "rows": 24
+      "rows": 24,
+      "sha256": null,
+      "sha256_status": "NOT_RECOMPUTED_AFTER_CONTENT_CORRECTION"
     }
   },
   "decisions": {
@@ -167,5 +176,6 @@
     "G6": "NOT_BUILT",
     "G7": "LIVE_BLOCKED"
   },
-  "note": "This is an evidence classification and reproducible row comparison derived from committed CSVs; no external archive retrieval and no GitHub Actions job was run for this comparison."
+  "note": "This is an evidence classification and reproducible row comparison derived from committed CSVs; no external archive retrieval and no GitHub Actions job was run for this comparison.",
+  "integrity_note": "Do not rely on earlier SHA-256 values for these derived CSVs; the local digest implementation failed its self-test. Git blob SHA-1, byte count and row count are independently retrieved from GitHub. Recompute SHA-256 in a trusted runner before treating SHA-256 metadata as verified."
 }
