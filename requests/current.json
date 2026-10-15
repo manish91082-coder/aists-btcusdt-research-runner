@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0107-FEB2018-DISPOSITION-OVERLAY-20261015-05",
-  "task": "cp0107_feb2018_disposition_overlay",
-  "purpose": "Export CP-0107 February row quarantine overlay from committed evidence only. No archive download, repair or backtest.",
-  "created_at_utc": "2026-10-15T13:23:00Z"
+  "request_id": "AISTS-CP0107-DEC2020-CHILD-WINDOW-AUDIT-20261015-01",
+  "task": "cp0107_dec2020_child_window_audit",
+  "purpose": "Audit December 2020 5m child coverage for 9 review roll-ups from cache only. Verify ZIP hashes/CRC and daily checksum; no downloads, candles or backtest.",
+  "created_at_utc": "2026-10-15T14:00:00Z"
 }
