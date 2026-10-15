@@ -230,3 +230,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - PASS_SHARED_60_RAW_FIELD_PROVENANCE_AUDIT; 13/13 checks. 52 economic/trade-metric divergent rows and 8 metadata close-time rows were reproduced from frozen raw tokens; all 60 monthly and daily manifest/hash references and original worklist key/raw JSON links match.
 - Full audit CSV SHA-256 7647e5f72f4ee212e2d67aff0dd9851e2556b32e1f882da1dd290b3df1076187, 179,989 bytes, 60 rows. Library path /AISTS/CP0107/shared_conflicts/CP0107_CP0041_Shared_60_Raw_Field_Provenance_Audit.csv.
 - No source choice, disposition change, closure, raw repair or backtest. Next: official source archive-version/provenance research for the 52 economic conflicts; gates remain blocked.
+
+
+## CP-0107 derived 996-row disposition view (2026-10-16)
+
+- Status `PASS_DERIVED_996_ROW_VIEW_VALIDATED`; 22/22 checks PASS. Source pack/worklist/crosswalk/delta hashes verified.
+- Derived 996-row view: exactly 450 verified target dispositions set to `QUARANTINE_REVIEW_REQUIRED`; 546 untouched rows; non-disposition fields and raw-source JSON hashes identical 996/996. Originals not modified.
+- Full derived worklist SHA-256 `137ad77bfafa7f7cd788db6f744e5567ad7dba889048b58feb743a34b863d9cb`; per-row audit SHA-256 `717125e5abd83f987139d76df7ba245b972ad52438d4c64bb2e8bf06901012aa`. Files stored under persistent Library `/AISTS/CP0107/derived_worklist/` and indexed in GitHub.
+- No canonical source or closed cases. G0 remains `BLOCKED_GLOBAL`; no backtest/promotion. Next: remaining 452 daily-only rows and 52 shared economic conflicts.

@@ -1,69 +1,105 @@
 {
   "checkpoint": "CP-0107",
+  "task": "derived_996_row_worklist_from_CP0041_450_row_quarantine_delta",
   "status": "PASS_DERIVED_996_ROW_VIEW_VALIDATED",
-  "checks_passed": 22,
-  "checks_total": 22,
-  "counts": {
-    "original_rows": 996,
+  "verification": {
+    "checks_passed": 22,
+    "checks_total": 22,
+    "source_rows": 996,
     "derived_rows": 996,
-    "quarantine_disposition_changes": 450,
+    "disposition_changes": 450,
     "unchanged_rows": 546,
     "non_disposition_fields_unchanged": 996,
-    "raw_source_row_json_unchanged": 996
+    "raw_source_json_unchanged": 996,
+    "all_targets_match_verified_crosswalk": true
   },
   "inputs": {
     "source_pack_sha256": "23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc",
     "original_worklist_sha256": "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f",
+    "original_worklist_bytes": 2111342,
     "crosswalk_sha256": "5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b",
-    "delta_sha256": "c4f9cf9935ac6d794191b31047cca87eec0072756eec1a6c3d15d8b3dab067b6",
-    "rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0"
+    "crosswalk_rows": 450,
+    "disposition_delta_sha256": "c4f9cf9935ac6d794191b31047cca87eec0072756eec1a6c3d15d8b3dab067b6",
+    "cp0040_rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0"
   },
   "outputs": [
     {
-      "name": "CP0107_CP0041_Derived_996_Row_Worklist.csv",
+      "kind": "full_derived_worklist",
+      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Worklist.csv",
       "bytes": 2099092,
+      "rows": 996,
       "sha256": "137ad77bfafa7f7cd788db6f744e5567ad7dba889048b58feb743a34b863d9cb",
-      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Worklist.csv"
+      "library_file_id": "libfile_76141814c42c8191a7cbf5cb01cb9082"
     },
     {
-      "name": "CP0107_CP0041_Derived_996_Row_Disposition_Audit.csv",
+      "kind": "per_row_disposition_audit",
+      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Disposition_Audit.csv",
       "bytes": 792477,
+      "rows": 996,
       "sha256": "717125e5abd83f987139d76df7ba245b972ad52438d4c64bb2e8bf06901012aa",
-      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Disposition_Audit.csv"
+      "library_file_id": "libfile_dff4720ac49081918d01e84c2fa410e1"
     },
     {
-      "name": "CP0107_CP0041_Derived_996_Row_Disposition_View.csv",
+      "kind": "compact_disposition_view",
+      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Disposition_View.csv",
       "bytes": 776844,
+      "rows": 996,
       "sha256": "990ea275d5f5fece863d7655615bc8d29dd321107668fd3322f18bb7fc61567d",
-      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Disposition_View.csv"
+      "library_file_id": "libfile_462c9be5629481919503eb7d9fff22ab"
     },
     {
-      "name": "CP0107_CP0041_Derived_996_Row_Disposition_Index.csv",
-      "bytes": 344470,
-      "sha256": "d00da3bcb00f7c453b4cf545b9c26b43f2e8a890de530d36abdf92e3a6583a30",
-      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Disposition_Index.csv"
-    },
-    {
-      "name": "CP0107_CP0041_Derived_996_Row_Worklist_Summary.json",
+      "kind": "derived_worklist_summary",
+      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Worklist_Summary.json",
       "bytes": 7294,
       "sha256": "31bf7846d3429e6590724250459bf2fc1317dcabccf71cca8c21b5ed575fee96",
-      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Worklist_Summary.json"
+      "library_file_id": "libfile_bdbd2d5f42fc8191be124b3a687b3b4a"
     },
     {
-      "name": "CP0107_CP0041_Derived_996_Row_Worklist_Report_HI.md",
+      "kind": "hindi_report",
+      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Worklist_Report_HI.md",
       "bytes": 1816,
       "sha256": "a80bb76e658eacf1493d38edb3f204e9a7b8e7bac874d2ca992dd3e6b9a01752",
-      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Worklist_Report_HI.md"
+      "library_file_id": "libfile_3eebc814f57481919e6fb8278b8e87c2"
+    },
+    {
+      "kind": "996_row_git_index_csv",
+      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_GitIndex_Minimal.csv",
+      "bytes": 185941,
+      "rows": 996,
+      "sha256": "072009025272fcba372b820a2ecbd1c65f5938138c5206f19e7cfcdf83ecc39b",
+      "library_file_id": "libfile_db9ce03696f08191a504f096e7238be7"
+    },
+    {
+      "kind": "996_row_git_index_gzip",
+      "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_GitIndex_Minimal.csv.gz",
+      "bytes": 7282,
+      "sha256": "a3a961a3e3ff0783c1cfed6efafddef313f7c455148a9a5174e95feef80062bf",
+      "library_file_id": "libfile_de3d761fb3348191a307e34246724aac"
     }
   ],
-  "original_inputs_modified": false,
-  "decisions": {
+  "decision_limits": {
+    "original_pack_modified": false,
+    "original_worklist_modified": false,
+    "crosswalk_modified": false,
+    "delta_modified": false,
     "canonical_source_selected": false,
     "source_cases_closed": 0,
     "root_cause": "OPEN_NOT_ESTABLISHED",
+    "timestamp_shifted_or_rounded": false,
+    "raw_rows_merged_replaced_or_deleted": false,
+    "synthetic_candles_created": false,
     "backtest_rerun": false,
     "strategy_promoted": false
   },
-  "library_delivery_verified": true,
-  "git_index_file": "not committed because the binary transfer hash failed; exact SHA-256 retained for local/library index"
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "next_action": "Continue evidence-linked disposition of remaining 452 daily-only unmatched rows and 52 shared economic conflicts. Use exact row keys and immutable archive hashes; no candidate rerun or promotion while G0 stays blocked."
 }
