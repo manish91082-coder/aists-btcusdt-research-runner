@@ -209,3 +209,10 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Previous draft preserved at `evidence/source_adjudication/CP0107_Summary_PreAcquisitionDraft_20261015.json`; original blob SHA-1 a5562fcc2cb233110441e9014e1eb8394ee77f8a. Old `0/16` source status is historical and superseded by verified run 38775666304.
 - Newest verified runs: 38775666304 (98/98), 38776970911 (12/12), 38777979719 (11/11), 38779041545 (30/30). All source cases remain open.
 - Gates unchanged; no canonical source, no case closure, no backtest/promotion.
+
+
+## CP-0107 derived 996-row worklist integrity (2026-10-15)
+
+- Derived output validated 22/22 checks: 450 crosswalk-backed dispositions changed to QUARANTINE_REVIEW_REQUIRED; 546 other rows remained unchanged. All 996 non-disposition field sets and raw-source JSON hashes are unchanged.
+- Full derived view SHA-256 `137ad77bfafa7f7cd788db6f744e5567ad7dba889048b58feb743a34b863d9cb`; row audit SHA-256 `717125e5abd83f987139d76df7ba245b972ad52438d4c64bb2e8bf06901012aa`. Full files, summary, Hindi report and compact index saved in `/AISTS/CP0107/derived_worklist/`.
+- Original CP-0041 source pack/worklist/crosswalk/delta are unmodified; no source authority selected, no case closed, and no backtest or strategy promotion.

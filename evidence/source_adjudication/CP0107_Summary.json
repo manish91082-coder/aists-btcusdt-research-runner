@@ -1,7 +1,7 @@
 {
   "checkpoint": "CP-0107",
   "project": "AISTS BTCUSDT Research Audit",
-  "status": "EVIDENCE_RECONCILED_ADJUDICATION_OPEN_NOT_STRATEGY_ACCEPTANCE",
+  "status": "EVIDENCE_RECONCILED_DERIVED_WORKLIST_VALIDATED_ADJUDICATION_OPEN",
   "parent_checkpoint": "CP-0106",
   "parent_run_id": 38730420808,
   "parent_commit_sha": "b6ddcc9ed6c486570dc0c2da8857dd013cba18ae",
@@ -62,7 +62,7 @@
     "G6": "NOT_BUILT",
     "G7": "LIVE_BLOCKED"
   },
-  "next_action": "Materialize the exact CP-0041 996-row worklist from the verified pack, create a derived (not replacement) 996-row view applying only the 450-row quarantine delta, and hash-verify exactly 450 changed dispositions plus 546 unchanged rows. Then continue remaining daily-only/shared-economic conflicts.",
+  "next_action": "Continue exact-row disposition for the remaining 452 daily-only rows and 52 shared economic-field conflicts, with 8 metadata-only proposals remaining open and all source authority decisions under CP-0040 gates.",
   "reconciled_against_main_head": "c96382d37326e1ba23d1bdf68c00b5d583dc18c7",
   "prior_draft_archive": {
     "path": "evidence/source_adjudication/CP0107_Summary_PreAcquisitionDraft_20261015.json",
@@ -174,6 +174,75 @@
       "delta_quarantine_rows": 450,
       "other_rows_unchanged": 546,
       "original_overwritten": false
+    }
+  },
+  "derived_worklist": {
+    "status": "PASS_DERIVED_996_ROW_VIEW_VALIDATED",
+    "validation_checks": "22/22 PASS",
+    "source_pack_sha256": "23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc",
+    "source_worklist_sha256": "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f",
+    "source_worklist_bytes": 2113342,
+    "source_worklist_rows": 996,
+    "crosswalk_sha256": "5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b",
+    "disposition_delta_sha256": "c4f9cf9935ac6d794191b31047cca87eec0072756eec1a6c3d15d8b3dab067b6",
+    "rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0",
+    "derived_rows": 996,
+    "disposition_changes": 450,
+    "unchanged_rows": 546,
+    "non_disposition_fields_unchanged": 996,
+    "source_row_json_unchanged": 996,
+    "original_worklist_modified": false,
+    "source_pack_modified": false,
+    "crosswalk_modified": false,
+    "delta_modified": false,
+    "outputs": [
+      {
+        "name": "CP0107_CP0041_Derived_996_Row_Worklist.csv",
+        "bytes": 2099092,
+        "sha256": "137ad77bfafa7f7cd788db6f744e5567ad7dba889048b58feb743a34b863d9cb",
+        "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Worklist.csv"
+      },
+      {
+        "name": "CP0107_CP0041_Derived_996_Row_Disposition_Audit.csv",
+        "bytes": 792477,
+        "sha256": "717125e5abd83f987139d76df7ba245b972ad52438d4c64bb2e8bf06901012aa",
+        "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Disposition_Audit.csv"
+      },
+      {
+        "name": "CP0107_CP0041_Derived_996_Row_Disposition_View.csv",
+        "bytes": 776844,
+        "sha256": "990ea275d5f5fece863d7655615bc8d29dd321107668fd3322f18bb7fc61567d",
+        "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Disposition_View.csv"
+      },
+      {
+        "name": "CP0107_CP0041_Derived_996_Row_Disposition_Index.csv",
+        "bytes": 344470,
+        "sha256": "d00da3bcb00f7c453b4cf545b9c26b43f2e8a890de530d36abdf92e3a6583a30",
+        "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Disposition_Index.csv"
+      },
+      {
+        "name": "CP0107_CP0041_Derived_996_Row_Worklist_Summary.json",
+        "bytes": 7294,
+        "sha256": "31bf7846d3429e6590724250459bf2fc1317dcabccf71cca8c21b5ed575fee96",
+        "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Worklist_Summary.json"
+      },
+      {
+        "name": "CP0107_CP0041_Derived_996_Row_Worklist_Report_HI.md",
+        "bytes": 1816,
+        "sha256": "a80bb76e658eacf1493d38edb3f204e9a7b8e7bac874d2ca992dd3e6b9a01752",
+        "library_path": "/AISTS/CP0107/derived_worklist/CP0107_CP0041_Derived_996_Row_Worklist_Report_HI.md"
+      }
+    ],
+    "git_index_transfer": "NOT_COMMITTED_BINARY_HASH_MISMATCH; no unverified index bytes published. This GitHub record anchors the exact derived output hashes and persistent Library paths.",
+    "decisions": {
+      "canonical_source_selected": false,
+      "source_cases_closed": 0,
+      "root_cause": "OPEN_NOT_ESTABLISHED",
+      "timestamps_shifted_or_rounded": false,
+      "raw_rows_merged_replaced_or_deleted": false,
+      "synthetic_candles_created": false,
+      "backtest_rerun": false,
+      "strategy_promoted": false
     }
   }
 }
