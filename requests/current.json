@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-HISTORICAL-REF-20261015-01",
-  "task": "historical_reference_replay",
-  "purpose": "Official archive QA and independent fixed-rule reference replay on BTCUSDT 4h, 1d and 1mo; no source acceptance or strategy promotion.",
-  "created_at_utc": "2026-10-15T10:30:00Z"
+  "request_id": "AISTS-MONTHLY-DERIVED-REPLAY-20261015-01",
+  "task": "monthly_derived_replay",
+  "purpose": "Build CP-0026-style 1mo bars from verified daily bars and cross-check against available official 1mo archives; run independent monthly reference metrics only.",
+  "created_at_utc": "2026-10-15T10:35:00Z"
 }
