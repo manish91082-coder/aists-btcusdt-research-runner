@@ -587,7 +587,7 @@ jobs:
           if [ "$TASK" = "cp0107_field_review_hash_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_Dec2020_FieldReview_Summary.json evidence/source_adjudication/CP0107_Dec2020_FieldReview_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ]; then
-            git add "$DEST" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.csv evidence/source_adjudication/CP0107_CP0041_Dec2020_ArchiveVerification.csv evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Summary.json evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
+            git add "$DEST" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.csv evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_ArchiveVerification.csv evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Summary.json evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_450.csv evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_Summary.json evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ]; then
