@@ -1,105 +1,98 @@
-name: 🐍 Python Research Runner
+name: AISTS Research Runner
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'requests/**'
   workflow_dispatch:
     inputs:
-      script_content:
-        description: 'Python code to execute (inline)'
-        required: false
-        default: 'print("Hello from GitHub Actions!")'
-      script_file:
-        description: 'Script file path in repo (e.g., scripts/my_script.py)'
-        required: false
-        default: 'scripts/sample_research.py'
-      python_version:
-        description: 'Python version'
-        required: false
-        default: '3.11'
+      task:
+        description: 'Allowlisted task'
+        required: true
         type: choice
         options:
-          - '3.11'
-          - '3.12'
-          - '3.10'
-  push:
-    paths:
-      - 'scripts/**'
-      - 'requirements.txt'
+          - smoke
+        default: smoke
 
 permissions:
-  contents: write
-  actions: write
-  checks: write
-  deployments: write
-  issues: write
-  packages: write
-  pages: write
-  pull-requests: write
-  repository-projects: write
-  security-events: write
-  statuses: write
+  contents: read
+
+concurrency:
+  group: aists-research-runner
+  cancel-in-progress: false
 
 jobs:
-  run-python:
-    name: 🚀 Execute Python Research Script
+  run:
+    name: Execute allowlisted research task
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-
+    timeout-minutes: 10
+    permissions:
+      contents: read
     steps:
-      - name: 📥 Checkout Repository
+      - name: Checkout exact commit
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      - name: 🐍 Set up Python ${{ github.event.inputs.python_version || '3.11' }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ github.event.inputs.python_version || '3.11' }}
-          cache: 'pip'
+          python-version: '3.11'
 
-      - name: 📦 Install Dependencies
+      - name: Prepare request for manual run
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TASK_INPUT: ${{ inputs.task }}
+          RUN_ID_INPUT: ${{ github.run_id }}
+          COMMIT_SHA_INPUT: ${{ github.sha }}
         run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          fi
+          mkdir -p requests
+          python - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          request = {
+              "request_id": "MANUAL-" + os.environ["RUN_ID_INPUT"],
+              "task": os.environ["TASK_INPUT"],
+              "purpose": "Manual allowlisted runner verification",
+              "created_at_utc": datetime.now(timezone.utc).isoformat(),
+              "requested_commit_sha": os.environ["COMMIT_SHA_INPUT"]
+          }
+          with open("requests/current.json", "w", encoding="utf-8") as f:
+              json.dump(request, f, indent=2)
+              f.write("\\n")
+          PY
 
-      - name: 📁 Create Results Directory
-        run: mkdir -p results
+      - name: Execute task and generate evidence
+        env:
+          AISTS_RUN_ID: ${{ github.run_id }}
+          AISTS_RUN_ATTEMPT: ${{ github.run_attempt }}
+          AISTS_COMMIT_SHA: ${{ github.sha }}
+          AISTS_REF: ${{ github.ref }}
+          AISTS_EVENT: ${{ github.event_name }}
+        run: python scripts/aists_runner.py --request requests/current.json --output-dir results
 
-      - name: 🔬 Run Research Script (File)
-        if: ${{ github.event.inputs.script_file != '' && github.event.inputs.script_content == '' }}
-        run: |
-          echo "Running: ${{ github.event.inputs.script_file }}"
-          python ${{ github.event.inputs.script_file }} 2>&1 | tee results/output.txt
-
-      - name: 💻 Run Inline Python Code
-        if: ${{ github.event.inputs.script_content != '' }}
-        run: |
-          cat << 'PYEOF' > /tmp/inline_script.py
-          ${{ github.event.inputs.script_content }}
-          PYEOF
-          python /tmp/inline_script.py 2>&1 | tee results/output.txt
-
-      - name: 📊 Run Sample Script (default push)
-        if: ${{ github.event_name == 'push' }}
-        run: |
-          python scripts/sample_research.py 2>&1 | tee results/output.txt
-
-      - name: 📤 Upload Results as Artifact
+      - name: Upload compact evidence artifact
+        if: always()
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: research-results-${{ github.run_number }}
+          name: aists-run-${{ github.run_id }}-attempt-${{ github.run_attempt }}
           path: results/
-          retention-days: 90
+          if-no-files-found: warn
+          retention-days: 7
 
-      - name: 📝 Print Summary
+      - name: Publish job summary
         if: always()
         run: |
-          echo "## 🔬 Research Run Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- **Run Number**: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Triggered by**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Python Version**: ${{ github.event.inputs.python_version || '3.11' }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Output Preview" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat results/output.txt 2>/dev/null | head -50 || echo "No output file found"
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "# AISTS Research Runner" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Workflow run: $GITHUB_RUN_ID" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Event: $GITHUB_EVENT_NAME" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f results/run_summary.json ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Evidence summary JSON is included below and in the artifact." >> "$GITHUB_STEP_SUMMARY"
+            cat results/run_summary.json >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No run_summary.json generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
