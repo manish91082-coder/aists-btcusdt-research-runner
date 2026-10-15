@@ -46,6 +46,7 @@ jobs:
         with:
           path: .cache/aists/binance-monthly-archives
           key: aists-btcusdt-monthly-spot-v2-7intervals-2017-08-2026-09
+          save-always: true
           restore-keys: |
             aists-btcusdt-monthly-spot-v1-2017-08-2026-09
       - name: Install pinned backtest dependencies
