@@ -90,16 +90,33 @@ def main():
  summary_path=out/"CP0107_Dec2020_FieldReview_Summary.json"
  summary_path.write_text(json.dumps(base_summary,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
  summary_sha=sha(summary_path);summary_bytes=summary_path.stat().st_size
- report=(ev/"CP0107_Dec2020_FieldReview_Report_HI.md").read_text(encoding="utf-8")
- start=report.find("| File | Rows | Bytes | SHA-256 |");end=report.find("\n\n## What remains unproven",start)
- if start<0 or end<0:raise ValueError("Report output table markers absent")
- table=["| File | Rows | Bytes | SHA-256 |","|---|---:|---:|---|"]
- for name,item in outputs.items():table.append("| "+name+" | "+str(item["rows"])+" | "+str(item["bytes"])+" | "+item["sha256"]+" |")
- table.append("| CP0107_Dec2020_FieldReview_Summary.json | 1 | "+str(summary_bytes)+" | "+summary_sha+" |")
- report=report[:start]+"\n".join(table)+report[end:]
- report=report.replace("no Actions job/backtest was run for the comparison outputs","SHA-256 was recomputed and checked in this GitHub Actions run; no archives were downloaded and no backtest was run")
- report=report.replace("This analysis uses committed, hash-identified CSV evidence only.","This analysis uses committed CSV evidence only; derived-table SHA-256 was recomputed inside the trusted GitHub Actions runner.")
- report_path=out/"CP0107_Dec2020_FieldReview_Report_HI.md";report_path.write_text(report,encoding="utf-8")
+ report_lines=[
+  "# CP-0107: December 2020 raw-field / provenance classification","",
+  "Status: "+base_summary["status"]+"; checks "+str(base_summary["checks_passed"])+"/"+str(base_summary["checks_total"])+" PASS.",
+  "",
+  "## Directly evidenced","",
+  "- Shared 5m exact open-time keys: 16; complete raw-field matches: 9; divergent pairs: 7.",
+  "- First shared-key divergence is 2020-12-21 13:15 UTC. Six later shared keys from 13:20 through 13:45 UTC pair flat/zero monthly rows with non-flat daily rows.",
+  "- Repeated close-time fingerprint 1608558440521 appears on 8 rows across 5m, 15m, 30m and 1h. It does not prove root cause or source authority.",
+  "- Exact expected 5m keys absent in the two verified archives: monthly 10, daily 14; all nine affected parent roll-ups remain open.",
+  "",
+  "## SHA-256 recomputed in GitHub Actions","",
+  "| File | Rows | Bytes | SHA-256 | Git blob SHA-1 |",
+  "|---|---:|---:|---|---|",
+ ]
+ for name,item in outputs.items():
+  report_lines.append("| "+name+" | "+str(item["rows"])+" | "+str(item["bytes"])+" | "+item["sha256"]+" | "+item["git_blob_sha1"]+" |")
+ report_lines.extend([
+  "| CP0107_Dec2020_FieldReview_Summary.json | 1 | "+str(summary_bytes)+" | "+summary_sha+" | committed with this run |",
+  "",
+  "## Provenance and disposition limits","",
+  "- Missing exact keys are absent from the inspected archive bytes; this does not explain why they are absent.",
+  "- Monthly archive official-manifest SHA and ZIP CRC were verified in the prior run, but its .CHECKSUM sidecar bytes were not rehashed in that run. Daily ZIP and cached sidecar were rehashed/content-matched.",
+  "- All affected cases remain OPEN_REVIEW_REQUIRED; root cause OPEN_NOT_ESTABLISHED; canonical source NONE; cases closed 0.",
+  "- No archive downloads, raw source edits, timestamp shifts, synthetic candles, backtest rerun or strategy promotion.",
+ ])
+ report_path=out/"CP0107_Dec2020_FieldReview_Report_HI.md"
+ report_path.write_text("\n".join(report_lines)+"\n",encoding="utf-8")
  all_ok=base_summary["status"]=="PASS_FIELD_REVIEW_HASH_RECOMPUTED" and all(x["status"]=="PASS" for x in checks)
  print(json.dumps({"status":base_summary["status"],"checks_passed":base_summary["checks_passed"],"checks_total":base_summary["checks_total"],
   "outputs":outputs,"summary_sha256":sha(summary_path),"summary_bytes":summary_path.stat().st_size,
