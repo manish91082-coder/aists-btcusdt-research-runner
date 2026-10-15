@@ -48,7 +48,7 @@ def main():
     if extraction.get("scope",{}).get("off_grid_rows_extracted")!=450: raise ValueError("Base extraction does not contain exactly 450 rows")
     with Path(a.crosswalk_summary).open("r",encoding="utf-8") as f: cross=json.load(f)
     x=cross.get("crosswalk",{})
-    if cross.get("status")!="PASS_EXACT_CP0041_CROSSWALK_WITH_OPEN_SOURCE_DISPOSITION": raise ValueError("CP-0041 crosswalk summary not PASS")
+    if cross.get("status") not in ("PASS_EXACT_CP0041_CROSSWALK_WITH_OPEN_SOURCE_DISPOSITION","PASS_EXACT_CP0041_CROSSWALK_WITH_OPEN_SOURCE_DISPOSITION_METRICS_CORRECTED"): raise ValueError("CP-0041 crosswalk summary not PASS")
     if x.get("row_count")!=450 or x.get("monthly_archive_hash_matches")!=450 or x.get("twelve_raw_fields_exact_matches")!=450:
         raise ValueError("CP-0041 crosswalk counts don't establish 450/450 exact monthly matches")
     if x.get("raw_value_mismatches")!=0 or x.get("source_hash_mismatches")!=0 or x.get("csv_sha256")!=CROSSWALK_SHA256:
