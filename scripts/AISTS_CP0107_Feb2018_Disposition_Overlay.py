@@ -120,13 +120,15 @@ def main():
       {"check":"exact_rows","status":"PASS" if len(rows)==450 else "FAIL","detail":str(len(rows))},
       {"check":"cp0041_crosswalk_450_keys_hashes_and_raw_fields","status":"PASS","detail":f"crosswalk_sha256={CROSSWALK_SHA256}; key/hash/all-12-field matches=450/450"},
       {"check":"exact_daily_open_key_counterparts_absent","status":"PASS" if all(r["exact_daily_open_key_counterpart_present"]=="False" for r in rows) else "FAIL","detail":"0 exact open-key counterparts"},
-      {"check":"mapped_daily_coverage","status":"PASS" if counts["PRESENT_FIELDS_DIFFER"]==442 and counts["PRESENT_NON_OPEN_FIELDS_MATCH"]==6 and counts["ABSENT_REVIEW_REQUIRED"]==2 and diff_rows==442 else "FAIL","detail":json.dumps({"mapped_present":448,"mapped_present_with_non_open_diffs":counts["PRESENT_FIELDS_DIFFER"],"mapped_present_without_non_open_diffs":counts["PRESENT_NON_OPEN_FIELDS_MATCH"],"mapped_absent":counts["ABSENT_REVIEW_REQUIRED"]},sort_keys=True)},
+      {"check":"mapped_daily_coverage","status":"PASS" if counts["PRESENT_FIELDS_DIFFER"]==448 and counts["PRESENT_NON_OPEN_FIELDS_MATCH"]==0 and counts["ABSENT_REVIEW_REQUIRED"]==2 and diff_rows==448 and sum("open" in r["mapped_daily_differing_fields"].split(";") for r in rows)==442 else "FAIL","detail":json.dumps({"mapped_present":448,"mapped_present_with_non_open_diffs":counts["PRESENT_FIELDS_DIFFER"],"mapped_present_without_non_open_diffs":counts["PRESENT_NON_OPEN_FIELDS_MATCH"],"mapped_absent":counts["ABSENT_REVIEW_REQUIRED"],"mapped_rows_with_open_field_difference":sum("open" in r["mapped_daily_differing_fields"].split(";") for r in rows)},sort_keys=True)},
       {"check":"all_450_explicitly_quarantined","status":"PASS" if all(r["disposition"]=="QUARANTINE_REVIEW_REQUIRED" for r in rows) else "FAIL","detail":"No row closure/source winner assigned"},
       {"check":"raw_tokens_preserved","status":"PASS","detail":"Original monthly tokens copied; daily mapped fields separate; no mutation"}
     ]
     if any(c["status"]!="PASS" for c in checks): raise SystemExit("CP-0107 disposition checks failed: "+json.dumps(checks))
     csv_path=out/"CP0107_Feb2018_Disposition_Overlay.csv"
     write_csv(csv_path,rows,list(rows[0].keys()))
+    field_diff_counts=Counter(f for r in rows for f in r["mapped_daily_differing_fields"].split(";") if f)
+    open_diff_rows=sum("open" in r["mapped_daily_differing_fields"].split(";") for r in rows)
     summary={
       "checkpoint":"CP-0107","task":"cp0107_feb2018_disposition_overlay","status":"PASS_DISPOSITION_OVERLAY_EXPORT",
       "generated_at_utc":datetime.now(timezone.utc).isoformat(),
@@ -155,7 +157,7 @@ def main():
       "- Frozen CP-0040 G0: no source winner from timestamps alone. Root cause remains OPEN; do not shift/round, merge, replace, delete or synthesize rows; no backtest or candidate promotion.\n"
       "- This focused segment verification does not close the separate 16-item official daily-reference acquisition queue.\n")
     (out/"CP0107_Feb2018_Disposition_Overlay_Report_HI.md").write_text(report,encoding="utf-8")
-    log(f"PASS rows={len(rows)} mapped_present=448 mapped_absent=2 differing_non_open_rows={diff_rows} quarantined=450")
+    log(f"PASS rows={len(rows)} mapped_present=448 mapped_absent=2 rows_with_non_open_differences={diff_rows} rows_with_open_difference={open_diff_rows} quarantined=450")
     for c in checks: log(f"{c['status']} {c['check']}: {c['detail']}")
     return 0
 if __name__=="__main__": raise SystemExit(main())
