@@ -1,0 +1,12 @@
+date,triage_class,mismatch_rows,intervals,field_union,status
+2017-09-06,METADATA_ONLY_CLOSE_TIME,5,15m;1h;30m;4h;5m,close_time,OPEN_NO_SOURCE_SELECTED
+2018-02-08,METADATA_ONLY_CLOSE_TIME,2,1d;4h,close_time,OPEN_NO_SOURCE_SELECTED
+2018-02-11,ECONOMIC_OR_TRADE_METRICS,1,1h,number_of_trades;open;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,OPEN_NO_SOURCE_SELECTED
+2019-11-25,METADATA_ONLY_CLOSE_TIME,1,4h,close_time,OPEN_NO_SOURCE_SELECTED
+2020-12-21,ECONOMIC_OR_TRADE_METRICS,13,15m;1h;30m;5m,close;close_time;high;low;number_of_trades;open;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,OPEN_NO_SOURCE_SELECTED
+2021-01-21,ECONOMIC_OR_TRADE_METRICS,2,1d;4h,number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,OPEN_NO_SOURCE_SELECTED
+2021-04-22,ECONOMIC_OR_TRADE_METRICS,5,15m;5m,close;number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,OPEN_NO_SOURCE_SELECTED
+2021-04-23,ECONOMIC_OR_TRADE_METRICS,16,15m;1h;30m;5m,close;high;low;number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,OPEN_NO_SOURCE_SELECTED
+2021-09-23,ECONOMIC_OR_TRADE_METRICS,1,5m,close;number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,OPEN_NO_SOURCE_SELECTED
+2021-12-24,ECONOMIC_OR_TRADE_METRICS,10,15m;1d;1h;30m;4h;5m,close;high;number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,OPEN_NO_SOURCE_SELECTED
+2022-04-13,ECONOMIC_OR_TRADE_METRICS,4,15m;1h;30m;5m,close;number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,OPEN_NO_SOURCE_SELECTED
