@@ -180,6 +180,10 @@ def nearest_opposite(timestamp,other_keys):
     if i>0: options.append(other_keys[i-1])
     key=min(options,key=lambda x:(abs(x-timestamp),x))
     return key,timestamp-key
+def classify_population_signature_match_count(count):
+    if count == 0: return "NO_EXACT_COUNTERPART_IN_OPPOSITE_SOURCE_POPULATION"
+    if count == 1: return "UNIQUE_EXACT_SIGNATURE_CANDIDATE_IN_OPPOSITE_SOURCE_POPULATION"
+    return "AMBIGUOUS_MULTIPLE_EXACT_SIGNATURE_CANDIDATES_IN_OPPOSITE_SOURCE_POPULATION"
 def aggregate_children(children,parent_ms,interval):
     step=STEP_MS[interval]
     expected_n=step//STEP_MS["5m"]
@@ -206,6 +210,9 @@ def self_tests():
     floor,ceil,rem,near=grid_neighbors(794789,300000)
     add("grid_neighborhood_explicit_no_rounding",floor==600000 and ceil==900000 and rem==194789 and near==-105211)
     add("target_date_count",len(TARGET_DATES)==7)
+    add("population_signature_zero_candidates",classify_population_signature_match_count(0)=="NO_EXACT_COUNTERPART_IN_OPPOSITE_SOURCE_POPULATION")
+    add("population_signature_unique_candidate",classify_population_signature_match_count(1)=="UNIQUE_EXACT_SIGNATURE_CANDIDATE_IN_OPPOSITE_SOURCE_POPULATION")
+    add("population_signature_ambiguity",classify_population_signature_match_count(2)=="AMBIGUOUS_MULTIPLE_EXACT_SIGNATURE_CANDIDATES_IN_OPPOSITE_SOURCE_POPULATION")
     return {"passed":sum(t["status"]=="PASS" for t in tests),"total":len(tests),"tests":tests}
 
 def main():
@@ -483,6 +490,144 @@ def main():
     write_csv(out/"CP0103_Unmatched_Partial_Signature_Candidates.csv",partial_signature_candidate_rows)
     write_csv(out/"CP0103_Partial_Signature_Pairs.csv",partial_signature_pairs)
     write_csv(out/"CP0103_Partial_Signature_Summary.csv",partial_signature_summary_rows)
+
+    # CP-0104: search the FULL opposite-source population, not only its unmatched rows.
+    # February's three-day cluster is allowed to match across Feb 9-11; other clusters stay day-scoped.
+    allrow_signature_schemas={
+        "OHLC_ONLY":("open","high","low","close"),
+        "OHLC_PLUS_BASE_VOLUME":("open","high","low","close","volume"),
+        "FULL_ECONOMIC":economic_fields,
+    }
+    cluster_days={
+        "2017-09-06":["2017-09-06"],
+        "2018-02-09_TO_2018-02-11":["2018-02-09","2018-02-10","2018-02-11"],
+        "2019-11-25":["2019-11-25"],
+        "2020-12-21":["2020-12-21"],
+    }
+    def cluster_for_day(day):
+        return "2018-02-09_TO_2018-02-11" if day in feb_cluster_dates else day
+
+    # Build an exact economic signature index from ALL rows on both source sides in each target cluster.
+    allrow_signature_indexes={}
+    allrow_population_sizes={}
+    for schema,fields in allrow_signature_schemas.items():
+        for cluster_name,days in cluster_days.items():
+            for iv in INTERVALS:
+                for source_name in ("MONTHLY","DAILY"):
+                    index={}
+                    count=0
+                    for source_day in days:
+                        source_rows=raw_data_for_rollup.get((source_day,iv,source_name),{})
+                        for timestamp,candle in source_rows.items():
+                            signature=tuple(candle[field] for field in fields)
+                            index.setdefault(signature,[]).append((source_day,timestamp,candle))
+                            count+=1
+                    allrow_signature_indexes[(schema,cluster_name,iv,source_name)]=index
+                    allrow_population_sizes[(schema,cluster_name,iv,source_name)]=count
+
+    allrow_signature_candidate_rows=[]
+    allrow_signature_pair_rows=[]
+    allrow_signature_summary_counts={}
+    for schema,fields in allrow_signature_schemas.items():
+        for item in unmatched_rows:
+            iv=item["interval"]; day=item["date"]; cluster_name=cluster_for_day(day)
+            current_source="MONTHLY" if item["source_side"]=="MONTHLY_ONLY" else "DAILY"
+            opposite_source="DAILY" if current_source=="MONTHLY" else "MONTHLY"
+            timestamp=int(item["open_time_ms"])
+            candle=raw_data_for_rollup[(day,iv,current_source)][timestamp]
+            signature=tuple(candle[field] for field in fields)
+            matches=allrow_signature_indexes[(schema,cluster_name,iv,opposite_source)].get(signature,[])
+            status=classify_population_signature_match_count(len(matches))
+            signature_payload=[
+                format(candle[field].normalize(),"f") if isinstance(candle[field],Decimal) else str(candle[field])
+                for field in fields
+            ]
+            sig_hash=sha256_bytes(json.dumps(signature_payload,separators=(",",":")).encode())
+            match_payload=[]
+            for candidate_day,candidate_ts,candidate in matches:
+                delta=timestamp-int(candidate_ts) if current_source=="MONTHLY" else int(candidate_ts)-timestamp
+                payload={
+                    "candidate_date":candidate_day,
+                    "candidate_open_time_ms":int(candidate_ts),
+                    "candidate_open_time_utc":utc_iso(candidate_ts),
+                    "candidate_open_time_raw":candidate["open_time_raw"],
+                    "monthly_minus_daily_open_delta_ms":delta,
+                    "monthly_minus_daily_open_delta_seconds":Decimal(delta)/Decimal(1000),
+                    "candidate_is_on_interval_grid":int(candidate_ts)%STEP_MS[iv]==0,
+                    "candidate_close_time_raw":candidate["close_time_raw"],
+                    "candidate_line_number":candidate["line_number"],
+                }
+                match_payload.append(payload)
+                allrow_signature_pair_rows.append({
+                    "cluster":cluster_name,"interval":iv,"signature_schema":schema,
+                    "unmatched_source_side":item["source_side"],"unmatched_date":day,
+                    "unmatched_open_time_ms":timestamp,"unmatched_open_time_utc":item["open_time_utc"],
+                    "unmatched_open_time_raw":item["open_time_raw"],
+                    "candidate_source_side":opposite_source,"candidate_date":candidate_day,
+                    "candidate_open_time_ms":int(candidate_ts),"candidate_open_time_utc":utc_iso(candidate_ts),
+                    "candidate_open_time_raw":candidate["open_time_raw"],
+                    "monthly_minus_daily_open_delta_ms":delta,
+                    "candidate_is_on_interval_grid":int(candidate_ts)%STEP_MS[iv]==0,
+                    "unmatched_signature_sha256":sig_hash,"signature_fields":json.dumps(fields),
+                    "pairing_status":status,
+                    "interpretation":"Exact value signature across the entire opposite-source target population; candidate only, not a timestamp join or source-authority decision"
+                })
+            allrow_signature_candidate_rows.append({
+                "cluster":cluster_name,"interval":iv,"signature_schema":schema,
+                "unmatched_source_side":item["source_side"],"unmatched_date":day,
+                "unmatched_open_time_ms":timestamp,"unmatched_open_time_utc":item["open_time_utc"],
+                "unmatched_open_time_raw":item["open_time_raw"],
+                "opposite_source_population_rows":allrow_population_sizes[(schema,cluster_name,iv,opposite_source)],
+                "opposite_exact_signature_match_count":len(matches),
+                "pairing_status":status,"unmatched_signature_sha256":sig_hash,
+                "signature_fields":json.dumps(fields),
+                "candidate_matches_json":json.dumps(match_payload,separators=(",",":"),ensure_ascii=False),
+                "interpretation":"Whole opposite-source population search; exact signature evidence only. No correction, source selection, or backtest."
+            })
+            key=(schema,cluster_name,iv,status)
+            entry=allrow_signature_summary_counts.setdefault(key,{"unmatched_rows":0,"candidate_pair_rows":0})
+            entry["unmatched_rows"]+=1
+            entry["candidate_pair_rows"]+=len(matches)
+
+    allrow_signature_summary_rows=[
+        {"signature_schema":schema,"cluster":cluster_name,"interval":iv,
+         "pairing_status":status,"unmatched_rows":counts["unmatched_rows"],
+         "candidate_pair_rows":counts["candidate_pair_rows"]}
+        for (schema,cluster_name,iv,status),counts in sorted(allrow_signature_summary_counts.items())
+    ]
+    write_csv(out/"CP0104_AllRows_Signature_Candidates.csv",allrow_signature_candidate_rows)
+    write_csv(out/"CP0104_AllRows_Signature_Pairs.csv",allrow_signature_pair_rows)
+    write_csv(out/"CP0104_AllRows_Signature_Summary.csv",allrow_signature_summary_rows)
+    allrow_summary={
+        "checkpoint":"CP-0104",
+        "parent_checkpoint":"CP-0103 run artifact with unmatched-only signature search",
+        "purpose":"Search every exact economic signature of the 909 unmatched rows against ALL opposite-source rows in each target cluster; do not constrain counterpart to unmatched rows.",
+        "generated_at_utc":now_utc(),
+        "status":"PASS_DIAGNOSTICS_ONLY" if not errors and all_sources_ok and tests["passed"]==tests["total"] else "BLOCKED_SOURCE_OR_READ_ERROR",
+        "source_archive_manifest_rows":len(archive_rows),
+        "source_archives_verified":sum(r.get("status")=="PASS" for r in archive_rows),
+        "target_cluster_scope":cluster_days,
+        "unmatched_rows_tested":len(unmatched_rows),
+        "signature_schemas":list(allrow_signature_schemas),
+        "all_source_rows_indexed_by_schema":sum(allrow_population_sizes.values()),
+        "candidate_rows":len(allrow_signature_candidate_rows),
+        "candidate_pair_rows":len(allrow_signature_pair_rows),
+        "pairing_status_counts":{
+            schema+":"+status:sum(r["signature_schema"]==schema and r["pairing_status"]==status for r in allrow_signature_candidate_rows)
+            for schema in allrow_signature_schemas
+            for status in (
+                "UNIQUE_EXACT_SIGNATURE_CANDIDATE_IN_OPPOSITE_SOURCE_POPULATION",
+                "AMBIGUOUS_MULTIPLE_EXACT_SIGNATURE_CANDIDATES_IN_OPPOSITE_SOURCE_POPULATION",
+                "NO_EXACT_COUNTERPART_IN_OPPOSITE_SOURCE_POPULATION"
+            )
+        },
+        "exact_pairs_by_schema":{schema:sum(r["signature_schema"]==schema for r in allrow_signature_pair_rows) for schema in allrow_signature_schemas},
+        "automatic_corrections_applied":0,"timestamp_rounding_or_shift_applied":False,
+        "raw_archive_mutation":False,"canonical_source_selected":False,"source_cases_closed":0,
+        "backtest_rerun":False,"strategy_promoted":False,"exchange_rest_api_used":False,
+        "interpretation":"A unique signature match is only a candidate pointer to an existing row on the opposite source. It does not authorize changing/open-time remapping or choosing source authority."
+    }
+    (out/"CP0104_AllRows_Signature_Summary.json").write_text(json.dumps(allrow_summary,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
     write_csv(out/"CP0103_Unmatched_Economic_Signature_Candidates.csv",signature_candidate_rows)
     write_csv(out/"CP0103_Unique_Economic_Signature_Pairs.csv",unique_signature_pairs)
     write_csv(out/"CP0103_Economic_Signature_Summary.csv",signature_summary_rows)
@@ -568,7 +713,8 @@ def main():
         if p.is_file() and p.name!="CP0103_Report_SHA256.csv":
             hashes.append({"file":p.name,"bytes":p.stat().st_size,"sha256":sha256_file(p)})
     write_csv(out/"CP0103_Report_SHA256.csv",hashes,["file","bytes","sha256"])
-    print(json.dumps(summary,indent=2,ensure_ascii=False,sort_keys=True))
+    write_csv(out/"CP0104_Report_SHA256.csv",hashes,["file","bytes","sha256"])
+    print(json.dumps({"CP0103":summary,"CP0104_AllRows_Signature":allrow_summary},indent=2,ensure_ascii=False,sort_keys=True))
     return 0 if summary["status"]=="PASS_DIAGNOSTICS_ONLY" else 1
 
 if __name__=="__main__":
