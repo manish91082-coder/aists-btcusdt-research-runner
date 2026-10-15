@@ -767,6 +767,131 @@ def main():
         "interpretation":"Small/zero numeric deltas may identify a review candidate but do not authorize joining rows. No matching rule or source authority is inferred from nearest timestamps."
     }
     (out/"CP0105_NearestTime_Summary.json").write_text(json.dumps(nearest_summary,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
+
+    # CP-0106: targeted raw-row window and timestamp-alignment regimes. Read-only.
+    raw_window_rows=[]
+    day="2020-12-21"
+    windows={"5m":(datetime(2020,12,21,12,30,tzinfo=timezone.utc),datetime(2020,12,21,14,15,tzinfo=timezone.utc)),
+             "15m":(datetime(2020,12,21,12,30,tzinfo=timezone.utc),datetime(2020,12,21,14,15,tzinfo=timezone.utc)),
+             "30m":(datetime(2020,12,21,12,30,tzinfo=timezone.utc),datetime(2020,12,21,14,15,tzinfo=timezone.utc)),
+             "1h":(datetime(2020,12,21,12,30,tzinfo=timezone.utc),datetime(2020,12,21,14,15,tzinfo=timezone.utc))}
+    raw_window_summary=[]
+    for iv,(begin_dt,end_dt) in windows.items():
+        begin_ms=int(begin_dt.timestamp()*1000); end_ms=int(end_dt.timestamp()*1000); step=STEP_MS[iv]
+        monthly=raw_data_for_rollup[(day,iv,"MONTHLY")]
+        daily=raw_data_for_rollup[(day,iv,"DAILY")]
+        union=sorted({t for t in monthly.keys()|daily.keys() if begin_ms<=t<end_ms})
+        for timestamp in union:
+            m=monthly.get(timestamp); d=daily.get(timestamp)
+            status=("MONTHLY_ONLY" if d is None else "DAILY_ONLY" if m is None else
+                    "SHARED_KEY_VALUE_MISMATCH" if source_mismatch_fields(m,d) else "SHARED_KEY_EXACT")
+            for source_name,candle in (("MONTHLY",m),("DAILY",d)):
+                if candle is None: continue
+                expected_close=timestamp+step-1
+                fields={
+                    "date":day,"interval":iv,"source":source_name,
+                    "open_time_ms":timestamp,"open_time_utc":utc_iso(timestamp),
+                    "open_time_raw":candle["open_time_raw"],
+                    "close_time_raw":candle["close_time_raw"],
+                    "close_time_ms":candle["close_time_ms"],"close_time_utc":utc_iso(candle["close_time_ms"]),
+                    "expected_close_time_utc":utc_iso(expected_close),
+                    "close_time_delta_from_expected_ms":candle["close_time_ms"]-expected_close,
+                    "open_grid_remainder_ms":timestamp%step,"open_is_on_grid":timestamp%step==0,
+                    "open":str(candle["open"]),"high":str(candle["high"]),"low":str(candle["low"]),
+                    "close":str(candle["close"]),"volume":str(candle["volume"]),
+                    "quote_asset_volume":str(candle["quote_asset_volume"]),
+                    "number_of_trades":candle["number_of_trades"],
+                    "taker_buy_base_asset_volume":str(candle["taker_buy_base_asset_volume"]),
+                    "taker_buy_quote_asset_volume":str(candle["taker_buy_quote_asset_volume"]),
+                    "flat_ohlc":candle["open"]==candle["high"]==candle["low"]==candle["close"],
+                    "zero_base_volume":candle["volume"]==0,
+                    "zero_trade_count":candle["number_of_trades"]==0,
+                    "raw_csv_line":candle["line_number"],"inner_csv_member":candle["inner_csv"],
+                    "paired_source_status":status,
+                    "paired_source_difference_fields":json.dumps(source_mismatch_fields(m,d) if m and d else []),
+                    "interpretation":"Raw value snapshot only. No source choice or data modification."
+                }
+                raw_window_rows.append(fields)
+        for source_name,source_map in (("MONTHLY",monthly),("DAILY",daily)):
+            window_bars=[source_map[t] for t in sorted(source_map) if begin_ms<=t<end_ms]
+            raw_window_summary.append({
+                "date":day,"interval":iv,"source":source_name,"window_start_utc":begin_dt.isoformat(),
+                "window_end_utc_exclusive":end_dt.isoformat(),"rows_in_window":len(window_bars),
+                "flat_ohlc_rows":sum(x["open"]==x["high"]==x["low"]==x["close"] for x in window_bars),
+                "zero_volume_rows":sum(x["volume"]==0 for x in window_bars),
+                "flat_ohlc_zero_volume_rows":sum(x["open"]==x["high"]==x["low"]==x["close"] and x["volume"]==0 for x in window_bars),
+                "bad_close_time_rows":sum(x["close_time_ms"]!=x["open_time_ms"]+step-1 for x in window_bars),
+                "off_grid_open_rows":sum(x["open_time_ms"]%step!=0 for x in window_bars)
+            })
+    write_csv(out/"CP0106_2020_Dec21_Raw_Row_Window.csv",raw_window_rows)
+    write_csv(out/"CP0106_2020_Dec21_Window_Summary.csv",raw_window_summary)
+
+    # Reconstruct contiguous monthly/daily timestamp regimes for the Feb 2018 cluster.
+    regime_rows=[]
+    feb_dates=("2018-02-09","2018-02-10","2018-02-11")
+    feb_intervals=("5m","15m","30m","1h")
+    for feb_day in feb_dates:
+        for iv in feb_intervals:
+            step=STEP_MS[iv]
+            for source_name in ("MONTHLY","DAILY"):
+                source_map=raw_data_for_rollup[(feb_day,iv,source_name)]
+                sequence=[source_map[t] for t in sorted(source_map)]
+                if not sequence: continue
+                current=[]
+                def emit_segment(segment):
+                    if not segment: return
+                    times=[x["open_time_ms"] for x in segment]
+                    residues=sorted(set(t%step for t in times))
+                    regime_rows.append({
+                        "date":feb_day,"interval":iv,"source":source_name,
+                        "alignment_status":"ON_GRID" if times[0]%step==0 else "OFF_GRID",
+                        "row_count":len(segment),"first_open_time_utc":utc_iso(times[0]),
+                        "last_open_time_utc":utc_iso(times[-1]),
+                        "first_open_time_raw":segment[0]["open_time_raw"],
+                        "last_open_time_raw":segment[-1]["open_time_raw"],
+                        "common_open_grid_remainders_ms":json.dumps(residues),
+                        "remainder_unique_count":len(residues),
+                        "inter_row_gaps":sum(times[i]-times[i-1]!=step for i in range(1,len(times))),
+                        "exact_grid_match_count":sum(t%step==0 for t in times),
+                        "off_grid_row_count":sum(t%step!=0 for t in times),
+                        "close_time_bad_count":sum(x["close_time_ms"]!=x["open_time_ms"]+step-1 for x in segment),
+                        "interpretation":"Contiguous rows grouped by on/off-grid status and exact interval cadence; descriptive only."
+                    })
+                for candle in sequence:
+                    if current:
+                        prev=current[-1]
+                        same_alignment=(prev["open_time_ms"]%step==0)==(candle["open_time_ms"]%step==0)
+                        exact_cadence=candle["open_time_ms"]-prev["open_time_ms"]==step
+                        if not same_alignment or not exact_cadence:
+                            emit_segment(current); current=[]
+                    current.append(candle)
+                emit_segment(current)
+    write_csv(out/"CP0106_Feb2018_Alignment_Regimes.csv",regime_rows)
+
+    # Row counts and interpretation summary used as the next durable adjudication checkpoint.
+    dec_monthly=[r for r in raw_window_rows if r["source"]=="MONTHLY"]
+    dec_daily=[r for r in raw_window_rows if r["source"]=="DAILY"]
+    cp0106_summary={
+        "checkpoint":"CP-0106",
+        "parent_checkpoints":["CP-0103","CP-0104","CP-0105"],
+        "purpose":"Record row-level evidence for the 2020-12-21 12:30-14:15 UTC source anomaly window and contiguous Feb-2018 on/off-grid regimes.",
+        "generated_at_utc":now_utc(),
+        "status":"PASS_DIAGNOSTICS_ONLY" if not errors and all_sources_ok and tests["passed"]==tests["total"] else "BLOCKED_SOURCE_OR_READ_ERROR",
+        "source_archive_objects_verified":sum(r.get("status")=="PASS" for r in archive_rows),
+        "feb2018_regime_segments":len(regime_rows),
+        "feb2018_off_grid_segments":sum(r["alignment_status"]=="OFF_GRID" for r in regime_rows),
+        "feb2018_on_grid_segments":sum(r["alignment_status"]=="ON_GRID" for r in regime_rows),
+        "dec2020_window_source_rows":len(raw_window_rows),
+        "dec2020_monthly_flat_zero_volume_rows":sum(bool(r["flat_ohlc"]) and bool(r["zero_base_volume"]) for r in dec_monthly),
+        "dec2020_daily_flat_zero_volume_rows":sum(bool(r["flat_ohlc"]) and bool(r["zero_base_volume"]) for r in dec_daily),
+        "dec2020_monthly_bad_close_time_rows":sum(int(r["close_time_delta_from_expected_ms"])!=0 for r in dec_monthly),
+        "dec2020_daily_bad_close_time_rows":sum(int(r["close_time_delta_from_expected_ms"])!=0 for r in dec_daily),
+        "raw_archive_mutation":False,"timestamp_rounding_or_shift":False,"automatic_corrections":0,
+        "canonical_source_selected":False,"source_cases_closed":0,"backtest_rerun":False,"strategy_promoted":False,
+        "exchange_rest_api_used":False,
+        "interpretation":"A flat/zero-volume row or non-boundary close time is a review flag, not alone proof of corruption. Alignment regimes and row snapshots are evidence only; source authority remains open."
+    }
+    (out/"CP0106_Run_Summary.json").write_text(json.dumps(cp0106_summary,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
     write_csv(out/"CP0103_Unmatched_Economic_Signature_Candidates.csv",signature_candidate_rows)
     write_csv(out/"CP0103_Unique_Economic_Signature_Pairs.csv",unique_signature_pairs)
     write_csv(out/"CP0103_Economic_Signature_Summary.csv",signature_summary_rows)
@@ -854,6 +979,7 @@ def main():
     write_csv(out/"CP0103_Report_SHA256.csv",hashes,["file","bytes","sha256"])
     write_csv(out/"CP0104_Report_SHA256.csv",hashes,["file","bytes","sha256"])
     write_csv(out/"CP0105_Report_SHA256.csv",hashes,["file","bytes","sha256"])
+    write_csv(out/"CP0106_Report_SHA256.csv",hashes,["file","bytes","sha256"])
     print(json.dumps({"CP0103":summary,"CP0104_AllRows_Signature":allrow_summary},indent=2,ensure_ascii=False,sort_keys=True))
     return 0 if summary["status"]=="PASS_DIAGNOSTICS_ONLY" else 1
 
