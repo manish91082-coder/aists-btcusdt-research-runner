@@ -201,3 +201,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Seven residual CP-0041 worklist rows individually revalidated against cached monthly archive row tokens and cached daily archive exact open-time keys; archive SHA/CRC checked. Daily exact-key counterparts present: 0; absent: 7.
 - All seven monthly rows are flat OHLC 22646.53000000, zero volume/trades. The repeated close-time token and raw row snapshots are retained; nearest timestamps remain diagnostic only.
 - All seven remain OPEN; canonical source NONE; root cause OPEN_NOT_ESTABLISHED; cases closed 0. No raw modification, time shifting, synthetic candles, backtest rerun or promotion.
+
+
+## CP-0107 evidence-index reconciliation (2026-10-15)
+
+- Updated summary: `evidence/source_adjudication/CP0107_Summary.json`; SHA-256 b1c87a81e9ec06448dc8de246214ec6e7a11a4393f3148a01719e956048a55e4; bytes 8601. Consolidated Hindi report: `evidence/source_adjudication/CP0107_Current_Evidence_Reconciliation_Report_HI.md`; SHA-256 b2b2399eba2d2d5c18ee85e565559c4d9a2e68c0299b523ba1eae5927d80cb48; bytes 3235.
+- Previous draft preserved at `evidence/source_adjudication/CP0107_Summary_PreAcquisitionDraft_20261015.json`; original blob SHA-1 a5562fcc2cb233110441e9014e1eb8394ee77f8a. Old `0/16` source status is historical and superseded by verified run 38775666304.
+- Newest verified runs: 38775666304 (98/98), 38776970911 (12/12), 38777979719 (11/11), 38779041545 (30/30). All source cases remain open.
+- Gates unchanged; no canonical source, no case closure, no backtest/promotion.

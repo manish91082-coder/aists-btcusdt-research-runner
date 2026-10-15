@@ -1,7 +1,7 @@
 {
   "checkpoint": "CP-0107",
   "project": "AISTS BTCUSDT Research Audit",
-  "status": "EVIDENCE_DRAFT_VERIFIED_NOT_FINAL_ADJUDICATION",
+  "status": "EVIDENCE_RECONCILED_ADJUDICATION_OPEN_NOT_STRATEGY_ACCEPTANCE",
   "parent_checkpoint": "CP-0106",
   "parent_run_id": 38730420808,
   "parent_commit_sha": "b6ddcc9ed6c486570dc0c2da8857dd013cba18ae",
@@ -17,17 +17,32 @@
     "dec2020_rollups": 34,
     "dec2020_rollups_review_required": 9,
     "close_time_only_cases": 8,
-    "source_objects_in_cp0106_manifest": 66
+    "source_objects_in_cp0106_manifest": 66,
+    "daily_reference_zip_sidecar_pairs_verified": 16,
+    "associated_monthly_archives_reused_verified": 14,
+    "dec2020_residual_monthly_only_rows_exact_key_absent": 7,
+    "aggregation_buckets_reviewed": 11,
+    "cp0041_worklist_rows": 996,
+    "cp0041_disposition_delta_rows": 450,
+    "cp0041_other_worklist_rows_unchanged": 546
   },
   "artifacts_sha256": {
     "CP0107_RowDisposition_Report_HI.md": "460e96fd3a6e73675bfc0e56fd4e4ae81be6903283a244f53985a659047c851c",
-    "CP0107_Dec2020_RowDisposition.csv": "16ecf3efb8bbe7a68f8fe22358177164f13ecfb1a6656e864f2b856578f1213c",
-    "CP0107_Dec2020_Rollup_Disposition.csv": "e36786f22bfac735a49c222af280932dfb549a5e1e7750b8213a0573601722d3",
+    "CP0107_Dec2020_RowDisposition.csv": "58bd1a4bbba5c4c2a77bcb04c696ddc5cf98b581d0cf6f60dbcd96883b273a41",
+    "CP0107_Dec2020_Rollup_Disposition.csv": "62172d46c4e9a23b76def8b02d5fc72a951d1d2644088b6f55cd40e50f8bad28",
     "CP0107_Feb2018_OffGrid_RowDisposition.csv": "7bc9226d690b9e761588286316012df35e5e0e6656ef16b2002aff7d284f6878",
     "CP0107_CloseTimeOnly_FieldDisposition.csv": "3ae1c162a00e370cd3c951fdeacdc4ff71d658e4d4936ed8aae1b3764dd00023",
-    "CP0107_SourceArchive_Manifest_66.csv": "015709030834ec87c6d76a0b0a4e892650bf7e0949cfc6e6d61ea8659a35a5a1"
+    "CP0107_SourceArchive_Manifest_66.csv": "015709030834ec87c6d76a0b0a4e892650bf7e0949cfc6e6d61ea8659a35a5a1",
+    "CP0107_Run_38771142900/CP0107_Feb2018_OffGrid_RawRows.csv": "379b1b9b258eed3fa55dfc95238e43e849300b14b85dd7643c0034befd841d64",
+    "CP0107_CloseTimeOnly_FieldDisposition_Final.csv": "473b149630edb6ee86b1720e2ffa4dd1afa7f022894bf5951ca398199319731c",
+    "CP0107_Run_38775666304/CP0107_CP0041_DailyReference_Period_Summary.csv": "ac0049d157ea7a9d881389a6f38f6e292201bcdce0f6c5317504ef8dc5e2c32e",
+    "CP0107_Run_38775666304/CP0107_CP0041_DailyReference_RawRow_Comparison.csv": "ac08f6839e172919634d2823ae1f6df4d74613e473419b8c00881527e40906ba",
+    "CP0107_Run_38776970911/CP0107_CP0041_AggregationBucket_Comparison.csv": "fa571c863b3f28da89395f7dc43832329c8ea2152655808fee24064638a46952",
+    "CP0107_Run_38776970911/CP0107_CP0041_AggregationBucket_RowEvidence.csv": "adecc637fc6683bf5c59558ac45b7fb6ceb4d4dad9b0b3d18b6a380c7b191400",
+    "CP0107_Run_38779041545/CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.csv": "2e74514f5fc94b9a3610f8a28982d4095d72258a4ac78ba83aa4415e48dcd80f",
+    "CP0107_CP0041_Worklist_Disposition_Delta_450.csv": "c4f9cf9935ac6d794191b31047cca87eec0072756eec1a6c3d15d8b3dab067b6"
   },
-  "source_authority": "NOT_ASSIGNED",
+  "source_authority": "NONE",
   "canonical_sources_selected": 0,
   "source_cases_closed": 0,
   "raw_archive_mutation": false,
@@ -35,8 +50,8 @@
   "synthetic_candles_created": false,
   "backtest_rerun": false,
   "strategy_promoted": false,
-  "frozen_rulebook_status": "Historical project-status artifacts describe CP-0040, but the full frozen rulebook is not a standalone file in this GitHub repo. Locate exact authoritative copy before threshold-dependent closure.",
-  "disposition_ledger_status": "CP-0041 worklists are referenced in Library artifacts; canonical ledger files are not in this GitHub repository tree and have not been synced here.",
+  "frozen_rulebook_status": "CP-0040 rulebook SHA-256 remains anchored to CP-0041 package. No threshold-dependent cases were closed; no canonical source declared.",
+  "disposition_ledger_status": "450-row append-only quarantine delta verified; full original 996-row worklist remains immutable and has not yet been materialized as a derived view.",
   "gates": {
     "G0": "BLOCKED_GLOBAL",
     "G1": "PARTIAL_SYSTEM_LEVEL",
@@ -47,5 +62,118 @@
     "G6": "NOT_BUILT",
     "G7": "LIVE_BLOCKED"
   },
-  "next_action": "Cache-only full-row extraction for 450 February off-grid rows after locating exact rulebook and ledger; retain official 16 daily ZIP/checksum pairs as 0/16 until actual ZIP and matching sidecar bytes are acquired and verified."
+  "next_action": "Materialize the exact CP-0041 996-row worklist from the verified pack, create a derived (not replacement) 996-row view applying only the 450-row quarantine delta, and hash-verify exactly 450 changed dispositions plus 546 unchanged rows. Then continue remaining daily-only/shared-economic conflicts.",
+  "reconciled_against_main_head": "c96382d37326e1ba23d1bdf68c00b5d583dc18c7",
+  "prior_draft_archive": {
+    "path": "evidence/source_adjudication/CP0107_Summary_PreAcquisitionDraft_20261015.json",
+    "original_git_blob_sha1": "a5562fcc2cb233110441e9014e1eb8394ee77f8a",
+    "original_sha256": "bb808ee2572b14c02d154630ab8671f78da000c4e63ed2b68f7ff812e5fd5902",
+    "bytes": 2733
+  },
+  "verified_runs": [
+    {
+      "run_id": 38771142900,
+      "status": "PASS_CACHE_ONLY_EXTRACTION",
+      "checks": "9/9",
+      "scope": "450 February off-grid rows; 16 source objects; exact daily open-key matches=0",
+      "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38771142900"
+    },
+    {
+      "run_id": 38771593935,
+      "status": "PASS",
+      "checks": "December field-review 9/9; official checksum provenance passed",
+      "scope": "59 December source rows; 8-row close-time fingerprint; missing child-key inventory",
+      "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38771593935"
+    },
+    {
+      "run_id": 38775666304,
+      "status": "PASS_DAILY_REFERENCE_ACQUIRED_AND_ROW_AUDIT_RECORDED",
+      "checks": "98/98",
+      "scope": "16 ZIP/.CHECKSUM pairs revalidated from prior captured artifact; 14 associated monthly ZIPs cache-verified; no repeat downloads",
+      "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38775666304",
+      "acquisition_attempt": {
+        "run_id": 38775174019,
+        "conclusion": "failure_after_source_acquisition_during_CSV_output",
+        "artifact_id": 11993600932,
+        "artifact_sha256": "912267a36aed3f726be1aa08c207076303fca31d2ea5669e5d723825c0e6141b"
+      }
+    },
+    {
+      "run_id": 38776970911,
+      "status": "PASS_AGGREGATION_BUCKET_DAILY_SOURCE_REVIEW",
+      "checks": "12/12",
+      "scope": "11 buckets; daily roll-up matched daily parent 11/11; monthly mismatch signature 11/11",
+      "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38776970911"
+    },
+    {
+      "run_id": 38777979719,
+      "status": "PASS_450_ROW_DISPOSITION_DELTA_READY",
+      "checks": "11/11",
+      "scope": "450 quarantine delta; 546 original rows unchanged; full 996-row source was not overwritten",
+      "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38777979719"
+    },
+    {
+      "run_id": 38779041545,
+      "status": "PASS_SEVEN_RESIDUAL_EXACT_KEY_AUDIT",
+      "checks": "30/30",
+      "scope": "7 December 2020 residual rows; daily exact-key matches=0/7; all open",
+      "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38779041545"
+    }
+  ],
+  "latest_evidence": {
+    "feb2018": {
+      "off_grid_monthly_rows": 450,
+      "exact_daily_open_key_counterparts": 0,
+      "disposition": "QUARANTINE_REVIEW_REQUIRED",
+      "root_cause": "OPEN_NOT_ESTABLISHED"
+    },
+    "dec2020": {
+      "source_rows": 59,
+      "rollup_comparisons": 34,
+      "review_required_rollups": 9,
+      "common_5m_keys": 16,
+      "exact_raw_pairs": 9,
+      "divergent_pairs": 7,
+      "flat_monthly_zero_volume_rows": 16,
+      "close_time_fingerprint_rows": 8,
+      "token": "1608558440521",
+      "utc": "2020-12-21T13:47:20.521Z",
+      "missing_child_keys": {
+        "monthly": 10,
+        "daily": 14
+      },
+      "missing_aggregates": "UNAVAILABLE_REVIEW_REQUIRED"
+    },
+    "close_time_only": {
+      "cases": 8,
+      "economic_fields_exact": 8,
+      "monthly_boundary_mismatches": 5,
+      "daily_boundary_mismatches": 3,
+      "proposal": "close_time metadata-field only",
+      "all_cases_open": true
+    },
+    "residual_dec2020": {
+      "rows": 7,
+      "daily_exact_key_matches": 0,
+      "flat_ohlc": "22646.53000000",
+      "zero_volume_and_trades": true,
+      "all_open": true
+    },
+    "aggregation_buckets": {
+      "count": 11,
+      "daily_rollup_matches_parent": 11,
+      "monthly_mismatch_signature_reproduced": 11,
+      "monthly_child_volume_exact_numeric_match": 10,
+      "all_open": true
+    },
+    "worklist": {
+      "original_rows": 996,
+      "crosswalk_exact_matches": 450,
+      "monthly_archive_hash_matches": 450,
+      "all_12_raw_fields_exact": 450,
+      "delta_quarantine_rows": 450,
+      "other_rows_unchanged": 546,
+      "original_overwritten": false
+    }
+  }
 }
