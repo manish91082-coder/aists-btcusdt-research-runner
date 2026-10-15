@@ -1,0 +1,171 @@
+{
+  "checkpoint": "CP-0107",
+  "task": "December 2020 raw-field and provenance classification using committed evidence only",
+  "status": "PASS_EVIDENCE_CLASSIFICATION_NOT_ROOT_CAUSE",
+  "inputs": {
+    "paths": [
+      "evidence/CURRENT_RESEARCH_STATE_HI.md",
+      "evidence/source_adjudication/CP0107_RowDisposition_Report_HI.md",
+      "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_5m_ActualRows_Window.csv",
+      "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_5m_ChildCoverage.csv",
+      "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_ReviewRollup_ChildCoverage.csv",
+      "evidence/source_adjudication/CP0107_Dec2020_RowDisposition.csv",
+      "evidence/source_adjudication/CP0107_Dec2020_Rollup_Disposition.csv",
+      "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_5m_SourceVerification.csv"
+    ],
+    "git_blob_shas": {
+      "current_state": "87c2304fac0effa9ce2e2ff189a59680e963610d",
+      "main_row_report": "799b6700abf60cee2099705b4e0e4a82ccfdc324",
+      "actual_rows": "c8fa466be7130b298d1487b4d840231d304cc1a9",
+      "child_key_coverage": "4093ee1cee6c6d38bebe4a40fa505cdcca4a6bef",
+      "child_rollup_coverage": "3717af508eb2d5f1f7e91884d89bb11521672cdb",
+      "context_disposition": "ad9337db584534063a720cf4dd99273f77e739e4",
+      "parent_rollup": "31f886f7c233237cf4b18e75026d73f4d50e30a8",
+      "source_verification": "a69e93038cec7a6e2de8ae0f0628c601838fa16e"
+    }
+  },
+  "input_source_hashes": {
+    "MONTHLY": {
+      "zip_sha256": "c169b2a72cc188c8089abc9f3c6f9699e4759a5e7d0d7a7c69d9117b0da68049",
+      "sidecar_sha256_recorded": "0db24ee3bb2a29cfd9971949837eab439c3226666bb2b00c458aaa16eb249667",
+      "sidecar_sha256_recomputed": "",
+      "checksum_status": "RECORDED_PARENT_MANIFEST_REFERENCE_ONLY"
+    },
+    "DAILY": {
+      "zip_sha256": "b21d0cdd4d29b8a8cfbfbaafd9f926e12989233290daeb0f4977eefb6489525b",
+      "sidecar_sha256_recorded": "a4aabf08bf9c231daf643071dd531f1f814a7fbdea86b4e8c38a7ce795f13962",
+      "sidecar_sha256_recomputed": "a4aabf08bf9c231daf643071dd531f1f814a7fbdea86b4e8c38a7ce795f13962",
+      "checksum_status": "LOCAL_SIDECAR_AND_ZIP_MATCH_PASS"
+    }
+  },
+  "shared_5m_monthly_daily_rows": {
+    "rows_common_key": 16,
+    "exact_raw_pairs": 9,
+    "rows_with_any_raw_field_difference": 7,
+    "mismatch_open_times_utc": [
+      "2020-12-21T13:15:00.000Z",
+      "2020-12-21T13:20:00.000Z",
+      "2020-12-21T13:25:00.000Z",
+      "2020-12-21T13:30:00.000Z",
+      "2020-12-21T13:35:00.000Z",
+      "2020-12-21T13:40:00.000Z",
+      "2020-12-21T13:45:00.000Z"
+    ],
+    "field_difference_row_counts": {
+      "high": 7,
+      "close": 7,
+      "volume": 7,
+      "quote_asset_volume": 7,
+      "number_of_trades": 7,
+      "taker_buy_base_asset_volume": 7,
+      "taker_buy_quote_asset_volume": 7,
+      "open": 6,
+      "low": 6,
+      "close_time": 1
+    },
+    "key_result": "2020-12-21T13:15:00Z is the first observed monthly/daily economic-field divergence in this shared range; six subsequent common keys 13:20–13:45 show monthly flat 22646.53 and zero trade metrics while daily rows retain nonzero market data. The common 13:45 daily row additionally carries the close-time fingerprint.",
+    "all_source_rows_preserved": true,
+    "source_winner_selected": false
+  },
+  "close_time_fingerprint": {
+    "token": "1608558440521",
+    "utc": "2020-12-21T13:47:20.521Z",
+    "row_count": 8,
+    "intervals": [
+      "5m",
+      "15m",
+      "30m",
+      "1h"
+    ],
+    "sources": {
+      "MONTHLY": 4,
+      "DAILY": 4
+    },
+    "monthly_flat_zero_rows": 4,
+    "daily_nonflat_rows": 4,
+    "expected_boundary_mismatches": 8,
+    "interpretation": "A repeated close_time across different intervals and open-time keys is an observed fingerprint only. It does not show whether an upstream exporter, archive producer, or other process caused it."
+  },
+  "missing_child_keys": {
+    "monthly_count": 10,
+    "daily_count": 14,
+    "total_source_key_absences": 24,
+    "times_monthly": [
+      "2020-12-21T14:10:00.000Z",
+      "2020-12-21T14:15:00.000Z",
+      "2020-12-21T14:20:00.000Z",
+      "2020-12-21T14:25:00.000Z",
+      "2020-12-21T14:30:00.000Z",
+      "2020-12-21T14:35:00.000Z",
+      "2020-12-21T14:40:00.000Z",
+      "2020-12-21T14:45:00.000Z",
+      "2020-12-21T14:50:00.000Z",
+      "2020-12-21T14:55:00.000Z"
+    ],
+    "times_daily": [
+      "2020-12-21T13:50:00.000Z",
+      "2020-12-21T13:55:00.000Z",
+      "2020-12-21T14:00:00.000Z",
+      "2020-12-21T14:05:00.000Z",
+      "2020-12-21T14:10:00.000Z",
+      "2020-12-21T14:15:00.000Z",
+      "2020-12-21T14:20:00.000Z",
+      "2020-12-21T14:25:00.000Z",
+      "2020-12-21T14:30:00.000Z",
+      "2020-12-21T14:35:00.000Z",
+      "2020-12-21T14:40:00.000Z",
+      "2020-12-21T14:45:00.000Z",
+      "2020-12-21T14:50:00.000Z",
+      "2020-12-21T14:55:00.000Z"
+    ],
+    "all_9_review_rollups_still_missing": true,
+    "meaning": "Exact open-time keys were not found in the SHA-verified archived ZIP bytes. Absence is proven for these bytes; cause and completeness outside these two archive objects are not proven."
+  },
+  "provenance_required": [
+    "Official source-side archive publication/version history or manifest provenance for each archive.",
+    "Recomputed .CHECKSUM bytes for monthly BTCUSDT-5m-2020-12.zip from the official archive location, if allowed by the acquisition policy; current conclusion only uses the frozen official SHA reference and ZIP CRC.",
+    "Documented reason for the shared close-time token across incompatible interval boundaries.",
+    "Proof whether daily/monthly files are independent exports or share an upstream pipeline/version.",
+    "Missing-key and close-time disposition must remain open until a source authority can be defended under CP-0040."
+  ],
+  "outputs": {
+    "CP0107_Dec2020_Shared_5m_RawField_Comparison.csv": {
+      "sha256": "c89e38fc02f36c2b64b29fc46ea3d522f4f2a5972b62ac4092cc37f7859641f0",
+      "bytes": 12387,
+      "rows": 16
+    },
+    "CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv": {
+      "sha256": "8d8c3d4c2701878ac33cd37647f341c53883732bd9d15f01d82c062a8c253f12",
+      "bytes": 5671,
+      "rows": 8
+    },
+    "CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv": {
+      "sha256": "da9f1db50042054ff84e672119ec447d6d100d8b5dce7139642d33ada6652269",
+      "bytes": 9222,
+      "rows": 24
+    }
+  },
+  "decisions": {
+    "all_flagged_rows": "OPEN_REVIEW_REQUIRED",
+    "missing_child_aggregates": "UNAVAILABLE_REVIEW_REQUIRED",
+    "root_cause": "OPEN_NOT_ESTABLISHED",
+    "canonical_source": "NONE",
+    "cases_closed": 0,
+    "raw_archives_modified": false,
+    "timestamp_shifted_or_rounded": false,
+    "synthetic_candles_created": false,
+    "backtest_rerun": false,
+    "strategy_promoted": false
+  },
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "note": "This is an evidence classification and reproducible row comparison derived from committed CSVs; no external archive retrieval and no GitHub Actions job was run for this comparison."
+}

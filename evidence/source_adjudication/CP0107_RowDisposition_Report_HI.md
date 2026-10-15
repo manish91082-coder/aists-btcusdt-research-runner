@@ -87,3 +87,11 @@ CSV: `CP0107_CloseTimeOnly_FieldDisposition_Final.csv`, 8 rows; SHA-256 `473b149
 - In 12:30–14:55 UTC, monthly has 20/30 expected 5m keys and daily 16/30. All nine parent roll-up review cases still have missing exact child keys when inspected against full cached archive bytes, not only the earlier 59-row sample.
 - Files are stored at `evidence/source_adjudication/CP0107_Run_38756665405/`: `CP0107_Dec2020_5m_ActualRows_Window.csv`, `CP0107_Dec2020_5m_ChildCoverage.csv`, `CP0107_Dec2020_ReviewRollup_ChildCoverage.csv`, `CP0107_Dec2020_5m_SourceVerification.csv`, and the JSON/Hindi summaries.
 - Missing exact keys do not prove upstream cause. No synthetic aggregate or source decision; all nine remain OPEN_REVIEW_REQUIRED and the root cause remains OPEN.
+
+
+## CP-0107 December raw-field comparison and provenance gap — 2026-10-15
+
+- Existing committed 5m raw rows show 16 common exact open-time keys: 9 exact pairs and 7 divergent pairs. The first divergence is 13:15 UTC; 13:20–13:45 has six monthly flat/zero rows paired with non-flat daily market rows. Field-level evidence: `CP0107_Dec2020_Shared_5m_RawField_Comparison.csv`.
+- Close-time fingerprint `1608558440521` occurs on 8 records across four intervals, mixing four flat/zero monthly rows and four non-flat daily rows. This shows a repeated token across different interval boundaries, not its causal mechanism. See `CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv`.
+- Exact absent child-key sets: monthly 10, daily 14 during the audited window. All 9 roll-up cases still lack required child keys in verified archives. See `CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv`.
+- Monthly ZIP official-manifest SHA and ZIP CRC pass, but monthly `.CHECKSUM` bytes were not re-fetched/rehashed. Daily ZIP plus cached `.CHECKSUM` were rehashed/content-matched. No source authority selected; root cause OPEN; no case closed.
