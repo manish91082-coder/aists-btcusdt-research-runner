@@ -225,12 +225,27 @@ def write_csv(path, rows):
 def run_stage(script, env, log_dir, timeout=6600):
     label=script.stem
     started=time.monotonic()
-    proc=subprocess.run([sys.executable,str(script)],cwd=str(REPO),env=env,text=True,
-                        stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=timeout)
-    (log_dir/f"{label}.stdout.log").write_text(proc.stdout[-300000:],encoding="utf-8")
-    (log_dir/f"{label}.stderr.log").write_text(proc.stderr[-150000:],encoding="utf-8")
-    return {"stage":label,"exit_code":proc.returncode,"elapsed_seconds":round(time.monotonic()-started,2),
-            "stdout_tail":proc.stdout[-12000:],"stderr_tail":proc.stderr[-5000:]}
+    log_path=log_dir/f"{label}.combined.log"
+    tail=[]
+    with log_path.open("w",encoding="utf-8") as log:
+        proc=subprocess.Popen([sys.executable,"-u",str(script)],cwd=str(REPO),env=env,text=True,
+                              stdout=subprocess.PIPE,stderr=subprocess.STDOUT,bufsize=1)
+        assert proc.stdout is not None
+        for line in proc.stdout:
+            print(f"[{label}] {line}",end="",flush=True)
+            log.write(line); log.flush()
+            tail.append(line)
+            if len(tail)>3000: tail=tail[-3000:]
+            if time.monotonic()-started>timeout and proc.poll() is None:
+                proc.kill()
+                print(f"[{label}] TIMEOUT after {timeout}s; process killed.",flush=True)
+                break
+        return_code=proc.wait()
+    text_tail="".join(tail)
+    (log_dir/f"{label}.stdout.log").write_text(text_tail[-300000:],encoding="utf-8")
+    (log_dir/f"{label}.stderr.log").write_text("",encoding="utf-8")
+    return {"stage":label,"exit_code":return_code,"elapsed_seconds":round(time.monotonic()-started,2),
+            "stdout_tail":text_tail[-12000:],"stderr_tail":""}
 
 
 def copy_if_exists(src, zipobj, arcname, inventory):
@@ -270,7 +285,7 @@ def main():
     records=[]
     with ThreadPoolExecutor(max_workers=12) as pool:
         futures={pool.submit(acquire_one,core,iv,y,m,cache,data_root):(iv,y,m) for iv,y,m in tasks}
-        for fut in as_completed(futures):
+        for completed,fut in enumerate(as_completed(futures),1):
             iv,y,m=futures[fut]
             try: rec=fut.result()
             except Exception as exc:
@@ -278,6 +293,12 @@ def main():
                      "zip_url":"","checksum_url":"","status":"ACQUISITION_EXCEPTION","error":f"{type(exc).__name__}: {exc}",
                      "zip_sha256_match":False,"cache_used":False}
             records.append(rec)
+            if completed % 25 == 0 or completed == len(tasks):
+                counts={}
+                for item in records:
+                    k=item.get("status","UNKNOWN")
+                    counts[k]=counts.get(k,0)+1
+                print(f"[monthly acquisition] {completed}/{len(tasks)} archive pairs checked; outcomes={json.dumps(counts,sort_keys=True)}",flush=True)
     records.sort(key=lambda r:(r.get("interval",""),r.get("month","")))
     write_csv(out/"monthly_archive_acquisition_manifest.csv",records)
     write_csv(reports/"official_checksum_verification.csv",[
