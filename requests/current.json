@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-MONTHLY-DERIVED-REPLAY-20261015-03",
-  "task": "monthly_derived_replay",
-  "purpose": "CP-0026-aligned monthly reconstruction from clean daily candles excluding initial partial 2017-08 month; crosscheck against available official monthly archives and run reference metrics.",
-  "created_at_utc": "2026-10-15T10:38:00Z"
+  "request_id": "AISTS-LEGACY-PIPELINE-20261015-01",
+  "task": "legacy_pipeline",
+  "purpose": "Run official monthly archive SHA/CRC inventory, CP-0025 flagged daily reference reconciliation, CP-0026 provisional candidates and original CP-0027 backtest in one GitHub Actions job. No source promotion.",
+  "created_at_utc": "2026-10-15T11:00:00Z"
 }
