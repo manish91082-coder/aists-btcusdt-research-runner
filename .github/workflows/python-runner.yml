@@ -14,6 +14,7 @@ on:
         options:
           - smoke
           - historical_reference_replay
+          - monthly_derived_replay
         default: smoke
 
 permissions:
@@ -55,13 +56,11 @@ jobs:
           python - <<'PY'
           import json, os
           from datetime import datetime, timezone
-          request = {
-              "request_id": "MANUAL-" + os.environ["RUN_ID_INPUT"],
-              "task": os.environ["TASK_INPUT"],
-              "purpose": "Manual allowlisted runner execution",
-              "created_at_utc": datetime.now(timezone.utc).isoformat(),
-              "requested_commit_sha": os.environ["COMMIT_SHA_INPUT"]
-          }
+          request = {"request_id": "MANUAL-" + os.environ["RUN_ID_INPUT"],
+                     "task": os.environ["TASK_INPUT"],
+                     "purpose": "Manual allowlisted runner execution",
+                     "created_at_utc": datetime.now(timezone.utc).isoformat(),
+                     "requested_commit_sha": os.environ["COMMIT_SHA_INPUT"]}
           with open("requests/current.json", "w", encoding="utf-8") as f:
               json.dump(request, f, indent=2)
               f.write("\n")
