@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0107-MONTHLY-CHECKSUM-PROVENANCE-20261015-02",
-  "task": "cp0107_monthly_checksum_provenance_audit",
-  "purpose": "Retry checksum sidecar audit after publisher schema fix. Verify monthly/daily .CHECKSUM hashes and archive SHA tokens, then persist summary. No ZIP download or REST API.",
-  "created_at_utc": "2026-10-15T16:52:00Z"
+  "request_id": "AISTS-CP0107-CP0041-DAILY-REFERENCE-AUDIT-20261015-01",
+  "task": "cp0107_cp0041_daily_reference_acquisition_audit",
+  "purpose": "Fetch 16 frozen CP-0041 daily ZIPs and .CHECKSUM files, validate hashes/CRC, compare with 14 cached monthly archives, and persist results. No REST API/backtest.",
+  "created_at_utc": "2026-10-15T17:02:00Z"
 }
