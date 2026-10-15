@@ -78,3 +78,12 @@ G0 `BLOCKED_GLOBAL`; G1 `PARTIAL_SYSTEM_LEVEL`; G2 `FAIL_CURRENT_23_CANDIDATES`;
 CSV: `CP0107_CloseTimeOnly_FieldDisposition_Final.csv`, 8 rows; SHA-256 `473b149630edb6ee86b1720e2ffa4dd1afa7f022894bf5951ca398199319731c`. Monthly/daily ZIP and checksum-sidecar hashes are joined from the verified CP-0106 manifest for each CP-0041 shared-conflict key.
 - Five monthly close_time values are +1 ms past boundary on 2017-09-06; three daily close_time values are early by 12,705,211 ms (4h), 84,705,211 ms (1d), and 7,200,000 ms (4h). Selected economic fields match on all 8 rows.
 - Field-only proposal; no archive acceptance or canonical-source selection. All cases remain OPEN, root cause OPEN.
+
+
+## December 2020: full-archive child-key coverage verification
+
+- Actions run 38756665405: runner PASS 11/11, child task PASS 5/5, persistent publisher PASS.
+- Verified cached monthly 5m ZIP SHA-256 `c169b2a72cc188c8089abc9f3c6f9699e4759a5e7d0d7a7c69d9117b0da68049`; CRC PASS. Its .CHECKSUM remains parent-manifest-only evidence. Verified daily 5m ZIP SHA-256 `b21d0cdd4d29b8a8cfbfbaafd9f926e12989233290daeb0f4977eefb6489525b`; CRC PASS; cached sidecar SHA rechecked and content matched.
+- In 12:30–14:55 UTC, monthly has 20/30 expected 5m keys and daily 16/30. All nine parent roll-up review cases still have missing exact child keys when inspected against full cached archive bytes, not only the earlier 59-row sample.
+- Files are stored at `evidence/source_adjudication/CP0107_Run_38756665405/`: `CP0107_Dec2020_5m_ActualRows_Window.csv`, `CP0107_Dec2020_5m_ChildCoverage.csv`, `CP0107_Dec2020_ReviewRollup_ChildCoverage.csv`, `CP0107_Dec2020_5m_SourceVerification.csv`, and the JSON/Hindi summaries.
+- Missing exact keys do not prove upstream cause. No synthetic aggregate or source decision; all nine remain OPEN_REVIEW_REQUIRED and the root cause remains OPEN.
