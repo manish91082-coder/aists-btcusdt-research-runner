@@ -254,4 +254,4 @@ def main():
       "daily_coverage_rows":len(daily_export),"checks":str(summary["checks_passed"])+"/"+str(summary["checks_total"])},ensure_ascii=False))
     for x in checks: log(x["status"]+" "+x["check_id"]+": "+x["detail"])
     return 0 if summary["status"]=="PASS_CACHE_ONLY_EXTRACTION" and summary["checks_passed"]==summary["checks_total"] else 1
-if __name__=="__": raise SystemExit(main())
+if __name__=="__main__": raise SystemExit(main())
