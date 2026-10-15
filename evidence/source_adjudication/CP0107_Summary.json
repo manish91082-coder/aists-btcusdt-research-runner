@@ -1,0 +1,54 @@
+{
+  "checkpoint": "CP-0107",
+  "project": "AISTS BTCUSDT historical source reconciliation",
+  "status": "PASS_ROW_DISPOSITION_DRAFT_ONLY",
+  "parent_checkpoint": "CP-0106",
+  "parent_run_id": 38730420808,
+  "parent_commit_sha": "b6ddcc9ed6c486570dc0c2da8857dd013cba18ae",
+  "parent_artifact_id": 11969978987,
+  "parent_artifact_sha256": "cdddab3be37f5c593d5cd42ac6c6f72b53f5b3a3fc4dae1218c3bd833850adb4",
+  "main_head_at_resume": "a78b6e0dd531484a0d7f3e1345c420a76c115237",
+  "evidence_counts": {
+    "source_objects_verified": 66,
+    "feb_off_grid_segments": 10,
+    "feb_off_grid_rows": 450,
+    "feb_exact_counterpart_count": 0,
+    "dec2020_raw_window_rows": 59,
+    "dec2020_flat_zero_volume_zero_trade_rows": 16,
+    "dec2020_shared_close_time_rows": 8,
+    "dec2020_rollup_comparisons": 34,
+    "dec2020_rollup_review_required": 9,
+    "close_time_only_cases": 8
+  },
+  "dispositions": {
+    "feb_off_grid": "QUARANTINE_REVIEW_REQUIRED",
+    "dec2020_rows": "OPEN_REVIEW_REQUIRED",
+    "missing_child_rollups": "AGGREGATE_UNAVAILABLE_REVIEW_REQUIRED",
+    "close_time_only": "FIELD_LEVEL_PROPOSAL_ONLY_CASES_REMAIN_OPEN"
+  },
+  "source_authority": "NOT_ASSIGNED",
+  "canonical_sources_selected": 0,
+  "cases_closed": 0,
+  "raw_archive_mutation": false,
+  "timestamp_shift_or_rounding": false,
+  "synthetic_candles_created": false,
+  "backtest_rerun": false,
+  "strategy_promoted": false,
+  "frozen_rulebook": "NOT_FOUND_IN_CURRENT_REPOSITORY_TREE; locate before authority/threshold dependent decisions",
+  "source_disposition_ledger": "NOT_FOUND_IN_CURRENT_REPOSITORY_TREE; no claim of ledger reconciliation",
+  "research_gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "limitations": [
+    "CP-0106 segment inventory does not include all individual raw values for 450 February rows; those rows still need focused extraction.",
+    "CP-0106 run checkout commit differs from newer main HEAD; the run commit is a descendant ancestor relation, not the current HEAD."
+  ],
+  "next_action": "Locate frozen CP-0040 rulebook and disposition ledger; extract all 450 February off-grid monthly rows with hashes/raw rows and daily coverage using existing cache; then formalize evidence-supported dispositions."
+}
