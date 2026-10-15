@@ -167,3 +167,12 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - MONTHLY BTCUSDT-5m-2020-12.zip: official .CHECKSUM fetched from data.binance.vision; sidecar SHA-256 0db24ee3bb2a29cfd9971949837eab439c3226666bb2b00c458aaa16eb249667; checksum token matches frozen archive SHA True; sidecar manifest SHA match True.
 - DAILY BTCUSDT-5m-2020-12-21.zip: official .CHECKSUM fetched from data.binance.vision; sidecar SHA-256 a4aabf08bf9c231daf643071dd531f1f814a7fbdea86b4e8c38a7ce795f13962; checksum token matches frozen archive SHA True; sidecar manifest SHA match True.
 - Only the two small .CHECKSUM text files were requested. No ZIP archives or market-data REST endpoints were requested. Root cause OPEN; canonical source NONE; no cases closed, no backtest or strategy promotion.
+
+
+## CP-0107 CP-0041 exact-date daily-reference acquisition and raw-row audit 38775666304
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38775666304; status PASS_DAILY_REFERENCE_ACQUIRED_AND_ROW_AUDIT_RECORDED; checks 98/98 PASS.
+- Exact scope: 16 queued official daily ZIPs + 16 .CHECKSUM files. The 14 associated monthly ZIPs were reused from cache and verified against the frozen CP-0041 subset; monthly ZIP downloads: 0.
+- Union key rows 1992; shared 1982; exact raw pairs 1550; divergent pairs 432; daily-only 0; monthly-only 10.
+- All unequal/missing rows remain OPEN_REVIEW_REQUIRED. Canonical source NONE, cases closed 0, no timestamp shifts/rounding/merge/replace/delete, no synthetic bars/backtest/promotion.
+- CP-0041 package SHA-256 23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc; queue member SHA-256 b6660083860d5d90afc5d2661353ecf4c8f1aa2d355a9db99d6fc7a40e9b045d; rulebook SHA-256 5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0.

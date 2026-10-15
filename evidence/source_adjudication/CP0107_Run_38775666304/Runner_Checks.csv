@@ -1,0 +1,12 @@
+check_id,status,detail
+request_json_parse,PASS,JSON parsed
+request_schema_allowlist,PASS,unknown=[] missing=[]
+request_id_format,PASS,AISTS-CP0107-CP0041-DAILY-REFERENCE-AUDIT-20261015-02
+task_allowlist,PASS,task='cp0107_cp0041_daily_reference_acquisition_audit'
+purpose_bounded_text,PASS,191
+workflow_least_privilege,PASS,top_level_contents_read=True; scoped_cp0107_publisher_write=True; forbidden=[]
+all_python_sources_parse,PASS,files=17 errors=[]
+commit_sha_present,PASS,0f40fa21955519b992d7030cc97cf5ad7dff5a1c
+actions_run_id_present,PASS,38775666304
+task_script_exists,PASS,/home/runner/work/aists-btcusdt-research-runner/aists-btcusdt-research-runner/scripts/AISTS_CP0107_CP0041_DailyReference_Acquisition_Audit.py
+task_exit_and_summary,PASS,exit=0; summary_exists=True

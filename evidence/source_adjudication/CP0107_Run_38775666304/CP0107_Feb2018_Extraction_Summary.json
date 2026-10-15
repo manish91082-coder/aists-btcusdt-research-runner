@@ -1,0 +1,121 @@
+{
+  "backtest_rerun": false,
+  "canonical_source_selected": false,
+  "checkpoint": "CP-0107",
+  "checks": [
+    {
+      "check_id": "frozen_manifest_66_rows",
+      "detail": "rows=66",
+      "status": "PASS"
+    },
+    {
+      "check_id": "cp0106_segment_inventory_10_rows",
+      "detail": "rows=10",
+      "status": "PASS"
+    },
+    {
+      "check_id": "manifest_sha256_present",
+      "detail": "47b20b50bff01778f3034fb3f381c795e7d82e922cc3514f2be12b5bc4f2e1de",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_16_source_objects_verified",
+      "detail": "verified=16/16",
+      "status": "PASS"
+    },
+    {
+      "check_id": "exact_450_off_grid_rows",
+      "detail": "extracted=450",
+      "status": "PASS"
+    },
+    {
+      "check_id": "segment_count_and_cadence",
+      "detail": "segments=12 row_total=450",
+      "status": "PASS"
+    },
+    {
+      "check_id": "zero_exact_open_key_match_for_offgrid",
+      "detail": "exact matches=0",
+      "status": "PASS"
+    },
+    {
+      "check_id": "daily_rows_all_exported",
+      "detail": "daily_rows=1167",
+      "status": "PASS"
+    },
+    {
+      "check_id": "no_timestamp_or_raw_mutation",
+      "detail": "raw tokens preserved; grid neighbors are diagnostic columns only",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 9,
+  "checks_total": 9,
+  "credentials_used": false,
+  "external_network_used": false,
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "generated_at_utc": "2026-10-15T12:32:36.383145+00:00",
+  "manifest_path": "evidence/source_adjudication/CP0107_SourceArchive_Manifest_66.csv",
+  "manifest_sha256": "47b20b50bff01778f3034fb3f381c795e7d82e922cc3514f2be12b5bc4f2e1de",
+  "market_data_rest_api_used": false,
+  "outputs": {
+    "CP0107_Feb2018_DailyCoverage_RawRows.csv": {
+      "bytes": 638834,
+      "sha256": "5dd5f5b314ff8518f06f6370db5502c79c3fd2a110653b05822921ff2b5dbcde"
+    },
+    "CP0107_Feb2018_OffGrid_RawRows.csv": {
+      "bytes": 367591,
+      "sha256": "379b1b9b258eed3fa55dfc95238e43e849300b14b85dd7643c0034befd841d64"
+    },
+    "CP0107_Feb2018_SegmentCoverage.csv": {
+      "bytes": 5364,
+      "sha256": "652562ecd179896e0ecd48f2d434be3c5b81bf139d2ac4098062e43f38caf200"
+    },
+    "CP0107_Feb2018_SourceVerification.csv": {
+      "bytes": 8050,
+      "sha256": "3692b0dc2378e5115326834a2b09a625341aa245396a4cca8ac1670474ae19b5"
+    }
+  },
+  "raw_source_archives_modified": false,
+  "scope": {
+    "daily_coverage_rows_exported": 1167,
+    "dates": [
+      "2018-02-09",
+      "2018-02-10",
+      "2018-02-11"
+    ],
+    "intervals": [
+      "5m",
+      "15m",
+      "30m",
+      "1h"
+    ],
+    "off_grid_rows_expected": 450,
+    "off_grid_rows_extracted": 450,
+    "off_grid_segments_verified": 10,
+    "segment_coverage_rows": 12
+  },
+  "self_tests": {
+    "expected_segment_total": 450,
+    "stdlib_only": true
+  },
+  "source_cases_closed": 0,
+  "source_errors": [],
+  "source_objects_expected": 16,
+  "source_objects_verified": 16,
+  "started_at_utc": "2026-10-15T12:32:36.264652+00:00",
+  "status": "PASS_CACHE_ONLY_EXTRACTION",
+  "strategy_promoted": false,
+  "synthetic_candles_created": false,
+  "task": "cp0107_feb2018_raw_row_extract",
+  "timestamp_shift_or_rounding": false
+}
