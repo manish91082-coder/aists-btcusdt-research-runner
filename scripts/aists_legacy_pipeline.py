@@ -94,9 +94,14 @@ def self_tests(core):
     inv=zip_inventory(sample.getvalue())
     add("synthetic_zip_crc_and_csv_inventory",inv["zip_crc"]=="PASS" and inv["csv_member_count"]==1)
     add("network_target_is_official_archive_only", 'url="https://data.binance.vision/data/spot"+rel' in Path(__file__).read_text(encoding="utf-8") and 'sumurl=url+".CHECKSUM"' in Path(__file__).read_text(encoding="utf-8"))
-    add("legacy_sources_present",all((SCRIPTS/f"AISTS_CP00{n}_{label}.py").exists() for n,label in [
-        ("25","Expanded_Daily_Reference_Validation"),("26","Research_Candidate_Builder"),("27","MultiTimeframe_Baseline_Backtest")
-    ]))
+    required_sources = [
+        "AISTS_CP0023_Forensic_Checksum_and_Monthly_Reconciliation.py",
+        "AISTS_CP0024_Strict_CloseTime_and_Daily_Reconciliation.py",
+        "AISTS_CP0025_Expanded_Daily_Reference_Validation.py",
+        "AISTS_CP0026_Research_Candidate_Builder.py",
+        "AISTS_CP0027_MultiTimeframe_Baseline_Backtest.py",
+    ]
+    add("legacy_sources_present",all((SCRIPTS/name).is_file() for name in required_sources), ";".join(required_sources))
     return {"total":len(tests),"passed":sum(t["status"]=="PASS" for t in tests),"tests":tests}
 
 
@@ -320,24 +325,83 @@ def main():
     (out/"monthly_archive_acquisition_summary.json").write_text(json.dumps(coverage,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 
     # Mark content evidence after CP-0025 scans the verified raw ZIPs. Do not promote any source.
+    daily_cache_root=cache.parent/"binance-daily-references"
+    daily_root=data_root/"reference_daily"
+    if daily_cache_root.exists():
+        seeded=0
+        for cached_zip in daily_cache_root.glob("*/*.zip"):
+            interval=cached_zip.parent.name
+            target_dir=daily_root/interval
+            target_dir.mkdir(parents=True,exist_ok=True)
+            target=target_dir/cached_zip.name
+            cached_sidecar=cached_zip.with_suffix(cached_zip.suffix+".CHECKSUM")
+            if not target.exists() and cached_sidecar.is_file():
+                try:
+                    with zipfile.ZipFile(cached_zip,"r") as z:
+                        if z.testzip() is not None: continue
+                    target.write_bytes(cached_zip.read_bytes())
+                    target.with_suffix(target.suffix+".CHECKSUM").write_bytes(cached_sidecar.read_bytes())
+                    seeded+=1
+                except Exception:
+                    target.unlink(missing_ok=True)
+        print(f"[daily cache] seeded {seeded} pairs for fresh sidecar revalidation.",flush=True)
+
     env=os.environ.copy(); env["AISTS_DATA_ROOT"]=str(data_root)
     env["PYTHONUNBUFFERED"]="1"
     stages=[]
+    cp23=SCRIPTS/"AISTS_CP0023_Forensic_Checksum_and_Monthly_Reconciliation.py"
+    cp24=SCRIPTS/"AISTS_CP0024_Strict_CloseTime_and_Daily_Reconciliation.py"
     cp25=SCRIPTS/"AISTS_CP0025_Expanded_Daily_Reference_Validation.py"
     cp26=SCRIPTS/"AISTS_CP0026_Research_Candidate_Builder.py"
     cp27=SCRIPTS/"AISTS_CP0027_MultiTimeframe_Baseline_Backtest.py"
 
     try:
-        s25=run_stage(cp25,env,logs,timeout=6600); stages.append(s25)
-        if s25["exit_code"]==0:
-            # Reconcile raw-source content rows with acquisition-manifest hashes.
-            dates_file=reports/"cp0025_reference_dates.json"
-            if dates_file.exists():
-                flagged=json.loads(dates_file.read_text(encoding="utf-8")).get("dates",[])
-                (out/"cp0025_flagged_dates_summary.json").write_text(json.dumps({"count":len(flagged),"dates":flagged},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-            s26=run_stage(cp26,env,logs,timeout=6600); stages.append(s26)
-            if s26["exit_code"]==0:
-                s27=run_stage(cp27,env,logs,timeout=6600); stages.append(s27)
+        s23=run_stage(cp23,env,logs,timeout=6600); stages.append(s23)
+        if s23["exit_code"]==0:
+            s24=run_stage(cp24,env,logs,timeout=6600); stages.append(s24)
+            if s24["exit_code"]==0:
+                s25=run_stage(cp25,env,logs,timeout=6600); stages.append(s25)
+                # Cache only daily archives that CP-0025 freshly verified against official sidecars.
+                daily_manifest=reports/"cp0025_daily_reference_manifest.csv"
+                if daily_manifest.is_file():
+                    daily_cache_root.mkdir(parents=True,exist_ok=True)
+                    cached_count=0
+                    with daily_manifest.open(newline="",encoding="utf-8") as f:
+                        for row in csv.DictReader(f):
+                            if row.get("checksum_status")!="MATCH" or row.get("download_status") not in ("DOWNLOADED_VALID","EXISTS_VALID"):
+                                continue
+                            source=Path(row.get("path",""))
+                            sidecar=source.with_suffix(source.suffix+".CHECKSUM")
+                            if not source.is_file() or not sidecar.is_file():
+                                continue
+                            try:
+                                official=row.get("official_sha256","").strip().lower()
+                                if not official or sha256_file(source)!=official:
+                                    continue
+                                with zipfile.ZipFile(source,"r") as z:
+                                    if z.testzip() is not None: continue
+                                folder=daily_cache_root/row.get("interval","")
+                                folder.mkdir(parents=True,exist_ok=True)
+                                dest=folder/source.name
+                                dest_sidecar=dest.with_suffix(dest.suffix+".CHECKSUM")
+                                # Never overwrite an existing different vintage in-place; use a hash-versioned name.
+                                if dest.exists() and sha256_file(dest)!=official:
+                                    dest=folder/f"{source.name}.{official[:16]}.verified"
+                                    dest_sidecar=dest.with_suffix(dest.suffix+".CHECKSUM")
+                                if not dest.exists(): shutil.copy2(source,dest)
+                                if not dest_sidecar.exists(): shutil.copy2(sidecar,dest_sidecar)
+                                cached_count+=1
+                            except Exception:
+                                continue
+                    print(f"[daily cache] cached {cached_count} checksum-matched references.",flush=True)
+                if s25["exit_code"]==0:
+                    dates_file=reports/"cp0025_reference_dates.json"
+                    if dates_file.exists():
+                        flagged=json.loads(dates_file.read_text(encoding="utf-8")).get("dates",[])
+                        (out/"cp0025_flagged_dates_summary.json").write_text(json.dumps({"count":len(flagged),"dates":flagged},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+                    s26=run_stage(cp26,env,logs,timeout=6600); stages.append(s26)
+                    if s26["exit_code"]==0:
+                        s27=run_stage(cp27,env,logs,timeout=6600); stages.append(s27)
     except subprocess.TimeoutExpired as exc:
         stages.append({"stage":"SUBPROCESS_TIMEOUT","exit_code":124,"elapsed_seconds":None,
                        "stderr_tail":f"Stage exceeded timeout: {exc}"})
@@ -353,6 +417,17 @@ def main():
             (out/"monthly_content_flag_counts.json").write_text(json.dumps({"status":"READ_ERROR","error":repr(exc)},indent=2)+"\n",encoding="utf-8")
 
     # Collect key metrics while keeping raw archives and full candidate files out of artifacts.
+    cp23_summary={}
+    p=reports/"forensic_row_and_gap_report.json"
+    if p.exists():
+        try: cp23_summary=json.loads(p.read_text(encoding="utf-8"))
+        except Exception: pass
+    cp24_summary={}
+    for name in ("strict_monthly_audit_summary.json","daily_vs_monthly_comparison_summary.json"):
+        p=reports/name
+        if p.exists():
+            try: cp24_summary[name]=json.loads(p.read_text(encoding="utf-8"))
+            except Exception: pass
     cp25_summary={}
     p=reports/"cp0025_reconciliation_summary.json"
     if p.exists():
@@ -384,6 +459,18 @@ def main():
     bundle_inventory=[]
     include=[
         (reports/"official_checksum_verification.csv","source/official_checksum_verification.csv"),
+        (reports/"official_checksum_summary.json","cp0023/official_checksum_summary.json"),
+        (reports/"forensic_row_and_gap_report.json","cp0023/forensic_row_and_gap_report.json"),
+        (reports/"forensic_row_anomalies.csv","cp0023/forensic_row_anomalies.csv"),
+        (reports/"forensic_gap_events.csv","cp0023/forensic_gap_events.csv"),
+        (reports/"monthly_reconciliation_summary.json","cp0023/monthly_reconciliation_summary.json"),
+        (reports/"strict_monthly_audit_summary.json","cp0024/strict_monthly_audit_summary.json"),
+        (reports/"strict_close_time_anomalies.csv","cp0024/strict_close_time_anomalies.csv"),
+        (reports/"off_grid_open_time_rows.csv","cp0024/off_grid_open_time_rows.csv"),
+        (reports/"strict_ohlc_anomalies.csv","cp0024/strict_ohlc_anomalies.csv"),
+        (reports/"daily_reference_download_manifest.csv","cp0024/daily_reference_download_manifest.csv"),
+        (reports/"daily_vs_monthly_row_comparison.csv","cp0024/daily_vs_monthly_row_comparison.csv"),
+        (reports/"daily_vs_monthly_comparison_summary.json","cp0024/daily_vs_monthly_comparison_summary.json"),
         (out/"monthly_archive_acquisition_manifest.csv","source/monthly_archive_acquisition_manifest.csv"),
         (out/"monthly_archive_acquisition_summary.json","source/monthly_archive_acquisition_summary.json"),
         (out/"monthly_content_flag_counts.json","source/monthly_content_flag_counts.json"),
@@ -435,6 +522,8 @@ def main():
         "requested_task":"CP-0025 -> CP-0026 -> CP-0027 original pipeline",
         "source_policy":"Only official downloadable Spot monthly ZIPs and sibling .CHECKSUM objects; original CP-0025 adds official daily ZIP+CHECKSUM references for flagged dates. No Binance REST market-data endpoints.",
         "monthly_source_acquisition":monthly_summary,
+        "cp0023_forensic_summary":cp23_summary,
+        "cp0024_reconciliation_summaries":cp24_summary,
         "cp0025_reconciliation_summary":cp25_summary,
         "cp0026_candidate_gate":cp26_summary.get("gate"),
         "cp0026_interval_results":cp26_summary.get("results"),
