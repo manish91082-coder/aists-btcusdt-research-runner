@@ -25,6 +25,7 @@ on:
           - cp0107_cp0041_daily_reference_acquisition_audit
           - cp0107_cp0041_aggregation_bucket_overlay_audit
           - cp0107_cp0041_worklist_disposition_patch_audit
+          - cp0107_cp0041_dec2020_residual7_exact_key_audit
         default: legacy_pipeline
 
 permissions:
@@ -103,7 +104,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ]; then
+          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ]; then
             echo "CP-0107 cache-only extraction uses Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -138,7 +139,7 @@ jobs:
           fi
 
   publish_cp0107_evidence:
-    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit' || needs.run.outputs.task == 'cp0107_field_review_hash_audit' || needs.run.outputs.task == 'cp0107_monthly_checksum_provenance_audit' || needs.run.outputs.task == 'cp0107_cp0041_daily_reference_acquisition_audit' || needs.run.outputs.task == 'cp0107_cp0041_aggregation_bucket_overlay_audit' || needs.run.outputs.task == 'cp0107_cp0041_worklist_disposition_patch_audit')
+    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit' || needs.run.outputs.task == 'cp0107_field_review_hash_audit' || needs.run.outputs.task == 'cp0107_monthly_checksum_provenance_audit' || needs.run.outputs.task == 'cp0107_cp0041_daily_reference_acquisition_audit' || needs.run.outputs.task == 'cp0107_cp0041_aggregation_bucket_overlay_audit' || needs.run.outputs.task == 'cp0107_cp0041_worklist_disposition_patch_audit' || needs.run.outputs.task == 'cp0107_cp0041_dec2020_residual7_exact_key_audit')
     needs: run
     runs-on: ubuntu-latest
     permissions:
@@ -374,6 +375,39 @@ jobs:
               rec = outputs.get(report.name, {})
               if not report.is_file() or hashlib.sha256(report.read_bytes()).hexdigest() != rec.get("sha256") or report.stat().st_size != rec.get("bytes"):
                   raise SystemExit("Disposition delta report hash/size mismatch")
+          residual7_summary_path = folder / "CP0107_CP0041_Dec2020_Residual7_Summary.json"
+          if os.environ.get("TASK") == "cp0107_cp0041_dec2020_residual7_exact_key_audit" and not residual7_summary_path.is_file():
+              raise SystemExit("Missing seven-row December residual audit summary; refusing repository write")
+          if residual7_summary_path.is_file():
+              residual = json.loads(residual7_summary_path.read_text(encoding="utf-8"))
+              if residual.get("status") != "PASS_SEVEN_RESIDUAL_EXACT_KEY_AUDIT":
+                  raise SystemExit("Seven-row exact-key audit did not PASS")
+              if residual.get("source_row_count") != 7 or residual.get("archive_objects_checked") != 14:
+                  raise SystemExit("Residual audit row/archive check count mismatch")
+              if residual.get("daily_exact_key_counterparts") != 0 or residual.get("daily_exact_key_absent") != 7:
+                  raise SystemExit("Residual exact-key absence result not as expected; hold for review")
+              if residual.get("checks_passed") != residual.get("checks_total") or any(c.get("status") != "PASS" for c in residual.get("checks", [])):
+                  raise SystemExit("Residual audit has failed checks")
+              decisions = residual.get("disposition", {})
+              if decisions.get("all_seven_remain_open") is not True or decisions.get("canonical_source_selected") is not False or decisions.get("source_cases_closed") != 0:
+                  raise SystemExit("Residual audit attempted source selection/closure")
+              if decisions.get("raw_archives_modified") is not False or decisions.get("timestamps_shifted_or_rounded") is not False or decisions.get("rows_merged_replaced_or_deleted") is not False or decisions.get("synthetic_candles_created") is not False or decisions.get("backtest_rerun") is not False or decisions.get("strategy_promoted") is not False:
+                  raise SystemExit("Residual audit violated source/backtest safety constraints")
+              outputs = residual.get("outputs", {})
+              for name, expected_rows in (("CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.csv", 7),
+                                          ("CP0107_CP0041_Dec2020_Residual7_ArchiveVerification.csv", 14)):
+                  p = folder / name
+                  rec = outputs.get(name, {})
+                  if not p.is_file() or hashlib.sha256(p.read_bytes()).hexdigest() != rec.get("sha256") or p.stat().st_size != rec.get("bytes"):
+                      raise SystemExit("Residual audit output hash/size mismatch: " + name)
+                  if len(rows(name)) != expected_rows or rec.get("rows") != expected_rows:
+                      raise SystemExit("Residual audit row-count mismatch: " + name)
+                  if name.endswith("ExactKey_Audit.csv") and any(x.get("daily_exact_open_key_present") != "False" or x.get("case_closed") != "False" for x in rows(name)):
+                      raise SystemExit("Residual audit contains an exact counterpart or closed case")
+              report = folder / "CP0107_CP0041_Dec2020_Residual7_Report_HI.md"
+              rec = outputs.get(report.name, {})
+              if not report.is_file() or hashlib.sha256(report.read_bytes()).hexdigest() != rec.get("sha256") or report.stat().st_size != rec.get("bytes"):
+                  raise SystemExit("Residual audit report hash/size mismatch")
           if len(offgrid) != 450 or len(daily) != 1167 or len(source) != 16 or len(segments) != 12:
               raise SystemExit(f"Row-count mismatch: offgrid={len(offgrid)} daily={len(daily)} source={len(source)} coverage={len(segments)}")
           if any(x.get("status") != "PASS" for x in source):
@@ -410,6 +444,25 @@ jobs:
                   note += "- " + name + ": rows=" + str(item["rows"]) + ", bytes=" + str(item["bytes"]) + ", SHA-256 " + item["sha256"] + ", Git blob SHA-1 " + item["git_blob_sha1"] + ".\n"
               note += "- Row comparison: 9/16 raw-field exact pairs, 7/16 divergent pairs; close-time fingerprint 8 rows; missing exact child keys monthly 10, daily 14. These findings remain diagnostic, not source acceptance. Root cause OPEN; canonical source NONE; cases closed 0.\n"
               note += "- Hashes recomputed by Python hashlib in GitHub Actions. No archive downloads, raw source mutations, backtest or strategy promotion.\n"
+              state_path.write_text(state + note, encoding="utf-8")
+          PY
+          fi
+          if [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ]; then
+            cp "$DEST/CP0107_CP0041_Dec2020_Residual7_Summary.json" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Summary.json
+            cp "$DEST/CP0107_CP0041_Dec2020_Residual7_Report_HI.md" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Report_HI.md
+            python - <<'PY'
+          import json, os
+          from pathlib import Path
+          summary = json.loads(Path("evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Summary.json").read_text(encoding="utf-8"))
+          state_path = Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state = state_path.read_text(encoding="utf-8")
+          marker = "CP-0107 seven residual December 2020 monthly-only exact-key audit " + os.environ["RUN_ID"]
+          if marker not in state:
+              note = "\n\n## " + marker + "\n\n"
+              note += "- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/" + os.environ["RUN_ID"] + "; status " + summary["status"] + "; checks " + str(summary["checks_passed"]) + "/" + str(summary["checks_total"]) + " PASS.\n"
+              note += "- Seven residual CP-0041 worklist rows individually revalidated against cached monthly archive row tokens and cached daily archive exact open-time keys; archive SHA/CRC checked. Daily exact-key counterparts present: " + str(summary["daily_exact_key_counterparts"]) + "; absent: " + str(summary["daily_exact_key_absent"]) + ".\n"
+              note += "- All seven monthly rows are flat OHLC 22646.53000000, zero volume/trades. The repeated close-time token and raw row snapshots are retained; nearest timestamps remain diagnostic only.\n"
+              note += "- All seven remain OPEN; canonical source NONE; root cause OPEN_NOT_ESTABLISHED; cases closed 0. No raw modification, time shifting, synthetic candles, backtest rerun or promotion.\n"
               state_path.write_text(state + note, encoding="utf-8")
           PY
           fi
@@ -494,6 +547,8 @@ jobs:
           fi
           if [ -f evidence_stage/cp0107_field_review_hash_audit_stdout.txt ]; then
             cp evidence_stage/cp0107_field_review_hash_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
+          elif [ -f evidence_stage/cp0107_cp0041_dec2020_residual7_exact_key_audit_stdout.txt ]; then
+            cp evidence_stage/cp0107_cp0041_dec2020_residual7_exact_key_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
           elif [ -f evidence_stage/cp0107_cp0041_worklist_disposition_patch_audit_stdout.txt ]; then
             cp evidence_stage/cp0107_cp0041_worklist_disposition_patch_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
           elif [ -f evidence_stage/cp0107_cp0041_aggregation_bucket_overlay_audit_stdout.txt ]; then
@@ -531,6 +586,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [ "$TASK" = "cp0107_field_review_hash_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_Dec2020_FieldReview_Summary.json evidence/source_adjudication/CP0107_Dec2020_FieldReview_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
+          elif [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ]; then
+            git add "$DEST" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.csv evidence/source_adjudication/CP0107_CP0041_Dec2020_ArchiveVerification.csv evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Summary.json evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_450.csv evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_Summary.json evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ]; then
