@@ -192,8 +192,9 @@ jobs:
               mapped = sum(x.get("mapped_daily_row_status") in ("PRESENT_FIELDS_DIFFER", "PRESENT_NON_OPEN_FIELDS_MATCH") for x in overlay)
               absent = sum(x.get("mapped_daily_row_status") == "ABSENT_REVIEW_REQUIRED" for x in overlay)
               differing = sum(x.get("mapped_daily_economic_or_close_time_differs") == "True" for x in overlay)
-              if mapped != 448 or absent != 2 or differing != 442:
-                  raise SystemExit(f"Unexpected mapped/difference counts: present={mapped} absent={absent} differing={differing}")
+              open_differing = sum("open" in x.get("mapped_daily_differing_fields", "").split(";") for x in overlay)
+              if mapped != 448 or absent != 2 or differing != 448 or open_differing != 442:
+                  raise SystemExit(f"Unexpected mapped/difference counts: present={mapped} absent={absent} differing={differing} open_differing={open_differing}")
               digest = hashlib.sha256(overlay_path.read_bytes()).hexdigest()
               if digest != overlay_summary.get("csv_sha256"):
                   raise SystemExit("Disposition overlay SHA-256 mismatch")
