@@ -70,8 +70,8 @@ def self_tests():
     cases=[]
     a=datetime(2020,2,1,tzinfo=UTC)
     rows=[
-        {"open_us":core.to_us(a),"raw_fields":["","","100","110","90","5","","50","10","2","20","0"]},
-        {"open_us":core.to_us(datetime(2020,2,2,tzinfo=UTC)),"raw_fields":["","","101","112","95","7","","75","12","3","30","0"]},
+        {"open_us":core.to_us(a),"raw_fields":["","100","110","90","95","5","","50","10","2","20","0"]},
+        {"open_us":core.to_us(datetime(2020,2,2,tzinfo=UTC)),"raw_fields":["","101","112","95","101","7","","75","12","3","30","0"]},
     ]
     m=aggregate_month(rows,2020,2)
     cases.append({"test":"monthly_ohlc_aggregation","status":"PASS" if m and m["open"]==Decimal("100") and m["high"]==Decimal("112") and m["low"]==Decimal("90") and m["close"]==Decimal("101") else "FAIL"})
