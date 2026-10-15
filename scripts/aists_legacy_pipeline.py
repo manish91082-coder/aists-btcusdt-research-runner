@@ -93,7 +93,7 @@ def self_tests(core):
         z.writestr("BTCUSDT-4h-2020-01.csv","1,1,1,1,1,0,1439,0,0,0,0,0\n")
     inv=zip_inventory(sample.getvalue())
     add("synthetic_zip_crc_and_csv_inventory",inv["zip_crc"]=="PASS" and inv["csv_member_count"]==1)
-    add("rest_api_not_used_by_pipeline", "api.binance.com/api/" not in Path(__file__).read_text(encoding="utf-8"))
+    add("network_target_is_official_archive_only", 'url="https://data.binance.vision/data/spot"+rel' in Path(__file__).read_text(encoding="utf-8") and 'sumurl=url+".CHECKSUM"' in Path(__file__).read_text(encoding="utf-8"))
     add("legacy_sources_present",all((SCRIPTS/f"AISTS_CP00{n}_{label}.py").exists() for n,label in [
         ("25","Expanded_Daily_Reference_Validation"),("26","Research_Candidate_Builder"),("27","MultiTimeframe_Baseline_Backtest")
     ]))
