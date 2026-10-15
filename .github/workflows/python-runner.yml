@@ -20,6 +20,7 @@ on:
           - cp0107_feb2018_raw_row_extract
           - cp0107_feb2018_disposition_overlay
           - cp0107_dec2020_child_window_audit
+          - cp0107_field_review_hash_audit
         default: legacy_pipeline
 
 permissions:
@@ -89,7 +90,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ]; then
+          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ]; then
             echo "CP-0107 cache-only extraction uses Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -124,7 +125,7 @@ jobs:
           fi
 
   publish_cp0107_evidence:
-    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit')
+    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit' || needs.run.outputs.task == 'cp0107_field_review_hash_audit')
     needs: run
     runs-on: ubuntu-latest
     permissions:
@@ -145,6 +146,7 @@ jobs:
       - name: Validate output hashes and row counts before publishing
         env:
           RUN_ID: ${{ github.run_id }}
+          TASK: ${{ needs.run.outputs.task }}
         run: |
           python - <<'PY'
           import csv, hashlib, json
@@ -212,6 +214,33 @@ jobs:
                       raise SystemExit("December output hash/size mismatch: " + name)
               if len(rows("CP0107_Dec2020_5m_ChildCoverage.csv")) != 60 or len(rows("CP0107_Dec2020_ReviewRollup_ChildCoverage.csv")) != 9 or len(rows("CP0107_Dec2020_5m_SourceVerification.csv")) != 2:
                   raise SystemExit("December child audit CSV row-count mismatch")
+          field_summary_path = folder / "CP0107_Dec2020_FieldReview_Summary.json"
+          if needs.run.outputs.task == "cp0107_field_review_hash_audit" and not field_summary_path.is_file():
+              raise SystemExit("Missing field-review hash summary; refusing repository write")
+          if field_summary_path.is_file():
+              field_summary = json.loads(field_summary_path.read_text(encoding="utf-8"))
+              if field_summary.get("status") != "PASS_FIELD_REVIEW_HASH_RECOMPUTED":
+                  raise SystemExit("Field-review hash verification did not PASS")
+              checks = field_summary.get("checks", [])
+              if not checks or any(c.get("status") != "PASS" for c in checks):
+                  raise SystemExit("Field-review audit contains failed checks")
+              expected_rows = {
+                  "CP0107_Dec2020_Shared_5m_RawField_Comparison.csv": 16,
+                  "CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv": 8,
+                  "CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv": 24,
+              }
+              outputs = field_summary.get("outputs", {})
+              if set(outputs) != set(expected_rows):
+                  raise SystemExit("Field-review output manifest is incomplete")
+              for name, nrows in expected_rows.items():
+                  path = folder / name
+                  recorded = outputs[name]
+                  if not path.is_file():
+                      raise SystemExit("Missing field-review CSV: " + name)
+                  if hashlib.sha256(path.read_bytes()).hexdigest() != recorded.get("sha256"):
+                      raise SystemExit("Field-review CSV SHA-256 mismatch: " + name)
+                  if path.stat().st_size != recorded.get("bytes") or len(rows(name)) != nrows or recorded.get("rows") != nrows:
+                      raise SystemExit("Field-review byte/row-count mismatch: " + name)
           if len(offgrid) != 450 or len(daily) != 1167 or len(source) != 16 or len(segments) != 12:
               raise SystemExit(f"Row-count mismatch: offgrid={len(offgrid)} daily={len(daily)} source={len(source)} coverage={len(segments)}")
           if any(x.get("status") != "PASS" for x in source):
@@ -224,13 +253,36 @@ jobs:
         env:
           RUN_ID: ${{ github.run_id }}
           RUN_COMMIT: ${{ github.sha }}
+          TASK: ${{ needs.run.outputs.task }}
         run: |
           DEST="evidence/source_adjudication/CP0107_Run_${RUN_ID}"
           mkdir -p "$DEST"
           cp -a evidence_stage/cp0107_feb2018/. "$DEST/"
           cp evidence_stage/run_summary.json "$DEST/Runner_Run_Summary.json"
           cp evidence_stage/checks.csv "$DEST/Runner_Checks.csv"
-          if [ -f evidence_stage/cp0107_feb2018_raw_row_extract_stdout.txt ]; then
+          if [ "$TASK" = "cp0107_field_review_hash_audit" ]; then
+            cp "$DEST/CP0107_Dec2020_FieldReview_Summary.json" evidence/source_adjudication/CP0107_Dec2020_FieldReview_Summary.json
+            cp "$DEST/CP0107_Dec2020_FieldReview_Report_HI.md" evidence/source_adjudication/CP0107_Dec2020_FieldReview_Report_HI.md
+            python - <<'PY'
+          import json, os
+          from pathlib import Path
+          summary = json.loads(Path("evidence/source_adjudication/CP0107_Dec2020_FieldReview_Summary.json").read_text(encoding="utf-8"))
+          state_path = Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state = state_path.read_text(encoding="utf-8")
+          marker = "CP-0107 trusted-runner field-review hash audit " + os.environ["RUN_ID"]
+          if marker not in state:
+              note = "\n\n## " + marker + "\n\n"
+              note += "- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/" + os.environ["RUN_ID"] + "; status " + summary["status"] + ", checks " + str(summary["checks_passed"]) + "/" + str(summary["checks_total"]) + " PASS.\n"
+              for name, item in summary["outputs"].items():
+                  note += "- " + name + ": rows=" + str(item["rows"]) + ", bytes=" + str(item["bytes"]) + ", SHA-256 " + item["sha256"] + ", Git blob SHA-1 " + item["git_blob_sha1"] + ".\n"
+              note += "- Row comparison: 9/16 raw-field exact pairs, 7/16 divergent pairs; close-time fingerprint 8 rows; missing exact child keys monthly 10, daily 14. These findings remain diagnostic, not source acceptance. Root cause OPEN; canonical source NONE; cases closed 0.\n"
+              note += "- Hashes recomputed by Python hashlib in GitHub Actions. No archive downloads, raw source mutations, backtest or strategy promotion.\n"
+              state_path.write_text(state + note, encoding="utf-8")
+          PY
+          fi
+          if [ -f evidence_stage/cp0107_field_review_hash_audit_stdout.txt ]; then
+            cp evidence_stage/cp0107_field_review_hash_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
+          elif [ -f evidence_stage/cp0107_feb2018_raw_row_extract_stdout.txt ]; then
             cp evidence_stage/cp0107_feb2018_raw_row_extract_stdout.txt "$DEST/Runner_Child_Stdout.txt"
           fi
           python - <<'PY'
@@ -259,7 +311,11 @@ jobs:
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$DEST"
+          if [ "$TASK" = "cp0107_field_review_hash_audit" ]; then
+            git add "$DEST" evidence/source_adjudication/CP0107_Dec2020_FieldReview_Summary.json evidence/source_adjudication/CP0107_Dec2020_FieldReview_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
+          else
+            git add "$DEST"
+          fi
           git commit -m "evidence: persist CP-0107 extraction run ${RUN_ID}"
           git push origin HEAD:main
 
