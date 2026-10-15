@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-LEGACY-PIPELINE-20261015-01",
+  "request_id": "AISTS-LEGACY-PIPELINE-20261015-02",
   "task": "legacy_pipeline",
-  "purpose": "Run official monthly archive SHA/CRC inventory, CP-0025 flagged daily reference reconciliation, CP-0026 provisional candidates and original CP-0027 backtest in one GitHub Actions job. No source promotion.",
-  "created_at_utc": "2026-10-15T11:00:00Z"
+  "purpose": "Retry complete CP-0025 to CP-0027 pipeline after fixing the offline preflight URL policy assertion.",
+  "created_at_utc": "2026-10-15T11:02:00Z"
 }
