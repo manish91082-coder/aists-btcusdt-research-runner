@@ -16,3 +16,7 @@ A change to `requests/current.json` on `main` runs the declared task. Manual run
 Standard GitHub-hosted runner usage is free/unlimited for public repositories under GitHub's published terms; do not assume all artifact/cache services have unlimited retention/storage.
 
 MIT License.
+
+
+## CP-0026-aligned monthly derivation
+The `monthly_derived_replay` task builds monthly bars from the hash/CRC/content-validated 1d archive series and compares them field-by-field to available official 1mo archives. It does not overwrite the direct archive or declare it canonical.
