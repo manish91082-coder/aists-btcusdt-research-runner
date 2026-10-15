@@ -1,0 +1,73 @@
+{
+  "artifact_files": [
+    {
+      "bytes": 564,
+      "path": "CP0107_Feb2018_Checks.csv",
+      "sha256": "b8f959f712250a2edf0845e0445f36471651d0fab25b1a06b5faf89597dadf21"
+    },
+    {
+      "bytes": 638834,
+      "path": "CP0107_Feb2018_DailyCoverage_RawRows.csv",
+      "sha256": "5dd5f5b314ff8518f06f6370db5502c79c3fd2a110653b05822921ff2b5dbcde"
+    },
+    {
+      "bytes": 1036405,
+      "path": "CP0107_Feb2018_Disposition_Overlay.csv",
+      "sha256": "3fa8cd5e17718dfe3069aab0b1d55fbf990723f1865c77412a957dd63f898a0f"
+    },
+    {
+      "bytes": 808,
+      "path": "CP0107_Feb2018_Disposition_Overlay_Report_HI.md",
+      "sha256": "b5b2b69887e2696e2f464e6f9a3514aa9825d2aeb44d29668b40b72671d5f639"
+    },
+    {
+      "bytes": 2904,
+      "path": "CP0107_Feb2018_Disposition_Overlay_Summary.json",
+      "sha256": "e7a1f3d7bfd2b1b459d0d4ca3d34dfd0138888f903fa8b819f355b61c64fec7c"
+    },
+    {
+      "bytes": 810,
+      "path": "CP0107_Feb2018_Extraction_Report_HI.md",
+      "sha256": "1ce0b34b108f66659cfa8a6b9b61612cb7f32c832777d32e79762ef3a530bf31"
+    },
+    {
+      "bytes": 3414,
+      "path": "CP0107_Feb2018_Extraction_Summary.json",
+      "sha256": "af75c6ce537cc3b879b51c968c679f503e1276d942c83d1493af4af9b0f0e435"
+    },
+    {
+      "bytes": 367591,
+      "path": "CP0107_Feb2018_OffGrid_RawRows.csv",
+      "sha256": "379b1b9b258eed3fa55dfc95238e43e849300b14b85dd7643c0034befd841d64"
+    },
+    {
+      "bytes": 5364,
+      "path": "CP0107_Feb2018_SegmentCoverage.csv",
+      "sha256": "652562ecd179896e0ecd48f2d434be3c5b81bf139d2ac4098062e43f38caf200"
+    },
+    {
+      "bytes": 8050,
+      "path": "CP0107_Feb2018_SourceVerification.csv",
+      "sha256": "3692b0dc2378e5115326834a2b09a625341aa245396a4cca8ac1670474ae19b5"
+    },
+    {
+      "bytes": 763,
+      "path": "Runner_Checks.csv",
+      "sha256": "eae27019da34ddc8b0c90c75ab481795eb614c499545e7771a368185b8c2bb5d"
+    },
+    {
+      "bytes": 2571,
+      "path": "Runner_Run_Summary.json",
+      "sha256": "bd9934b8f0764dc8480cc0de8bd345f7cbd1fd590fa0b97d8978a6b44f079053"
+    }
+  ],
+  "backtest_rerun": false,
+  "canonical_source_selected": false,
+  "cases_closed": 0,
+  "checkpoint": "CP-0107",
+  "publish_status": "PASS_HASH_AND_ROW_COUNT_VALIDATED",
+  "run_id": 38741774289,
+  "source_authority": "NOT_ASSIGNED",
+  "strategy_promoted": false,
+  "trigger_commit_sha": "04bb9d78a51b0e00c810d90075616844fa1feae3"
+}
