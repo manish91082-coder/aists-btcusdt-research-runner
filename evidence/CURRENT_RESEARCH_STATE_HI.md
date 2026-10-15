@@ -176,3 +176,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Union key rows 1992; shared 1982; exact raw pairs 1550; divergent pairs 432; daily-only 0; monthly-only 10.
 - All unequal/missing rows remain OPEN_REVIEW_REQUIRED. Canonical source NONE, cases closed 0, no timestamp shifts/rounding/merge/replace/delete, no synthetic bars/backtest/promotion.
 - CP-0041 package SHA-256 23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc; queue member SHA-256 b6660083860d5d90afc5d2661353ecf4c8f1aa2d355a9db99d6fc7a40e9b045d; rulebook SHA-256 5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0.
+
+
+## CP-0107 CP-0041 11-bucket daily/monthly roll-up overlay 38776970911
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38776970911; status PASS_AGGREGATION_BUCKET_DAILY_SOURCE_REVIEW; checks 12/12 PASS.
+- Input row comparison SHA-256 ac08f6839e172919634d2823ae1f6df4d74613e473419b8c00881527e40906ba, source member SHA-256 aba8bfeca2ea62f576075faf926e4c425c862d50428cd59732ab9db88a64442a, frozen CP-0040 rulebook SHA-256 5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0.
+- 11 residual buckets checked by exact open-time key across daily and monthly child/parent rows. Daily roll-up status counts: {"DAILY_CHILD_ROLLUP_MATCHES_DAILY_PARENT": 11}.
+- Every bucket stays UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT; source authority NONE, cases closed 0. No raw edits, timestamp normalization, synthetic candles, backtest or strategy promotion.
