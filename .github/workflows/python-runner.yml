@@ -29,6 +29,8 @@ concurrency:
 
 jobs:
   run:
+    outputs:
+      task: ${{ steps.request_meta.outputs.task }}
     name: AISTS allowlisted task runner (task-specific result in run summary)
     runs-on: ubuntu-latest
     timeout-minutes: 180
@@ -77,6 +79,11 @@ jobs:
               json.dump(request, f, indent=2)
               f.write("\n")
           PY
+      - name: Read task for scoped evidence publishing
+        id: request_meta
+        run: |
+          TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
+          echo "task=$TASK" >> "$GITHUB_OUTPUT"
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
@@ -113,3 +120,109 @@ jobs:
           else
             echo "No results/run_summary.json generated." >> "$GITHUB_STEP_SUMMARY"
           fi
+
+  publish_cp0107_evidence:
+    if: needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' && needs.run.result == 'success'
+    needs: run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Checkout exact main commit with scoped write token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: \${{ github.token }}
+          persist-credentials: true
+      - name: Download this run's evidence artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aists-run-\${{ github.run_id }}-attempt-\${{ github.run_attempt }}
+          path: evidence_stage
+      - name: Validate output hashes and row counts before publishing
+        env:
+          RUN_ID: \${{ github.run_id }}
+        run: |
+          python - <<'PY'
+          import csv, hashlib, json
+          from pathlib import Path
+          root = Path("evidence_stage")
+          folder = root / "cp0107_feb2018"
+          summary_path = folder / "CP0107_Feb2018_Extraction_Summary.json"
+          if not summary_path.is_file():
+              raise SystemExit("Missing CP-0107 extraction summary; refusing repository write")
+          summary = json.loads(summary_path.read_text(encoding="utf-8"))
+          if summary.get("status") != "PASS_CACHE_ONLY_EXTRACTION":
+              raise SystemExit("CP-0107 extraction did not PASS; refusing repository write")
+          if summary.get("source_objects_verified") != 16 or summary.get("source_objects_expected") != 16:
+              raise SystemExit("Expected 16/16 verified source objects; refusing repository write")
+          if summary.get("scope", {}).get("off_grid_rows_extracted") != 450:
+              raise SystemExit("Expected exactly 450 extracted off-grid rows; refusing repository write")
+          if summary.get("checks_passed") != summary.get("checks_total"):
+              raise SystemExit("Extraction checks are not all PASS; refusing repository write")
+          for name, recorded in summary.get("outputs", {}).items():
+              path = folder / name
+              if not path.is_file():
+                  raise SystemExit(f"Missing expected output: {name}")
+              h = hashlib.sha256(path.read_bytes()).hexdigest()
+              if h != recorded.get("sha256") or path.stat().st_size != recorded.get("bytes"):
+                  raise SystemExit(f"Output hash/size mismatch: {name}")
+          def rows(name):
+              with (folder / name).open("r", encoding="utf-8", newline="") as f:
+                  return list(csv.DictReader(f))
+          offgrid = rows("CP0107_Feb2018_OffGrid_RawRows.csv")
+          daily = rows("CP0107_Feb2018_DailyCoverage_RawRows.csv")
+          source = rows("CP0107_Feb2018_SourceVerification.csv")
+          segments = rows("CP0107_Feb2018_SegmentCoverage.csv")
+          if len(offgrid) != 450 or len(daily) != 1167 or len(source) != 16 or len(segments) != 12:
+              raise SystemExit(f"Row-count mismatch: offgrid={len(offgrid)} daily={len(daily)} source={len(source)} coverage={len(segments)}")
+          if any(x.get("status") != "PASS" for x in source):
+              raise SystemExit("At least one source verification row is not PASS")
+          if any(x.get("segment_status") == "FAIL_OFF_GRID_COUNT_MISMATCH" for x in segments):
+              raise SystemExit("A segment count disagrees with CP-0106")
+          print(f"VALIDATED run={summary.get('task')} source=16/16 offgrid={len(offgrid)} daily={len(daily)} segment-coverage={len(segments)}")
+          PY
+      - name: Persist verified CP-0107 outputs in evidence history
+        env:
+          RUN_ID: \${{ github.run_id }}
+          RUN_COMMIT: \${{ github.sha }}
+        run: |
+          DEST="evidence/source_adjudication/CP0107_Run_\${RUN_ID}"
+          mkdir -p "$DEST"
+          cp -a evidence_stage/cp0107_feb2018/. "$DEST/"
+          cp evidence_stage/run_summary.json "$DEST/Runner_Run_Summary.json"
+          cp evidence_stage/checks.csv "$DEST/Runner_Checks.csv"
+          if [ -f evidence_stage/cp0107_feb2018_raw_row_extract_stdout.txt ]; then
+            cp evidence_stage/cp0107_feb2018_raw_row_extract_stdout.txt "$DEST/Runner_Child_Stdout.txt"
+          fi
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path("evidence/source_adjudication") / ("CP0107_Run_" + os.environ["RUN_ID"])
+          files = []
+          for p in sorted(root.iterdir()):
+              if p.is_file() and p.name != "CP0107_Persistent_Output_Manifest.json":
+                  b = p.read_bytes()
+                  files.append({"path": p.name, "bytes": len(b), "sha256": hashlib.sha256(b).hexdigest()})
+          manifest = {
+              "checkpoint": "CP-0107",
+              "run_id": int(os.environ["RUN_ID"]),
+              "trigger_commit_sha": os.environ["RUN_COMMIT"],
+              "publish_status": "PASS_HASH_AND_ROW_COUNT_VALIDATED",
+              "artifact_files": files,
+              "source_authority": "NOT_ASSIGNED",
+              "cases_closed": 0,
+              "canonical_source_selected": False,
+              "backtest_rerun": False,
+              "strategy_promoted": False
+          }
+          (root / "CP0107_Persistent_Output_Manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+          print(json.dumps({"path": str(root), "persisted_files": len(files)}, ensure_ascii=False))
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DEST"
+          git commit -m "evidence: persist CP-0107 extraction run \${RUN_ID}"
+          git push origin HEAD:main
+
