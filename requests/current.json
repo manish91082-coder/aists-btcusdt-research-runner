@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0107-FEB2018-RAW-ROW-EXTRACT-20261015-01",
+  "request_id": "AISTS-CP0107-FEB2018-RAW-ROW-EXTRACT-20261015-02",
   "task": "cp0107_feb2018_raw_row_extract",
-  "purpose": "Cache-only extraction of all 450 February 2018 monthly off-grid rows plus exact daily coverage; verify against CP-0106 frozen manifest; no network, repair, source selection, or backtest.",
-  "created_at_utc": "2026-10-15T12:30:00Z"
+  "purpose": "Retry CP-0107 cache-only extraction after correcting the script entrypoint; all 450 monthly off-grid rows plus daily coverage, verify CP-0106 manifest; no network, repair, source selection, or backtest.",
+  "created_at_utc": "2026-10-15T12:29:00Z"
 }
