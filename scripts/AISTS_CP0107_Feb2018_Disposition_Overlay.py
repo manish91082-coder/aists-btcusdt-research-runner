@@ -139,7 +139,10 @@ def main():
       "cp0041_unmatched_ledger_sha256":"11eb82994d5a17469eefee9f14d360537d5871c19d303ed0466c5df4f6c34021",
       "cp0041_crosswalk_csv_sha256":CROSSWALK_SHA256,
       "row_count":len(rows),"mapped_daily_present":448,"mapped_daily_absent":2,
-      "mapped_rows_with_non_open_field_differences":442,"mapped_present_non_open_fields_match":6,
+      "mapped_rows_with_any_non_open_field_difference":diff_rows,
+      "mapped_rows_with_open_field_difference":open_diff_rows,
+      "mapped_rows_with_close_time_field_difference":sum("close_time" in r["mapped_daily_differing_fields"].split(";") for r in rows),
+      "mapped_rows_with_volume_field_difference":sum("volume" in r["mapped_daily_differing_fields"].split(";") for r in rows),
       "exact_daily_open_key_counterparts":0,"explicit_quarantine_rows":sum(r["disposition"]=="QUARANTINE_REVIEW_REQUIRED" for r in rows),
       "source_cases_closed":0,"canonical_source_selected":False,"root_cause":"OPEN_NOT_ESTABLISHED",
       "raw_source_archives_modified":False,"timestamps_shifted_or_rounded":False,"synthetic_candles_created":False,
@@ -147,13 +150,13 @@ def main():
       "checks_passed":len(checks),"checks_total":len(checks),"checks":checks,
       "csv_sha256":sha256_file(csv_path),"csv_bytes":csv_path.stat().st_size,
       "status_by_mapping":dict(counts),
-      "decision":"Keep all 450 rows quarantined under frozen CP-0040 G0. Mapped daily timestamps are diagnostic only; 448 mapped daily rows exist; 442 differ in non-open fields and 6 match on those fields; 2 targets are absent."
+      "decision":"Keep all 450 rows quarantined under frozen CP-0040 G0. Mapped daily timestamps are diagnostic only; 448 mapped daily rows exist and all 448 differ in at least one non-open field; 442 differ in open price, 447 in close_time and 448 in volume; 2 targets are absent."
     }
     (out/"CP0107_Feb2018_Disposition_Overlay_Summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
     report=("# CP-0107 February 2018 quarantine disposition overlay\n\n"
       f"- Status: {summary['status']}\n- Row dispositions: {len(rows)}/450 QUARANTINE_REVIEW_REQUIRED\n"
       f"- CP-0041 crosswalk SHA-256: {CROSSWALK_SHA256}; 450/450 monthly row keys, archive hashes and 12 raw fields match the verified crosswalk.\n"
-      "- Exact daily open-key counterpart: 0/450. Shifted target rows: 448 present, 2 absent. Of 448 present targets, 442 differ in non-open fields and 6 match in those fields.\n"
+      "- Exact daily open-key counterpart: 0/450. Shifted target rows: 448 present, 2 absent. All 448 present targets differ in at least one non-open field; 442 differ in open price, 447 in close_time and 448 in volume.\n"
       "- Frozen CP-0040 G0: no source winner from timestamps alone. Root cause remains OPEN; do not shift/round, merge, replace, delete or synthesize rows; no backtest or candidate promotion.\n"
       "- This focused segment verification does not close the separate 16-item official daily-reference acquisition queue.\n")
     (out/"CP0107_Feb2018_Disposition_Overlay_Report_HI.md").write_text(report,encoding="utf-8")
