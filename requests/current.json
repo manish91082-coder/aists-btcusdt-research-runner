@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0107-FIELD-REVIEW-HASH-AUDIT-20261015-03",
+  "request_id": "AISTS-CP0107-FIELD-REVIEW-HASH-AUDIT-20261015-04",
   "task": "cp0107_field_review_hash_audit",
-  "purpose": "Recompute SHA-256 for three CP-0107 field-review CSVs in GitHub Actions; verify counts, then publish corrected summary/report. No downloads or backtest.",
-  "created_at_utc": "2026-10-15T16:46:00Z"
+  "purpose": "Retry CP-0107 hash audit after publisher env fix; recompute SHA-256, validate counts, and publish verified summary/report. No downloads or backtest.",
+  "created_at_utc": "2026-10-15T16:48:00Z"
 }
