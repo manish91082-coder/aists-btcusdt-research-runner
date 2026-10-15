@@ -71,3 +71,10 @@ G0 `BLOCKED_GLOBAL`; G1 `PARTIAL_SYSTEM_LEVEL`; G2 `FAIL_CURRENT_23_CANDIDATES`;
 - Correct field-specific comparison: 448 mapped official daily targets exist, 2 are absent. All 448 present targets have non-open-field differences; `open` differs in 442 rows, `close_time` in 447, and `volume` in 448. Zero exact daily open-key counterparts exist for the 450 monthly off-grid rows.
 - This supersedes the earlier CP-0107 generated-summary phrase that said 442 mapped rows had any non-open-field difference and 6 matched those fields. That earlier metric was incorrect; the row-level overlay and the corrected summary are authoritative.
 - Frozen CP-0040 G0 disposition: all 450 rows stay `QUARANTINE_REVIEW_REQUIRED`; do not repair, shift, round, merge, replace or delete. Root cause OPEN, canonical source NONE, source cases closed 0.
+
+
+## Joined evidence: eight close-time-only cases
+
+CSV: `CP0107_CloseTimeOnly_FieldDisposition_Final.csv`, 8 rows; SHA-256 `473b149630edb6ee86b1720e2ffa4dd1afa7f022894bf5951ca398199319731c`. Monthly/daily ZIP and checksum-sidecar hashes are joined from the verified CP-0106 manifest for each CP-0041 shared-conflict key.
+- Five monthly close_time values are +1 ms past boundary on 2017-09-06; three daily close_time values are early by 12,705,211 ms (4h), 84,705,211 ms (1d), and 7,200,000 ms (4h). Selected economic fields match on all 8 rows.
+- Field-only proposal; no archive acceptance or canonical-source selection. All cases remain OPEN, root cause OPEN.

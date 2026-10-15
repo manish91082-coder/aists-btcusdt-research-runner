@@ -107,3 +107,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Metric correction audit: earlier successful run 38741774289 had a summary wording/count defect (it reported 442 as the total mapped non-open differences and claimed 6 records matched on those fields). Run 38742035787 and its persistent summary supersede that statement: row-level evidence shows 448 non-open-field-difference rows; 442 is specifically the `open`-field-difference count. Earlier run and failure history remain preserved, not erased.
 - All 450 rows remain `QUARANTINE_REVIEW_REQUIRED`; root cause OPEN, canonical source NONE, source cases closed 0. No archive bytes changed, no timestamps shifted/rounded, no synthetic candles, no backtest, no strategy promotion. Frozen gates remain unchanged.
 - Next bounded checkpoint: exact field-level disposition for the 8 close-time-only conflicts, then December-2020 row/roll-up disposition. No acquisition of the 770 archive set or baseline backtest rerun.
+
+
+## CP-0107 eight close-time-only joined dispositions — 2026-10-15
+
+- Final joined CSV: `evidence/source_adjudication/CP0107_CloseTimeOnly_FieldDisposition_Final.csv`, 8 rows, SHA-256 `473b149630edb6ee86b1720e2ffa4dd1afa7f022894bf5951ca398199319731c`. Each row now includes expected boundary, raw monthly/daily close_time, selected economic values, monthly/daily archive SHA-256 and checksum-sidecar SHA-256.
+- Frozen CP-0040 rulebook SHA-256 `5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0`; CP-0041 pack SHA-256 `23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc`; CP-0106 manifest SHA-256 `015709030834ec87c6d76a0b0a4e892650bf7e0949cfc6e6d61ea8659a35a5a1`.
+- Five 2017-09-06 rows: monthly close_time +1 ms, daily matches boundary. Three later rows: monthly matches boundary, daily is early by 12,705,211 ms, 84,705,211 ms and 7,200,000 ms. Economic fields match 8/8; 2017 `ignore` field differs but is not the selected conflict.
+- All eight remain OPEN_REVIEW_REQUIRED_NO_CANONICAL_SOURCE; root cause OPEN; archive acceptance not assessed, canonical source selected false, cases closed 0. No raw mutation, timestamp shifting, backtest or strategy promotion.
