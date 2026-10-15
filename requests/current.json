@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-MONTHLY-DERIVED-REPLAY-20261015-02",
+  "request_id": "AISTS-MONTHLY-DERIVED-REPLAY-20261015-03",
   "task": "monthly_derived_replay",
-  "purpose": "Retry corrected CP-0026-style 1mo derivation self-test, cross-check 1d-derived candles against available official monthly archives, and run reference metrics.",
-  "created_at_utc": "2026-10-15T10:28:30Z"
+  "purpose": "CP-0026-aligned monthly reconstruction from clean daily candles excluding initial partial 2017-08 month; crosscheck against available official monthly archives and run reference metrics.",
+  "created_at_utc": "2026-10-15T10:38:00Z"
 }
