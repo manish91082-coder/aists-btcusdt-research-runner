@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0107-FEB2018-RAW-ROW-EXTRACT-20261015-04",
-  "task": "cp0107_feb2018_raw_row_extract",
-  "purpose": "Cache-only CP-0107 extraction: 450 February off-grid raw rows, daily coverage and hash verification. Persist outputs only after validation. No network, repairs, source selection or backtest.",
-  "created_at_utc": "2026-10-15T12:36:00Z"
+  "request_id": "AISTS-CP0107-FEB2018-DISPOSITION-OVERLAY-20261015-01",
+  "task": "cp0107_feb2018_disposition_overlay",
+  "purpose": "Export a 450-row CP-0041 crosswalk-backed quarantine overlay from committed CP-0107 evidence only. No archive acquisition, repairs or backtest.",
+  "created_at_utc": "2026-10-15T13:00:00Z"
 }
