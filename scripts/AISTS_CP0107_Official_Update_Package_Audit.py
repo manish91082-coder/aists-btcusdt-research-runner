@@ -182,9 +182,6 @@ def main():
     output_manifest["CP0107_Official_Update_Package_Report_HI.md"]={"bytes":(out/"CP0107_Official_Update_Package_Report_HI.md").stat().st_size,"sha256":sha256((out/"CP0107_Official_Update_Package_Report_HI.md").read_bytes()),"rows":None}
     summary["outputs"]=output_manifest
     (out/"CP0107_Official_Update_Package_Summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
-    output_manifest["CP0107_Official_Update_Package_Summary.json"]={"bytes":(out/"CP0107_Official_Update_Package_Summary.json").stat().st_size,"sha256":sha256((out/"CP0107_Official_Update_Package_Summary.json").read_bytes()),"rows":None}
-    summary["outputs"]=output_manifest
-    (out/"CP0107_Official_Update_Package_Summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
     log(json.dumps({"status":status,"checks":str(checks_passed)+"/"+str(len(checks)),"blob_sha1":actual_git_sha,"bundle_sha256":bundle_sha,
         "member_count":len(entries),"target_archives":len(matches),"exact_member_hits":exact_member_hits,"text_name_hits":text_name_hits,
         "frozen_sha_token_hits":hash_token_hits,"member_bytes_match_current_sha":member_sha_current},sort_keys=True))
