@@ -38,3 +38,13 @@ The frozen boundary arithmetic for each record is `expected_close_time = open_ti
 
 ## Frozen gates and safety
 G0 `BLOCKED_GLOBAL`; G1 `PARTIAL_SYSTEM_LEVEL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL`; G4 `INSUFFICIENT_EVIDENCE`; G5 `NOT_RUN`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`. No Binance market-data REST API, signing, public broadcast, exchange order, raw repair, canonical source selection, strategy promotion or backtest rerun was performed.
+
+## CP-0107 final extraction addendum — Run 38735418645
+
+- Final run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38735418645. Runner PASS 11/11; child extraction PASS 9/9; evidence-publisher job PASS.
+- Permanent output folder: `evidence/source_adjudication/CP0107_Run_38735418645/`; post-publish commit `b35953da0d12a84d52429a9dd064842900e0107e`.
+- 450 raw off-grid monthly rows exported, 1,167 daily coverage rows exported, 10 off-grid segments verified across 12 date/interval cells, 16/16 scoped source objects verified, 0 exact daily open-key matches for the off-grid rows. No network, repair, timestamp shift/rounding, synthetic candle, backtest, canonical source selection or candidate promotion.
+- Durable row export `CP0107_Feb2018_OffGrid_RawRows.csv` SHA-256 `379b1b9b258eed3fa55dfc95238e43e849300b14b85dd7643c0034befd841d64`; daily coverage SHA-256 `5dd5f5b314ff8518f06f6370db5502c79c3fd2a110653b05822921ff2b5dbcde`; segment coverage SHA-256 `652562ecd179896e0ecd48f2d434be3c5b81bf139d2ac4098062e43f38caf200`; source verification SHA-256 `3692b0dc2378e5115326834a2b09a625341aa245396a4cca8ac1670474ae19b5`.
+- Hash rule: monthly ZIPs are checked against the official hash recorded in CP-0106’s frozen manifest; monthly sidecar bytes were not downloaded/re-hashed in this cache-only run. The daily ZIP + local .CHECKSUM bytes were re-hashed and content-matched. This distinction is in the extraction report and machine-readable summary.
+- Supersession/correction: the earlier provisional `CP0107_Feb2018_OffGrid_RowDisposition.csv` has hash cells which were not fully validated and do not match all run-verified ZIP hashes. Do not use that draft’s hash columns for provenance decisions. Run-scoped source verification and raw-row outputs are the authoritative evidence for this extraction; the old file remains unchanged as historical draft.
+- The frozen CP-0040 policy and authoritative CP-0041 disposition ledger have not yet been located as exact standalone repo files. Therefore CP-0107 closes no source-authority cases; all source decisions remain OPEN/REVIEW_REQUIRED pending the authoritative ledger and policy.
