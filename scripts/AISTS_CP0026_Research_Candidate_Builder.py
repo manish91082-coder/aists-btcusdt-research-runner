@@ -26,7 +26,7 @@ SYMBOL = "BTCUSDT"
 BASE_INTERVALS = ["5m", "15m", "30m", "1h", "4h", "1d"]
 FIXED_MS = {"5m":300_000, "15m":900_000, "30m":1_800_000, "1h":3_600_000, "4h":14_400_000, "1d":86_400_000}
 ROOT = Path("/content/drive/MyDrive/AISTS/market_data/binance_spot/BTCUSDT")
-CANDIDATE_ROOT = ROOT / "derived" / "research_candidate_v1" / SYMBOL
+CANDIDATE_ROOT = Path(os.environ.get("AISTS_DATA_ROOT", str(ROOT))) / "derived" / "research_candidate_v1" / SYMBOL
 OUTPUT_FIELDS = [
     "open_time_ms","open_time_utc","open","high","low","close","volume",
     "close_time_ms","quote_asset_volume","number_of_trades",
