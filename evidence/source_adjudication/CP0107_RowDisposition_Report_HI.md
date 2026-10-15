@@ -56,3 +56,9 @@ G0 `BLOCKED_GLOBAL`; G1 `PARTIAL_SYSTEM_LEVEL`; G2 `FAIL_CURRENT_23_CANDIDATES`;
 - Exact crosswalk CSV: 450 rows, SHA-256 `5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b`; interval/open-time keys 450/450; monthly archive SHA match 450/450; all 12 raw fields match the CP-0041 monthly ledger 450/450; zero hash/value/key mismatches.
 - Daily mapping diagnostic: 448 mapped daily keys present in CP-0107 official coverage, 2 still absent; 442 mapped rows have field differences. CP-0041's earlier candidate/override fixed-shift diagnostic listed 8 without exact counterparts; six now exist in CP-0107 direct daily coverage, two remain absent at the 2018-02-10 06:00 UTC targets for 5m and 15m. This does not establish why the economic fields differ.
 - Frozen G0 interpretation: retain all 450 as `QUARANTINE_REVIEW_REQUIRED`; no rounding/shifting/merge/replacement/deletion, root cause OPEN, source NONE, zero cases closed, no backtest/promotion. Required source-time/provenance semantics evidence is still absent.
+
+
+## Metric clarification from row-level CSV verification
+
+- Corrected mapped daily counts: 448 rows have a mapped official daily target present; 2 targets are absent. Of the 448 present targets, 448 have at least one non-open-field difference, including volume/quote volume/trade metrics; 442 rows specifically differ in open price; 447 differ in close_time; all 448 differ in volume. The previous summary's `442` mapped-field aggregate was mislabeled/ambiguous and is superseded by these field-specific counts.
+- This does not change disposition: all 450 monthly off-grid records remain QUARANTINE_REVIEW_REQUIRED, root cause OPEN, canonical source NONE.
