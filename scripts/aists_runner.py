@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-ALLOWED_TASKS={"smoke","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit"}
+ALLOWED_TASKS={"smoke","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit"}
 REQUEST_KEYS={"request_id","task","purpose","created_at_utc","requested_commit_sha"}
 
 def file_sha(path):
@@ -77,13 +77,13 @@ def main():
     if task=="smoke":
         check("smoke_no_network",True,"No HTTP requests; standard library only.")
         child_status="SMOKE_ONLY"
-    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit"):
+    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit"):
         script_name={"historical_reference_replay":"historical_reference_replay.py",
                      "monthly_derived_replay":"monthly_derived_replay.py",
                      "legacy_pipeline":"aists_legacy_pipeline.py",
                      "source_adjudication_diagnostic":"AISTS_CP0103_Source_Adjudication_Diagnostic.py",
                      "cp0107_feb2018_raw_row_extract":"AISTS_CP0107_Feb2018_Raw_Row_Extract.py",
-                     "cp0107_feb2018_disposition_overlay":"AISTS_CP0107_Feb2018_Disposition_Overlay.py","cp0107_dec2020_child_window_audit":"AISTS_CP0107_Dec2020_ChildWindow_Audit.py","cp0107_field_review_hash_audit":"AISTS_CP0107_FieldReview_HashAudit.py","cp0107_monthly_checksum_provenance_audit":"AISTS_CP0107_MonthlyChecksumProvenanceAudit.py","cp0107_cp0041_daily_reference_acquisition_audit":"AISTS_CP0107_CP0041_DailyReference_Acquisition_Audit.py","cp0107_cp0041_aggregation_bucket_overlay_audit":"AISTS_CP0107_CP0041_AggregationBucket_Overlay_Audit.py"}[task]
+                     "cp0107_feb2018_disposition_overlay":"AISTS_CP0107_Feb2018_Disposition_Overlay.py","cp0107_dec2020_child_window_audit":"AISTS_CP0107_Dec2020_ChildWindow_Audit.py","cp0107_field_review_hash_audit":"AISTS_CP0107_FieldReview_HashAudit.py","cp0107_monthly_checksum_provenance_audit":"AISTS_CP0107_MonthlyChecksumProvenanceAudit.py","cp0107_cp0041_daily_reference_acquisition_audit":"AISTS_CP0107_CP0041_DailyReference_Acquisition_Audit.py","cp0107_cp0041_aggregation_bucket_overlay_audit":"AISTS_CP0107_CP0041_AggregationBucket_Overlay_Audit.py","cp0107_cp0041_worklist_disposition_patch_audit":"AISTS_CP0107_CP0041_Worklist_Disposition_Patch_Audit.py"}[task]
         child=ROOT/"scripts"/script_name
         check("task_script_exists",child.exists(),str(child))
         if child.exists():
@@ -149,13 +149,22 @@ def main():
                       "--output-dir","results/cp0107_feb2018"]
                 timeout=900
                 child_summary_path=output/"cp0107_feb2018"/"CP0107_CP0041_AggregationBucket_Summary.json"
+            elif task=="cp0107_cp0041_worklist_disposition_patch_audit":
+                argv=[sys.executable,str(child),
+                      "--baseline-dir","evidence/source_adjudication/CP0107_Run_38775666304",
+                      "--source-overlay","evidence/source_adjudication/CP0107_Run_38742035787/CP0107_Feb2018_Disposition_Overlay.csv",
+                      "--crosswalk-summary","evidence/source_adjudication/CP0107_CP0041_Crosswalk_Summary.json",
+                      "--source-manifest","evidence/source_adjudication/CP0107_CP0041_Worklist_Source_Manifest.json",
+                      "--output-dir","results/cp0107_feb2018"]
+                timeout=900
+                child_summary_path=output/"cp0107_feb2018"/"CP0107_CP0041_Worklist_Disposition_Delta_Summary.json"
             else:
                 argv=[sys.executable,str(child),"--output-dir",f"results/{task}","--cache-dir",".cache/aists/binance-monthly-archives"]
                 timeout=3300
                 summary_name="historical_reference_replay_summary.json" if task=="historical_reference_replay" else "monthly_derived_replay_summary.json"
                 child_summary_path=output/task/summary_name
             try:
-                if task in ("legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit"):
+                if task in ("legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit"):
                     log_path=output/f"{task}_stdout.txt"
                     with log_path.open("w",encoding="utf-8") as log:
                         proc=subprocess.Popen(argv,cwd=str(ROOT),text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,bufsize=1)

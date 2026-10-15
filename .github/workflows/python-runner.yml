@@ -24,6 +24,7 @@ on:
           - cp0107_monthly_checksum_provenance_audit
           - cp0107_cp0041_daily_reference_acquisition_audit
           - cp0107_cp0041_aggregation_bucket_overlay_audit
+          - cp0107_cp0041_worklist_disposition_patch_audit
         default: legacy_pipeline
 
 permissions:
@@ -102,7 +103,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ]; then
+          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ]; then
             echo "CP-0107 cache-only extraction uses Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -137,7 +138,7 @@ jobs:
           fi
 
   publish_cp0107_evidence:
-    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit' || needs.run.outputs.task == 'cp0107_field_review_hash_audit' || needs.run.outputs.task == 'cp0107_monthly_checksum_provenance_audit' || needs.run.outputs.task == 'cp0107_cp0041_daily_reference_acquisition_audit' || needs.run.outputs.task == 'cp0107_cp0041_aggregation_bucket_overlay_audit')
+    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit' || needs.run.outputs.task == 'cp0107_field_review_hash_audit' || needs.run.outputs.task == 'cp0107_monthly_checksum_provenance_audit' || needs.run.outputs.task == 'cp0107_cp0041_daily_reference_acquisition_audit' || needs.run.outputs.task == 'cp0107_cp0041_aggregation_bucket_overlay_audit' || needs.run.outputs.task == 'cp0107_cp0041_worklist_disposition_patch_audit')
     needs: run
     runs-on: ubuntu-latest
     permissions:
@@ -340,6 +341,39 @@ jobs:
               rec = outputs["CP0107_CP0041_AggregationBucket_Report_HI.md"]
               if not report_path.is_file() or hashlib.sha256(report_path.read_bytes()).hexdigest() != rec.get("sha256") or report_path.stat().st_size != rec.get("bytes"):
                   raise SystemExit("Aggregation-bucket report hash/size mismatch")
+          delta_summary_path = folder / "CP0107_CP0041_Worklist_Disposition_Delta_Summary.json"
+          if os.environ.get("TASK") == "cp0107_cp0041_worklist_disposition_patch_audit" and not delta_summary_path.is_file():
+              raise SystemExit("Missing 450-row worklist disposition delta summary; refusing repository write")
+          if delta_summary_path.is_file():
+              delta_summary = json.loads(delta_summary_path.read_text(encoding="utf-8"))
+              if delta_summary.get("status") != "PASS_450_ROW_DISPOSITION_DELTA_READY":
+                  raise SystemExit("450-row disposition delta audit status not PASS")
+              if delta_summary.get("checks_passed") != delta_summary.get("checks_total") or any(c.get("status") != "PASS" for c in delta_summary.get("checks", [])):
+                  raise SystemExit("Disposition delta audit contains failed checks")
+              scope = delta_summary.get("scope", {})
+              if scope.get("delta_rows") != 450 or scope.get("proposed_quarantine_dispositions") != 450 or scope.get("worklist_rows_left_unchanged") != 546:
+                  raise SystemExit("Disposition delta row scope mismatch")
+              source = delta_summary.get("source_worklist", {})
+              if source.get("rows") != 996 or source.get("sha256") != "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f":
+                  raise SystemExit("Frozen CP-0041 996-row source worklist reference mismatch")
+              decision = delta_summary.get("semantics", {})
+              if decision.get("original_996_row_worklist_modified") is not False or decision.get("other_546_rows_modified") is not False or decision.get("source_authority") != "NONE" or decision.get("canonical_source_selected") is not False or decision.get("source_cases_closed") != 0:
+                  raise SystemExit("Disposition delta attempts to change source authority or untouched rows")
+              outputs = delta_summary.get("outputs", {})
+              for name, expected_rows in (("CP0107_CP0041_Worklist_Disposition_Delta_450.csv", 450),):
+                  p = folder / name
+                  rec = outputs.get(name, {})
+                  if not p.is_file() or hashlib.sha256(p.read_bytes()).hexdigest() != rec.get("sha256") or p.stat().st_size != rec.get("bytes"):
+                      raise SystemExit("Disposition delta file hash/size mismatch: " + name)
+                  if len(rows(name)) != expected_rows or rec.get("rows") != expected_rows:
+                      raise SystemExit("Disposition delta row-count mismatch: " + name)
+                  delta_rows = rows(name)
+                  if any(x.get("proposed_worklist_disposition") != "QUARANTINE_REVIEW_REQUIRED" or x.get("canonical_source") != "NONE" or x.get("case_closed") != "False" for x in delta_rows):
+                      raise SystemExit("Disposition delta has a non-quarantine/closure/source-selection row")
+              report = folder / "CP0107_CP0041_Worklist_Disposition_Delta_Report_HI.md"
+              rec = outputs.get(report.name, {})
+              if not report.is_file() or hashlib.sha256(report.read_bytes()).hexdigest() != rec.get("sha256") or report.stat().st_size != rec.get("bytes"):
+                  raise SystemExit("Disposition delta report hash/size mismatch")
           if len(offgrid) != 450 or len(daily) != 1167 or len(source) != 16 or len(segments) != 12:
               raise SystemExit(f"Row-count mismatch: offgrid={len(offgrid)} daily={len(daily)} source={len(source)} coverage={len(segments)}")
           if any(x.get("status") != "PASS" for x in source):
@@ -376,6 +410,27 @@ jobs:
                   note += "- " + name + ": rows=" + str(item["rows"]) + ", bytes=" + str(item["bytes"]) + ", SHA-256 " + item["sha256"] + ", Git blob SHA-1 " + item["git_blob_sha1"] + ".\n"
               note += "- Row comparison: 9/16 raw-field exact pairs, 7/16 divergent pairs; close-time fingerprint 8 rows; missing exact child keys monthly 10, daily 14. These findings remain diagnostic, not source acceptance. Root cause OPEN; canonical source NONE; cases closed 0.\n"
               note += "- Hashes recomputed by Python hashlib in GitHub Actions. No archive downloads, raw source mutations, backtest or strategy promotion.\n"
+              state_path.write_text(state + note, encoding="utf-8")
+          PY
+          fi
+          if [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ]; then
+            cp "$DEST/CP0107_CP0041_Worklist_Disposition_Delta_450.csv" evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_450.csv
+            cp "$DEST/CP0107_CP0041_Worklist_Disposition_Delta_Summary.json" evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_Summary.json
+            cp "$DEST/CP0107_CP0041_Worklist_Disposition_Delta_Report_HI.md" evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_Report_HI.md
+            python - <<'PY'
+          import json, os
+          from pathlib import Path
+          summary = json.loads(Path("evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_Summary.json").read_text(encoding="utf-8"))
+          state_path = Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state = state_path.read_text(encoding="utf-8")
+          marker = "CP-0107 CP-0041 450-row worklist disposition delta " + os.environ["RUN_ID"]
+          if marker not in state:
+              note = "\n\n## " + marker + "\n\n"
+              note += "- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/" + os.environ["RUN_ID"] + "; status " + summary["status"] + "; checks " + str(summary["checks_passed"]) + "/" + str(summary["checks_total"]) + " PASS.\n"
+              note += "- Frozen source member: CP-0041 996-row worklist SHA-256 " + summary["source_worklist"]["sha256"] + "; source package SHA-256 " + summary["source_worklist"]["source_package_sha256"] + ".\n"
+              note += "- Exact delta: 450/450 crosswalk row IDs matched. Proposed disposition only: QUARANTINE_REVIEW_REQUIRED for those 450 rows. The other 546 rows remain unchanged in the original worklist.\n"
+              note += "- Daily mapped records: 448 present with non-open-field differences, 2 absent; exact daily open-key counterparts 0/450. All remain quarantined, canonical source NONE, root cause OPEN_NOT_ESTABLISHED, no cases closed.\n"
+              note += "- This is an append-only delta artifact; the original 996-row worklist/source pack is not rewritten. No timestamps shifted, no raw row replacement/merge/delete, no synthetic candles/backtest/promotion.\n"
               state_path.write_text(state + note, encoding="utf-8")
           PY
           fi
@@ -439,6 +494,8 @@ jobs:
           fi
           if [ -f evidence_stage/cp0107_field_review_hash_audit_stdout.txt ]; then
             cp evidence_stage/cp0107_field_review_hash_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
+          elif [ -f evidence_stage/cp0107_cp0041_worklist_disposition_patch_audit_stdout.txt ]; then
+            cp evidence_stage/cp0107_cp0041_worklist_disposition_patch_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
           elif [ -f evidence_stage/cp0107_cp0041_aggregation_bucket_overlay_audit_stdout.txt ]; then
             cp evidence_stage/cp0107_cp0041_aggregation_bucket_overlay_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
           elif [ -f evidence_stage/cp0107_cp0041_daily_reference_acquisition_audit_stdout.txt ]; then
@@ -474,6 +531,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [ "$TASK" = "cp0107_field_review_hash_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_Dec2020_FieldReview_Summary.json evidence/source_adjudication/CP0107_Dec2020_FieldReview_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
+          elif [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ]; then
+            git add "$DEST" evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_450.csv evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_Summary.json evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_CP0041_AggregationBucket_Summary.json evidence/source_adjudication/CP0107_CP0041_AggregationBucket_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ]; then
