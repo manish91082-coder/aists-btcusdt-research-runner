@@ -159,3 +159,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - CP0107_Dec2020_Shared_5m_RawField_Comparison.csv: rows=16, bytes=12019, SHA-256 530d120984e88d37a7993c80151482d8b75677bbec9d04fa31a927373a55aca0, Git blob SHA-1 92c9e97f5c4baea175f89e7b36493a18e0934829.
 - Row comparison: 9/16 raw-field exact pairs, 7/16 divergent pairs; close-time fingerprint 8 rows; missing exact child keys monthly 10, daily 14. These findings remain diagnostic, not source acceptance. Root cause OPEN; canonical source NONE; cases closed 0.
 - Hashes recomputed by Python hashlib in GitHub Actions. No archive downloads, raw source mutations, backtest or strategy promotion.
+
+
+## CP-0107 official monthly/daily .CHECKSUM provenance audit 38771593935
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38771593935; status PASS_OFFICIAL_SIDECAR_PROVENANCE; checks 10/10 PASS.
+- MONTHLY BTCUSDT-5m-2020-12.zip: official .CHECKSUM fetched from data.binance.vision; sidecar SHA-256 0db24ee3bb2a29cfd9971949837eab439c3226666bb2b00c458aaa16eb249667; checksum token matches frozen archive SHA True; sidecar manifest SHA match True.
+- DAILY BTCUSDT-5m-2020-12-21.zip: official .CHECKSUM fetched from data.binance.vision; sidecar SHA-256 a4aabf08bf9c231daf643071dd531f1f814a7fbdea86b4e8c38a7ce795f13962; checksum token matches frozen archive SHA True; sidecar manifest SHA match True.
+- Only the two small .CHECKSUM text files were requested. No ZIP archives or market-data REST endpoints were requested. Root cause OPEN; canonical source NONE; no cases closed, no backtest or strategy promotion.
