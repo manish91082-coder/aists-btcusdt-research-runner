@@ -217,7 +217,8 @@ def parse_zip(body, interval, year, month, name):
                         issues.append({"archive": name, "line_number": line, "issue": "NON_INCREASING_OPEN_TIME", "row_sha256": row_hash})
                     previous = openus
                     bars.append({"open_us": openus, "close_us": closeus, "open": o, "high": h,
-                                 "low": l, "close": c, "volume": v, "source_archive": name})
+                                 "low": l, "close": c, "volume": v, "source_archive": name,
+                                 "raw_fields": list(fields), "open_unit": uo})
                     qa["parseable_rows"] += 1
     except Exception as exc:
         qa["error"] = f"{type(exc).__name__}: {exc}"
