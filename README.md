@@ -5,10 +5,11 @@ Standalone GitHub Actions runner for the actual AISTS historical pipeline.
 ## Primary task: `legacy_pipeline`
 One run performs, in order:
 1. Revalidates official SHA-256 sidecars and downloads/reuses the official Spot monthly ZIPs for 5m, 15m, 30m, 1h, 4h, 1d and 1mo, 2017-08 through 2026-09.
-2. Runs vendored CP-0025 flagged-date discovery, official daily-reference acquisition and exact-open-time reconciliation.
-3. Runs vendored CP-0026 provisional candidate construction.
-4. Runs the original vendored CP-0027 deterministic gap-aware backtest engine.
-5. Exports a compact evidence ZIP plus run summary and file hashes. Raw ZIPs and full candidate datasets are excluded from artifacts.
+2. Runs CP-0023 forensic checksum/row/gap scan to generate the required `forensic_gap_events.csv` and source manifest.
+3. Runs CP-0024 strict close-time/open-grid audit and selected daily/monthly exact row comparison.
+4. Runs CP-0025 flagged-date discovery using CP-0023/24 reports, official daily-reference checksum validation and exact-time reconciliation.
+5. Runs CP-0026 provisional candidate construction and the original CP-0027 deterministic gap-aware backtest engine.
+6. Exports a compact evidence ZIP plus run summary and file hashes. Raw ZIPs and full candidate datasets are excluded from artifacts.
 
 ## Integrity/safety
 - Only official `data.binance.vision` public downloadable archive and `.CHECKSUM` objects, with redirect host/path allowlisting.
