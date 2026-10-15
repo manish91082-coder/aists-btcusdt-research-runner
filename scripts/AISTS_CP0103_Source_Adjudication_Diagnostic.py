@@ -325,6 +325,89 @@ def main():
                 if day in ("2018-02-09","2018-02-10","2018-02-11"):
                     for t in mk:
                         k=(iv,t%step); feb_offsets[k]=feb_offsets.get(k,0)+1
+    # CP-0104 follow-on diagnostic: compare exact economic signatures across unmatched keys.
+    # Signatures exclude open_time and close_time. Candidate pairs never mutate data.
+    feb_cluster_dates={"2018-02-09","2018-02-10","2018-02-11"}
+    economic_fields=("open","high","low","close","volume","quote_asset_volume","number_of_trades",
+                     "taker_buy_base_asset_volume","taker_buy_quote_asset_volume")
+    sig_groups={}
+    sig_payloads={}
+    for item in unmatched_rows:
+        iv=item["interval"]; day=item["date"]; side=item["source_side"]
+        t=int(item["open_time_ms"])
+        dataset="MONTHLY" if side=="MONTHLY_ONLY" else "DAILY"
+        candle=raw_data_for_rollup[(day,iv,dataset)][t]
+        signature=tuple(candle[field] for field in economic_fields)
+        cluster="2018-02-09_TO_2018-02-11" if day in feb_cluster_dates else day
+        key=(cluster,iv,signature)
+        sig_groups.setdefault(key,{"MONTHLY_ONLY":[],"DAILY_ONLY":[]})
+        sig_groups[key][side].append((item,candle))
+        sig_payloads[key]=[
+            format(candle[field].normalize(),"f") if isinstance(candle[field],Decimal) else str(candle[field])
+            for field in economic_fields
+        ]
+    signature_candidate_rows=[]
+    unique_signature_pairs=[]
+    signature_summary={}
+    for key,sides in sorted(sig_groups.items(),key=lambda kv:(kv[0][0],kv[0][1],str(kv[0][2]))):
+        cluster,iv,signature=key
+        monthly=sides["MONTHLY_ONLY"]
+        daily=sides["DAILY_ONLY"]
+        if len(monthly)==1 and len(daily)==1:
+            status="UNIQUE_ECONOMIC_SIGNATURE_CANDIDATE"
+            m_item,m_candle=monthly[0]
+            d_item,d_candle=daily[0]
+            delta=int(m_item["open_time_ms"])-int(d_item["open_time_ms"])
+            unique_signature_pairs.append({
+                "cluster":cluster,"interval":iv,
+                "monthly_date":m_item["date"],"monthly_open_time_ms":int(m_item["open_time_ms"]),
+                "monthly_open_time_utc":m_item["open_time_utc"],"monthly_open_time_raw":m_item["open_time_raw"],
+                "daily_date":d_item["date"],"daily_open_time_ms":int(d_item["open_time_ms"]),
+                "daily_open_time_utc":d_item["open_time_utc"],"daily_open_time_raw":d_item["open_time_raw"],
+                "monthly_minus_daily_open_delta_ms":delta,
+                "monthly_minus_daily_open_delta_seconds":Decimal(delta)/Decimal(1000),
+                "economic_signature_sha256":sha256_bytes(json.dumps(sig_payloads[key],separators=(",",":")).encode()),
+                "signature_fields":json.dumps(economic_fields),
+                "pairing_status":status,
+                "interpretation":"UNIQUE VALUE-SIGNATURE CANDIDATE ONLY; no timestamp shift, join, correction, or source-authority decision"
+            })
+        elif not monthly or not daily:
+            status="NO_EXACT_ECONOMIC_SIGNATURE_MATCH"
+        else:
+            status="AMBIGUOUS_DUPLICATE_ECONOMIC_SIGNATURE"
+        for side_name,entries,opposite in (("MONTHLY_ONLY",monthly,daily),("DAILY_ONLY",daily,monthly)):
+            for item,candle in entries:
+                candidate=opposite[0] if len(monthly)==1 and len(daily)==1 else None
+                if side_name=="MONTHLY_ONLY":
+                    candidate_date=candidate[0]["date"] if candidate else ""
+                    candidate_time=candidate[0]["open_time_ms"] if candidate else ""
+                    candidate_raw=candidate[0]["open_time_raw"] if candidate else ""
+                    delta=int(item["open_time_ms"])-int(candidate[0]["open_time_ms"]) if candidate else ""
+                else:
+                    candidate_date=candidate[0]["date"] if candidate else ""
+                    candidate_time=candidate[0]["open_time_ms"] if candidate else ""
+                    candidate_raw=candidate[0]["open_time_raw"] if candidate else ""
+                    delta=int(candidate[0]["open_time_ms"])-int(item["open_time_ms"]) if candidate else ""
+                signature_candidate_rows.append({
+                    "cluster":cluster,"interval":iv,"source_side":side_name,"date":item["date"],
+                    "open_time_ms":int(item["open_time_ms"]),"open_time_utc":item["open_time_utc"],
+                    "open_time_raw":item["open_time_raw"],
+                    "economic_signature_sha256":sha256_bytes(json.dumps(sig_payloads[key],separators=(",",":")).encode()),
+                    "own_signature_count":len(entries),"opposite_signature_count":len(opposite),
+                    "pairing_status":status,"candidate_date":candidate_date,"candidate_open_time_ms":candidate_time,
+                    "candidate_open_time_raw":candidate_raw,"monthly_minus_daily_open_delta_ms":delta,
+                    "signature_fields":json.dumps(economic_fields),
+                    "interpretation":"Exact numeric economic fields only; evidence candidate, not a source or timestamp decision"
+                })
+                skey=(cluster,iv,status)
+                signature_summary[skey]=signature_summary.get(skey,0)+1
+    signature_summary_rows=[
+        {"cluster":cluster,"interval":iv,"pairing_status":status,"unmatched_row_count":count}
+        for (cluster,iv,status),count in sorted(signature_summary.items())
+    ]
+    write_csv(out/"CP0103_Unmatched_Economic_Signature_Candidates.csv",signature_candidate_rows)
+    write_csv(out/"CP0103_Unique_Economic_Signature_Pairs.csv",unique_signature_pairs)
+    write_csv(out/"CP0103_Economic_Signature_Summary.csv",signature_summary_rows)
     write_csv(out/"CP0103_Date_Interval_Source_Reconciliation.csv",summary_rows)
     write_csv(out/"CP0103_Unmatched_Timestamp_Neighborhoods.csv",unmatched_rows)
     write_csv(out/"CP0103_Exact_Key_Value_Mismatches.csv",mismatch_rows)
@@ -387,6 +470,8 @@ def main():
         "source_archive_manifest_rows":len(archive_rows),"target_dates":list(TARGET_DATES),"target_intervals":list(INTERVALS),
         "date_interval_comparison_rows":len(summary_rows),"unmatched_timestamp_rows_detail":len(unmatched_rows),
         "exact_key_value_mismatch_rows":len(mismatch_rows),"close_time_only_conflicts_detailed":len(close_time_only),
+        "unmatched_economic_signature_rows":len(signature_candidate_rows),"unique_economic_signature_candidate_pairs":len(unique_signature_pairs),
+        "economic_signature_pairing_status_counts":{status:sum(r["pairing_status"]==status for r in signature_candidate_rows) for status in ("UNIQUE_ECONOMIC_SIGNATURE_CANDIDATE","AMBIGUOUS_DUPLICATE_ECONOMIC_SIGNATURE","NO_EXACT_ECONOMIC_SIGNATURE_MATCH")},
         "feb2018_off_grid_residue_groups":sum(1 for (iv,rem) in feb_offsets if rem!=0),
         "feb2018_grid_aligned_residue_groups":sum(1 for (iv,rem) in feb_offsets if rem==0),
         "feb2018_all_residue_groups":len(offset_rows),"rollup_chain_rows":len(rollup_rows),
