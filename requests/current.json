@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0105-NEAREST-TIME-ECONOMIC-DELTAS-20261015-01",
+  "request_id": "AISTS-CP0105-NEAREST-TIME-ECONOMIC-DELTAS-20261015-02",
   "task": "source_adjudication_diagnostic",
-  "purpose": "Run CP-0105 cache-only nearest-time numeric deltas for 909 unresolved rows after CP-0104 found no exact signature counterpart across the full opposite-source cluster population. No new broad archive acquisition, source selection, repair or backtest.",
-  "created_at_utc": "2026-10-15T12:50:00Z"
+  "purpose": "Rerun the cache-only CP-0105 nearest-time numeric delta diagnostic for 909 unresolved rows. No archive re-acquisition, edits, source decisions or backtest.",
+  "created_at_utc": "2026-10-15T12:55:00Z"
 }
