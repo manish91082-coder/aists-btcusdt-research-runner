@@ -1,22 +1,30 @@
 # AISTS BTCUSDT Research Runner
 
-Standalone GitHub Actions execution environment for evidence-first BTCUSDT historical research.
+Standalone GitHub Actions runner for the actual AISTS historical pipeline.
 
-- Public repository; standard GitHub-hosted runners.
-- Allowlists: `smoke`, `historical_reference_replay`.
-- Historical replay pulls only official Binance Spot monthly kline ZIPs and sibling `.CHECKSUM` objects; redirect targets are restricted to allowlisted distribution hosts and exact object paths.
-- No Binance market-data REST API, exchange secrets, live orders, signing, raw repair, source selection, or strategy promotion.
-- Only `contents: read` workflow permission; arbitrary inline Python and recurring live-price workflows removed.
-- Results separate infrastructure success from data/research status; each artifact includes request ID, commit/run identity, input hashes, archive manifest, content issues, gap events and reference metrics.
-- Reference strategies: EMA 12/26, RSI14 (30 entry/55 exit), Donchian 20/10; 4h, 1d, 1mo from 2017-08 through 2026-09; fees 10/15/20 bps and slippage 5/10/20 bps per side.
-- This is an independent baseline, not a bit-identical replay of old CP-0027, and cannot promote candidates.
+## Primary task: `legacy_pipeline`
+One run performs, in order:
+1. Revalidates official SHA-256 sidecars and downloads/reuses the official Spot monthly ZIPs for 5m, 15m, 30m, 1h, 4h, 1d and 1mo, 2017-08 through 2026-09.
+2. Runs vendored CP-0025 flagged-date discovery, official daily-reference acquisition and exact-open-time reconciliation.
+3. Runs vendored CP-0026 provisional candidate construction.
+4. Runs the original vendored CP-0027 deterministic gap-aware backtest engine.
+5. Exports a compact evidence ZIP plus run summary and file hashes. Raw ZIPs and full candidate datasets are excluded from artifacts.
 
-A change to `requests/current.json` on `main` runs the declared task. Manual runs are in Actions. Artifacts retain 7 days; verified monthly ZIPs are cached on the runner and are rechecked against freshly fetched official checksums before reuse.
+## Integrity/safety
+- Only official `data.binance.vision` public downloadable archive and `.CHECKSUM` objects, with redirect host/path allowlisting.
+- No Binance market-data REST API, credentials, orders, signing, or transaction broadcast.
+- Raw source ZIPs are never repaired or replaced in place; candidate timestamp normalization is only what the original CP-0026 code already implements.
+- Workflow permission is `contents: read`; no arbitrary inline Python or scheduled live-price jobs.
+- SHA-256/checksum pass means byte integrity only. It does not assign canonical-source authority.
+- CP-0027 is vendored unchanged; its hard-coded starting capital assumption is 10,000 USDT. This is not the user's ₹10,000 INR capital baseline, so absolute amounts require separate recalibration. Percent returns and drawdowns are the primary legacy comparison metrics.
+- A completed run is research evidence, not strategy approval. All candidates remain unpromoted pending the frozen rulebook and out-of-sample adjudication.
 
-Standard GitHub-hosted runner usage is free/unlimited for public repositories under GitHub's published terms; do not assume all artifact/cache services have unlimited retention/storage.
+## Other allowlisted tasks
+`smoke`, `historical_reference_replay`, and `monthly_derived_replay` are retained for isolated diagnostics. The primary request should use `legacy_pipeline`.
 
+## Cost/retention
+Public repository with standard GitHub-hosted runners. Artifact retention is 7 days. Monthly archive cache is versioned and source bytes are revalidated against fresh official sidecars before reuse. Raw market archives and candidate files are kept in the job workspace/cache, not the artifact.
+
+## Evidence
+Each run captures its exact commit SHA, Actions run ID, stage logs, source archive hashes/sidecars, CP-0025 reconciliation outputs, CP-0026 candidate manifest and CP-0027 backtest metrics.
 MIT License.
-
-
-## CP-0026-aligned monthly derivation
-The `monthly_derived_replay` task builds monthly bars from the hash/CRC/content-validated 1d archive series and compares them field-by-field to available official 1mo archives. It does not overwrite the direct archive or declare it canonical.
