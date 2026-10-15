@@ -1,0 +1,68 @@
+{
+  "checkpoint": "CP-0107",
+  "status": "PASS_CACHE_ONLY_EXTRACTION_AND_DURABLE_PUBLISH",
+  "run_id": 38735418645,
+  "run_url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38735418645",
+  "trigger_commit_sha": "a59b33464582474719fdaa5e2fc1115443b2ef84",
+  "evidence_publish_commit_sha": "b35953da0d12a84d52429a9dd064842900e0107e",
+  "runner_status": "PASS",
+  "runner_checks": "11/11",
+  "extraction_checks": "9/9",
+  "counts": {
+    "scoped_source_objects_verified": 16,
+    "monthly_archives": 4,
+    "daily_archives": 12,
+    "off_grid_monthly_rows": 450,
+    "daily_coverage_rows": 1167,
+    "off_grid_segments": 10,
+    "date_interval_coverage_rows": 12,
+    "exact_daily_open_key_counterparts": 0
+  },
+  "outputs": {
+    "CP0107_Feb2018_OffGrid_RawRows.csv": {
+      "sha256": "379b1b9b258eed3fa55dfc95238e43e849300b14b85dd7643c0034befd841d64",
+      "bytes": 367591,
+      "rows": 450
+    },
+    "CP0107_Feb2018_DailyCoverage_RawRows.csv": {
+      "sha256": "5dd5f5b314ff8518f06f6370db5502c79c3fd2a110653b05822921ff2b5dbcde",
+      "bytes": 638834,
+      "rows": 1167
+    },
+    "CP0107_Feb2018_SegmentCoverage.csv": {
+      "sha256": "652562ecd179896e0ecd48f2d434be3c5b81bf139d2ac4098062e43f38caf200",
+      "bytes": 5364,
+      "rows": 12
+    },
+    "CP0107_Feb2018_SourceVerification.csv": {
+      "sha256": "3692b0dc2378e5115326834a2b09a625341aa245396a4cca8ac1670474ae19b5",
+      "bytes": 8050,
+      "rows": 16
+    },
+    "CP0107_Feb2018_Extraction_Summary.json": {
+      "sha256": "af75c6ce537cc3b879b51c968c679f503e1276d942c83d1493af4af9b0f0e435",
+      "bytes": 3414
+    }
+  },
+  "monthly_sidecar_qualification": "Monthly ZIP hashes match the official SHA-256 recorded in CP-0106 manifest. Monthly .CHECKSUM sidecar bytes were not re-fetched/rehashed; the sidecar hashes are parent-manifest references. The 12 daily ZIPs and cached sidecars were rehashed/content matched.",
+  "separate_official_daily_acquisition_queue": "0/16 remains open; not the same object set as this CP-0107 16/16 source verification.",
+  "source_authority": "NOT_ASSIGNED",
+  "source_cases_closed": 0,
+  "canonical_source_selected": false,
+  "raw_archives_modified": false,
+  "timestamps_shifted_or_rounded": false,
+  "synthetic_candles_created": false,
+  "backtest_rerun": false,
+  "strategy_promoted": false,
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "next_action": "Locate exact CP-0040 rulebook and CP-0041 authoritative disposition ledger; then perform row-by-row adjudication using run-scoped evidence."
+}
