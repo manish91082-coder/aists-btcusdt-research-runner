@@ -62,3 +62,12 @@ G0 `BLOCKED_GLOBAL`; G1 `PARTIAL_SYSTEM_LEVEL`; G2 `FAIL_CURRENT_23_CANDIDATES`;
 
 - Corrected mapped daily counts: 448 rows have a mapped official daily target present; 2 targets are absent. Of the 448 present targets, 448 have at least one non-open-field difference, including volume/quote volume/trade metrics; 442 rows specifically differ in open price; 447 differ in close_time; all 448 differ in volume. The previous summary's `442` mapped-field aggregate was mislabeled/ambiguous and is superseded by these field-specific counts.
 - This does not change disposition: all 450 monthly off-grid records remain QUARANTINE_REVIEW_REQUIRED, root cause OPEN, canonical source NONE.
+
+
+## Superseding final overlay run and metric correction — CP-0107 run 38742035787
+
+- Final Actions run and publisher: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38742035787; runner PASS 11/11, disposition checks PASS 6/6, publisher hash/row-count validation PASS.
+- Durable row-level overlay: `evidence/source_adjudication/CP0107_Run_38742035787/CP0107_Feb2018_Disposition_Overlay.csv`, 450 rows, 1,036,405 bytes, SHA-256 `3fa8cd5e17718dfe3069aab0b1d55fbf990723f1865c77412a957dd63f898a0f`.
+- Correct field-specific comparison: 448 mapped official daily targets exist, 2 are absent. All 448 present targets have non-open-field differences; `open` differs in 442 rows, `close_time` in 447, and `volume` in 448. Zero exact daily open-key counterparts exist for the 450 monthly off-grid rows.
+- This supersedes the earlier CP-0107 generated-summary phrase that said 442 mapped rows had any non-open-field difference and 6 matched those fields. That earlier metric was incorrect; the row-level overlay and the corrected summary are authoritative.
+- Frozen CP-0040 G0 disposition: all 450 rows stay `QUARANTINE_REVIEW_REQUIRED`; do not repair, shift, round, merge, replace or delete. Root cause OPEN, canonical source NONE, source cases closed 0.
