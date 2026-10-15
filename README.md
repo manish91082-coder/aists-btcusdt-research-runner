@@ -21,7 +21,7 @@ One run performs, in order:
 - A completed run is research evidence, not strategy approval. All candidates remain unpromoted pending the frozen rulebook and out-of-sample adjudication.
 
 ## Other allowlisted tasks
-`smoke`, `historical_reference_replay`, and `monthly_derived_replay` are retained for isolated diagnostics. The primary request should use `legacy_pipeline`.
+`smoke`, `historical_reference_replay`, and `monthly_derived_replay` are retained for isolated diagnostics. The primary request should use `legacy_pipeline`. The cache-only `source_adjudication_diagnostic` follows a completed run to inspect frozen conflict clusters without repeating acquisition or backtesting.
 
 ## Cost/retention
 Public repository with standard GitHub-hosted runners. Artifact retention is 7 days. Monthly archive cache is versioned and source bytes are revalidated against fresh official sidecars before reuse. Raw market archives and candidate files are kept in the job workspace/cache, not the artifact.
