@@ -19,6 +19,7 @@ on:
           - source_adjudication_diagnostic
           - cp0107_feb2018_raw_row_extract
           - cp0107_feb2018_disposition_overlay
+          - cp0107_dec2020_child_window_audit
         default: legacy_pipeline
 
 permissions:
@@ -88,7 +89,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ]; then
+          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ]; then
             echo "CP-0107 cache-only extraction uses Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -123,7 +124,7 @@ jobs:
           fi
 
   publish_cp0107_evidence:
-    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay')
+    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit')
     needs: run
     runs-on: ubuntu-latest
     permissions:
@@ -198,6 +199,19 @@ jobs:
               digest = hashlib.sha256(overlay_path.read_bytes()).hexdigest()
               if digest != overlay_summary.get("csv_sha256"):
                   raise SystemExit("Disposition overlay SHA-256 mismatch")
+          child_summary_path = folder / "CP0107_Dec2020_ChildWindow_Audit_Summary.json"
+          if child_summary_path.is_file():
+              child_summary = json.loads(child_summary_path.read_text(encoding="utf-8"))
+              if child_summary.get("status") != "PASS_CACHE_ONLY_DEC2020_CHILD_AUDIT":
+                  raise SystemExit("December child audit status not PASS")
+              if child_summary.get("source_archives_verified") != 2 or child_summary.get("review_rollups_checked") != 9:
+                  raise SystemExit("December child audit archive/rollup count mismatch")
+              for name, recorded in child_summary.get("outputs", {}).items():
+                  path = folder / name
+                  if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != recorded.get("sha256") or path.stat().st_size != recorded.get("bytes"):
+                      raise SystemExit("December output hash/size mismatch: " + name)
+              if len(rows("CP0107_Dec2020_5m_ChildCoverage.csv")) != 60 or len(rows("CP0107_Dec2020_ReviewRollup_ChildCoverage.csv")) != 9 or len(rows("CP0107_Dec2020_5m_SourceVerification.csv")) != 2:
+                  raise SystemExit("December child audit CSV row-count mismatch")
           if len(offgrid) != 450 or len(daily) != 1167 or len(source) != 16 or len(segments) != 12:
               raise SystemExit(f"Row-count mismatch: offgrid={len(offgrid)} daily={len(daily)} source={len(source)} coverage={len(segments)}")
           if any(x.get("status") != "PASS" for x in source):
