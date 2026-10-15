@@ -353,8 +353,8 @@ jobs:
               scope = delta_summary.get("scope", {})
               if scope.get("delta_rows") != 450 or scope.get("proposed_quarantine_dispositions") != 450 or scope.get("worklist_rows_left_unchanged") != 546:
                   raise SystemExit("Disposition delta row scope mismatch")
-              source = delta_summary.get("source_worklist", {})
-              if source.get("rows") != 996 or source.get("sha256") != "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f":
+              delta_source_manifest = delta_summary.get("source_worklist", {})
+              if delta_source_manifest.get("rows") != 996 or delta_source_manifest.get("sha256") != "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f":
                   raise SystemExit("Frozen CP-0041 996-row source worklist reference mismatch")
               decision = delta_summary.get("semantics", {})
               if decision.get("original_996_row_worklist_modified") is not False or decision.get("other_546_rows_modified") is not False or decision.get("source_authority") != "NONE" or decision.get("canonical_source_selected") is not False or decision.get("source_cases_closed") != 0:
