@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0107-CP0041-AGGREGATION-BUCKET-OVERLAY-20261015-01",
+  "request_id": "AISTS-CP0107-CP0041-AGGREGATION-BUCKET-OVERLAY-20261015-02",
   "task": "cp0107_cp0041_aggregation_bucket_overlay_audit",
-  "purpose": "Audit 11 frozen CP-0041 buckets against committed daily/monthly raw rows by exact open-time key; hash-check inputs and publish review-only overlay. No downloads/backtest.",
-  "created_at_utc": "2026-10-15T17:25:00Z"
+  "purpose": "Retry 11-bucket daily/monthly exact-key roll-up audit after close-time delta fix. Reuse committed rows only, publish hash-checked review overlay. No downloads/backtest.",
+  "created_at_utc": "2026-10-15T17:27:00Z"
 }
