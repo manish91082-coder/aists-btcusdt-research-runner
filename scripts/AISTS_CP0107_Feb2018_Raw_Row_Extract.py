@@ -171,7 +171,7 @@ def main():
           "shared_open_keys":len(common),"monthly_only_open_keys":len(mk-dk),"daily_only_open_keys":len(dk-mk),
           "monthly_off_grid_keys":sum(1 for x in mk-dk if x%step!=0),"daily_off_grid_keys":len(do),
           "exact_open_key_matches_for_off_grid_rows":sum(1 for x in mo if x["open_time_ms"] in dk),
-          "floor_grid_daily_key_present_rows":sum(1 for x in mo if ((x["open_time_ms"]//step)*step) in dk)),
+          "floor_grid_daily_key_present_rows":sum(1 for x in mo if ((x["open_time_ms"]//step)*step) in dk),
           "ceil_grid_daily_key_present_rows":sum(1 for x in mo if (((x["open_time_ms"]//step)*step+step) in dk)),
           "monthly_duplicate_open_time_rows":sum(v-1 for v in mc.values() if v>1),
           "daily_duplicate_open_time_rows":sum(v-1 for v in dc.values() if v>1),"segment_status":state})
