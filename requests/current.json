@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0104-ALL-SOURCE-SIGNATURES-20261015-01",
+  "request_id": "AISTS-CP0104-ALL-SOURCE-SIGNATURES-20261015-02",
   "task": "source_adjudication_diagnostic",
-  "purpose": "Extend CP-0103 by searching every unmatched row's OHLC, OHLC+base-volume and full-economic signature against all opposite-source rows in each target cluster, not just opposite unmatched rows. No source selection, edits, or backtest.",
-  "created_at_utc": "2026-10-15T12:40:00Z"
+  "purpose": "Retry all-opposite-source-population signature search after fixing CP-0104 summary gate variable initialization; use existing verified caches only. No new broad acquisition or backtest.",
+  "created_at_utc": "2026-10-15T12:43:00Z"
 }
