@@ -61,13 +61,20 @@ def main():
  ap.add_argument("--period-summary",required=True);ap.add_argument("--archive-manifest",required=True)
  ap.add_argument("--output-dir",required=True)
  args=ap.parse_args();out=Path(args.output_dir).resolve();out.mkdir(parents=True,exist_ok=True)
+ source_dir=ROOT/"evidence/source_adjudication/CP0107_Run_38775666304"
+ for source_file in sorted(source_dir.iterdir()):
+  if source_file.is_file():
+   target=out/source_file.name
+   if source_file.resolve()!=target.resolve():
+    import shutil
+    shutil.copy2(source_file,target)
  snapshot=ROOT/args.bucket_snapshot;rawpath=ROOT/args.row_comparison;periodpath=ROOT/args.period_summary;archivepath=ROOT/args.archive_manifest
  for p in (snapshot,rawpath,periodpath,archivepath):
   if not p.is_file():raise FileNotFoundError("Required committed evidence absent: "+str(p))
  checks=[]
  def check(name,ok,detail):checks.append({"check_id":name,"status":"PASS" if ok else "FAIL","detail":str(detail)})
  check("cp0041_bucket_snapshot_blob",git_blob(args.bucket_snapshot)==BUCKET_BLOB,git_blob(args.bucket_snapshot))
- check("cp0041_bucket_snapshot_provenance",sha_file(snapshot)==sha_file(snapshot) and all(x.get("source_package_sha256")==PACKAGE_SHA and x.get("source_member_sha256")==BUCKET_MEMBER_SHA and x.get("source_member_name")==BUCKET_MEMBER for x in read_csv(snapshot)),"source package/member hashes are recorded")
+ check("cp0041_bucket_snapshot_provenance",all(x.get("source_package_sha256")==PACKAGE_SHA and x.get("source_member_sha256")==BUCKET_MEMBER_SHA and x.get("source_member_name")==BUCKET_MEMBER and len(x.get("source_record_canonical_sha256",""))==64 for x in read_csv(snapshot)),"source package/member/record hashes are recorded")
  check("row_comparison_blob_and_sha",git_blob(RAW_REL)==RAW_BLOB and sha_file(rawpath)==RAW_SHA and rawpath.stat().st_size==1509065,"committed 1,992-row daily/monthly raw comparison")
  check("period_summary_blob_and_sha",git_blob(PERIOD_REL)==PERIOD_BLOB and sha_file(periodpath)==PERIOD_SHA and periodpath.stat().st_size==7855,"committed 16-period row summary")
  check("daily_archive_manifest_blob_and_sha",git_blob(ARCHIVE_REL)==ARCHIVE_BLOB and sha_file(archivepath)==ARCHIVE_SHA and archivepath.stat().st_size==14055,"committed 16-item official ZIP/.CHECKSUM manifest")
@@ -90,7 +97,7 @@ def main():
   count=parent_step//child_step;child_keys=[start+i*child_step for i in range(count)]
   source_results={}
   for source,prefix in (("MONTHLY","monthly_"),("DAILY","daily_")):
-   item_rows=[];child_rows=[];duplicate_keys=[]
+   item_rows=[];child_rows=[];duplicate_keys=[];parent_row=None
    expected=[(child_iv,k,"CHILD") for k in child_keys]+[(parent_iv,start,"PARENT")]
    for iv,key,role in expected:
     candidates=bykey.get((iv,date,key),[])
