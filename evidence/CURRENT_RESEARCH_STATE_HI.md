@@ -95,3 +95,15 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 
 - Corrected crosswalk counts from actual 450-row CSV: 448 mapped daily targets present, 2 absent; all 448 present rows have at least one non-open-field difference; 442 rows differ in the open-price field; 447 in close_time; 448 in volume. The former summary's generic `442 mapped-field differences` label was ambiguous/mislabeled and is superseded by field-specific counts.
 - Evidence reference remains crosswalk CSV SHA-256 `5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b`. This correction does not alter any raw bytes or disposition: 450/450 remain QUARANTINE_REVIEW_REQUIRED.
+
+
+## Final CP-0107 February quarantine overlay — run 38742035787 (2026-10-15)
+
+- Actions run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38742035787. Runner PASS 11/11; overlay research task PASS 6/6; separate publisher PASS `PASS_HASH_AND_ROW_COUNT_VALIDATED`.
+- Durable output folder: `evidence/source_adjudication/CP0107_Run_38742035787/`.
+- Row-level file: `CP0107_Feb2018_Disposition_Overlay.csv`, 450 data rows, 1,036,405 bytes, SHA-256 `3fa8cd5e17718dfe3069aab0b1d55fbf990723f1865c77412a957dd63f898a0f`. Persistent manifest independently records the same SHA-256 and byte count.
+- CP-0041 crosswalk result is exact for all 450 monthly rows: interval/open key, monthly source archive SHA-256 and all 12 raw kline values match the frozen CP-0041 unmatched ledger/crosswalk. Crosswalk CSV SHA-256 `5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b`; CP-0040 rulebook SHA-256 `5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0`.
+- Final mapped-daily counts: 448 target rows present and 2 absent. All 448 present targets differ in at least one non-open field; 442 differ in `open`, 447 in `close_time`, and all 448 in `volume`. No exact daily open-key counterpart exists for the 450 original off-grid timestamps.
+- Metric correction audit: earlier successful run 38741774289 had a summary wording/count defect (it reported 442 as the total mapped non-open differences and claimed 6 records matched on those fields). Run 38742035787 and its persistent summary supersede that statement: row-level evidence shows 448 non-open-field-difference rows; 442 is specifically the `open`-field-difference count. Earlier run and failure history remain preserved, not erased.
+- All 450 rows remain `QUARANTINE_REVIEW_REQUIRED`; root cause OPEN, canonical source NONE, source cases closed 0. No archive bytes changed, no timestamps shifted/rounded, no synthetic candles, no backtest, no strategy promotion. Frozen gates remain unchanged.
+- Next bounded checkpoint: exact field-level disposition for the 8 close-time-only conflicts, then December-2020 row/roll-up disposition. No acquisition of the 770 archive set or baseline backtest rerun.
