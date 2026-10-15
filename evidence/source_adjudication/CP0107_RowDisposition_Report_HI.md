@@ -48,3 +48,11 @@ G0 `BLOCKED_GLOBAL`; G1 `PARTIAL_SYSTEM_LEVEL`; G2 `FAIL_CURRENT_23_CANDIDATES`;
 - Hash rule: monthly ZIPs are checked against the official hash recorded in CP-0106’s frozen manifest; monthly sidecar bytes were not downloaded/re-hashed in this cache-only run. The daily ZIP + local .CHECKSUM bytes were re-hashed and content-matched. This distinction is in the extraction report and machine-readable summary.
 - Supersession/correction: the earlier provisional `CP0107_Feb2018_OffGrid_RowDisposition.csv` has hash cells which were not fully validated and do not match all run-verified ZIP hashes. Do not use that draft’s hash columns for provenance decisions. Run-scoped source verification and raw-row outputs are the authoritative evidence for this extraction; the old file remains unchanged as historical draft.
 - The frozen CP-0040 policy and authoritative CP-0041 disposition ledger have not yet been located as exact standalone repo files. Therefore CP-0107 closes no source-authority cases; all source decisions remain OPEN/REVIEW_REQUIRED pending the authoritative ledger and policy.
+
+
+## CP-0107 / CP-0041 frozen-rulebook crosswalk addendum
+
+- Authority source: CP-0041 package SHA-256 `23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc`, CRC PASS, 19 members, embedded payloads 18/18 PASS. Frozen CP-0040 rulebook SHA-256 `5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0`.
+- Exact crosswalk CSV: 450 rows, SHA-256 `5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b`; interval/open-time keys 450/450; monthly archive SHA match 450/450; all 12 raw fields match the CP-0041 monthly ledger 450/450; zero hash/value/key mismatches.
+- Daily mapping diagnostic: 448 mapped daily keys present in CP-0107 official coverage, 2 still absent; 442 mapped rows have field differences. CP-0041's earlier candidate/override fixed-shift diagnostic listed 8 without exact counterparts; six now exist in CP-0107 direct daily coverage, two remain absent at the 2018-02-10 06:00 UTC targets for 5m and 15m. This does not establish why the economic fields differ.
+- Frozen G0 interpretation: retain all 450 as `QUARANTINE_REVIEW_REQUIRED`; no rounding/shifting/merge/replacement/deletion, root cause OPEN, source NONE, zero cases closed, no backtest/promotion. Required source-time/provenance semantics evidence is still absent.

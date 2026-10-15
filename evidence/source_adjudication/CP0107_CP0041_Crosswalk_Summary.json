@@ -1,0 +1,79 @@
+{
+  "checkpoint": "CP-0107",
+  "status": "PASS_EXACT_CP0041_CROSSWALK_WITH_OPEN_SOURCE_DISPOSITION",
+  "source_package": {
+    "file": "AISTS_CP0041_Row_Level_Evidence_Disposition_Pack.zip",
+    "sha256": "23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc",
+    "zip_crc": "PASS",
+    "member_count": 19,
+    "embedded_payload_hashes": "18/18 PASS",
+    "rulebook": "AISTS_CP0040_Strategy_Acceptance_Rulebook_HI.md",
+    "rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0",
+    "unmatched_ledger": "AISTS_CP0041_Unmatched_Row_Disposition.csv",
+    "unmatched_ledger_sha256": "11eb82994d5a17469eefee9f14d360537d5871c19d303ed0466c5df4f6c34021"
+  },
+  "crosswalk": {
+    "csv_path": "local artifact CP0107_CP0041_Row_Crosswalk.csv",
+    "csv_sha256": "5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b",
+    "bytes": 452986,
+    "row_count": 450,
+    "shared_keys": 450,
+    "new_only_keys": 0,
+    "prior_only_keys": 0,
+    "monthly_archive_hash_matches": 450,
+    "twelve_raw_fields_exact_matches": 450,
+    "raw_value_mismatches": 0,
+    "source_hash_mismatches": 0
+  },
+  "mapped_daily_diagnostics": {
+    "mapped_daily_rows_present_in_CP0107_coverage": 448,
+    "mapped_daily_rows_absent_in_CP0107_coverage": 2,
+    "raw_mapped_field_value_differences": 442,
+    "CP0041_fixed_shift_diagnostics_no_daily_row_at_fixed_shift": 8,
+    "of_those_8_found_in_CP0107_official_daily_coverage": 6,
+    "of_those_8_still_absent_in_CP0107_daily_coverage": 2,
+    "still_absent_keys": [
+      {
+        "interval": "5m",
+        "monthly_open_time_utc": "2018-02-10T05:58:14.789Z",
+        "diagnostic_shift_ms": 105211,
+        "mapped_daily_open_time_utc": "2018-02-10T06:00:00Z"
+      },
+      {
+        "interval": "15m",
+        "monthly_open_time_utc": "2018-02-10T05:58:14.789Z",
+        "diagnostic_shift_ms": 105211,
+        "mapped_daily_open_time_utc": "2018-02-10T06:00:00Z"
+      }
+    ],
+    "diagnostic_shift_ms_counts": {
+      "105211": 407,
+      "1905211": 43
+    },
+    "pattern_789000_rows": 450
+  },
+  "disposition": {
+    "all_450": "QUARANTINE_REVIEW_REQUIRED",
+    "root_cause": "OPEN",
+    "canonical_source": "NONE",
+    "source_cases_closed": 0,
+    "timestamp_shift_or_rounding": false,
+    "merge_replace_delete": false,
+    "synthetic_candles_created": false,
+    "raw_archives_modified": false,
+    "backtest_rerun": false,
+    "strategy_promoted": false
+  },
+  "critical_qualification": "The 450 monthly records match CP-0041 exactly by interval/open-time key, exact monthly archive SHA-256, and all 12 raw fields. The fixed timestamp offsets remain diagnostics only: mapped daily values differ, and nearest/fixed-shift timestamps do not prove source equivalence. In the original CP-0041 candidate/override context, 8 rows had no exact fixed-shift counterpart; in CP-0107's reverified official daily archives, 6 of those mapped keys are now present and 2 (5m/15m on 2018-02-10 05:58:14.789Z) remain absent. All 450 stay quarantined.",
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "next_action": "Use this frozen-rulebook-backed crosswalk to update only the 450 row dispositions in the broader 996-row CP-0041 worklist; do not close any row without required original time-semantics/provenance evidence."
+}
