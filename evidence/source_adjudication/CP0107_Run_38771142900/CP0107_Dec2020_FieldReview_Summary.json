@@ -1,0 +1,302 @@
+{
+  "checkpoint": "CP-0107",
+  "checks": [
+    {
+      "check_id": "preserved_feb2018_baseline",
+      "detail": "PASS_CACHE_ONLY_EXTRACTION",
+      "status": "PASS"
+    },
+    {
+      "check_id": "preserved_dec2020_child_audit",
+      "detail": "PASS_CACHE_ONLY_DEC2020_CHILD_AUDIT",
+      "status": "PASS"
+    },
+    {
+      "check_id": "hash_and_copy_CP0107_Dec2020_Shared_5m_RawField_Comparison.csv",
+      "detail": "530d120984e88d37a7993c80151482d8b75677bbec9d04fa31a927373a55aca0",
+      "status": "PASS"
+    },
+    {
+      "check_id": "hash_and_copy_CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv",
+      "detail": "b2aa529e3d1e6bd03717507be650b660e712826b1994f9c2619bc47064af509d",
+      "status": "PASS"
+    },
+    {
+      "check_id": "hash_and_copy_CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv",
+      "detail": "cd659b18d996a9ea4d86dba50e07c8c116fc57188f77d5cda07eb9b261ef4110",
+      "status": "PASS"
+    },
+    {
+      "check_id": "shared_open_key_pair_counts",
+      "detail": "total=16 exact=9 divergent=7",
+      "status": "PASS"
+    },
+    {
+      "check_id": "close_time_fingerprint_rows",
+      "detail": "8 rows with exact token",
+      "status": "PASS"
+    },
+    {
+      "check_id": "missing_child_key_counts",
+      "detail": "monthly=10 daily=14",
+      "status": "PASS"
+    },
+    {
+      "check_id": "removed_misleading_boundary_label",
+      "detail": "column absent",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 9,
+  "checks_total": 9,
+  "classification_status": "PASS_EVIDENCE_CLASSIFICATION_NOT_ROOT_CAUSE",
+  "close_time_fingerprint": {
+    "daily_nonflat_rows": 4,
+    "expected_boundary_mismatches": 8,
+    "interpretation": "A repeated close_time across different intervals and open-time keys is an observed fingerprint only. It does not show whether an upstream exporter, archive producer, or other process caused it.",
+    "intervals": [
+      "5m",
+      "15m",
+      "30m",
+      "1h"
+    ],
+    "monthly_flat_zero_rows": 4,
+    "row_count": 8,
+    "sources": {
+      "DAILY": 4,
+      "MONTHLY": 4
+    },
+    "token": "1608558440521",
+    "utc": "2020-12-21T13:47:20.521Z"
+  },
+  "constraints": {
+    "backtest_rerun": false,
+    "canonical_source_selected": false,
+    "external_network_used": false,
+    "market_data_rest_api_used": false,
+    "raw_archives_modified": false,
+    "root_cause": "OPEN_NOT_ESTABLISHED",
+    "source_cases_closed": 0,
+    "strategy_promoted": false,
+    "synthetic_candles_created": false,
+    "timestamp_shift_or_rounding": false
+  },
+  "decisions": {
+    "all_flagged_rows": "OPEN_REVIEW_REQUIRED",
+    "backtest_rerun": false,
+    "canonical_source": "NONE",
+    "cases_closed": 0,
+    "missing_child_aggregates": "UNAVAILABLE_REVIEW_REQUIRED",
+    "raw_archives_modified": false,
+    "root_cause": "OPEN_NOT_ESTABLISHED",
+    "strategy_promoted": false,
+    "synthetic_candles_created": false,
+    "timestamp_shifted_or_rounded": false
+  },
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "generated_at_utc": "2026-10-15T16:41:52.951952+00:00",
+  "input_source_hashes": {
+    "DAILY": {
+      "checksum_status": "LOCAL_SIDECAR_AND_ZIP_MATCH_PASS",
+      "sidecar_sha256_recomputed": "a4aabf08bf9c231daf643071dd531f1f814a7fbdea86b4e8c38a7ce795f13962",
+      "sidecar_sha256_recorded": "a4aabf08bf9c231daf643071dd531f1f814a7fbdea86b4e8c38a7ce795f13962",
+      "zip_sha256": "b21d0cdd4d29b8a8cfbfbaafd9f926e12989233290daeb0f4977eefb6489525b"
+    },
+    "MONTHLY": {
+      "checksum_status": "RECORDED_PARENT_MANIFEST_REFERENCE_ONLY",
+      "sidecar_sha256_recomputed": "",
+      "sidecar_sha256_recorded": "0db24ee3bb2a29cfd9971949837eab439c3226666bb2b00c458aaa16eb249667",
+      "zip_sha256": "c169b2a72cc188c8089abc9f3c6f9699e4759a5e7d0d7a7c69d9117b0da68049"
+    }
+  },
+  "inputs": {
+    "git_blob_shas": {
+      "actual_rows": "c8fa466be7130b298d1487b4d840231d304cc1a9",
+      "child_key_coverage": "4093ee1cee6c6d38bebe4a40fa505cdcca4a6bef",
+      "child_rollup_coverage": "3717af508eb2d5f1f7e91884d89bb11521672cdb",
+      "context_disposition": "ad9337db584534063a720cf4dd99273f77e739e4",
+      "current_state": "87c2304fac0effa9ce2e2ff189a59680e963610d",
+      "main_row_report": "799b6700abf60cee2099705b4e0e4a82ccfdc324",
+      "parent_rollup": "31f886f7c233237cf4b18e75026d73f4d50e30a8",
+      "source_verification": "a69e93038cec7a6e2de8ae0f0628c601838fa16e"
+    },
+    "paths": [
+      "evidence/CURRENT_RESEARCH_STATE_HI.md",
+      "evidence/source_adjudication/CP0107_RowDisposition_Report_HI.md",
+      "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_5m_ActualRows_Window.csv",
+      "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_5m_ChildCoverage.csv",
+      "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_ReviewRollup_ChildCoverage.csv",
+      "evidence/source_adjudication/CP0107_Dec2020_RowDisposition.csv",
+      "evidence/source_adjudication/CP0107_Dec2020_Rollup_Disposition.csv",
+      "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_5m_SourceVerification.csv"
+    ]
+  },
+  "inputs_verified_now": {
+    "evidence/source_adjudication/CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv": {
+      "bytes": 5671,
+      "git_blob_sha1": "f16e44d15cdec9bf47d974acd85e54d2d8361e7c",
+      "rows": 8,
+      "sha256": "b2aa529e3d1e6bd03717507be650b660e712826b1994f9c2619bc47064af509d"
+    },
+    "evidence/source_adjudication/CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv": {
+      "bytes": 9222,
+      "git_blob_sha1": "4ce746db8ae8f9e6f1622e4c0bae17bf975348c1",
+      "rows": 24,
+      "sha256": "cd659b18d996a9ea4d86dba50e07c8c116fc57188f77d5cda07eb9b261ef4110"
+    },
+    "evidence/source_adjudication/CP0107_Dec2020_Rollup_Disposition.csv": {
+      "bytes": 23974,
+      "git_blob_sha1": "31f886f7c233237cf4b18e75026d73f4d50e30a8",
+      "rows": 34,
+      "sha256": "62172d46c4e9a23b76def8b02d5fc72a951d1d2644088b6f55cd40e50f8bad28"
+    },
+    "evidence/source_adjudication/CP0107_Dec2020_RowDisposition.csv": {
+      "bytes": 47739,
+      "git_blob_sha1": "ad9337db584534063a720cf4dd99273f77e739e4",
+      "rows": 59,
+      "sha256": "58bd1a4bbba5c4c2a77bcb04c696ddc5cf98b581d0cf6f60dbcd96883b273a41"
+    },
+    "evidence/source_adjudication/CP0107_Dec2020_Shared_5m_RawField_Comparison.csv": {
+      "bytes": 12019,
+      "git_blob_sha1": "92c9e97f5c4baea175f89e7b36493a18e0934829",
+      "rows": 16,
+      "sha256": "530d120984e88d37a7993c80151482d8b75677bbec9d04fa31a927373a55aca0"
+    },
+    "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_5m_ActualRows_Window.csv": {
+      "bytes": 13302,
+      "git_blob_sha1": "c8fa466be7130b298d1487b4d840231d304cc1a9",
+      "rows": 36,
+      "sha256": "f397756fb22a267db0e9d2fe96a7bcadab8f4d29c8cd24b1c9397f3bbb89ce37"
+    },
+    "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_5m_ChildCoverage.csv": {
+      "bytes": 13925,
+      "git_blob_sha1": "4093ee1cee6c6d38bebe4a40fa505cdcca4a6bef",
+      "rows": 60,
+      "sha256": "dcfecaff37f53a017304603d696f6f84c35cdef60941abb59ad8dfa0936f8dc4"
+    },
+    "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_5m_SourceVerification.csv": {
+      "bytes": 1150,
+      "git_blob_sha1": "a69e93038cec7a6e2de8ae0f0628c601838fa16e",
+      "rows": 2,
+      "sha256": "daab391c7680ca4e468ff344ffacbcad367be77958aea56519245ff1d207e7d7"
+    },
+    "evidence/source_adjudication/CP0107_Run_38756665405/CP0107_Dec2020_ReviewRollup_ChildCoverage.csv": {
+      "bytes": 6237,
+      "git_blob_sha1": "3717af508eb2d5f1f7e91884d89bb11521672cdb",
+      "rows": 9,
+      "sha256": "5aed8326dd38921323e6ed6cf6590ec6dd5f73279187f522e4e0509c4dcee9ca"
+    }
+  },
+  "integrity_note": "Derived CSV SHA-256 values recomputed by Python hashlib inside GitHub Actions. Git blob SHA-1, byte count, row count and SHA-256 are recorded together.",
+  "missing_child_keys": {
+    "all_9_review_rollups_still_missing": true,
+    "daily_count": 14,
+    "meaning": "Exact open-time keys were not found in the SHA-verified archived ZIP bytes. Absence is proven for these bytes; cause and completeness outside these two archive objects are not proven.",
+    "monthly_count": 10,
+    "times_daily": [
+      "2020-12-21T13:50:00.000Z",
+      "2020-12-21T13:55:00.000Z",
+      "2020-12-21T14:00:00.000Z",
+      "2020-12-21T14:05:00.000Z",
+      "2020-12-21T14:10:00.000Z",
+      "2020-12-21T14:15:00.000Z",
+      "2020-12-21T14:20:00.000Z",
+      "2020-12-21T14:25:00.000Z",
+      "2020-12-21T14:30:00.000Z",
+      "2020-12-21T14:35:00.000Z",
+      "2020-12-21T14:40:00.000Z",
+      "2020-12-21T14:45:00.000Z",
+      "2020-12-21T14:50:00.000Z",
+      "2020-12-21T14:55:00.000Z"
+    ],
+    "times_monthly": [
+      "2020-12-21T14:10:00.000Z",
+      "2020-12-21T14:15:00.000Z",
+      "2020-12-21T14:20:00.000Z",
+      "2020-12-21T14:25:00.000Z",
+      "2020-12-21T14:30:00.000Z",
+      "2020-12-21T14:35:00.000Z",
+      "2020-12-21T14:40:00.000Z",
+      "2020-12-21T14:45:00.000Z",
+      "2020-12-21T14:50:00.000Z",
+      "2020-12-21T14:55:00.000Z"
+    ],
+    "total_source_key_absences": 24
+  },
+  "note": "This is an evidence classification and reproducible row comparison derived from committed CSVs; no external archive retrieval and no GitHub Actions job was run for this comparison.",
+  "outputs": {
+    "CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv": {
+      "bytes": 5671,
+      "git_blob_sha1": "f16e44d15cdec9bf47d974acd85e54d2d8361e7c",
+      "path": "evidence/source_adjudication/CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv",
+      "rows": 8,
+      "sha256": "b2aa529e3d1e6bd03717507be650b660e712826b1994f9c2619bc47064af509d"
+    },
+    "CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv": {
+      "bytes": 9222,
+      "git_blob_sha1": "4ce746db8ae8f9e6f1622e4c0bae17bf975348c1",
+      "path": "evidence/source_adjudication/CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv",
+      "rows": 24,
+      "sha256": "cd659b18d996a9ea4d86dba50e07c8c116fc57188f77d5cda07eb9b261ef4110"
+    },
+    "CP0107_Dec2020_Shared_5m_RawField_Comparison.csv": {
+      "bytes": 12019,
+      "git_blob_sha1": "92c9e97f5c4baea175f89e7b36493a18e0934829",
+      "path": "evidence/source_adjudication/CP0107_Dec2020_Shared_5m_RawField_Comparison.csv",
+      "rows": 16,
+      "sha256": "530d120984e88d37a7993c80151482d8b75677bbec9d04fa31a927373a55aca0"
+    }
+  },
+  "provenance_required": [
+    "Official source-side archive publication/version history or manifest provenance for each archive.",
+    "Recomputed .CHECKSUM bytes for monthly BTCUSDT-5m-2020-12.zip from the official archive location, if allowed by the acquisition policy; current conclusion only uses the frozen official SHA reference and ZIP CRC.",
+    "Documented reason for the shared close-time token across incompatible interval boundaries.",
+    "Proof whether daily/monthly files are independent exports or share an upstream pipeline/version.",
+    "Missing-key and close-time disposition must remain open until a source authority can be defended under CP-0040."
+  ],
+  "shared_5m_monthly_daily_rows": {
+    "all_source_rows_preserved": true,
+    "exact_raw_pairs": 9,
+    "field_difference_row_counts": {
+      "close": 7,
+      "close_time": 1,
+      "high": 7,
+      "low": 6,
+      "number_of_trades": 7,
+      "open": 6,
+      "quote_asset_volume": 7,
+      "taker_buy_base_asset_volume": 7,
+      "taker_buy_quote_asset_volume": 7,
+      "volume": 7
+    },
+    "key_result": "2020-12-21T13:15:00Z is the first observed monthly/daily economic-field divergence in this shared range; six subsequent common keys 13:20–13:45 show monthly flat 22646.53 and zero trade metrics while daily rows retain nonzero market data. The common 13:45 daily row additionally carries the close-time fingerprint.",
+    "mismatch_open_times_utc": [
+      "2020-12-21T13:15:00.000Z",
+      "2020-12-21T13:20:00.000Z",
+      "2020-12-21T13:25:00.000Z",
+      "2020-12-21T13:30:00.000Z",
+      "2020-12-21T13:35:00.000Z",
+      "2020-12-21T13:40:00.000Z",
+      "2020-12-21T13:45:00.000Z"
+    ],
+    "rows_common_key": 16,
+    "rows_with_any_raw_field_difference": 7,
+    "source_winner_selected": false
+  },
+  "status": "PASS_FIELD_REVIEW_HASH_RECOMPUTED",
+  "task": "December 2020 raw-field and provenance classification using committed evidence only",
+  "trusted_runner": {
+    "commit_sha": "7812296985be06aece1c1cffca324fdc9cdebd40",
+    "method": "Python hashlib.sha256 over exact committed bytes in GitHub Actions checkout",
+    "run_id": "38771142900"
+  }
+}

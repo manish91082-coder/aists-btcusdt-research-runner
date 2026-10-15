@@ -149,3 +149,13 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Corrected shared 5m comparison CSV no longer includes the misleading boundary-label column. Its current Git blob SHA-1 is `92c9e97f5c4baea175f89e7b36493a18e0934829`; 16 rows.
 - The local SHA-256 routine failed its `abc` self-test. Therefore earlier SHA-256 values for the three derived CSVs and summary are superseded and not verified; the JSON now records `sha256: null`, verified Git blob SHA-1, byte count, row count, and an explicit recomputation status. Do not treat the old SHA-256 values as valid.
 - Evidence findings unchanged: 16 shared keys, 9 exact raw pairs, 7 mismatches, 8 shared close-time fingerprint rows, monthly 10 and daily 14 missing source keys, 9 affected parent roll-ups. All affected decisions remain OPEN.
+
+
+## CP-0107 trusted-runner field-review hash audit 38771142900
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38771142900; status PASS_FIELD_REVIEW_HASH_RECOMPUTED, checks 9/9 PASS.
+- CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv: rows=8, bytes=5671, SHA-256 b2aa529e3d1e6bd03717507be650b660e712826b1994f9c2619bc47064af509d, Git blob SHA-1 f16e44d15cdec9bf47d974acd85e54d2d8361e7c.
+- CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv: rows=24, bytes=9222, SHA-256 cd659b18d996a9ea4d86dba50e07c8c116fc57188f77d5cda07eb9b261ef4110, Git blob SHA-1 4ce746db8ae8f9e6f1622e4c0bae17bf975348c1.
+- CP0107_Dec2020_Shared_5m_RawField_Comparison.csv: rows=16, bytes=12019, SHA-256 530d120984e88d37a7993c80151482d8b75677bbec9d04fa31a927373a55aca0, Git blob SHA-1 92c9e97f5c4baea175f89e7b36493a18e0934829.
+- Row comparison: 9/16 raw-field exact pairs, 7/16 divergent pairs; close-time fingerprint 8 rows; missing exact child keys monthly 10, daily 14. These findings remain diagnostic, not source acceptance. Root cause OPEN; canonical source NONE; cases closed 0.
+- Hashes recomputed by Python hashlib in GitHub Actions. No archive downloads, raw source mutations, backtest or strategy promotion.

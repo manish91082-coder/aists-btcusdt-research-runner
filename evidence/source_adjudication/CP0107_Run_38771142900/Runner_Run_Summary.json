@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "check_id": "request_json_parse",
+      "detail": "JSON parsed",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_schema_allowlist",
+      "detail": "unknown=[] missing=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_id_format",
+      "detail": "AISTS-CP0107-FIELD-REVIEW-HASH-AUDIT-20261015-04",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_allowlist",
+      "detail": "task='cp0107_field_review_hash_audit'",
+      "status": "PASS"
+    },
+    {
+      "check_id": "purpose_bounded_text",
+      "detail": "148",
+      "status": "PASS"
+    },
+    {
+      "check_id": "workflow_least_privilege",
+      "detail": "top_level_contents_read=True; scoped_cp0107_publisher_write=True; forbidden=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_python_sources_parse",
+      "detail": "files=15 errors=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "commit_sha_present",
+      "detail": "7812296985be06aece1c1cffca324fdc9cdebd40",
+      "status": "PASS"
+    },
+    {
+      "check_id": "actions_run_id_present",
+      "detail": "38771142900",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_script_exists",
+      "detail": "/home/runner/work/aists-btcusdt-research-runner/aists-btcusdt-research-runner/scripts/AISTS_CP0107_FieldReview_HashAudit.py",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_exit_and_summary",
+      "detail": "exit=0; summary_exists=True",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 11,
+  "checks_total": 11,
+  "child_summary_sha256": "e706de9164f28a413de3b8817c863bd5df2ad27e597f8aec5478ea6182dbc294",
+  "commit_sha": "7812296985be06aece1c1cffca324fdc9cdebd40",
+  "event": "push",
+  "exchange_credentials_used": false,
+  "generated_at_utc": "2026-10-15T16:41:52.960273+00:00",
+  "market_data_rest_api_used": false,
+  "project": "AISTS BTCUSDT Research Runner",
+  "raw_source_archives_modified": false,
+  "request_id": "AISTS-CP0107-FIELD-REVIEW-HASH-AUDIT-20261015-04",
+  "request_sha256": "5736b46cede3a575aa78c8e874dc82d9e03ed90ced301df8e5994e71c6dad7c6",
+  "research_task_status": "PASS_FIELD_REVIEW_HASH_RECOMPUTED",
+  "run_attempt": "1",
+  "run_id": "38771142900",
+  "runner_sha256": "f3f97e93fb2b0a2910aefb97e005169ffbab44614c87a97d6f6820a6a86970e2",
+  "runner_status": "PASS",
+  "schema_version": 1,
+  "source_selected": false,
+  "strategy_promoted": false,
+  "task": "cp0107_field_review_hash_audit",
+  "workflow_sha256": "2ac74d0af434a2cb605990cca454bf9286824ceadb10191bdb8fbcc373a37e99"
+}

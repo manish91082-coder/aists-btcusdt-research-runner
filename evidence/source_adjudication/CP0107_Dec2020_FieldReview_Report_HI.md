@@ -1,32 +1,26 @@
 # CP-0107: December 2020 raw-field / provenance classification
 
-**Status:** `PASS_EVIDENCE_CLASSIFICATION_NOT_ROOT_CAUSE`. This analysis uses committed, hash-identified CSV evidence only. No archives were downloaded; no Actions job/backtest was run for the comparison outputs.
+Status: PASS_FIELD_REVIEW_HASH_RECOMPUTED; checks 9/9 PASS.
 
 ## Directly evidenced
 
-- **16 shared 5m open-time keys** exist in both monthly and daily ZIP-derived extracts. Of these, **9 rows match across all compared raw fields and 7 differ**.
-- The first divergence in that shared range is **2020-12-21 13:15 UTC**: open/low match, but high, close, base volume, quote volume, trade count and taker-buy metrics differ.
-- At the following six shared keys, **13:20 through 13:45 UTC**, monthly rows are flat at OHLC `22646.53000000` with zero base/quote volume and zero trades, while the corresponding daily rows contain non-flat prices and nonzero trades/volume. At 13:45, the daily record also has `close_time=1608558440521`, which is earlier than its expected 5m boundary.
-- The same close-time token `1608558440521` appears on **8 records** across 5m, 15m, 30m and 1h; four are monthly flat/zero rows and four are daily non-flat rows. Their open-time keys and expected close boundaries differ. This proves a repeated field value, not a common candle or the process that produced it.
-- In the two SHA-verified child archives, 10 expected monthly 5m keys and 14 expected daily 5m keys are absent during the audited window. All nine roll-up cases still lack required exact child keys. No child or aggregate is synthesized.
+- Shared 5m exact open-time keys: 16; complete raw-field matches: 9; divergent pairs: 7.
+- First shared-key divergence is 2020-12-21 13:15 UTC. Six later shared keys from 13:20 through 13:45 UTC pair flat/zero monthly rows with non-flat daily rows.
+- Repeated close-time fingerprint 1608558440521 appears on 8 rows across 5m, 15m, 30m and 1h. It does not prove root cause or source authority.
+- Exact expected 5m keys absent in the two verified archives: monthly 10, daily 14; all nine affected parent roll-ups remain open.
 
-## Row-level files
+## SHA-256 recomputed in GitHub Actions
 
-| File | Rows | Bytes | Git blob SHA-1 |
-| `CP0107_Dec2020_Shared_5m_RawField_Comparison.csv` | 16 | 12019 | `92c9e97f5c4baea175f89e7b36493a18e0934829` |
-| `CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv` | 8 | 5671 | `f16e44d15cdec9bf47d974acd85e54d2d8361e7c` |
-| `CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv` | 24 | 9222 | `4ce746db8ae8f9e6f1622e4c0bae17bf975348c1` |
-| `CP0107_Dec2020_FieldReview_Summary.json` | 1 | 8074 | current commit assigned after write |
+| File | Rows | Bytes | SHA-256 | Git blob SHA-1 |
+|---|---:|---:|---|---|
+| CP0107_Dec2020_Shared_5m_RawField_Comparison.csv | 16 | 12019 | 530d120984e88d37a7993c80151482d8b75677bbec9d04fa31a927373a55aca0 | 92c9e97f5c4baea175f89e7b36493a18e0934829 |
+| CP0107_Dec2020_CloseTime_Fingerprint_FieldReview.csv | 8 | 5671 | b2aa529e3d1e6bd03717507be650b660e712826b1994f9c2619bc47064af509d | f16e44d15cdec9bf47d974acd85e54d2d8361e7c |
+| CP0107_Dec2020_Missing_5m_ChildKeys_BySource.csv | 24 | 9222 | cd659b18d996a9ea4d86dba50e07c8c116fc57188f77d5cda07eb9b261ef4110 | 4ce746db8ae8f9e6f1622e4c0bae17bf975348c1 |
+| CP0107_Dec2020_FieldReview_Summary.json | 1 | 12728 | e706de9164f28a413de3b8817c863bd5df2ad27e597f8aec5478ea6182dbc294 | committed with this run |
 
-## What remains unproven
+## Provenance and disposition limits
 
-- Whether the repeated close-time value was introduced by archive generation, export/serialization, a shared upstream process or another mechanism.
-- Whether the daily and monthly exports are independent, and which source has authority for disputed economic fields.
-- Why the source archive rows at the missing keys are absent; this audit establishes only exact-key absence in the hash-verified ZIP bytes.
-- Monthly `.CHECKSUM` sidecar bytes were not re-fetched/re-hashed in this run. The monthly ZIP SHA matches the official value in the frozen manifest and its ZIP CRC passes; daily ZIP and cached sidecar were locally rehashed/content matched.
-
-## Disposition
-
-All affected row/case dispositions remain `OPEN_REVIEW_REQUIRED`; root cause `OPEN_NOT_ESTABLISHED`; canonical source `NONE`; source cases closed `0`. Raw files, timestamps and field tokens remain unchanged. No backtest rerun or candidate promotion. Frozen gates remain unchanged.
-
-Next evidence-producing step: obtain official archive-side provenance/version history and a documented explanation of the cross-interval close-time token; only then decide whether metadata-field-only disposition or continued quarantine is justified under CP-0040.
+- Missing exact keys are absent from the inspected archive bytes; this does not explain why they are absent.
+- Monthly archive official-manifest SHA and ZIP CRC were verified in the prior run, but its .CHECKSUM sidecar bytes were not rehashed in that run. Daily ZIP and cached sidecar were rehashed/content-matched.
+- All affected cases remain OPEN_REVIEW_REQUIRED; root cause OPEN_NOT_ESTABLISHED; canonical source NONE; cases closed 0.
+- No archive downloads, raw source edits, timestamp shifts, synthetic candles, backtest rerun or strategy promotion.
