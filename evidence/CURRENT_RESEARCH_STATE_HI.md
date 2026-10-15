@@ -115,3 +115,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Frozen CP-0040 rulebook SHA-256 `5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0`; CP-0041 pack SHA-256 `23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc`; CP-0106 manifest SHA-256 `015709030834ec87c6d76a0b0a4e892650bf7e0949cfc6e6d61ea8659a35a5a1`.
 - Five 2017-09-06 rows: monthly close_time +1 ms, daily matches boundary. Three later rows: monthly matches boundary, daily is early by 12,705,211 ms, 84,705,211 ms and 7,200,000 ms. Economic fields match 8/8; 2017 `ignore` field differs but is not the selected conflict.
 - All eight remain OPEN_REVIEW_REQUIRED_NO_CANONICAL_SOURCE; root cause OPEN; archive acceptance not assessed, canonical source selected false, cases closed 0. No raw mutation, timestamp shifting, backtest or strategy promotion.
+
+
+## CP-0107 final path verification and December 2020 disposition sync — 2026-10-15
+
+- The eight close-time joined artifacts already exist under the `_Final` names: `CP0107_CloseTimeOnly_FieldDisposition_Final.csv`, `_Final_Summary.json`, and `_Final_Report_HI.md`. The earlier `_v3` lookup returned 404 only because the expected filename differed; it did not mean the final artifacts were absent. Verified CSV has 8 rows; stored summary records 5/5 diagnostic checks PASS, 5 monthly boundary mismatches, 3 daily mismatches, and economic-field exact matches 8/8. All eight cases remain open, canonical source none.
+- December window source detail was rechecked: 59 rows (33 monthly, 26 daily); 16 monthly flat OHLC/zero-base-volume/zero-trade rows; close-time fingerprint `1608558440521` appears in 8 rows; 4 of the flat-zero monthly rows overlap the fingerprint. Existing source-row disposition has 20 `OPEN_REVIEW_REQUIRED` records and 39 `OBSERVED_CONTEXT_ONLY`.
+- Parent-child roll-up table was rechecked: 34 comparisons, 25 `EXACT_MATCH` for complete child sets, and 9 `REVIEW_REQUIRED` when exact 5m children are missing. No synthetic aggregates/candles were created.
+- Interpretation is diagnostic only. The shared fingerprint does not establish root cause or source authority. All flagged December rows remain open; root cause `OPEN_NOT_ESTABLISHED`; canonical source `NONE`. No archive re-download, raw mutation, timestamp shift, backtest or strategy promotion.
