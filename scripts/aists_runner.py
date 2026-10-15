@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-ALLOWED_TASKS={"smoke","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic"}
+ALLOWED_TASKS={"smoke","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract"}
 REQUEST_KEYS={"request_id","task","purpose","created_at_utc","requested_commit_sha"}
 
 def file_sha(path):
@@ -64,11 +64,12 @@ def main():
     if task=="smoke":
         check("smoke_no_network",True,"No HTTP requests; standard library only.")
         child_status="SMOKE_ONLY"
-    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic"):
+    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract"):
         script_name={"historical_reference_replay":"historical_reference_replay.py",
                      "monthly_derived_replay":"monthly_derived_replay.py",
                      "legacy_pipeline":"aists_legacy_pipeline.py",
-                     "source_adjudication_diagnostic":"AISTS_CP0103_Source_Adjudication_Diagnostic.py"}[task]
+                     "source_adjudication_diagnostic":"AISTS_CP0103_Source_Adjudication_Diagnostic.py",
+                     "cp0107_feb2018_raw_row_extract":"AISTS_CP0107_Feb2018_Raw_Row_Extract.py"}[task]
         child=ROOT/"scripts"/script_name
         check("task_script_exists",child.exists(),str(child))
         if child.exists():
@@ -84,13 +85,21 @@ def main():
                       "--output-dir","results/source_adjudication_diagnostic"]
                 timeout=1800
                 child_summary_path=output/"source_adjudication_diagnostic"/"CP0103_Run_Summary.json"
+            elif task=="cp0107_feb2018_raw_row_extract":
+                argv=[sys.executable,str(child),"--monthly-cache",".cache/aists/binance-monthly-archives",
+                      "--daily-cache",".cache/aists/binance-daily-references",
+                      "--manifest","evidence/source_adjudication/CP0107_SourceArchive_Manifest_66.csv",
+                      "--segment-inventory","evidence/source_adjudication/CP0106_Run_38730420808_Feb2018_OffGrid_Segments.csv",
+                      "--output-dir","results/cp0107_feb2018"]
+                timeout=900
+                child_summary_path=output/"cp0107_feb2018"/"CP0107_Feb2018_Extraction_Summary.json"
             else:
                 argv=[sys.executable,str(child),"--output-dir",f"results/{task}","--cache-dir",".cache/aists/binance-monthly-archives"]
                 timeout=3300
                 summary_name="historical_reference_replay_summary.json" if task=="historical_reference_replay" else "monthly_derived_replay_summary.json"
                 child_summary_path=output/task/summary_name
             try:
-                if task in ("legacy_pipeline","source_adjudication_diagnostic"):
+                if task in ("legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract"):
                     log_path=output/f"{task}_stdout.txt"
                     with log_path.open("w",encoding="utf-8") as log:
                         proc=subprocess.Popen(argv,cwd=str(ROOT),text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,bufsize=1)

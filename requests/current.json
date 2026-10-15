@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0106-ROW-LEVEL-SOURCE-ADJUDICATION-20261015-01",
-  "task": "source_adjudication_diagnostic",
-  "purpose": "Use checksum-verified caches to export CP-0106 raw rows for the Dec-2020 anomaly window and contiguous Feb-2018 timestamp regimes. No broad download, repair, source choice or backtest.",
-  "created_at_utc": "2026-10-15T13:10:00Z"
+  "request_id": "AISTS-CP0107-FEB2018-RAW-ROW-EXTRACT-20261015-01",
+  "task": "cp0107_feb2018_raw_row_extract",
+  "purpose": "Cache-only extraction of all 450 February 2018 monthly off-grid rows plus exact daily coverage; verify against CP-0106 frozen manifest; no network, repair, source selection, or backtest.",
+  "created_at_utc": "2026-10-15T12:30:00Z"
 }
