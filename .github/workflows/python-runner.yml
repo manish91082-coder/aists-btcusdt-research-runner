@@ -18,6 +18,7 @@ on:
           - legacy_pipeline
           - source_adjudication_diagnostic
           - cp0107_feb2018_raw_row_extract
+          - cp0107_feb2018_disposition_overlay
         default: legacy_pipeline
 
 permissions:
@@ -87,7 +88,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ]; then
+          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ]; then
             echo "CP-0107 cache-only extraction uses Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -122,7 +123,7 @@ jobs:
           fi
 
   publish_cp0107_evidence:
-    if: needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' && needs.run.result == 'success'
+    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay')
     needs: run
     runs-on: ubuntu-latest
     permissions:
@@ -175,6 +176,27 @@ jobs:
           daily = rows("CP0107_Feb2018_DailyCoverage_RawRows.csv")
           source = rows("CP0107_Feb2018_SourceVerification.csv")
           segments = rows("CP0107_Feb2018_SegmentCoverage.csv")
+          overlay_path = folder / "CP0107_Feb2018_Disposition_Overlay.csv"
+          overlay_summary_path = folder / "CP0107_Feb2018_Disposition_Overlay_Summary.json"
+          if overlay_path.is_file() or overlay_summary_path.is_file():
+              if not overlay_path.is_file() or not overlay_summary_path.is_file():
+                  raise SystemExit("Incomplete disposition overlay pair; refusing repository write")
+              overlay = rows("CP0107_Feb2018_Disposition_Overlay.csv")
+              overlay_summary = json.loads(overlay_summary_path.read_text(encoding="utf-8"))
+              if len(overlay) != 450 or overlay_summary.get("row_count") != 450:
+                  raise SystemExit(f"Expected 450 overlay rows; got {len(overlay)}")
+              if any(x.get("disposition") != "QUARANTINE_REVIEW_REQUIRED" for x in overlay):
+                  raise SystemExit("Overlay contains an unexpected disposition")
+              if any(x.get("cp0041_crosswalk_match") != "PASS_FROM_VERIFIED_CROSSWALK" for x in overlay):
+                  raise SystemExit("Overlay row lacks CP-0041 crosswalk evidence tag")
+              mapped = sum(x.get("mapped_daily_row_status") in ("PRESENT_FIELDS_DIFFER", "PRESENT_NON_OPEN_FIELDS_MATCH") for x in overlay)
+              absent = sum(x.get("mapped_daily_row_status") == "ABSENT_REVIEW_REQUIRED" for x in overlay)
+              differing = sum(x.get("mapped_daily_economic_or_close_time_differs") == "True" for x in overlay)
+              if mapped != 448 or absent != 2 or differing != 442:
+                  raise SystemExit(f"Unexpected mapped/difference counts: present={mapped} absent={absent} differing={differing}")
+              digest = hashlib.sha256(overlay_path.read_bytes()).hexdigest()
+              if digest != overlay_summary.get("csv_sha256"):
+                  raise SystemExit("Disposition overlay SHA-256 mismatch")
           if len(offgrid) != 450 or len(daily) != 1167 or len(source) != 16 or len(segments) != 12:
               raise SystemExit(f"Row-count mismatch: offgrid={len(offgrid)} daily={len(daily)} source={len(source)} coverage={len(segments)}")
           if any(x.get("status") != "PASS" for x in source):
