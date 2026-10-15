@@ -1,2 +1,2 @@
-# The initial AISTS smoke task uses Python's standard library only.
-# Pin additional research dependencies explicitly when a reviewed task requires them.
+numpy==1.26.4
+pandas==2.2.3
