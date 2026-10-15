@@ -116,7 +116,7 @@ def main():
         "duplicate_exact_key":"True" if len(present)>1 else "False","source_csv_data_record_number":chosen.get("_data_record_number","") if chosen else "",
         "source_archive_csv_line_number":csv_record_number,"source_row_relation":relation,"source_archive_filename":archive_name,
         "source_archive_sha256":archive_hash,"daily_sidecar_sha256":sidecar_hash,
-        "raw_close_time_expected_delta_ms":(int(raw["close_time"])-(key+iv_step-1)) if raw and str(raw.get("close_time","")).isdigit() else ""}
+        "raw_close_time_expected_delta_ms":(int(raw["close_time"])-(key+STEP_MS[iv]-1)) if raw and str(raw.get("close_time","")).isdigit() else ""}
     for field in RAW_FIELDS:ev["raw_"+field]=raw.get(field,"") if raw else ""
     evidence.append(ev)
     if role=="CHILD" and raw:
