@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0107-CP0041-DEC2020-RESIDUAL7-AUDIT-20261015-01",
+  "request_id": "AISTS-CP0107-CP0041-DEC2020-RESIDUAL7-AUDIT-20261015-02",
   "task": "cp0107_cp0041_dec2020_residual7_exact_key_audit",
-  "purpose": "Audit seven residual Dec-2020 monthly-only rows against hash-verified cached monthly/daily ZIPs and exact open keys. No downloads, source change or backtest.",
-  "created_at_utc": "2026-10-15T17:47:00Z"
+  "purpose": "Retry seven-row cached Dec-2020 exact-key audit after publisher output-path fix. Revalidate hashes; no downloads/backtest or source changes.",
+  "created_at_utc": "2026-10-15T17:50:00Z"
 }
