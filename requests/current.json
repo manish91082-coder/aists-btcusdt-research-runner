@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-BOOTSTRAP-SMOKE-20261015-01",
-  "task": "smoke",
-  "purpose": "Prove request-commit-workflow-artifact verification end to end without network or market-data access.",
+  "request_id": "AISTS-HISTORICAL-REF-20261015-01",
+  "task": "historical_reference_replay",
+  "purpose": "Official archive QA and independent fixed-rule reference replay on BTCUSDT 4h, 1d and 1mo; no source acceptance or strategy promotion.",
   "created_at_utc": "2026-10-15T10:30:00Z"
 }
