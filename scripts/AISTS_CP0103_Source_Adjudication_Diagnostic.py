@@ -254,7 +254,7 @@ def main():
                     "archive_path":"","zip_sha256":"","official_sha256":"","checksum_sidecar_sha256":"","zip_crc":"NOT_VERIFIED","csv_member":"","status":"FAIL","error":repr(exc)})
     write_csv(out/"CP0103_Source_Archive_Verification.csv",archive_rows)
 
-    monthly_rows={}; daily_rows={}; monthly_duplicates={}
+    monthly_rows={}; daily_rows={}; monthly_duplicates={}; daily_duplicates={}
     if not errors:
         # Read each needed monthly archive once, preserving exact open-time integers and raw timestamp tokens.
         for iv,ym in month_targets:
@@ -275,7 +275,7 @@ def main():
             monthly_duplicates[(iv,ym)]=dup_by_day
         for day in TARGET_DATES:
             for iv in INTERVALS:
-                daily_rows[(iv,day)]=read_zip_day(verified_daily[(iv,day)][0],day)[0]
+                daily_rows[(iv,day)],daily_duplicates[(iv,day)],_=read_zip_day(verified_daily[(iv,day)][0],day)
 
     summary_rows=[]; unmatched_rows=[]; mismatch_rows=[]; close_time_only=[]; feb_offsets={}
     raw_data_for_rollup={}
@@ -291,7 +291,7 @@ def main():
                     "exact_open_key_matches":len(common),"value_mismatch_shared_keys":len(value_mismatch),
                     "monthly_only_rows":len(mo),"daily_only_rows":len(do),"monthly_off_grid_rows":len(off_m),
                     "daily_off_grid_rows":len(off_d),"monthly_duplicate_target_open_times":monthly_duplicates.get((iv,day[:7]),{}).get(day,0),
-                    "daily_duplicate_target_open_times":0,"status":"REVIEW_ONLY"})
+                    "daily_duplicate_target_open_times":daily_duplicates.get((iv,day),0),"status":"REVIEW_ONLY"})
                 raw_data_for_rollup[(day,iv,"MONTHLY")]=m
                 raw_data_for_rollup[(day,iv,"DAILY")]=d
                 for t,fields in value_mismatch:
@@ -387,7 +387,9 @@ def main():
         "source_archive_manifest_rows":len(archive_rows),"target_dates":list(TARGET_DATES),"target_intervals":list(INTERVALS),
         "date_interval_comparison_rows":len(summary_rows),"unmatched_timestamp_rows_detail":len(unmatched_rows),
         "exact_key_value_mismatch_rows":len(mismatch_rows),"close_time_only_conflicts_detailed":len(close_time_only),
-        "feb2018_off_grid_residue_groups":len(offset_rows),"rollup_chain_rows":len(rollup_rows),
+        "feb2018_off_grid_residue_groups":sum(1 for (iv,rem) in feb_offsets if rem!=0),
+        "feb2018_grid_aligned_residue_groups":sum(1 for (iv,rem) in feb_offsets if rem==0),
+        "feb2018_all_residue_groups":len(offset_rows),"rollup_chain_rows":len(rollup_rows),
         "automatic_corrections_applied":0,"timestamp_rounding_or_shift_applied":False,"raw_archive_mutation":False,
         "canonical_source_selected":False,"source_cases_closed":0,"candidate_or_strategy_promoted":False,
         "backtest_rerun":False,"exchange_rest_api_used":False,"exchange_credentials_used":False,
