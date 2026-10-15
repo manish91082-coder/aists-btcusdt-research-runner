@@ -26,6 +26,7 @@ on:
           - cp0107_cp0041_aggregation_bucket_overlay_audit
           - cp0107_cp0041_worklist_disposition_patch_audit
           - cp0107_cp0041_dec2020_residual7_exact_key_audit
+          - cp0107_official_update_package_audit
         default: legacy_pipeline
 
 permissions:
@@ -104,7 +105,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ]; then
+          if [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
             echo "CP-0107 cache-only extraction uses Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -139,7 +140,7 @@ jobs:
           fi
 
   publish_cp0107_evidence:
-    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit' || needs.run.outputs.task == 'cp0107_field_review_hash_audit' || needs.run.outputs.task == 'cp0107_monthly_checksum_provenance_audit' || needs.run.outputs.task == 'cp0107_cp0041_daily_reference_acquisition_audit' || needs.run.outputs.task == 'cp0107_cp0041_aggregation_bucket_overlay_audit' || needs.run.outputs.task == 'cp0107_cp0041_worklist_disposition_patch_audit' || needs.run.outputs.task == 'cp0107_cp0041_dec2020_residual7_exact_key_audit')
+    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0107_feb2018_raw_row_extract' || needs.run.outputs.task == 'cp0107_feb2018_disposition_overlay' || needs.run.outputs.task == 'cp0107_dec2020_child_window_audit' || needs.run.outputs.task == 'cp0107_field_review_hash_audit' || needs.run.outputs.task == 'cp0107_monthly_checksum_provenance_audit' || needs.run.outputs.task == 'cp0107_cp0041_daily_reference_acquisition_audit' || needs.run.outputs.task == 'cp0107_cp0041_aggregation_bucket_overlay_audit' || needs.run.outputs.task == 'cp0107_cp0041_worklist_disposition_patch_audit' || needs.run.outputs.task == 'cp0107_cp0041_dec2020_residual7_exact_key_audit' || needs.run.outputs.task == 'cp0107_official_update_package_audit')
     needs: run
     runs-on: ubuntu-latest
     permissions:
@@ -408,6 +409,34 @@ jobs:
               rec = outputs.get(report.name, {})
               if not report.is_file() or hashlib.sha256(report.read_bytes()).hexdigest() != rec.get("sha256") or report.stat().st_size != rec.get("bytes"):
                   raise SystemExit("Residual audit report hash/size mismatch")
+          official_update_summary_path = folder / "CP0107_Official_Update_Package_Summary.json"
+          if os.environ.get("TASK") == "cp0107_official_update_package_audit" and not official_update_summary_path.is_file():
+              raise SystemExit("Missing official update package audit summary; refusing repository write")
+          if official_update_summary_path.is_file():
+              official = json.loads(official_update_summary_path.read_text(encoding="utf-8"))
+              if official.get("status") != "PASS_OFFICIAL_UPDATE_PACKAGE_INSPECTED_SOURCE_AUTHORITY_OPEN":
+                  raise SystemExit("Official update package inspection status not PASS")
+              if official.get("checks_passed") != official.get("checks_total") or any(c.get("status") != "PASS" for c in official.get("checks", [])):
+                  raise SystemExit("Official update package audit has failed checks")
+              source_info = official.get("source", {})
+              if source_info.get("official_git_blob_sha1") != "90631298cf50ac2e1ee8372a087767b010d78a21" or source_info.get("actual_git_blob_sha1") != source_info.get("official_git_blob_sha1") or source_info.get("bytes") != 6653240 or source_info.get("zip_crc") != "PASS":
+                  raise SystemExit("Official correction bundle integrity does not match frozen GitHub blob")
+              inventory = official.get("cp0041_target_inventory", {})
+              if inventory.get("rows") != 33 or inventory.get("sha256") != "b1bce4a37f9ac416ef02d27f2af7aefcf2e08ebae8b2d918b08596a9ed700e2d":
+                  raise SystemExit("Frozen CP-0041 target inventory mismatch")
+              if official.get("package_inventory", {}).get("target_monthly_archive_names_checked") != 33:
+                  raise SystemExit("Not all 33 CP-0041 target monthly archive names were checked")
+              decision = official.get("decision", {})
+              if decision.get("monthly_daily_canonical_source_selected") is not False or decision.get("source_cases_closed") != 0 or decision.get("root_cause") != "OPEN_NOT_ESTABLISHED" or decision.get("backtest_rerun") is not False or decision.get("strategy_promoted") is not False:
+                  raise SystemExit("Official update inspection attempted source selection or strategy promotion")
+              for name, rec in official.get("outputs", {}).items():
+                  p = folder / name
+                  if not p.is_file() or hashlib.sha256(p.read_bytes()).hexdigest() != rec.get("sha256") or p.stat().st_size != rec.get("bytes"):
+                      raise SystemExit("Official update audit output hash/size mismatch: " + name)
+                  if rec.get("rows") is not None and len(rows(name)) != rec.get("rows"):
+                      raise SystemExit("Official update audit output row-count mismatch: " + name)
+              if not (folder / "CP0107_Official_Update_Package_Report_HI.md").is_file():
+                  raise SystemExit("Official update audit report absent")
           if len(offgrid) != 450 or len(daily) != 1167 or len(source) != 16 or len(segments) != 12:
               raise SystemExit(f"Row-count mismatch: offgrid={len(offgrid)} daily={len(daily)} source={len(source)} coverage={len(segments)}")
           if any(x.get("status") != "PASS" for x in source):
@@ -465,6 +494,44 @@ jobs:
               note += "- Seven residual CP-0041 worklist rows individually revalidated against cached monthly archive row tokens and cached daily archive exact open-time keys; archive SHA/CRC checked. Daily exact-key counterparts present: " + str(summary["daily_exact_key_counterparts"]) + "; absent: " + str(summary["daily_exact_key_absent"]) + ".\n"
               note += "- All seven monthly rows are flat OHLC 22646.53000000, zero volume/trades. The repeated close-time token and raw row snapshots are retained; nearest timestamps remain diagnostic only.\n"
               note += "- All seven remain OPEN; canonical source NONE; root cause OPEN_NOT_ESTABLISHED; cases closed 0. No raw modification, time shifting, synthetic candles, backtest rerun or promotion.\n"
+              state_path.write_text(state + note, encoding="utf-8")
+          PY
+          fi
+          if [ "$TASK" = "cp0107_official_update_package_audit" ]; then
+            cp "$DEST/CP0107_Official_Update_Package_Summary.json" evidence/source_adjudication/CP0107_Official_Update_Package_Summary.json
+            cp "$DEST/CP0107_Official_Update_Package_Report_HI.md" evidence/source_adjudication/CP0107_Official_Update_Package_Report_HI.md
+            python - <<'PY'
+          import json, os
+          from pathlib import Path
+          sp = Path("evidence/source_adjudication/CP0107_Official_Update_Package_Summary.json")
+          audit = json.loads(sp.read_text(encoding="utf-8"))
+          master_path = Path("evidence/source_adjudication/CP0107_Summary.json")
+          master = json.loads(master_path.read_text(encoding="utf-8"))
+          master["official_update_package_audit"] = {
+              "status": audit["status"], "run_id": int(os.environ["RUN_ID"]),
+              "summary_path": "evidence/source_adjudication/CP0107_Official_Update_Package_Summary.json",
+              "report_path": "evidence/source_adjudication/CP0107_Official_Update_Package_Report_HI.md",
+              "source_blob_sha1": audit["source"]["official_git_blob_sha1"],
+              "source_zip_sha256": audit["source"]["sha256"], "source_zip_bytes": audit["source"]["bytes"],
+              "target_monthly_archive_names_checked": audit["package_inventory"]["target_monthly_archive_names_checked"],
+              "exact_archive_member_name_hits": audit["package_inventory"]["exact_archive_member_name_hits"],
+              "text_filename_reference_hits": audit["package_inventory"]["text_filename_reference_hits"],
+              "frozen_current_sha_token_hits": audit["package_inventory"]["frozen_current_sha_token_hits"],
+              "member_bytes_equal_frozen_current_sha": audit["package_inventory"]["member_bytes_equal_frozen_current_sha"],
+              "source_authority": "NONE", "source_cases_closed": 0, "root_cause": "OPEN_NOT_ESTABLISHED"
+          }
+          master["status"] = "EVIDENCE_RECONCILED_OFFICIAL_UPDATE_PACKAGE_INSPECTED_SOURCE_AUTHORITY_OPEN"
+          master["next_action"] = "Review exact correction-bundle matches, if any, as version evidence only. Keep all source decisions open pending CP-0040-compliant exact-row provenance."
+          master_path.write_text(json.dumps(master, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+          state_path = Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state = state_path.read_text(encoding="utf-8")
+          marker = "CP-0107 official correction-bundle audit " + os.environ["RUN_ID"]
+          if marker not in state:
+              note = "\n\n## " + marker + "\n\n"
+              note += "- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/" + os.environ["RUN_ID"] + "; status " + audit["status"] + "; checks " + str(audit["checks_passed"]) + "/" + str(audit["checks_total"]) + " PASS.\n"
+              note += "- Official Git blob SHA-1 " + audit["source"]["official_git_blob_sha1"] + "; bundle SHA-256 " + audit["source"]["sha256"] + "; bytes " + str(audit["source"]["bytes"]) + "; ZIP CRC " + audit["source"]["zip_crc"] + ".\n"
+              note += "- Checked 33 CP-0041 monthly archive targets. Exact archive-member hits=" + str(audit["package_inventory"]["exact_archive_member_name_hits"]) + "; text-name references=" + str(audit["package_inventory"]["text_filename_reference_hits"]) + "; frozen current SHA-token hits=" + str(audit["package_inventory"]["frozen_current_sha_token_hits"]) + ".\n"
+              note += "- Package matches are version/provenance evidence only. Canonical source NONE; cases closed 0; root cause OPEN_NOT_ESTABLISHED. No Binance market-data REST API, no row edits, no backtest or strategy promotion.\n"
               state_path.write_text(state + note, encoding="utf-8")
           PY
           fi
@@ -549,6 +616,8 @@ jobs:
           fi
           if [ -f evidence_stage/cp0107_field_review_hash_audit_stdout.txt ]; then
             cp evidence_stage/cp0107_field_review_hash_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
+          elif [ -f evidence_stage/cp0107_official_update_package_audit_stdout.txt ]; then
+            cp evidence_stage/cp0107_official_update_package_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
           elif [ -f evidence_stage/cp0107_cp0041_dec2020_residual7_exact_key_audit_stdout.txt ]; then
             cp evidence_stage/cp0107_cp0041_dec2020_residual7_exact_key_audit_stdout.txt "$DEST/Runner_Child_Stdout.txt"
           elif [ -f evidence_stage/cp0107_cp0041_worklist_disposition_patch_audit_stdout.txt ]; then
@@ -588,6 +657,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [ "$TASK" = "cp0107_field_review_hash_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_Dec2020_FieldReview_Summary.json evidence/source_adjudication/CP0107_Dec2020_FieldReview_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
+          elif [ "$TASK" = "cp0107_official_update_package_audit" ]; then
+            git add "$DEST" evidence/source_adjudication/CP0107_Official_Update_Package_Summary.json evidence/source_adjudication/CP0107_Official_Update_Package_Report_HI.md evidence/source_adjudication/CP0107_Summary.json evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.csv evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_ArchiveVerification.csv evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Summary.json evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ]; then
