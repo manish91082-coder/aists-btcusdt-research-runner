@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0107-FEB2018-DISPOSITION-OVERLAY-20261015-01",
+  "request_id": "AISTS-CP0107-FEB2018-DISPOSITION-OVERLAY-20261015-02",
   "task": "cp0107_feb2018_disposition_overlay",
-  "purpose": "Export a 450-row CP-0041 crosswalk-backed quarantine overlay from committed CP-0107 evidence only. No archive acquisition, repairs or backtest.",
-  "created_at_utc": "2026-10-15T13:00:00Z"
+  "purpose": "Export CP-0107 February row quarantine overlay from committed evidence only. No archive download, repair or backtest.",
+  "created_at_utc": "2026-10-15T13:18:00Z"
 }
