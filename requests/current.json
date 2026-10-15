@@ -1,0 +1,6 @@
+{
+  "request_id": "AISTS-BOOTSTRAP-SMOKE-20261015-01",
+  "task": "smoke",
+  "purpose": "Prove request-commit-workflow-artifact verification end to end without network or market-data access.",
+  "created_at_utc": "2026-10-15T10:30:00Z"
+}
