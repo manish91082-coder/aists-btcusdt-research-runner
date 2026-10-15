@@ -1,0 +1,88 @@
+{
+  "artifact_files": [
+    {
+      "bytes": 13302,
+      "path": "CP0107_Dec2020_5m_ActualRows_Window.csv",
+      "sha256": "f397756fb22a267db0e9d2fe96a7bcadab8f4d29c8cd24b1c9397f3bbb89ce37"
+    },
+    {
+      "bytes": 13925,
+      "path": "CP0107_Dec2020_5m_ChildCoverage.csv",
+      "sha256": "dcfecaff37f53a017304603d696f6f84c35cdef60941abb59ad8dfa0936f8dc4"
+    },
+    {
+      "bytes": 1150,
+      "path": "CP0107_Dec2020_5m_SourceVerification.csv",
+      "sha256": "daab391c7680ca4e468ff344ffacbcad367be77958aea56519245ff1d207e7d7"
+    },
+    {
+      "bytes": 773,
+      "path": "CP0107_Dec2020_ChildWindow_Audit_Report_HI.md",
+      "sha256": "e3312f054ee27ad183d400c5462b8f62a82595b4fbf8899ecc7adb5c9208ea4e"
+    },
+    {
+      "bytes": 9148,
+      "path": "CP0107_Dec2020_ChildWindow_Audit_Summary.json",
+      "sha256": "3f36561bb48f3f22bad7ab468bc337e4a37880b109aa386edf8f0b27be0d2a63"
+    },
+    {
+      "bytes": 6237,
+      "path": "CP0107_Dec2020_ReviewRollup_ChildCoverage.csv",
+      "sha256": "5aed8326dd38921323e6ed6cf6590ec6dd5f73279187f522e4e0509c4dcee9ca"
+    },
+    {
+      "bytes": 564,
+      "path": "CP0107_Feb2018_Checks.csv",
+      "sha256": "b8f959f712250a2edf0845e0445f36471651d0fab25b1a06b5faf89597dadf21"
+    },
+    {
+      "bytes": 638834,
+      "path": "CP0107_Feb2018_DailyCoverage_RawRows.csv",
+      "sha256": "5dd5f5b314ff8518f06f6370db5502c79c3fd2a110653b05822921ff2b5dbcde"
+    },
+    {
+      "bytes": 810,
+      "path": "CP0107_Feb2018_Extraction_Report_HI.md",
+      "sha256": "1ce0b34b108f66659cfa8a6b9b61612cb7f32c832777d32e79762ef3a530bf31"
+    },
+    {
+      "bytes": 3414,
+      "path": "CP0107_Feb2018_Extraction_Summary.json",
+      "sha256": "af75c6ce537cc3b879b51c968c679f503e1276d942c83d1493af4af9b0f0e435"
+    },
+    {
+      "bytes": 367591,
+      "path": "CP0107_Feb2018_OffGrid_RawRows.csv",
+      "sha256": "379b1b9b258eed3fa55dfc95238e43e849300b14b85dd7643c0034befd841d64"
+    },
+    {
+      "bytes": 5364,
+      "path": "CP0107_Feb2018_SegmentCoverage.csv",
+      "sha256": "652562ecd179896e0ecd48f2d434be3c5b81bf139d2ac4098062e43f38caf200"
+    },
+    {
+      "bytes": 8050,
+      "path": "CP0107_Feb2018_SourceVerification.csv",
+      "sha256": "3692b0dc2378e5115326834a2b09a625341aa245396a4cca8ac1670474ae19b5"
+    },
+    {
+      "bytes": 759,
+      "path": "Runner_Checks.csv",
+      "sha256": "2139f9ffcc480d079cf91b224998c142c39ddff729d6097c257367231e82f0cf"
+    },
+    {
+      "bytes": 2569,
+      "path": "Runner_Run_Summary.json",
+      "sha256": "e85045f395447a32c4da1598e341a2ea3c1daa6b56fd8e4e4483ccad6dabe8e0"
+    }
+  ],
+  "backtest_rerun": false,
+  "canonical_source_selected": false,
+  "cases_closed": 0,
+  "checkpoint": "CP-0107",
+  "publish_status": "PASS_HASH_AND_ROW_COUNT_VALIDATED",
+  "run_id": 38756665405,
+  "source_authority": "NOT_ASSIGNED",
+  "strategy_promoted": false,
+  "trigger_commit_sha": "965ddf778070b913f12f39637922c135a5667d08"
+}

@@ -1,0 +1,12 @@
+check_id,status,detail
+request_json_parse,PASS,JSON parsed
+request_schema_allowlist,PASS,unknown=[] missing=[]
+request_id_format,PASS,AISTS-CP0107-DEC2020-CHILD-WINDOW-AUDIT-20261015-01
+task_allowlist,PASS,task='cp0107_dec2020_child_window_audit'
+purpose_bounded_text,PASS,153
+workflow_least_privilege,PASS,top_level_contents_read=True; scoped_cp0107_publisher_write=True; forbidden=[]
+all_python_sources_parse,PASS,files=14 errors=[]
+commit_sha_present,PASS,965ddf778070b913f12f39637922c135a5667d08
+actions_run_id_present,PASS,38756665405
+task_script_exists,PASS,/home/runner/work/aists-btcusdt-research-runner/aists-btcusdt-research-runner/scripts/AISTS_CP0107_Dec2020_ChildWindow_Audit.py
+task_exit_and_summary,PASS,exit=0; summary_exists=True

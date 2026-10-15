@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "check_id": "request_json_parse",
+      "detail": "JSON parsed",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_schema_allowlist",
+      "detail": "unknown=[] missing=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_id_format",
+      "detail": "AISTS-CP0107-DEC2020-CHILD-WINDOW-AUDIT-20261015-01",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_allowlist",
+      "detail": "task='cp0107_dec2020_child_window_audit'",
+      "status": "PASS"
+    },
+    {
+      "check_id": "purpose_bounded_text",
+      "detail": "153",
+      "status": "PASS"
+    },
+    {
+      "check_id": "workflow_least_privilege",
+      "detail": "top_level_contents_read=True; scoped_cp0107_publisher_write=True; forbidden=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_python_sources_parse",
+      "detail": "files=14 errors=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "commit_sha_present",
+      "detail": "965ddf778070b913f12f39637922c135a5667d08",
+      "status": "PASS"
+    },
+    {
+      "check_id": "actions_run_id_present",
+      "detail": "38756665405",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_script_exists",
+      "detail": "/home/runner/work/aists-btcusdt-research-runner/aists-btcusdt-research-runner/scripts/AISTS_CP0107_Dec2020_ChildWindow_Audit.py",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_exit_and_summary",
+      "detail": "exit=0; summary_exists=True",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 11,
+  "checks_total": 11,
+  "child_summary_sha256": "3f36561bb48f3f22bad7ab468bc337e4a37880b109aa386edf8f0b27be0d2a63",
+  "commit_sha": "965ddf778070b913f12f39637922c135a5667d08",
+  "event": "push",
+  "exchange_credentials_used": false,
+  "generated_at_utc": "2026-10-15T15:01:47.227700+00:00",
+  "market_data_rest_api_used": false,
+  "project": "AISTS BTCUSDT Research Runner",
+  "raw_source_archives_modified": false,
+  "request_id": "AISTS-CP0107-DEC2020-CHILD-WINDOW-AUDIT-20261015-01",
+  "request_sha256": "8a36cbd5ca735979d46dba0dda517436c2a9e7602ad85bd3ca2505ee793ba80b",
+  "research_task_status": "PASS_CACHE_ONLY_DEC2020_CHILD_AUDIT",
+  "run_attempt": "1",
+  "run_id": "38756665405",
+  "runner_sha256": "1a8979a8c91448b80f106f256a8f756277d8982b04cc85460612d40f5fc00d70",
+  "runner_status": "PASS",
+  "schema_version": 1,
+  "source_selected": false,
+  "strategy_promoted": false,
+  "task": "cp0107_dec2020_child_window_audit",
+  "workflow_sha256": "067095dbee4a3e81ccabc113687aa4dfc85f619fffe5da77682a2da3648bd634"
+}
