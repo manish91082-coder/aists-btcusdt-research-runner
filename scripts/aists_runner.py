@@ -77,7 +77,7 @@ def main():
     if task=="smoke":
         check("smoke_no_network",True,"No HTTP requests; standard library only.")
         child_status="SMOKE_ONLY"
-    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract"):
+    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay"):
         script_name={"historical_reference_replay":"historical_reference_replay.py",
                      "monthly_derived_replay":"monthly_derived_replay.py",
                      "legacy_pipeline":"aists_legacy_pipeline.py",
