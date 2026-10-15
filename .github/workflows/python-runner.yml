@@ -60,7 +60,7 @@ jobs:
           }
           with open("requests/current.json", "w", encoding="utf-8") as f:
               json.dump(request, f, indent=2)
-              f.write("\\n")
+              f.write("\n")
           PY
 
       - name: Execute task and generate evidence
