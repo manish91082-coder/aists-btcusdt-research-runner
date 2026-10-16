@@ -16,7 +16,7 @@ Policy:
 """
 from __future__ import annotations
 
-import csv, gzip, hashlib, json, os, zipfile
+import argparse, csv, gzip, hashlib, json, os, zipfile
 from collections import Counter
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -132,6 +132,87 @@ def load_dict_csv(path):
     with path.open(newline="",encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
 
+def load_candidate_gate(manifest_path: Path, blockers_path: Path, summary_path: Path):
+    """Fail closed unless a validated row manifest exists and every non-row blocker is resolved."""
+    for path in (manifest_path, blockers_path, summary_path):
+        if not path.is_file():
+            raise RuntimeError(f"G0_BLOCKED_MISSING_QUARANTINE_GATE_FILE: {path}")
+    summary=json.loads(summary_path.read_text(encoding="utf-8"))
+    if summary.get("status") not in {"PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN","PASS_CANDIDATE_ELIGIBILITY_READY"}:
+        raise RuntimeError(f"G0_BLOCKED_UNRECOGNIZED_MANIFEST_STATUS: {summary.get('status')!r}")
+    actual_manifest_sha=sha256_file(manifest_path)
+    expected_manifest_sha=summary.get("row_level_manifest",{}).get("sha256")
+    if actual_manifest_sha != expected_manifest_sha:
+        raise RuntimeError(f"G0_BLOCKED_MANIFEST_SHA256_MISMATCH: actual={actual_manifest_sha}; expected={expected_manifest_sha}")
+    manifest=load_dict_csv(manifest_path)
+    expected_rows=summary.get("row_level_manifest",{}).get("rows")
+    if len(manifest) != expected_rows or len(manifest) != 969:
+        raise RuntimeError(f"G0_BLOCKED_MANIFEST_ROW_COUNT: actual={len(manifest)}; expected={expected_rows}")
+    required={"case_id","case_class","interval","open_time_ms","disposition","canonical_source","case_closed"}
+    if not manifest or not required.issubset(manifest[0]):
+        raise RuntimeError("G0_BLOCKED_MANIFEST_SCHEMA_INVALID")
+    keys=set()
+    cases_by_key={}
+    classes=Counter()
+    for row in manifest:
+        iv=str(row["interval"]).strip()
+        ts=str(row["open_time_ms"]).strip()
+        if iv not in BASE_INTERVALS + ["1mo"] or not ts.isdigit():
+            raise RuntimeError(f"G0_BLOCKED_INVALID_EXACT_KEY: {row.get('case_id')}")
+        key=(iv,ts)
+        keys.add(key)
+        cases_by_key.setdefault(key,[]).append(str(row["case_id"]))
+        classes[str(row["case_class"])]+=1
+        if str(row["canonical_source"]).upper() != "NONE" or str(row["case_closed"]).lower() != "false":
+            raise RuntimeError(f"G0_BLOCKED_SOURCE_AUTHORITY_OR_CLOSED_CASE: {row.get('case_id')}")
+    if len(keys) != len(manifest):
+        raise RuntimeError(f"G0_BLOCKED_DUPLICATE_EXACT_KEYS: unique={len(keys)} rows={len(manifest)}")
+    if dict(classes) != summary.get("row_level_manifest",{}).get("case_class_counts"):
+        raise RuntimeError("G0_BLOCKED_MANIFEST_CLASS_COUNTS_MISMATCH")
+    blockers=load_dict_csv(blockers_path)
+    blocker_summary=summary.get("nonrow_blockers",{})
+    if len(blockers) != blocker_summary.get("rows"):
+        raise RuntimeError("G0_BLOCKED_NONROW_BLOCKER_COUNT_MISMATCH")
+    if len(blockers) > 0 or blocker_summary.get("candidate_eligibility_blocked") is True:
+        raise RuntimeError(f"G0_BLOCKED_NONROW_BLOCKERS_REMAIN: {len(blockers)} unresolved non-row cases")
+    if summary.get("status") != "PASS_CANDIDATE_ELIGIBILITY_READY":
+        raise RuntimeError(f"G0_BLOCKED_MANIFEST_NOT_APPROVED_FOR_CANDIDATE_BUILD: {summary.get('status')}")
+    return keys, cases_by_key, summary
+
+def partition_candidate_rows(rows, interval, quarantine_keys):
+    """Partition candidate-shaped rows by exact key; never rounds timestamps or mutates rows."""
+    kept, quarantined = [], []
+    for row in rows:
+        token=str(row.get("open_time_ms",""))
+        if not token.isdigit():
+            raise ValueError(f"candidate open_time_ms must be an exact integer token: {token!r}")
+        (quarantined if (interval,token) in quarantine_keys else kept).append(row)
+    return kept, quarantined
+
+def run_gate_self_test(manifest_path: Path, blockers_path: Path, summary_path: Path):
+    checks=[]
+    def check(name, ok, detail):
+        checks.append({"test":name,"status":"PASS" if ok else "FAIL","detail":str(detail)})
+        if not ok: raise AssertionError(f"{name}: {detail}")
+    try:
+        load_candidate_gate(manifest_path,blockers_path,summary_path)
+        blocked=False; message="gate unexpectedly allowed candidate build"
+    except RuntimeError as exc:
+        blocked="G0_BLOCKED_NONROW_BLOCKERS_REMAIN" in str(exc)
+        message=str(exc)
+    check("current_27_nonrow_blockers_fail_closed",blocked,message)
+    keys={("5m","1518170294789")}
+    fixture=[{"open_time_ms":"1518170294789","raw_open_time_token":"1518170294789"},
+             {"open_time_ms":"1518170294790","raw_open_time_token":"1518170294790"}]
+    kept,quarantined=partition_candidate_rows(fixture,"5m",keys)
+    check("exact_key_quarantined",len(quarantined)==1 and quarantined[0] is fixture[0],len(quarantined))
+    check("one_ms_difference_retained",len(kept)==1 and kept[0] is fixture[1],len(kept))
+    check("raw_timestamp_tokens_unchanged",fixture[0]["raw_open_time_token"]=="1518170294789" and fixture[1]["raw_open_time_token"]=="1518170294790","fixture values preserved")
+    other,other_q=partition_candidate_rows([fixture[0]],"15m",keys)
+    check("other_interval_not_matched",len(other)==1 and not other_q,len(other))
+    return {"status":"PASS","tests_passed":len(checks),"tests_total":len(checks),"tests":checks,
+            "scope":"actual manifest preflight plus synthetic partition fixtures; no market data, candidate build, or backtest"}
+
 def verify_monthly_manifest(root):
     path = root / "reports" / "official_checksum_verification.csv"
     records = load_dict_csv(path)
@@ -199,7 +280,7 @@ def candidate_row(k, interval, source_type, source_interval, archive, source_sha
         "partial_calendar_month": ""
     }
 
-def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, monthly_checksums, out_path):
+def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, monthly_checksums, out_path, quarantine_keys, quarantine_cases):
     interval_dir = root / "klines" / interval
     paths = sorted(interval_dir.glob(f"{SYMBOL}-{interval}-????-??.zip"))
     month_paths = {}
@@ -215,11 +296,12 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
     month_keys=sorted(set(month_paths)|set(days_by_month))
     disposition=[]
     issues=[]
+    quarantined=[]
     summary={
         "interval":interval,"monthly_archives":len(paths),"months_processed":len(month_keys),
         "monthly_rows_kept":0,"monthly_rows_suppressed_for_flagged_dates":0,
         "daily_reference_rows_selected":0,"parse_errors":0,"checksum_verified":True,
-        "candidate_rows":0,"close_time_normalized_rows":0,"off_grid_open_rows":0,
+        "candidate_rows":0,"quarantined_rows":0,"close_time_normalized_rows":0,"off_grid_open_rows":0,
         "ohlc_anomaly_rows":0,"duplicate_open_times":0,"out_of_order_open_times":0,
         "gap_events":0,"estimated_missing_intervals":0,"first_open_time_utc":None,"last_open_time_utc":None,
     }
@@ -278,6 +360,14 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
             # Audit/write: no auto-dedup; preserve defects in candidate and block if found.
             for r in chunk:
                 t=int(r["open_time_ms"])
+                qkey=(interval,str(t))
+                if qkey in quarantine_keys:
+                    qr=dict(r)
+                    qr["quarantine_case_ids"]=";".join(quarantine_cases.get(qkey,[]))
+                    qr["quarantine_reason"]="CP-0040 exact interval + open_time_ms key"
+                    quarantined.append(qr)
+                    summary["quarantined_rows"]+=1
+                    continue
                 if not is_on_grid(t,interval):
                     summary["off_grid_open_rows"]+=1
                     issues.append({"interval":interval,"open_time_utc":r["open_time_utc"],"type":"CANDIDATE_OFF_GRID_OPEN","source_type":r["source_type"],"source_archive":r["source_archive"]})
@@ -326,7 +416,7 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
     ) else "BLOCKED_STRUCTURAL_ERRORS"
     summary["gap_policy"]="Gaps recorded, never interpolated or silently filled."
     summary["close_time_policy"]="Candidate output close_time is normalized to open_time + interval duration - 1ms. Original raw close-time token is retained."
-    return summary, disposition, issues
+    return summary, disposition, issues, quarantined
 
 def create_monthly_from_daily(root, daily_candidate_path, monthly_out):
     """Create complete candidate 1mo candles from the candidate 1d series."""
@@ -378,8 +468,26 @@ def create_monthly_from_daily(root, daily_candidate_path, monthly_out):
     return summary
 
 def main():
+    ap=argparse.ArgumentParser()
+    ap.add_argument("--gate-self-test",action="store_true")
+    ap.add_argument("--manifest")
+    ap.add_argument("--blockers")
+    ap.add_argument("--gate-summary")
+    args=ap.parse_args()
+    if args.gate_self_test:
+        if not (args.manifest and args.blockers and args.gate_summary):
+            ap.error("--gate-self-test requires --manifest, --blockers, and --gate-summary")
+        result=run_gate_self_test(Path(args.manifest),Path(args.blockers),Path(args.gate_summary))
+        print(json.dumps(result,indent=2,ensure_ascii=False))
+        return
     root=get_root()
     if not root.exists(): raise FileNotFoundError(f"Expected Drive data root not found: {root}")
+    gate_dir=root/"reports"
+    manifest_path=Path(args.manifest) if args.manifest else gate_dir/"CP0040_ExactKey_Quarantine_Manifest.csv"
+    blockers_path=Path(args.blockers) if args.blockers else gate_dir/"CP0040_NonRow_Blockers.csv"
+    gate_summary_path=Path(args.gate_summary) if args.gate_summary else gate_dir/"CP0040_ExactKey_Quarantine_Manifest_Summary.json"
+    quarantine_keys,quarantine_cases,gate_summary=load_candidate_gate(manifest_path,blockers_path,gate_summary_path)
+    print("CP-0040 quarantine gate PASS; exact keys loaded:",len(quarantine_keys))
     dates_path=root/"reports"/"cp0025_reference_dates.json"
     if not dates_path.exists(): raise FileNotFoundError(f"Run CP-0025 first; not found: {dates_path}")
     flagged=json.loads(dates_path.read_text(encoding="utf-8"))["dates"]
@@ -397,17 +505,17 @@ def main():
     outdir=CANDIDATE_ROOT/"intervals"
     outdir.mkdir(parents=True,exist_ok=True)
     reports=root/"reports"; reports.mkdir(parents=True,exist_ok=True)
-    summaries=[]; all_dispositions=[]; all_issues=[]
+    summaries=[]; all_dispositions=[]; all_issues=[]; all_quarantined=[]
     print("AISTS CP-0026 | build provisional research candidate")
     print("No downloads. No raw ZIP edits. Uses current Drive files + existing checksum evidence.")
     print(f"Flagged UTC dates: {len(flagged_dates)}; day-level source policy: official-checksum-verified daily archive for flagged days.")
     print("Other dates: checksum-reverified monthly archive. Open times are never rounded.")
     for interval in BASE_INTERVALS:
         out=outdir/f"{SYMBOL}-{interval}-research-candidate.csv.gz"
-        summary,dispositions,issues=audit_and_write_interval(root,interval,flagged_dates,daily_manifest,monthly_checksums,out)
+        summary,dispositions,issues,quarantined=audit_and_write_interval(root,interval,flagged_dates,daily_manifest,monthly_checksums,out,quarantine_keys,quarantine_cases)
         summary["file"]=str(out)
         summary["sha256"]=sha256_file(out)
-        summaries.append(summary);all_dispositions.extend(dispositions);all_issues.extend(issues)
+        summaries.append(summary);all_dispositions.extend(dispositions);all_issues.extend(issues);all_quarantined.extend(quarantined)
         print(json.dumps(summary,ensure_ascii=False))
     monthly_out=outdir/f"{SYMBOL}-1mo-research-candidate.csv.gz"
     daily_path=outdir/f"{SYMBOL}-1d-research-candidate.csv.gz"
@@ -417,15 +525,17 @@ def main():
     write_csv_path=reports/"cp0026_day_source_disposition.csv"
     write_rows(write_csv_path,all_dispositions)
     write_rows(reports/"cp0026_candidate_quality_issues.csv",all_issues)
+    write_rows(reports/"cp0026_quarantined_candidate_rows.csv",all_quarantined)
     source_counts={}
     for s in summaries:
-        source_counts[s["interval"]]={k:s.get(k) for k in ["candidate_rows","monthly_rows_kept","monthly_rows_suppressed_for_flagged_dates","daily_reference_rows_selected","close_time_normalized_rows","off_grid_open_rows","ohlc_anomaly_rows","duplicate_open_times","out_of_order_open_times","gap_events","estimated_missing_intervals","status","first_open_time_utc","last_open_time_utc","sha256"]}
+        source_counts[s["interval"]]={k:s.get(k) for k in ["candidate_rows","monthly_rows_kept","monthly_rows_suppressed_for_flagged_dates","daily_reference_rows_selected","close_time_normalized_rows","quarantined_rows","off_grid_open_rows","ohlc_anomaly_rows","duplicate_open_times","out_of_order_open_times","gap_events","estimated_missing_intervals","status","first_open_time_utc","last_open_time_utc","sha256"]}
     blocking=[s for s in summaries if str(s.get("status","")).startswith("BLOCKED")]
     report={
         "project":"AISTS CP-0026",
         "generated_at_utc":now_utc(),"symbol":SYMBOL,"market":"spot",
         "drive_root":str(root),"candidate_root":str(CANDIDATE_ROOT),
         "flagged_date_count":len(flagged_dates),"flagged_dates":sorted(flagged_dates),
+        "cp0040_quarantine_gate":{"status":"PASS","manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":len(quarantine_keys),"selected_source_rows_quarantined":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
         "source_policy":{
             "flagged_dates":"Select daily public archive only when its local SHA256 matches CP-0025's official SHA256 evidence.",
             "unflagged_dates":"Select monthly archive only when its local SHA256 matches the published official SHA256 sidecar recorded in CP-0023.",
@@ -446,7 +556,7 @@ def main():
     (reports/"cp0026_research_candidate_manifest.json").write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding="utf-8")
     bundle=reports/"AISTS_CP0026_Research_Candidate_Report_Bundle.zip"
     bundle_names=["cp0026_research_candidate_manifest.json","cp0026_day_source_disposition.csv","cp0026_candidate_quality_issues.csv",
-                  "cp0025_daily_reference_summary.json","cp0025_reconciliation_summary.json"]
+                  "cp0025_daily_reference_summary.json","cp0025_reconciliation_summary.json","cp0026_quarantined_candidate_rows.csv"]
     with zipfile.ZipFile(bundle,"w",compression=zipfile.ZIP_DEFLATED) as zf:
         for name in bundle_names:
             p=reports/name
