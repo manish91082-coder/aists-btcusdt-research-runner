@@ -1,6 +1,6 @@
 {
-  "request_id": "AISTS-CP0107-OFFICIAL-UPDATE-PROVENANCE-20261016-01",
+  "request_id": "AISTS-CP0107-OFFICIAL-UPDATE-PROVENANCE-20261016-02",
   "task": "cp0107_official_update_package_audit",
-  "purpose": "Inspect only the fixed official Binance public-data correction bundle and compare its members/references with 33 frozen CP-0041 monthly archive targets. No Binance market-data REST, no broad archive refetch, no source selection, no backtest.",
-  "created_at_utc": "2026-10-16T06:35:00Z"
+  "purpose": "Inspect the fixed official Binance public-data correction bundle and compare it with 33 frozen CP-0041 monthly archive targets. No market-data REST, broad refetch, source selection or backtest.",
+  "created_at_utc": "2026-10-16T06:38:00Z"
 }
