@@ -18,6 +18,7 @@ on:
           - cp0040_quarantine_manifest_extend_acquisition
           - cp0040_quarantine_manifest_extend_aggregation
           - cp0040_candidate_builder_gate_tests
+          - cp0040_baseline_reconstruction_audit
           - historical_reference_replay
           - monthly_derived_replay
           - legacy_pipeline
@@ -110,8 +111,8 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
-            echo "CP-0107 cache-only extraction uses Python standard library; skipping pip dependencies."
+          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
+            echo "CP-0040 reconstruction and CP-0107 cache-only audits use Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
           fi
@@ -804,4 +805,117 @@ jobs:
           PY
           git add "$DEST" evidence/source_adjudication/CP0040_Current_Manifest.json evidence/CURRENT_RESEARCH_STATE_HI.md
           git commit -m "evidence: publish CP0040 quarantine manifest run ${RUN_ID}"
+          git push origin HEAD:main
+
+  publish_cp0040_baseline_reconstruction_audit:
+    if: needs.run.result == 'success' && needs.run.outputs.task == 'cp0040_baseline_reconstruction_audit'
+    needs: run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Checkout main with scoped write token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ github.token }}
+          persist-credentials: true
+      - name: Download this run's reconstruction artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aists-run-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: evidence_stage
+      - name: Validate bounded reconstruction evidence
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path("evidence_stage/cp0040_baseline_reconstruction_audit")
+          summary_path = root / "CP0040_Baseline_Reconstruction_Audit_Summary.json"
+          report_path = root / "CP0040_Baseline_Reconstruction_Audit_Report_HI.md"
+          if not summary_path.is_file() or not report_path.is_file():
+              raise SystemExit("Required reconstruction summary/report missing; refusing evidence publish")
+          summary = json.loads(summary_path.read_text(encoding="utf-8"))
+          allowed = {"PASS_BASELINE_INPUTS_RECONSTRUCTED", "BLOCKED_INPUTS_NOT_REPRODUCIBLE"}
+          if summary.get("task") != "cp0040_baseline_reconstruction_audit" or summary.get("status") not in allowed:
+              raise SystemExit("Unexpected task/status; refusing evidence publish")
+          if summary.get("network_used") is not False or summary.get("production_candidate_build") is not False or summary.get("backtest_run") is not False:
+              raise SystemExit("Scope assertions failed; refusing evidence publish")
+          if summary.get("status") == "PASS_BASELINE_INPUTS_RECONSTRUCTED":
+              checks = summary.get("checks", [])
+              if not checks or any(x.get("status") != "PASS" for x in checks):
+                  raise SystemExit("Successful reconstruction summary contains non-PASS checks")
+              required = {"4h", "1d", "1mo"}
+              results = summary.get("candidate_content_results", {})
+              if set(results) != required or any(results[k].get("matches_frozen_content_anchor") is not True for k in required):
+                  raise SystemExit("Frozen content anchors do not all match")
+          run_id = os.environ["RUN_ID"]
+          print(json.dumps({"status":"PASS_PUBLISH_PREFLIGHT","run_id":run_id,"research_status":summary["status"],"checks":len(summary.get("checks",[]))},sort_keys=True))
+          PY
+      - name: Persist run-scoped evidence and append canonical state
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          SRC="evidence_stage/cp0040_baseline_reconstruction_audit"
+          DEST="evidence/source_adjudication/CP0040_Reconstruction_Run_${RUN_ID}"
+          mkdir -p "$DEST"
+          cp "$SRC/CP0040_Baseline_Reconstruction_Audit_Summary.json" "$DEST/"
+          cp "$SRC/CP0040_Baseline_Reconstruction_Audit_Report_HI.md" "$DEST/"
+          if [ -f "$SRC/CP0040_Baseline_Reconstruction_Archive_Inventory.csv" ]; then
+            cp "$SRC/CP0040_Baseline_Reconstruction_Archive_Inventory.csv" "$DEST/"
+          fi
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          run_id=os.environ["RUN_ID"]
+          run_commit=os.environ["RUN_COMMIT"]
+          base=Path("evidence/source_adjudication")
+          dest=base / ("CP0040_Reconstruction_Run_" + run_id)
+          summary_path=dest / "CP0040_Baseline_Reconstruction_Audit_Summary.json"
+          summary=json.loads(summary_path.read_text(encoding="utf-8"))
+          outputs={}
+          for p in sorted(dest.iterdir()):
+              if p.is_file():
+                  outputs[p.name]={"bytes":p.stat().st_size,"sha256":hashlib.sha256(p.read_bytes()).hexdigest()}
+          pointer={
+              "run_id":int(run_id),
+              "run_commit_sha":run_commit,
+              "status":summary["status"],
+              "summary_path":str(dest/"CP0040_Baseline_Reconstruction_Audit_Summary.json"),
+              "report_path":str(dest/"CP0040_Baseline_Reconstruction_Audit_Report_HI.md"),
+              "summary_sha256":outputs["CP0040_Baseline_Reconstruction_Audit_Summary.json"]["sha256"],
+              "outputs":outputs,
+              "production_candidate_build":False,
+              "backtest_run":False,
+              "strategy_promoted":False,
+              "g0":"BLOCKED_GLOBAL"
+          }
+          (base/"CP0040_Baseline_Reconstruction_Current.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\\n",encoding="utf-8")
+          state_path=Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state=state_path.read_text(encoding="utf-8")
+          marker="CP-0040 baseline reconstruction audit run "+run_id
+          if marker not in state:
+              note="\\n\\n## "+marker+"\\n\\n"
+              note+="- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/"+run_id+"; task status "+summary["status"]+"; runner commit "+run_commit+".\\n"
+              note+="- Scope is temporary cache-only reconstruction of the frozen CP-0031 candidate input content; network/acquisition count=0; production candidate build=False; backtest=False.\\n"
+              note+="- Monthly archives used="+str(summary.get("monthly_archives_used",0))+"; daily reference archives used="+str(summary.get("daily_reference_archives_used",0))+"; official daily sidecars verified="+str(summary.get("official_daily_sidecars_verified",0))+".\\n"
+              for iv,res in summary.get("candidate_content_results",{}).items():
+                  note+="- "+iv+" reconstructed decompressed SHA-256 "+str(res.get("decompressed_sha256",""))+"; frozen anchor "+str(res.get("decompressed_sha256_anchor",""))+"; match="+str(res.get("matches_frozen_content_anchor",False))+".\\n"
+              if summary["status"]=="BLOCKED_INPUTS_NOT_REPRODUCIBLE":
+                  note+="- Decision: stop further CP-0040 sensitivity execution until the missing/mismatched input is resolved; no fabricated metrics.\\n"
+              else:
+                  note+="- Input content anchors reproduced. This is not a backtest, signal-impact calculation, canonical-source decision, or promotion approval.\\n"
+              note+="- G0 remains BLOCKED_GLOBAL; all 11 non-row aggregation blockers remain open; canonical source remains NONE; live signing/broadcast/orders remain blocked.\\n"
+              state_path.write_text(state+note,encoding="utf-8")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DEST" evidence/source_adjudication/CP0040_Baseline_Reconstruction_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
+          git commit -m "evidence(cp0040): publish baseline reconstruction run ${RUN_ID}"
           git push origin HEAD:main
