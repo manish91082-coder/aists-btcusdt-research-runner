@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-CP0026-GATE-TESTS-001",
-  "task": "cp0040_candidate_builder_gate_tests",
-  "purpose": "Test CP-0026 builder fail-closed integration against the published 969-key manifest and 27 non-row blockers; verify exact-key partition behavior only; do not build candidate data or run backtests.",
-  "created_at_utc": "2026-10-16T10:10:00Z",
-  "requested_commit_sha": "94651d1d8766f5671a7a5640dab6c956c59e7166"
+  "request_id": "CP0040-QUARANTINE-EXTENSION-001",
+  "task": "cp0040_quarantine_manifest_extend_acquisition",
+  "purpose": "Extend the frozen 969-key quarantine manifest with row-level unresolved keys from the already verified 16-period Binance daily-reference comparison; resolve acquisition-stage blockers only where row audit is complete; retain aggregation blockers; no candidate build or backtest.",
+  "created_at_utc": "2026-10-16T10:40:00Z",
+  "requested_commit_sha": "e5e6fcf8a2a7b46e6cef04526613c62136ef643f"
 }
