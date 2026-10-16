@@ -168,7 +168,7 @@ def main():
         ck("24_selected_keys_unique_across_both_groups",len(keys)==24 and len(set(keys))==24,{"rows":len(keys),"unique_keys":len(set(keys))})
         ck("no_case_closure_or_source_promotion",all(r["canonical_source"]=="NONE" and r["case_closed"].lower()=="false" and r["source_authority"]=="NONE" for r in matrix),
            "24/24 keys remain unresolved, canonical source NONE, case_closed false")
-        ck("global_gates_remain_blocked",len(blockers)==11 and pointer.get("candidate_eligibility_blocked") is True and triage.get("decisions",{}).get("canonical_source_selected") is False and triage.get("decisions",{}).get("source_cases_closed")==0,
+        ck("global_gates_remain_blocked",len(blockers)==11 and pointer.get("candidate_eligibility_blocked") is True and triage.get("canonical_source_selected") is False and triage.get("source_cases_closed")==0,
            {"nonrow_blockers":len(blockers),"G0":"BLOCKED_GLOBAL","G2":"FAIL_CURRENT_23_CANDIDATES","G7":"LIVE_BLOCKED"})
         passed=sum(c["status"]=="PASS" for c in checks);total=len(checks)
         status="PASS_24_ACQUISITION_KEYS_CONFIRMED_QUARANTINED_SOURCE_AUTHORITY_OPEN" if passed==total else "REVIEW_REQUIRED_ACQUISITION_QUARANTINE_COVERAGE"
