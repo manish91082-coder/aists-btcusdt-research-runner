@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0097",
+  "status": "PASS_CORRECTION_ROUTE_EXHAUSTED_FOR_FROZEN_TARGET_SET_SOURCE_AUTHORITY_OPEN",
+  "reviewed_at_utc": "2026-10-16",
+  "repository": "manish91082-coder/aists-btcusdt-research-runner",
+  "official_source": {
+    "repository": "binance/binance-public-data",
+    "path": "README.md",
+    "ref": "master",
+    "git_blob_sha1": "e01e34a0b0cd91d62386a5a237190a3167138bae",
+    "preserved_copy_path": "evidence/source_adjudication/CP0097_Official_Binance_Public_Data_README_master.md",
+    "preserved_copy_git_blob_sha1": "e01e34a0b0cd91d62386a5a237190a3167138bae",
+    "exact_blob_match": true,
+    "documented_update_rows": 2,
+    "documented_kline_correction_bundles": 1,
+    "kline_correction_bundle": "2022-08-08_kline_updates.zip"
+  },
+  "prior_evidence": {
+    "cp0094": {
+      "path": "evidence/source_adjudication/CP0094_Acquisition_Quarantine_Coverage_Current.json",
+      "git_blob_sha1": "fdd69f1cba2ccfc0107c0680f6b17cc79f8dbba7",
+      "status": "PASS_24_ACQUISITION_KEYS_CONFIRMED_QUARANTINED_SOURCE_AUTHORITY_OPEN",
+      "economic_conflicts_quarantined": "14/14",
+      "monthly_only_grid_keys_quarantined": "10/10"
+    },
+    "cp0095": {
+      "path": "evidence/source_adjudication/CP0095_Official_Correction_Target_Mapping_Current.json",
+      "git_blob_sha1": "ac317a58197f0ccc72981cb015a0493db318905d",
+      "status": "PASS_OFFICIAL_CORRECTION_CSV_HAS_NO_EXACT_PATHS_FOR_16_TARGETS_SOURCE_AUTHORITY_OPEN",
+      "exact_paths": "0/16",
+      "basename_matches": "0/16"
+    },
+    "cp0096": {
+      "path": "evidence/source_adjudication/CP0096_Correction_Checksum_Crosswalk_Current.json",
+      "git_blob_sha1": "c2e276b691600d4fa5155c2cad02ba5ca8e82097",
+      "status": "PASS_CHECKSUM_CROSSWALK_NO_ARCHIVE_HASH_HITS_SOURCE_AUTHORITY_OPEN",
+      "daily_hash_hits": "0/16",
+      "monthly_hash_hits": "0/14"
+    }
+  },
+  "decision": {
+    "official_correction_route_for_frozen_target_set": "EXHAUSTED_NO_EXACT_PATH_BASENAME_OR_ARCHIVE_SHA256_LINK",
+    "correction_search_route_closed": true,
+    "canonical_source_selected": false,
+    "source_cases_closed": 0,
+    "raw_source_bytes_modified": false,
+    "new_archives_downloaded": 0,
+    "worklist_mutated": false
+  },
+  "unchanged_gates": {
+    "unresolved_shared_conflicts": 60,
+    "unmatched_rows_quarantined": 909,
+    "unresolved_nonrow_aggregation_blockers": 11,
+    "g0": "BLOCKED_GLOBAL",
+    "g2": "FAIL_CURRENT_23_CANDIDATES",
+    "g7": "LIVE_BLOCKED"
+  },
+  "next_action": "Continue only with new exact-row official evidence or the unresolved non-row aggregation blockers; do not re-run the same correction bundle for the frozen hashes absent new evidence.",
+  "report_path": "evidence/source_adjudication/CP0097_Official_Correction_Route_Closure_HI.md",
+  "report_git_blob_sha1": "e0d19fcbdfd288148a3a45e8a4e4feb0da06dddd"
+}
