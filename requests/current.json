@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-BASELINE-RECONSTRUCTION-AUDIT-002",
-  "task": "cp0040_baseline_reconstruction_audit",
-  "purpose": "Cache-only rebuild CP0031 4h, 1d, 1mo inputs; no network, production build or backtest. Require exact decompressed SHA anchors.",
-  "created_at_utc": "2026-10-16T11:45:00Z",
-  "requested_commit_sha": "a6b8bba78215269b46a6b24179206dc9d34a264e"
+  "request_id": "CP0040-QUARANTINE-SENSITIVITY-RUN-001",
+  "task": "cp0040_quarantine_sensitivity_run",
+  "purpose": "Compare frozen MTF_BREAKOUT_4H_D1 baseline and exact-key quarantine. Baseline metrics must match first; no source downloads or promotion.",
+  "created_at_utc": "2026-10-16T12:00:00Z",
+  "requested_commit_sha": "52a3856950cb79b4ebf0adbf382681b0fa5785fe"
 }
