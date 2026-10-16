@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0093-DAILY-REFERENCE-DISCREPANCY-TRIAGE-001",
+  "request_id": "CP0093-DAILY-REFERENCE-DISCREPANCY-TRIAGE-002",
   "task": "cp0093_daily_reference_discrepancy_triage",
-  "purpose": "Triage the completed CP-0107 16-reference row comparison by economic versus metadata-only divergence and monthly-only keys; preserve all source-authority and global gates; read-only.",
-  "created_at_utc": "2026-10-16T15:10:00Z",
-  "requested_commit_sha": "fb45401422c57b09f5c3f2a83b7e548601f9bf7b"
+  "purpose": "Retry read-only discrepancy triage after aligning disposition guard with frozen exact-pair context labels; validate input hashes and preserve source authority NONE/G0 blocked.",
+  "created_at_utc": "2026-10-16T15:18:00Z",
+  "requested_commit_sha": "719d5fc62f37aaa05c48164ccf2a10e5003169fc"
 }
