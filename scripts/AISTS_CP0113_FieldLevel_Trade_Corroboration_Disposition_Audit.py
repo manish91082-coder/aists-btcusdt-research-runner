@@ -96,7 +96,7 @@ def main() -> int:
         "daily_metric_fields_exact_match": "315/315",
         "monthly_unique_bars_exact_match": "21/35",
         "monthly_metric_fields_exact_match": "218/315",
-        "direct_trade_parent_equals_child_rollup": "11/11",
+        "direct_trade_derived_parent_equals_child_rollup": "11/11",
     }
     if any(result.get(k) != v for k, v in expected_cp0112.items()):
         raise ValueError("CP-0112 aggregate results do not match the verified continuation pointer")
