@@ -619,3 +619,10 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Reused verified correction ZIP SHA-256 1404dbfb3d62534b2576a6c0c046826fe652f895b9bebfe4c13df58bc8cf6240; correction CSV rows=73234. No new download.
 - Exact correction paths for 16 daily targets=0/16; basename matches=0/16. Correction bundle provides no mapping for this target set.
 - Source authority remains UNDETERMINED; no case closed; 60 source conflicts, 909 unmatched rows and 11 aggregation blockers remain open; G0 BLOCKED_GLOBAL; G2 current 23 candidates FAIL; G7 LIVE_BLOCKED.
+
+
+## CP-0096 correction checksum crosswalk 38913040361
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38913040361; status PASS_CHECKSUM_CROSSWALK_NO_ARCHIVE_HASH_HITS_SOURCE_AUTHORITY_OPEN; checks 11/11 PASS.
+- Compared every correction CSV Original/New SHA-256 field against 16 verified daily ZIP hashes and 14 verified monthly ZIP hashes. Daily hits=0/16; monthly hits=0/14. No new download.
+- Source authority remains UNDETERMINED; no case closed; 60 source conflicts, 909 unmatched rows and 11 aggregation blockers remain open; G0 BLOCKED_GLOBAL; G2 current 23 candidates FAIL; G7 LIVE_BLOCKED.
