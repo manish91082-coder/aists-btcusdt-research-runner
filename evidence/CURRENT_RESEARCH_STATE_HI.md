@@ -455,3 +455,12 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Consequence: exact-key quarantine coverage is necessary but not sufficient for G0 PASS because final metrics under this quarantine manifest have not been run. No candidate build/backtest authorized by this checkpoint. G0 stays `BLOCKED_GLOBAL`; all 11 relationship blockers remain OPEN; no root cause, source selection or closure.
 - Amended report: `evidence/source_adjudication/CP0040_Aggregation_Relationship_Hold_Decision_HI.md` (rulebook clause crosswalk appended).
 - Next bounded action: preserve this HOLD and decide, under the frozen research workflow, whether to run a separately labelled quarantine-sensitivity diagnostic using the exact current manifest after required strategy/research scope is frozen; do not change source data or promote a candidate.
+
+
+## CP-0040 quarantine sensitivity scope lock — 2026-10-16
+
+- Published `evidence/source_adjudication/CP0040_Quarantine_Sensitivity_Scope_Lock_HI.md` (commit `116b6693d48d8d58da3104294559418e2adb81c1`).
+- Locked next experiment to one frozen comparator only: `MTF_BREAKOUT_4H_D1`, explicitly as a consumed diagnostic comparator, not a selected/promoted strategy. No parameter tuning or strategy-universe expansion.
+- Planned comparison: baseline source policy versus current exact-key quarantine manifest (1,427 keys; SHA-256 `e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a`), using exact `(interval, open_time_ms)` matching only; report signal/input impact and metric deltas if baseline inputs are reproducible.
+- Implementation guard: a separate diagnostic path must not weaken or override the production CP-0026 gate. If baseline inputs/metrics cannot be reproduced from committed evidence and verified cache without repeating acquisition, stop with `BLOCKED_INPUTS_NOT_REPRODUCIBLE`; do not invent comparisons.
+- No diagnostic implementation/execution yet; no production candidate build/backtest. G0 remains `BLOCKED_GLOBAL`; all 11 relationship blockers remain open; strategy promotion and live actions remain blocked.
