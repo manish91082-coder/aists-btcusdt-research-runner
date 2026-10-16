@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0113-FIELD-LEVEL-TRADE-CORROBORATION-20261016-01",
+  "request_id": "CP0113-FIELD-LEVEL-TRADE-CORROBORATION-20261016-02",
   "task": "cp0113_fieldlevel_trade_corroboration_disposition_audit",
-  "purpose": "Dedupe the frozen 35 child/parent candle keys, verify daily/monthly archive and checksum identity, and produce exact 14-key/97-field monthly conflict crosswalk; no canonical source selection or case closure.",
-  "created_at_utc": "2026-10-16T17:50:00Z",
-  "requested_commit_sha": "933dce9fa384584d686ae8a12dc4a12c2dc0fd99"
+  "purpose": "Verify frozen CP-0112 pointer, dedupe the 35 exact child/parent candle keys, verify daily/monthly archive identity, and emit the exact 14-key/97-field monthly conflict crosswalk; no source selection or closure.",
+  "created_at_utc": "2026-10-16T17:56:00Z",
+  "requested_commit_sha": "c8bd8db352e8853ab1a62963b133de0ae81eebbf"
 }
