@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-QUARANTINE-EXTENSION-001",
+  "request_id": "CP0040-QUARANTINE-EXTENSION-002",
   "task": "cp0040_quarantine_manifest_extend_acquisition",
-  "purpose": "Extend the frozen 969-key quarantine manifest with row-level unresolved keys from the already verified 16-period Binance daily-reference comparison; resolve acquisition-stage blockers only where row audit is complete; retain aggregation blockers; no candidate build or backtest.",
-  "created_at_utc": "2026-10-16T10:40:00Z",
+  "purpose": "Extend quarantine manifest from verified CP-0041 row comparisons; add unresolved exact keys, retire acquisition-stage blockers, keep aggregation blockers. No candidate build or backtest.",
+  "created_at_utc": "2026-10-16T10:45:00Z",
   "requested_commit_sha": "e5e6fcf8a2a7b46e6cef04526613c62136ef643f"
 }
