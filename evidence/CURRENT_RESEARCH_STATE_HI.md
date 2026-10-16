@@ -570,3 +570,12 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Shared-52 rows=52; conflicts intersecting frozen MTF_BREAKOUT_4H_D1 direct inputs=4 (4h=2, 1d=2); remaining intervals=48. All 52 exact keys matched the CP-0040 quarantine manifest.
 - Official correction package supplied no exact daily path for the four direct cases. Full-manifest sensitivity: TRAIN delta pp=-15.89174082849894; no 4-row causal attribution was run.
 - This is dependency evidence, not source adjudication or G0 approval. All 52 cases remain open; the 11 relationship blockers remain open; G0 BLOCKED_GLOBAL; canonical source NONE.
+
+
+## CP-0040 rulebook-bound eligibility decision run 38904743112
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38904743112; status PASS_RULEBOOK_BOUND_DECISION_GLOBAL_GATES_REMAIN_BLOCKED; runner commit ca5b237443b83da03ee2f24e99b649beccac9fcd.
+- Frozen rulebook verified: 10,630 bytes, SHA-256 5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0, member confirmed in CP-0041 and CP-0046 packs.
+- Candidate-specific quarantine criterion=PASS_QUARANTINE_BRANCH_FOR_THIS_FROZEN_DIAGNOSTIC_COMPARATOR_ONLY; direct exact keys removed=9/9; replacements=0. Global G0 remains BLOCKED_GLOBAL.
+- G3=BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; TRAIN net-return delta pp=-15.89174082849894; G2 remains FAIL/NOT PROMOTED. CP-0026 builder stays fail-closed; no build or backtest.
+- All 11 relationship blockers remain open; canonical source NONE; no cases closed; live signing, broadcast and orders BLOCKED.

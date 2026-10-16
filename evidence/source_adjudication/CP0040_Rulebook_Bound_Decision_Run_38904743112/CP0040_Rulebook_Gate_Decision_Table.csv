@@ -1,0 +1,7 @@
+gate,status,evidence
+G0 candidate-specific quarantine criterion,PASS_QUARANTINE_BRANCH_FOR_THIS_FROZEN_DIAGNOSTIC_COMPARATOR_ONLY,9/9 direct 4h/1d manifest keys removed under exact-key quarantine; zero replacements; frozen baseline anchors and quarantine metrics verified.
+G0 global / CP-0026 production builder,BLOCKED_GLOBAL,11 non-row relationship blockers remain open; production builder explicitly fails closed.
+G2 historical strategy screen,FAIL_NOT_PROMOTED,Frozen rulebook Section 3 says MTF_BREAKOUT_4H_D1 FAIL / NOT PROMOTED.
+G3 source-policy stability,BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT,Full-manifest quarantine changes TRAIN net return by -15.891741 percentage points.
+Source authority,NONE,All direct unresolved rows remain open; no canonical source selected.
+Live / exchange actions,BLOCKED,"No live signing, broadcast or exchange orders."

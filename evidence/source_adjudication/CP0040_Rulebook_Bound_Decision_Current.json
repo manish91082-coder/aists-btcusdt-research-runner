@@ -1,0 +1,33 @@
+{
+  "candidate_specific_g0": "PASS_QUARANTINE_BRANCH_FOR_THIS_FROZEN_DIAGNOSTIC_COMPARATOR_ONLY",
+  "canonical_source": "NONE",
+  "global_g0": "BLOCKED_GLOBAL",
+  "outputs": {
+    "CP0040_Rulebook_Bound_Eligibility_Decision_Report_HI.md": {
+      "bytes": 1969,
+      "sha256": "46867e7f7b605d5b7a63984d93b30f484a2c708d0d17c1b2ee97c71c9f184c73"
+    },
+    "CP0040_Rulebook_Bound_Eligibility_Decision_Summary.json": {
+      "bytes": 7793,
+      "sha256": "b3a2b0658643f9af141d8b58f5439b5de85e8c7b226be74aac55db3bbfa701f0"
+    },
+    "CP0040_Rulebook_Eligibility_Check_Register.csv": {
+      "bytes": 2686,
+      "sha256": "e1c5447bd28e7ded84fcf5bda01ae0dfc6107eada2b575c4553f80d824d94c97"
+    },
+    "CP0040_Rulebook_Gate_Decision_Table.csv": {
+      "bytes": 862,
+      "sha256": "83e863f194a2017351d6c7297de0042b9afeeeb8b2242c6ee02c7ab0ae93b5c0"
+    }
+  },
+  "production_candidate_build": false,
+  "report_path": "evidence/source_adjudication/CP0040_Rulebook_Bound_Decision_Run_38904743112/CP0040_Rulebook_Bound_Eligibility_Decision_Report_HI.md",
+  "run_commit_sha": "ca5b237443b83da03ee2f24e99b649beccac9fcd",
+  "run_id": 38904743112,
+  "source_cases_closed": 0,
+  "status": "PASS_RULEBOOK_BOUND_DECISION_GLOBAL_GATES_REMAIN_BLOCKED",
+  "strategy_promoted": false,
+  "summary_path": "evidence/source_adjudication/CP0040_Rulebook_Bound_Decision_Run_38904743112/CP0040_Rulebook_Bound_Eligibility_Decision_Summary.json",
+  "summary_sha256": "b3a2b0658643f9af141d8b58f5439b5de85e8c7b226be74aac55db3bbfa701f0",
+  "unresolved_nonrow_aggregation_blockers": 11
+}
