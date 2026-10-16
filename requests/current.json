@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-CP0026-GATE-TESTS-003",
-  "task": "cp0040_candidate_builder_gate_tests",
-  "purpose": "Verify CP-0026 gate against the current 1427-key manifest; confirm all aggregation bucket row keys are quarantined and 11 relationship blockers still fail closed. No candidate build/backtest.",
-  "created_at_utc": "2026-10-16T11:20:00Z",
-  "requested_commit_sha": "9b3d134382d48c83e7215480eefc848af03bb577"
+  "request_id": "CP0040-QUARANTINE-SENSITIVITY-PREFLIGHT-001",
+  "task": "cp0040_quarantine_sensitivity_preflight",
+  "purpose": "Inventory committed baseline-like evidence and restored cache only; no network, archive download, candidate build, backtest, or source changes. Decide if baseline outputs need content validation.",
+  "created_at_utc": "2026-10-16T10:30:00Z",
+  "requested_commit_sha": "7d20e228f3e1752f43b2d9896e9e8fd995f1b512"
 }
