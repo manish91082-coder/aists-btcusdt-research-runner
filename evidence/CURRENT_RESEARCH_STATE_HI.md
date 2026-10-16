@@ -498,3 +498,17 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - **Explicit limitation:** the 1.88 MB ZIP exists as a validated artifact in this conversation's working environment; the binary has not been committed to GitHub and has not been staged in Actions. The available repository connector can commit text metadata but does not provide a direct local-file-to-GitHub binary upload operation. No signed temporary URL or credential was put into the public request history. The next execution prerequisite is a controlled binary handoff to the runner or another authorised staging surface, then verify the staged bytes against this manifest before running the diagnostic.
 - **No research execution performed:** no new data acquisition, production candidate build, backtest, signal/position comparison, or quarantine sensitivity was run while making this package. The original CP-0031 metrics remain historic outputs only.
 - **Gate remains unchanged:** G0 `BLOCKED_GLOBAL`; all 11 aggregation relationship blockers remain open; candidate promotion, live signing, broadcast, and Binance orders remain blocked.
+
+
+## CP0040-QS-HANDOFF-CAPABILITY-AUDIT-20261016-01
+
+- Date: 2026-10-16. Read-only inspection of the current GitHub connector, repository workflow, runner, and latest verified preflight artifact.
+- Actions run `38890325530` has only artifact `12041381968`, size 7,997 bytes, SHA-256 `239123393358d581783057f45d8398f67be2f1b42999b2be8458b51f63c6b7ce`. It is preflight evidence, not the baseline snapshot. Run HEAD was `b7204d3bab674a6d68e3690f22b98b424c8a0d39`; later docs-only HEAD changes do not inherit that run's CI result.
+- The validated local snapshot remains `AISTS_CP0040_Baseline_Snapshot_20261016.zip`, 1,884,382 bytes, SHA-256 `1e5f528d1c09fb8b598e75f5c08b23530f0073882553cb272558aa89b047981f`, 22 members. It has not been uploaded to the repository or staged in Actions.
+- Capability audit: the available GitHub connector exposes text-file create/update, a blob API that requires the full caller-supplied UTF-8/base64 string, and workflow-artifact download/list operations. It does not expose a local-file upload, release-asset upload, artifact upload, or workflow-dispatch action. No local-file-to-blob transport was available in this turn.
+- `.github/workflows/python-runner.yml` restores source caches, but the existing legacy acquisition path calls official `.CHECKSUM` URLs and can fetch missing/mismatched ZIPs. It is therefore not an acceptable way to claim a network-free, cache-only reconstruction under the frozen CP-0040 scope.
+- Google Drive integration is disabled by admin. Dropbox integration is listed as available but is not installed/authorized; it was not used and no external share link was created.
+- **Decision: `BLOCKED_BINARY_HANDOFF_UNAVAILABLE`.** No diagnostic, candidate build, backtest, new source acquisition, or strategy comparison was run. `requests/current.json` was not changed to trigger a run.
+- **Gates unchanged:** CP-0040 comparator remains diagnostic-only; G0 `BLOCKED_GLOBAL`; all 11 non-row aggregation blockers remain open; no canonical source selection, candidate promotion, live signing, public broadcast, or Binance order placement.
+- **Next prerequisite:** establish an authorised binary handoff that the Actions runner can read, or separately implement and verify a genuinely offline, hash-anchored cache reconstruction. Before the sensitivity calculation, verify the staged/input bytes against the frozen CP-0040 snapshot manifest.
+
