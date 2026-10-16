@@ -6,7 +6,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-URL="https://api.github.com/repos/binance/binance-public-data/git/blobs/90631298cf50ac2e1ee8372a087767b010d78a21"
+URL="https://raw.githubusercontent.com/binance/binance-public-data/master/updates/2022-08-08_kline_updates.zip"
 EXPECTED_GIT_BLOB_SHA1="90631298cf50ac2e1ee8372a087767b010d78a21"
 EXPECTED_BYTES=6653240
 MAX_BYTES=8_000_000
@@ -45,7 +45,7 @@ def main():
     def ck(n,ok,d):checks.append({"check_id":n,"status":"PASS" if ok else "FAIL","detail":str(d)})
     body=b"";headers={};http_status=None;error=None
     try:
-        req=urllib.request.Request(URL,headers={"Accept":"application/vnd.github.raw+json","X-GitHub-Api-Version":"2022-11-28","User-Agent":"AISTS-CP0092-CorrectionArchiveProbe/1.0"})
+        req=urllib.request.Request(URL,headers={"Accept":"application/octet-stream","User-Agent":"AISTS-CP0092-CorrectionArchiveProbe/1.0"})
         with urllib.request.urlopen(req,timeout=45) as response:
             http_status=getattr(response,"status",None);headers={k.lower():v for k,v in response.headers.items()}
             ctype=headers.get("content-type","")
@@ -91,7 +91,7 @@ def main():
     checks_total=len(checks);checks_passed=sum(c["status"]=="PASS" for c in checks)
     summary={"schema_version":1,"checkpoint":"CP-0092","task":"cp0092_correction_archive_binary_route_probe","status":status,
         "started_at_utc":started,"finished_at_utc":now(),"url":URL,
-        "transport":{"route":"GitHub Git Blobs REST API with raw media type","accept":"application/vnd.github.raw+json","http_status":http_status,"content_type":headers.get("content-type",""),"error":error},
+        "transport":{"route":"raw.githubusercontent.com fetched from GitHub-hosted Actions runner after local-container DNS failure","accept":"application/octet-stream","http_status":http_status,"content_type":headers.get("content-type",""),"error":error},
         "archive":{"expected_bytes":EXPECTED_BYTES,"actual_bytes":len(body),"expected_git_blob_sha1":EXPECTED_GIT_BLOB_SHA1,"actual_git_blob_sha1":body_sha1,
             "sha256":body_sha256,"zip_crc":crc,"member_count":member_count,"path":str(binary.relative_to(ROOT)) if body else None},
         "checks":checks,"checks_passed":checks_passed,"checks_total":checks_total,"members":members,"target_mappings":targets,
@@ -100,12 +100,12 @@ def main():
         "canonical_source_selected":False,"source_cases_closed":0,"source_authority":"UNDETERMINED",
         "open_debt":{"daily_zip_checksum_pairs_before_probe":"0/16","shared_conflicts":60,"unmatched_rows_quarantined":909,
             "aggregation_buckets":11,"g0":"BLOCKED_GLOBAL","g2":"FAIL_CURRENT_23_CANDIDATES","g7":"LIVE_BLOCKED"},
-        "decision":"Archive acquisition alone does not prove per-target mapping or resolve source authority. Each target requires exact member/schema match and independent official daily ZIP plus .CHECKSUM validation."}
+        "decision":"This attempt uses GitHub-hosted Actions egress, a different transport environment from the previously DNS-blocked local container. Archive acquisition alone does not prove per-target mapping or resolve source authority. Each target requires exact member/schema match and independent official daily ZIP plus .CHECKSUM validation."}
     write_json(out/"CP0092_Correction_Archive_Binary_Route_Summary.json",summary)
     write_csv(out/"CP0092_Correction_Archive_Member_Inventory.csv",members)
     write_csv(out/"CP0092_Missing_Daily_Target_Mapping.csv",targets)
     report=["# CP-0092: Correction archive binary route probe","", "Status: "+status,
-        "Route: GitHub Git Blobs REST API, raw media type application/vnd.github.raw+json.",
+        "Route: official raw.githubusercontent.com repository file, requested from the GitHub-hosted runner after the prior local-container DNS failure.",
         "HTTP status: "+str(http_status)+"; bytes received: "+str(len(body))+"; expected bytes: "+str(EXPECTED_BYTES)+".",
         "Expected Git blob SHA-1: "+EXPECTED_GIT_BLOB_SHA1+"; actual: "+(body_sha1 or "NOT_COMPUTABLE")+".",
         "SHA-256: "+(body_sha256 or "NOT_COMPUTABLE")+"; ZIP CRC: "+crc+"; members: "+str(member_count)+".",
