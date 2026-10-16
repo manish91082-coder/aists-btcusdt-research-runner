@@ -388,3 +388,14 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Report: `evidence/source_adjudication/CP0040_CP0026_Quarantine_Gate_Integration_Report_HI.md`; summary: `evidence/source_adjudication/CP0040_CP0026_Quarantine_Gate_Integration_Summary.json`.
 - No candidate dataset build, no backtest, no canonical source selection, no case closure, no strategy promotion. Live signing, public broadcast and exchange orders remain BLOCKED.
 - Next: resolve or formally disposition the 27 non-row blockers with exact evidence, update manifest/gate state, and rerun regression checks before considering a candidate build.
+
+
+## CP-0040 exact-key quarantine manifest run 38883343753
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38883343753; status PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN; checks 19/19 PASS.
+- Row-level exact-key manifest: 1411 rows / 1411 unique keys. Classes: {"ACQUISITION_ECONOMIC_CONFLICT": 14, "ACQUISITION_MONTHLY_ONLY_ROW": 10, "ACQUISITION_RAW_FIELD_CONFLICT": 418, "CLOSE_TIME_ONLY": 8, "DAILY_ONLY_ROW": 452, "MONTHLY_ONLY_ROW": 457, "SHARED_ECONOMIC_CONFLICT": 52}.
+- The 450 off-grid rows are a subset of the 909 unmatched rows and were not double-counted. Shared-52 plus close-time-only 8 cover the 60 shared conflict records.
+- Separate non-row blockers: 11; counts={"RESIDUAL_AGGREGATION_BUCKET": 11}. Candidate eligibility remains BLOCKED.
+- Manifest SHA-256 d62c30c8ac7a4e5241b48e79884e68395fd1904826cfd70549886876269642b2; blocker ledger SHA-256 f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36. The published frozen index was re-hashed; the original CP-0041 package/rulebook bytes were not freshly re-hashed in this run.
+- Acquisition extension reviewed 1992 raw row pairs: 432 divergent pairs, 14 economic-field divergences, and 10 monthly-only keys. Newly added unique keys=442; overlapping keys enriched=0. No new downloads.
+- No canonical source selected, no cases closed, no candidate build/backtest, no strategy promotion, live actions remain BLOCKED.

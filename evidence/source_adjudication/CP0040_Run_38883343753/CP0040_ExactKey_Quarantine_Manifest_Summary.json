@@ -1,0 +1,191 @@
+{
+  "acquisition_extension": {
+    "canonical_source_selected": false,
+    "daily_archives_verified": 16,
+    "daily_only_keys": 0,
+    "daily_sidecars_verified": 16,
+    "economic_field_divergent_pairs": 14,
+    "monthly_archives_reused_and_verified": 14,
+    "monthly_only_keys": 10,
+    "non_economic_raw_field_divergent_pairs": 418,
+    "raw_comparison_rows": 1992,
+    "raw_divergent_pairs": 432,
+    "source_cases_closed": 0
+  },
+  "checkpoint": "CP0040_EXACT_KEY_QUARANTINE_MANIFEST_ACQUISITION_EXTENSION",
+  "checks": [
+    {
+      "check_id": "base_manifest_sha256",
+      "detail": "d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819",
+      "status": "PASS"
+    },
+    {
+      "check_id": "base_manifest_unique_keys",
+      "detail": "rows=969 keys=969",
+      "status": "PASS"
+    },
+    {
+      "check_id": "base_blockers_27",
+      "detail": "rows=27",
+      "status": "PASS"
+    },
+    {
+      "check_id": "acquisition_summary_pass",
+      "detail": "PASS_DAILY_REFERENCE_ACQUIRED_AND_ROW_AUDIT_RECORDED",
+      "status": "PASS"
+    },
+    {
+      "check_id": "acquisition_checks_all_pass",
+      "detail": "98/98",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_16_archives_and_sidecars_verified",
+      "detail": "queue=16 ZIPs=16 sidecars=16",
+      "status": "PASS"
+    },
+    {
+      "check_id": "14_monthly_archives_reused",
+      "detail": "monthly=14 redownloads=0",
+      "status": "PASS"
+    },
+    {
+      "check_id": "comparison_sha_and_size",
+      "detail": "sha=ac08f6839e172919634d2823ae1f6df4d74613e473419b8c00881527e40906ba; bytes=1509065",
+      "status": "PASS"
+    },
+    {
+      "check_id": "comparison_row_count",
+      "detail": "rows=1992",
+      "status": "PASS"
+    },
+    {
+      "check_id": "comparison_relation_counts",
+      "detail": "{'SHARED_RAW_DIVERGENT': 432, 'MONTHLY_ONLY_KEY': 10, 'SHARED_RAW_EXACT': 1550}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "comparison_summary_metrics",
+      "detail": "{\"close_time_only_pairs\": 0, \"daily_only_keys\": 0, \"divergent_raw_row_pairs\": 432, \"economic_field_divergent_pairs\": 14, \"exact_raw_row_pairs\": 1550, \"interpretation\": \"Raw equality and exact-key coverage are diagnostics only; an exact timestamp match does not assign source authority.\", \"missing_expected_keys_rows\": 10, \"monthly_only_keys\": 10, \"periods_complete_expected_grid\": 14, \"periods_open_coverage_review\": 2, \"shared_open_keys\": 1982, \"union_open_key_rows\": 1992}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "open_comparison_rows",
+      "detail": "open_rows=442",
+      "status": "PASS"
+    },
+    {
+      "check_id": "economic_and_monthly_only_counts",
+      "detail": "economic=14 monthly_only=10",
+      "status": "PASS"
+    },
+    {
+      "check_id": "missing_expected_grid_keys_equal_monthly_only",
+      "detail": "missing=10 monthly_only=10 exact_set_match=True",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_16_acquisition_blockers_have_verified_comparison",
+      "detail": "blockers=16 queue_cases=16",
+      "status": "PASS"
+    },
+    {
+      "check_id": "final_manifest_unique_keys",
+      "detail": "rows=1411 keys=1411",
+      "status": "PASS"
+    },
+    {
+      "check_id": "extension_key_accounting",
+      "detail": "open_rows=442 added=442 enriched=0",
+      "status": "PASS"
+    },
+    {
+      "check_id": "final_cases_open_no_source_authority",
+      "detail": "all open and canonical source NONE",
+      "status": "PASS"
+    },
+    {
+      "check_id": "acquisition_blockers_resolved_by_row_audit",
+      "detail": "remaining=11 types={'RESIDUAL_AGGREGATION_BUCKET': 11}",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 19,
+  "checks_total": 19,
+  "decisions": {
+    "backtest_rerun": false,
+    "candidate_built": false,
+    "candidate_eligibility": "BLOCKED_RESIDUAL_AGGREGATION_BUCKETS_REMAIN",
+    "canonical_source_selected": false,
+    "raw_rows_merged_replaced_or_deleted": false,
+    "root_cause": "OPEN_NOT_ESTABLISHED",
+    "source_cases_closed": 0,
+    "strategy_promoted": false,
+    "synthetic_candles_created": false,
+    "timestamp_shifted_or_rounded": false
+  },
+  "inputs": {
+    "acquisition_summary_sha256": "54ee4cbda54201b3a81cd327b6e49c3e82419daf43bac188871359ad217dbbe9",
+    "base_manifest_rows": 969,
+    "base_manifest_run_id": 38882377148,
+    "base_manifest_sha256": "d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819",
+    "comparison_bytes": 1509065,
+    "comparison_path": "evidence/source_adjudication/CP0107_Run_38776970911/CP0107_CP0041_DailyReference_RawRow_Comparison.csv",
+    "comparison_rows": 1992,
+    "comparison_sha256": "ac08f6839e172919634d2823ae1f6df4d74613e473419b8c00881527e40906ba",
+    "cp0040_rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0",
+    "missing_expected_keys_sha256": "bd53c87ae8dbf4273d86bbe5ece6dc84446571111b7be41443004a88d452df19",
+    "original_worklist_sha256": "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f",
+    "source_package_sha256": "23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc"
+  },
+  "nonrow_blockers": {
+    "candidate_eligibility_blocked": true,
+    "reason": "11 residual aggregation buckets remain unresolved; no guessed timestamp or synthetic row was added.",
+    "record_type_counts": {
+      "RESIDUAL_AGGREGATION_BUCKET": 11
+    },
+    "rows": 11,
+    "sha256": "f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36"
+  },
+  "outputs": {
+    "CP0040_ExactKey_Quarantine_Manifest.csv": {
+      "bytes": 760291,
+      "rows": 1411,
+      "sha256": "d62c30c8ac7a4e5241b48e79884e68395fd1904826cfd70549886876269642b2"
+    },
+    "CP0040_NonRow_Blockers.csv": {
+      "bytes": 2228,
+      "rows": 11,
+      "sha256": "f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36"
+    }
+  },
+  "row_level_manifest": {
+    "acquisition_economic_field_divergent_pairs": 14,
+    "acquisition_missing_expected_keys_exactly_represented_as_monthly_only": true,
+    "acquisition_monthly_only_keys": 10,
+    "acquisition_open_rows_reviewed": 442,
+    "acquisition_row_relation_counts": {
+      "MONTHLY_ONLY_KEY": 10,
+      "SHARED_RAW_DIVERGENT": 432,
+      "SHARED_RAW_EXACT": 1550
+    },
+    "all_cases_open": true,
+    "canonical_source": "NONE",
+    "case_class_counts": {
+      "ACQUISITION_ECONOMIC_CONFLICT": 14,
+      "ACQUISITION_MONTHLY_ONLY_ROW": 10,
+      "ACQUISITION_RAW_FIELD_CONFLICT": 418,
+      "CLOSE_TIME_ONLY": 8,
+      "DAILY_ONLY_ROW": 452,
+      "MONTHLY_ONLY_ROW": 457,
+      "SHARED_ECONOMIC_CONFLICT": 52
+    },
+    "existing_keys_enriched_with_acquisition_evidence": 0,
+    "new_unique_keys_added_from_acquisition": 442,
+    "offgrid450_subset_of_original_unmatched909": true,
+    "rows": 1411,
+    "sha256": "d62c30c8ac7a4e5241b48e79884e68395fd1904826cfd70549886876269642b2",
+    "unique_exact_keys": 1411
+  },
+  "status": "PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN"
+}
