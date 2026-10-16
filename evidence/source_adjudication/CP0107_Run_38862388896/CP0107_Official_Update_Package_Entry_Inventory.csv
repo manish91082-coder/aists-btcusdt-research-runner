@@ -1,0 +1,3 @@
+member_name,basename,uncompressed_bytes,compressed_bytes,crc32_hex,is_nested_zip,member_sha256
+2022-08-08_kline_updates.csv,2022-08-08_kline_updates.csv,17950767,6652662,a6e7f1fb,False,94fea6dfad2903b5a1b0ed0193c9694318655e00f7d164224be72e82d7599046
+__MACOSX/._2022-08-08_kline_updates.csv,._2022-08-08_kline_updates.csv,220,110,076324b2,False,028455428d359dbee9c20c0ba899b838fbad356701b6d5373f6a6fc058a43d80
