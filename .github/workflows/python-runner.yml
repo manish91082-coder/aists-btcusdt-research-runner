@@ -49,6 +49,7 @@ on:
           - cp0112_trade_derived_aggregation_reconstruction
           - cp0113_fieldlevel_trade_corroboration_disposition_audit
           - cp0114_quarantine_overlap_g0_impact_audit
+          - cp0116_candidate_filter_static_audit
         default: legacy_pipeline
 
 permissions:
