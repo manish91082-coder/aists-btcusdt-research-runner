@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0040",
+  "anchor_id": "CP0040-MTF-BREAKOUT-4H-D1-HISTORIC-METRIC-ANCHORS-20261016-01",
+  "comparator": "MTF_BREAKOUT_4H_D1",
+  "purpose": "Frozen historic CP-0031 outputs used solely as an exact-input/engine reproducibility gate before quarantine sensitivity analysis. Not current performance claims or promotion criteria.",
+  "source": {
+    "baseline_snapshot_sha256": "1e5f528d1c09fb8b598e75f5c08b23530f0073882553cb272558aa89b047981f",
+    "original_cp0031_bundle_sha256": "e6998e59cd50683a3f3b92f1bd9afee0c6bbb44714d87893b33d33e4e83936f",
+    "original_stress_results_csv_sha256": "2b1b8534dac4ecc1b0142c81f64d5724cba32597bbaff57d45163a6abf6626b1",
+    "original_summary_json_sha256": "c133ccd820c3b3bd46f69f316f171bd1d1707907ea71150b8dc7644bb30a8dd3",
+    "cp0026_candidate_manifest_sha256": "baf72b07d2dd9e970ada0dc18eece57cab066a4a375b62e628938dba3fb7b6de",
+    "frozen_engine_sha256": "6b92b0956522ad6e6a7bdcaa364ee677c97b8926e3705d6250866c17cc70ceec",
+    "stress_result_rows": 180,
+    "trade_log_rows_all_strategies": 164
+  },
+  "assumptions": {
+    "initial_capital_usdt": 10000,
+    "fee_bps_per_side": 10,
+    "extra_slippage_bps_per_side": 5,
+    "allocation_fraction": 0.25,
+    "windows": {
+      "TRAIN": "Available history before 2023-01-01T00:00:00Z; previously examined.",
+      "DEVELOPMENT_CHECK": "2023-01-01T00:00:00Z to 2025-01-01T00:00:00Z; previously examined, not pristine validation.",
+      "CONSUMED_OOS_DIAGNOSTIC": "2025-01-01T00:00:00Z onward; previously inspected diagnostic, not pristine out-of-sample evidence."
+    },
+    "numeric_absolute_tolerance": 1e-8
+  },
+  "metrics": {
+    "TRAIN": {
+      "net_return_pct": 81.99313544472133,
+      "max_intrabar_drawdown_proxy_pct": -22.190809230779152,
+      "closed_round_trips": 69,
+      "profit_factor": 2.24488698438978,
+      "win_rate_pct": 47.82608695652174,
+      "net_realized_pnl_usdt": 8199.313544472125,
+      "fees_paid_usdt": 480.3419726518657,
+      "estimated_slippage_cost_usdt": 240.1732162830922,
+      "final_equity_usdt": 18199.313544472134
+    },
+    "DEVELOPMENT_CHECK": {
+      "net_return_pct": 24.343646291056565,
+      "max_intrabar_drawdown_proxy_pct": -8.480433307931289,
+      "closed_round_trips": 42,
+      "profit_factor": 2.3457942426560003,
+      "win_rate_pct": 35.714285714285715,
+      "net_realized_pnl_usdt": 2434.364629105657,
+      "fees_paid_usdt": 241.70073473406094,
+      "estimated_slippage_cost_usdt": 120.85106659612465,
+      "final_equity_usdt": 12434.364629105656
+    },
+    "CONSUMED_OOS_DIAGNOSTIC": {
+      "net_return_pct": -1.3846214314251704,
+      "max_intrabar_drawdown_proxy_pct": -5.297173132203914,
+      "closed_round_trips": 24,
+      "profit_factor": 0.846407118815267,
+      "win_rate_pct": 45.833333333333336,
+      "net_realized_pnl_usdt": -138.46214314252165,
+      "fees_paid_usdt": 119.85367605940584,
+      "estimated_slippage_cost_usdt": 59.92684835929126,
+      "final_equity_usdt": 9861.537856857483
+    }
+  },
+  "gate": {
+    "if_baseline_replay_metrics_do_not_match": "BLOCKED_BASELINE_METRICS_NOT_REPRODUCIBLE",
+    "historical_periods_are_pristine_oos": false,
+    "strategy_promotion": "BLOCKED",
+    "live_signing_broadcast_orders": "BLOCKED"
+  }
+}
