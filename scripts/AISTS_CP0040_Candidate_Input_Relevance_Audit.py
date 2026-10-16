@@ -134,7 +134,7 @@ def main():
                 "root_cause":"OPEN_NOT_ESTABLISHED","canonical_source":"NONE"},
             "matrix":expanded,"checks":checks,"checks_passed":sum(c["status"]=="PASS" for c in checks),"checks_total":len(checks),
             "network_used":False,"archive_downloads":0,"source_bytes_modified":False,"production_candidate_build":False,
-            "backtest_rerun":False,"canonical_source_selected":False,"source_cases_closed":0,
+            "backtest_rerun":False,"canonical_source_selected":False,"canonical_source":"NONE","source_cases_closed":0,
             "unresolved_nonrow_aggregation_blockers":11,"g0":"BLOCKED_GLOBAL","strategy_promoted":False,
             "live_signing_broadcast_orders":"BLOCKED",
             "decision":"The 11 relationship blockers are in 5m/15m/30m/1h intervals, not the comparator's direct 4h/1d signal inputs. This is input-relevance evidence only: it does not clear the global CP-0026 gate or select a canonical source. The broader row-level quarantine materially changes TRAIN return, so the overall quarantine-policy decision remains material and unresolved.",
