@@ -50,13 +50,24 @@ def main():
         if any(token in text for token in ("custom_code:","script_content:","actions: write","api.binance.com/api/")):
             forbidden.append(path.name)
         writes=text.count("contents: write")
-        publisher=re.search(r"(?ms)^  publish_cp0107_evidence:\n(.*?)(?=^  [A-Za-z0-9_]+:|\Z)",text)
-        publisher_block=publisher.group(1) if publisher else ""
-        publisher_scoped=bool(re.search(r"(?m)^    permissions:\s*\n^      contents: write\s*$",publisher_block)
-                              and re.search(r"(?m)^    if:.*needs\.run\.outputs\.task",publisher_block)
-                              and "cp0107_feb2018_raw_row_extract" in publisher_block
-                              and "cp0107_feb2018_disposition_overlay" in publisher_block)
-        if writes and not (writes==1 and publisher_scoped):
+        publisher_blocks=[]
+        for publisher_name in ("publish_cp0107_evidence","publish_cp0040_quarantine_manifest"):
+            publisher=re.search(r"(?ms)^  "+re.escape(publisher_name)+r":\n(.*?)(?=^  [A-Za-z0-9_]+:|\Z)",text)
+            publisher_blocks.append((publisher_name,publisher.group(1) if publisher else ""))
+        scoped_count=0
+        for publisher_name,publisher_block in publisher_blocks:
+            if not publisher_block:
+                continue
+            has_scoped_permissions=bool(re.search(r"(?m)^    permissions:\s*\n^      contents: write\s*$",publisher_block))
+            has_task_scope=bool(re.search(r"(?m)^    if:.*needs\.run\.outputs\.task",publisher_block))
+            if publisher_name=="publish_cp0107_evidence":
+                task_allowlist=("cp0107_feb2018_raw_row_extract" in publisher_block and "cp0107_feb2018_disposition_overlay" in publisher_block)
+            else:
+                task_allowlist=("cp0040_quarantine_manifest_build" in publisher_block)
+            if has_scoped_permissions and has_task_scope and task_allowlist:
+                scoped_count += 1
+        publisher_scoped=(scoped_count==2)
+        if writes and not (writes==scoped_count and scoped_count in (1,2)):
             forbidden.append(path.name+": unscoped contents: write")
         if publisher_scoped:
             scoped_publisher_write=True
