@@ -26,6 +26,7 @@ on:
           - cp0107_shared52_candidate_input_dependency_audit
           - cp0040_rulebook_bound_eligibility_decision
           - cp0092_correction_archive_binary_probe
+          - cp0093_daily_reference_discrepancy_triage
           - historical_reference_replay
           - monthly_derived_replay
           - legacy_pipeline
@@ -118,7 +119,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0040_aggregation_monthly_sidecar_audit" ] || [ "$TASK" = "cp0040_archive_integrity_conflict_matrix" ] || [ "$TASK" = "cp0040_candidate_input_relevance_audit" ] || [ "$TASK" = "cp0107_shared52_candidate_input_dependency_audit" ] || [ "$TASK" = "cp0040_rulebook_bound_eligibility_decision" ] || [ "$TASK" = "cp0092_correction_archive_binary_probe" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
+          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0040_aggregation_monthly_sidecar_audit" ] || [ "$TASK" = "cp0040_archive_integrity_conflict_matrix" ] || [ "$TASK" = "cp0040_candidate_input_relevance_audit" ] || [ "$TASK" = "cp0107_shared52_candidate_input_dependency_audit" ] || [ "$TASK" = "cp0040_rulebook_bound_eligibility_decision" ] || [ "$TASK" = "cp0092_correction_archive_binary_probe" ] || [ "$TASK" = "cp0093_daily_reference_discrepancy_triage" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
             echo "CP-0040 provenance/crosswalk and CP-0107 cache-only audits use Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -1698,4 +1699,125 @@ jobs:
           git config user.email "41898282+actions-bot@users.noreply.github.com"
           git add "$DEST" evidence/source_adjudication/CP0092_Correction_Archive_Binary_Probe_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
           git commit -m "evidence(cp0092): publish correction archive binary route result ${RUN_ID}"
+          git push origin HEAD:main
+
+  publish_cp0093_daily_reference_discrepancy_triage:
+    if: needs.run.result == 'success' && needs.run.outputs.task == 'cp0093_daily_reference_discrepancy_triage'
+    needs: run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Checkout main with scoped write token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ github.token }}
+          persist-credentials: true
+      - name: Download this run's discrepancy triage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aists-run-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: evidence_stage
+      - name: Validate CP0093 row-triage evidence
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv,hashlib,json,os
+          from pathlib import Path
+          root=Path("evidence_stage/cp0093_daily_reference_discrepancy_triage")
+          sp=root/"CP0093_DailyReference_Discrepancy_Triage_Summary.json"
+          rp=root/"CP0093_DailyReference_Discrepancy_Triage_Report_HI.md"
+          if not sp.is_file() or not rp.is_file():
+              raise SystemExit("Missing CP0093 report/summary; refusing publish")
+          s=json.loads(sp.read_text(encoding="utf-8"))
+          expected="PASS_DAILY_REFERENCE_DISCREPANCY_TRIAGE_COMPLETE_SOURCE_AUTHORITY_OPEN"
+          if s.get("task")!="cp0093_daily_reference_discrepancy_triage" or s.get("status")!=expected:
+              raise SystemExit("CP0093 triage status/task not PASS")
+          if s.get("checks_passed")!=s.get("checks_total") or any(x.get("status")!="PASS" for x in s.get("checks",[])):
+              raise SystemExit("CP0093 input/evidence checks are not all PASS")
+          if s.get("network_used") is not False or s.get("archive_downloads")!=0 or s.get("source_bytes_modified") is not False:
+              raise SystemExit("Triage exceeded offline/read-only scope")
+          if s.get("canonical_source_selected") is not False or s.get("source_cases_closed")!=0 or s.get("g0")!="BLOCKED_GLOBAL" or s.get("g7")!="LIVE_BLOCKED":
+              raise SystemExit("Source-authority or global gate guard changed")
+          expected_rows={
+              "CP0093_DailyReference_Case_Triage.csv":16,
+              "CP0093_Economic_Divergence_14_Row_Detail.csv":14,
+              "CP0093_MonthlyOnly_10_Key_Review.csv":10
+          }
+          for name,rec in s.get("outputs",{}).items():
+              p=root/name
+              if not p.is_file() or p.stat().st_size!=rec.get("bytes") or hashlib.sha256(p.read_bytes()).hexdigest()!=rec.get("sha256"):
+                  raise SystemExit("Derived output hash/size mismatch: "+name)
+              if rec.get("rows") is not None:
+                  with p.open("r",encoding="utf-8",newline="") as f: rows=list(csv.DictReader(f))
+                  if len(rows)!=rec.get("rows"): raise SystemExit("Derived output row count mismatch: "+name)
+          for name,n in expected_rows.items():
+              rec=s.get("outputs",{}).get(name,{})
+              if rec.get("rows")!=n: raise SystemExit("Expected "+str(n)+" rows in "+name)
+              with (root/name).open("r",encoding="utf-8",newline="") as f: rows=list(csv.DictReader(f))
+              if len(rows)!=n: raise SystemExit("Incorrect case count in "+name)
+              if any(r.get("source_authority")!="NONE" or r.get("case_closed")!="False" for r in rows):
+                  raise SystemExit("A derived case row changed source authority/closure: "+name)
+          c=s.get("comparison",{})
+          if [c.get("union_open_key_rows"),c.get("exact_raw_row_pairs"),c.get("divergent_raw_row_pairs"),
+              c.get("economic_field_divergent_pairs"),c.get("monthly_only_keys"),c.get("daily_only_keys")] != [1992,1550,432,14,10,0]:
+              raise SystemExit("CP0093 derived comparison denominators changed")
+          print(json.dumps({"status":"PASS_PUBLISH_PREFLIGHT","run_id":os.environ["RUN_ID"],
+              "checks":s.get("checks_passed"),"economic_rows":c.get("economic_field_divergent_pairs"),
+              "monthly_only":c.get("monthly_only_keys"),"case_rows":c.get("case_triage_rows")},sort_keys=True))
+          PY
+      - name: Persist CP0093 discrepancy triage and append current state
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          SRC="evidence_stage/cp0093_daily_reference_discrepancy_triage"
+          DEST="evidence/source_adjudication/CP0093_DailyReference_Discrepancy_Triage_Run_${RUN_ID}"
+          mkdir -p "$DEST"
+          cp "$SRC/CP0093_DailyReference_Discrepancy_Triage_Summary.json" "$DEST/"
+          cp "$SRC/CP0093_DailyReference_Discrepancy_Triage_Report_HI.md" "$DEST/"
+          cp "$SRC/CP0093_DailyReference_Case_Triage.csv" "$DEST/"
+          cp "$SRC/CP0093_Economic_Divergence_14_Row_Detail.csv" "$DEST/"
+          cp "$SRC/CP0093_MonthlyOnly_10_Key_Review.csv" "$DEST/"
+          cp "$SRC/CP0093_Field_Divergence_Counts.csv" "$DEST/"
+          cp "$SRC/CP0093_Raw_Difference_Signature_Counts.csv" "$DEST/"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          rid=os.environ["RUN_ID"];commit=os.environ["RUN_COMMIT"]
+          base=Path("evidence/source_adjudication")
+          dest=base/("CP0093_DailyReference_Discrepancy_Triage_Run_"+rid)
+          sp=dest/"CP0093_DailyReference_Discrepancy_Triage_Summary.json"
+          s=json.loads(sp.read_text(encoding="utf-8"));c=s["comparison"]
+          hashes={}
+          for p in sorted(dest.iterdir()):
+              if p.is_file(): hashes[p.name]={"bytes":p.stat().st_size,"sha256":hashlib.sha256(p.read_bytes()).hexdigest()}
+          pointer={"run_id":int(rid),"run_commit_sha":commit,"status":s["status"],
+                   "summary_path":str(sp),"report_path":str(dest/"CP0093_DailyReference_Discrepancy_Triage_Report_HI.md"),
+                   "summary_sha256":hashes[sp.name]["sha256"],"outputs":hashes,
+                   "input_source_run_id":s["input_source_run_id"],"source_authority":"NONE","source_cases_closed":0,
+                   "economic_field_divergent_pairs":c["economic_field_divergent_pairs"],
+                   "monthly_only_keys":c["monthly_only_keys"],"daily_only_keys":c["daily_only_keys"],
+                   "unresolved_nonrow_aggregation_blockers":11,"g0":"BLOCKED_GLOBAL","g2":"FAIL_CURRENT_23_CANDIDATES","g7":"LIVE_BLOCKED"}
+          (base/"CP0093_DailyReference_Discrepancy_Triage_Current.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+          state_path=Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state=state_path.read_text(encoding="utf-8")
+          marker="CP-0093 daily-reference discrepancy triage "+rid
+          if marker not in state:
+              note="\n\n## "+marker+"\n\n"
+              note+="- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/"+rid+"; status "+s["status"]+"; checks "+str(s["checks_passed"])+"/"+str(s["checks_total"])+" PASS.\n"
+              note+="- Existing CP-0107 acquisition run 38909366995: 16/16 daily ZIP/.CHECKSUM pairs and 14/14 monthly cache archives revalidated; this triage used existing artifacts, no downloads.\n"
+              note+="- Raw comparison: 1,992 union rows; shared 1,982; exact 1,550; divergent 432; economic-field divergent 14; monthly-only 10; daily-only 0.\n"
+              note+="- All 16 target cases remain open; canonical source NONE; cases closed 0. Global G0 BLOCKED_GLOBAL; G2 current 23 candidates FAIL; G7 LIVE_BLOCKED. No market data edits, synthetic candles, backtest or promotion.\n"
+              state_path.write_text(state+note,encoding="utf-8")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+actions-bot@users.noreply.github.com"
+          git add "$DEST" evidence/source_adjudication/CP0093_DailyReference_Discrepancy_Triage_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
+          git commit -m "evidence(cp0093): persist daily-reference discrepancy triage ${RUN_ID}"
           git push origin HEAD:main
