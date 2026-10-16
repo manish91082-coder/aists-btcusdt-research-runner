@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0093-DAILY-REFERENCE-DISCREPANCY-TRIAGE-003",
-  "task": "cp0093_daily_reference_discrepancy_triage",
-  "purpose": "Retry the verified read-only discrepancy triage after adding explicit case_closed=False to economic detail rows; preserve all source-authority and global gates.",
-  "created_at_utc": "2026-10-16T15:23:00Z",
-  "requested_commit_sha": "a54accb66a06c8ccda0ff10147d0279a2a10807e"
+  "request_id": "CP0094-ACQUISITION-QUARANTINE-COVERAGE-AUDIT-001",
+  "task": "cp0094_acquisition_quarantine_coverage_audit",
+  "purpose": "Verify exact-key coverage of 14 economic acquisition conflicts and 10 missing daily-grid keys against CP-0040 frozen quarantine manifest, linking original row and archive hashes; read-only, no source selection.",
+  "created_at_utc": "2026-10-16T15:40:00Z",
+  "requested_commit_sha": "007a76d2b2403b24f11cfc7f82da7ce3646efb6a"
 }
