@@ -1,0 +1,161 @@
+{
+  "checkpoint": "CP0040_EXACT_KEY_QUARANTINE_MANIFEST",
+  "checks": [
+    {
+      "check_id": "frozen_index_sha256",
+      "detail": "observed=a3a961a3e3ff0783c1cfed6efafddef313f7c455148a9a5174e95feef80062bf; expected=a3a961a3e3ff0783c1cfed6efafddef313f7c455148a9a5174e95feef80062bf",
+      "status": "PASS"
+    },
+    {
+      "check_id": "expanded_index_sha256",
+      "detail": "observed=072009025272fcba372b820a2ecbd1c65f5938138c5206f19e7cfcdf83ecc39b; expected=072009025272fcba372b820a2ecbd1c65f5938138c5206f19e7cfcdf83ecc39b",
+      "status": "PASS"
+    },
+    {
+      "check_id": "index_schema",
+      "detail": "fields=['case_id', 'crosswalk_target', 'disposition_delta_applied', 'effective_current_disposition', 'interval', 'open_time_utc', 'original_current_disposition', 'record_type', 'utc_date']",
+      "status": "PASS"
+    },
+    {
+      "check_id": "index_row_count",
+      "detail": "rows=996",
+      "status": "PASS"
+    },
+    {
+      "check_id": "case_id_unique",
+      "detail": "unique=996",
+      "status": "PASS"
+    },
+    {
+      "check_id": "record_type_counts",
+      "detail": "{'SHARED_OPEN_VALUE_CONFLICT': 60, 'DAILY_ONLY_ROW': 452, 'MONTHLY_ONLY_ROW': 457, 'RESIDUAL_AGGREGATION_BUCKET': 11, 'MISSING_DAILY_REFERENCE_ACQUISITION': 16}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "shared52_count_and_unique",
+      "detail": "rows=52 unique=52",
+      "status": "PASS"
+    },
+    {
+      "check_id": "close8_count_and_unique",
+      "detail": "rows=8 unique=8",
+      "status": "PASS"
+    },
+    {
+      "check_id": "shared52_close8_disjoint",
+      "detail": "overlap=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "shared52_close8_cover_all_shared60",
+      "detail": "union=60; shared_worklist=60",
+      "status": "PASS"
+    },
+    {
+      "check_id": "offgrid450_subset_of_unmatched909",
+      "detail": "delta=450; unmatched=909; outside=0",
+      "status": "PASS"
+    },
+    {
+      "check_id": "offgrid450_disposition",
+      "detail": "all 450 remain quarantine-review-required and open",
+      "status": "PASS"
+    },
+    {
+      "check_id": "row_key_validation",
+      "detail": "[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "row_manifest_count",
+      "detail": "manifest_rows=969",
+      "status": "PASS"
+    },
+    {
+      "check_id": "row_class_counts",
+      "detail": "{'CLOSE_TIME_ONLY': 8, 'SHARED_ECONOMIC_CONFLICT': 52, 'DAILY_ONLY_ROW': 452, 'MONTHLY_ONLY_ROW': 457}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "unique_exact_keys",
+      "detail": "unique_keys=969 manifest_rows=969",
+      "status": "PASS"
+    },
+    {
+      "check_id": "nonrow_blocker_inventory",
+      "detail": "count=27 types={'RESIDUAL_AGGREGATION_BUCKET': 11, 'MISSING_DAILY_REFERENCE_ACQUISITION': 16}",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 17,
+  "checks_total": 17,
+  "decisions": {
+    "backtest_rerun": false,
+    "candidate_built": false,
+    "candidate_eligibility": "BLOCKED_NONROW_SOURCE_AND_COVERAGE_CASES_REMAIN",
+    "canonical_source_selected": false,
+    "raw_rows_merged_replaced_or_deleted": false,
+    "root_cause": "OPEN_NOT_ESTABLISHED",
+    "source_cases_closed": 0,
+    "strategy_promoted": false,
+    "synthetic_candles_created": false,
+    "timestamp_shifted_or_rounded": false
+  },
+  "inputs": {
+    "close8_sha256": "473b149630edb6ee86b1720e2ffa4dd1afa7f022894bf5951ca398199319731c",
+    "cp0040_rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0",
+    "delta450_sha256": "c4f9cf9935ac6d794191b31047cca87eec0072756eec1a6c3d15d8b3dab067b6",
+    "expanded_index_bytes": 185941,
+    "expanded_index_sha256": "072009025272fcba372b820a2ecbd1c65f5938138c5206f19e7cfcdf83ecc39b",
+    "index_bytes": 7282,
+    "index_path": "evidence/source_adjudication/CP0107_CP0041_Derived_996_Row_GitIndex_Minimal.csv.gz",
+    "index_sha256": "a3a961a3e3ff0783c1cfed6efafddef313f7c455148a9a5174e95feef80062bf",
+    "original_worklist_sha256": "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f",
+    "shared52_sha256": "28f0ce2151d094c98286466321c20d2cd232277405275a25d0a46d3fd159728f"
+  },
+  "nonrow_blockers": {
+    "candidate_eligibility_blocked": true,
+    "reason": "11 aggregation buckets and 16 missing daily-reference acquisition cases do not carry exact row keys in this frozen index and remain unresolved.",
+    "record_type_counts": {
+      "MISSING_DAILY_REFERENCE_ACQUISITION": 16,
+      "RESIDUAL_AGGREGATION_BUCKET": 11
+    },
+    "rows": 27,
+    "sha256": "d0126152a58baecd8f61bcdcc21286ecffacba6427e7b09696ca63db33c1f0d0"
+  },
+  "outputs": {
+    "CP0040_ExactKey_Quarantine_Manifest.csv": {
+      "bytes": 428757,
+      "rows": 969,
+      "sha256": "d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819"
+    },
+    "CP0040_NonRow_Blockers.csv": {
+      "bytes": 5386,
+      "rows": 27,
+      "sha256": "d0126152a58baecd8f61bcdcc21286ecffacba6427e7b09696ca63db33c1f0d0"
+    }
+  },
+  "row_level_manifest": {
+    "all_cases_open": true,
+    "canonical_source": "NONE",
+    "case_class_counts": {
+      "CLOSE_TIME_ONLY": 8,
+      "DAILY_ONLY_ROW": 452,
+      "MONTHLY_ONLY_ROW": 457,
+      "SHARED_ECONOMIC_CONFLICT": 52
+    },
+    "offgrid450_are_subset_of_unmatched909": true,
+    "rows": 969,
+    "sha256": "d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819",
+    "shared52_plus_close8_cover_shared60": true,
+    "source_record_type_counts": {
+      "DAILY_ONLY_ROW": 452,
+      "MISSING_DAILY_REFERENCE_ACQUISITION": 16,
+      "MONTHLY_ONLY_ROW": 457,
+      "RESIDUAL_AGGREGATION_BUCKET": 11,
+      "SHARED_OPEN_VALUE_CONFLICT": 60
+    },
+    "unique_exact_keys": 969
+  },
+  "status": "PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN"
+}

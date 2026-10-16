@@ -365,3 +365,13 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Published report `evidence/source_adjudication/CP0040_ExactKey_Quarantine_Gate_SelfTest_HI.md` (commit `c81cef287ed738b2994b97cc10ca2275368b2a62`) and JSON `evidence/source_adjudication/CP0040_ExactKey_Quarantine_Gate_Summary.json` (commit `6352b6bb6ab5592c342d8536937ac74e374e3817`).
 - Scope is strictly synthetic tests. This does not validate the actual market-data manifest, does not build/filter candidate data, and does not run a backtest. The new primitive is not yet integrated into CP-0026. G0 remains `BLOCKED_GLOBAL`; strategy approval and all live actions remain blocked.
 - Next bounded action: build and verify the complete frozen exact-key quarantine manifest, then integrate the gate into CP-0026 with fail-closed completeness/count/hash checks. Do not build a candidate until the full manifest is proven complete.
+
+
+## CP-0040 exact-key quarantine manifest run 38882377148
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38882377148; status PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN; checks 17/17 PASS.
+- Row-level exact-key manifest: 969 rows / 969 unique keys. Classes: {"CLOSE_TIME_ONLY": 8, "DAILY_ONLY_ROW": 452, "MONTHLY_ONLY_ROW": 457, "SHARED_ECONOMIC_CONFLICT": 52}.
+- The 450 off-grid rows are a subset of the 909 unmatched rows and were not double-counted. Shared-52 plus close-time-only 8 cover the 60 shared conflict records.
+- Separate non-row blockers: 27 (11 aggregation buckets, 16 missing daily-reference acquisition cases). Candidate eligibility remains BLOCKED.
+- Manifest SHA-256 d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819; blocker ledger SHA-256 d0126152a58baecd8f61bcdcc21286ecffacba6427e7b09696ca63db33c1f0d0. The published frozen index was re-hashed; the original CP-0041 package/rulebook bytes were not freshly re-hashed in this run.
+- No canonical source selected, no cases closed, no candidate build/backtest, no strategy promotion, live actions remain BLOCKED.
