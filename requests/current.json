@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0094-ACQUISITION-QUARANTINE-COVERAGE-AUDIT-003",
-  "task": "cp0094_acquisition_quarantine_coverage_audit",
-  "purpose": "Retry rulebook-bound acquisition quarantine coverage after aligning source-closure guard to CP0093 published root-level fields; preserve all row/source and global gates.",
-  "created_at_utc": "2026-10-16T15:58:00Z",
-  "requested_commit_sha": "cde0c3c14ec2b800d248197d83daf2353797dbec"
+  "request_id": "CP0095-OFFICIAL-CORRECTION-TARGET-MAPPING-AUDIT-001",
+  "task": "cp0095_official_correction_target_mapping_audit",
+  "purpose": "Reuse previously verified correction ZIP bytes and compare official correction CSV File Path/original/new checksum fields with all 16 exact daily ZIP targets; no redownload, source selection, row mutation, case closure, backtest or candidate build.",
+  "created_at_utc": "2026-10-16T16:05:00Z",
+  "requested_commit_sha": "aa58ed676c6f66199b2166517e7b9eb83ecd22bc"
 }
