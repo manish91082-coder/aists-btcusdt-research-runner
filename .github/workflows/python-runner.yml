@@ -1641,7 +1641,7 @@ jobs:
               raise SystemExit("Correction archive acquisition cannot choose/close sources")
           if s.get("official_daily_zip_checksum_pairs_acquired")!=0 or s.get("market_data_rest_api_used") is not False:
               raise SystemExit("Scope violation: probe must not claim daily pairs or market-data REST")
-          if s.get("current_blockers",{}).get("g0")!="BLOCKED_GLOBAL" or s.get("current_blockers",{}).get("aggregation_buckets")!=11:
+          if s.get("open_debt",{}).get("g0")!="BLOCKED_GLOBAL" or s.get("open_debt",{}).get("aggregation_buckets")!=11:
               raise SystemExit("Frozen global gate was not preserved")
           if s.get("status")=="PASS_CORRECTION_ARCHIVE_BINARY_ACQUIRED_AND_VERIFIED":
               a=s.get("archive",{})
