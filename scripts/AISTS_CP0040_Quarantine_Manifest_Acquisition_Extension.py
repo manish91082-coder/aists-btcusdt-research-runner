@@ -151,7 +151,7 @@ def main() -> int:
               "case_id":cid,"case_class":case_class,"interval":iv,"open_time_ms":ts,
               "disposition":"OPEN_REVIEW_REQUIRED","canonical_source":"NONE","case_closed":"false",
               "source_record_type":relation,"source_disposition_original":"OPEN_REVIEW_REQUIRED",
-              "source_index_sha256":EXPECTED_INDEX_SHA,"source_index_expanded_sha256":base_summary["inputs"]["index_expanded_sha256"] if "index_expanded_sha256" in base_summary.get("inputs",{}) else "",
+              "source_index_sha256":EXPECTED_INDEX_SHA,"source_index_expanded_sha256":base_summary["inputs"]["expanded_index_sha256"] if "expanded_index_sha256" in base_summary.get("inputs",{}) else "",
               "source_worklist_sha256":WORKLIST_SHA,"cp0040_rulebook_sha256":RULEBOOK_SHA,
             }
             item.update({field:"" for field in EXTENSION_FIELDS});item.update(evidence)
