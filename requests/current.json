@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0093-DAILY-REFERENCE-DISCREPANCY-TRIAGE-002",
+  "request_id": "CP0093-DAILY-REFERENCE-DISCREPANCY-TRIAGE-003",
   "task": "cp0093_daily_reference_discrepancy_triage",
-  "purpose": "Retry read-only discrepancy triage after aligning disposition guard with frozen exact-pair context labels; validate input hashes and preserve source authority NONE/G0 blocked.",
-  "created_at_utc": "2026-10-16T15:18:00Z",
-  "requested_commit_sha": "719d5fc62f37aaa05c48164ccf2a10e5003169fc"
+  "purpose": "Retry the verified read-only discrepancy triage after adding explicit case_closed=False to economic detail rows; preserve all source-authority and global gates.",
+  "created_at_utc": "2026-10-16T15:23:00Z",
+  "requested_commit_sha": "a54accb66a06c8ccda0ff10147d0279a2a10807e"
 }
