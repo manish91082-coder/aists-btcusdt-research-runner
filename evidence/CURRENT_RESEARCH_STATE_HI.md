@@ -282,3 +282,13 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Exact case join 52/52; exact official daily-path matches 33/52 across 14 archives; no exact path in this bundle 19/52. New checksum equals frozen daily SHA for 33/33 path-matched rows; Original checksum equals frozen daily SHA for 0/33. Every case stays unresolved and no-auto-correction.
 - Summary: `evidence/source_adjudication/CP0107_Shared52_RowValue_VersionCrosswalk_Summary.json`; Hindi report: `evidence/source_adjudication/CP0107_Shared52_RowValue_VersionCrosswalk_Report_HI.md`. This is not a full archive refetch/reparse. CP-0040 full standalone raw-byte verification remains `NOT_VERIFIED`.
 - Gates unchanged: G0 `BLOCKED_GLOBAL`; G1 `PARTIAL_SYSTEM_LEVEL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL`; G4 `INSUFFICIENT_EVIDENCE`; G5 `NOT_RUN`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`.
+
+
+## CP-0107 Shared-52 official-bundle no-path triage — 2026-10-16
+
+- Read-only triage report: `evidence/source_adjudication/CP0107_Shared52_NoPath_Triage_Report_HI.md`; source crosswalk Git blob SHA-1 `acbdf6fc6e161cbf18abde221a050701e88a9c01`.
+- Reclassified the 19 cases with no exact daily archive path in the single inspected official correction bundle into five UTC-date groups: 2018-02-11 (1), 2020-12-21 (13), 2021-01-21 (2), 2021-09-23 (1), 2021-12-24 (2). These sum to 19/19.
+- This is bundle coverage only, not archive nonexistence, source authority, or root-cause proof. All 19 retain `UNRESOLVED_SOURCE_CONFLICT_NO_AUTO_CORRECTION`; canonical source NONE; root cause OPEN_NOT_ESTABLISHED; cases closed 0.
+- No market archives fetched; no raw rows changed; no timestamps shifted/rounded; no merge/replace/delete; no synthetic candles; no backtest or strategy promotion. Standalone CP-0040 rulebook fresh raw-byte verification remains NOT_VERIFIED.
+- Report commit: `253360f9e9813b173fe8fae2496442e46fa96d47`; report blob SHA-1 after fetch-back: `7d4a22b61304a500b17defee57816a557fa4d186`; fetched content exact-match: PASS.
+- Research gates unchanged: G0 BLOCKED_GLOBAL; G1 PARTIAL_SYSTEM_LEVEL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL; G4 INSUFFICIENT_EVIDENCE; G5 NOT_RUN; G6 NOT_BUILT; G7 LIVE_BLOCKED.
