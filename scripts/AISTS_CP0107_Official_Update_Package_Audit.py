@@ -69,7 +69,8 @@ def main():
     # Publisher has frozen CP-0107 baseline row-count guards; carry forward the verified baseline files unchanged.
     baseline=root/"evidence/source_adjudication/CP0107_Run_38771142900"
     baseline_names=("CP0107_Feb2018_OffGrid_RawRows.csv","CP0107_Feb2018_DailyCoverage_RawRows.csv",
-                    "CP0107_Feb2018_SourceVerification.csv","CP0107_Feb2018_SegmentCoverage.csv")
+                    "CP0107_Feb2018_SourceVerification.csv","CP0107_Feb2018_SegmentCoverage.csv",
+                    "CP0107_Feb2018_Extraction_Summary.json")
     for name in baseline_names:
         src=baseline/name
         if not src.is_file():raise FileNotFoundError("Verified CP-0107 baseline evidence missing: "+str(src))
