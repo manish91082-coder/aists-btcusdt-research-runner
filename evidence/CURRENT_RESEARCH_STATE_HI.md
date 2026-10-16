@@ -445,3 +445,13 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Root cause NOT ESTABLISHED; source authority NONE; canonical source selections 0; cases closed by this checkpoint 0.
 - Candidate build/backtest NOT RUN; strategy promotion NOT performed; live signing, public broadcast and exchange orders remain BLOCKED.
 - Next bounded action: retrieve the exact frozen CP-0040 rulebook bytes from the verified CP-0041 authority package and record a clause-level G0 crosswalk for each of the 11 relationship cases. If exact bytes are unavailable, preserve HOLD and do not infer clearance.
+
+
+## CP-0040 rulebook clause crosswalk amendment — 2026-10-16
+
+- Recovered the exact frozen rulebook from conversation file `AISTS_CP0041_Row_Level_Evidence_Disposition_Pack.zip`; package SHA-256 `23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc`, ZIP CRC PASS, embedded rulebook SHA-256 `5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0` verified exact.
+- Clause crosswalk: G0 §18 requires unresolved cross-timeframe conflicts be marked `UNRESOLVED` and quarantine sensitivity run separately; G0 §19 permits quarantine-based PASS only when each unresolved item is explicitly quarantined AND final metrics are based on that quarantine policy; G3 §38 requires source-policy/quarantine sensitivities and keeps the data gate open for material differences unless adjudicated or conservative quarantine is frozen.
+- Actual CP-0041 aggregation disposition CSV: 11/11 cases remain `UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT`; exact-date official daily ZIP/checksum availability is FALSE for 11/11. Evidence grades: 3 `SAME_DATE_CONTEXT_ONLY`, 2 `MONTH_CONTEXT_ONLY`, 6 `NO_MATCH`. Monthly archives/raw rows are verified, but this is not exact-date child/parent independent attribution.
+- Consequence: exact-key quarantine coverage is necessary but not sufficient for G0 PASS because final metrics under this quarantine manifest have not been run. No candidate build/backtest authorized by this checkpoint. G0 stays `BLOCKED_GLOBAL`; all 11 relationship blockers remain OPEN; no root cause, source selection or closure.
+- Amended report: `evidence/source_adjudication/CP0040_Aggregation_Relationship_Hold_Decision_HI.md` (rulebook clause crosswalk appended).
+- Next bounded action: preserve this HOLD and decide, under the frozen research workflow, whether to run a separately labelled quarantine-sensitivity diagnostic using the exact current manifest after required strategy/research scope is frozen; do not change source data or promote a candidate.
