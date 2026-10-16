@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0096-CORRECTION-CHECKSUM-CROSSWALK-AUDIT-001",
-  "task": "cp0096_correction_checksum_crosswalk_audit",
-  "purpose": "Compare all official correction Original/New SHA-256 tokens against 16 verified daily ZIP and 14 monthly ZIP hashes; reuse prior artifact only, no download, source selection, mutation or backtest.",
-  "created_at_utc": "2026-10-16T16:25:00Z",
-  "requested_commit_sha": "d57a98e3afddb821faf5d6e62f7ca2ef0df06454"
+  "request_id": "CP0110-TRADE-SIDECAR-PREFLIGHT-20261016-01",
+  "task": "cp0110_official_trade_sidecar_preflight",
+  "purpose": "Probe seven exact official Spot daily-trades .CHECKSUM files for the frozen aggregation dates; no trade ZIP download, REST API, source mutation, or case closure.",
+  "created_at_utc": "2026-10-16T14:55:00Z",
+  "requested_commit_sha": "c765712875ea96ccb4701640e13d2dc8be30ad00"
 }
