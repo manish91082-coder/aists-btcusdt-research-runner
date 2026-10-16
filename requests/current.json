@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0114-QUARANTINE-OVERLAP-G0-AUDIT-20261016-01",
-  "task": "cp0114_quarantine_overlap_g0_impact_audit",
-  "purpose": "Join the 35 exact CP0113 candle keys and 14 monthly conflict keys against the frozen exact-key manifest, candidate relevance matrix and CP0040 sensitivity applied-key list; report coverage only, no source selection or closure.",
-  "created_at_utc": "2026-10-16T18:13:00Z",
-  "requested_commit_sha": "9a35847b67c03edb53dba8114cac438e73cbf244"
+  "request_id": "CP0116-CANDIDATE-FILTER-STATIC-AUDIT-20261016-01",
+  "task": "cp0116_candidate_filter_static_audit",
+  "purpose": "Statically inspect the frozen CP-0026 builder G0 guard and exact-key quarantine branch; run the builder's own gate self-test and synthetic partition probes for all 35 CP-0113 target keys; do not invoke production main, read/build actual candle outputs, or backtest.",
+  "created_at_utc": "2026-10-16T18:36:00Z",
+  "requested_commit_sha": "8c2469261feee96c14ec85231204c087e4481465"
 }
