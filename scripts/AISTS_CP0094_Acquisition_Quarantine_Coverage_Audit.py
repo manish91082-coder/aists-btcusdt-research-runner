@@ -104,8 +104,8 @@ def main():
             if record is None and need_raw:
                 # Source case IDs in CP-0093 use FETCHREF-queue IDs and exactly match the raw comparison rows.
                 record=next((r for r in raw if r.get("case_id")==source_id and r.get("interval")==iv and r.get("open_time_ms")==ts),None)
-            ok=bool(hit) and hit.get("case_class")==manifest_class and hit.get("acquisition_source_case_id")==source_id and
-                hit.get("source_record_type")==source_record and hit.get("disposition")=="OPEN_REVIEW_REQUIRED" and hit.get("canonical_source")=="NONE" and hit.get("case_closed","").lower()=="false"
+            ok=(bool(hit) and hit.get("case_class")==manifest_class and hit.get("acquisition_source_case_id")==source_id and
+                hit.get("source_record_type")==source_record and hit.get("disposition")=="OPEN_REVIEW_REQUIRED" and hit.get("canonical_source")=="NONE" and hit.get("case_closed","").lower()=="false")
             archive=None;monthly_archive=None
             if need_raw and record:
                 archive=archive_by.get(record.get("daily_archive_filename",""))
@@ -121,8 +121,8 @@ def main():
                                        p.get("row_relation")=="MONTHLY_ONLY_KEY" for p in raw) is False
                 # A missing daily expected-grid key is recorded in the separate missing-key ledger, not the shared-row table.
                 upstream_fields_ok=bool(src.get("status")=="EXPECTED_GRID_KEY_ABSENT_REVIEW_ONLY" and src.get("synthetic_candle_created")=="False")
-            monthly_ref_ok=bool(hit and monthly_archive is None or hit and monthly_archive and monthly_archive.get("actual_sha256")==hit.get("acquisition_monthly_sha256"))
-            daily_ref_ok=bool(hit and archive is None or hit and archive and archive.get("zip_sha256")==hit.get("acquisition_daily_sha256"))
+            monthly_ref_ok=bool(hit and monthly_archive is not None and monthly_archive.get("actual_sha256")==hit.get("acquisition_monthly_sha256"))
+            daily_ref_ok=bool(hit and archive is not None and archive.get("zip_sha256")==hit.get("acquisition_daily_sha256"))
             field_match=True
             if need_raw and record and hit:
                 field_match=(hit.get("acquisition_economic_differing_fields","")==record.get("economic_differing_fields",""))
@@ -209,7 +209,7 @@ def main():
           "unresolved_nonrow_aggregation_blockers":11,"g0":"BLOCKED_GLOBAL","g2":"FAIL_CURRENT_23_CANDIDATES","g7":"LIVE_BLOCKED",
           "production_candidate_build":False,"backtest_rerun":False,"strategy_promoted":False,
           "next_action":"Continue evidence-linked source-authority adjudication without source preference; preserve quarantine and blocked global gates."}
-        for name in outputs:
+        for name in outputs[1:]:
             p=out/name;summary.setdefault("outputs",{})[name]={"bytes":p.stat().st_size,"sha256":sha(p.read_bytes()),"rows":len(read_csv(p)) if name.endswith(".csv") else None}
         write_json(out/outputs[0],summary)
         print(json.dumps({"status":status,"checks_passed":passed,"checks_total":total,
