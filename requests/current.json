@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-RULEBOOK-BOUND-ELIGIBILITY-DECISION-002",
-  "task": "cp0040_rulebook_bound_eligibility_decision",
-  "purpose": "Retry frozen rulebook eligibility decision after exact final-newline hash and G0 language/schema fixes; maintain global G0 blocked and CP-0026 fail-closed.",
-  "created_at_utc": "2026-10-16T13:36:00Z",
-  "requested_commit_sha": "1ab04042edc3c2c87e632215d7e50ba5059972ba"
+  "request_id": "CP0092-CORRECTION-ARCHIVE-BINARY-ROUTE-PROBE-001",
+  "task": "cp0092_correction_archive_binary_probe",
+  "purpose": "Acquire the official Binance correction ZIP through GitHub Git Blobs raw media type, verify exact bytes and ZIP CRC, and inventory members; no source selection or row closure.",
+  "created_at_utc": "2026-10-16T14:05:00Z",
+  "requested_commit_sha": "546d07d118ea7159c738f1d5c0f8b1261b144658"
 }
