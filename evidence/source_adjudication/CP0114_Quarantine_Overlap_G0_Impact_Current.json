@@ -24,12 +24,16 @@
   "report_git_blob_sha1": "1546408f8b6c77b21a62fbd92fa9aceebdfcbe25",
   "inputs": {
     "row_evidence_git_blob_sha1": "5ccb7fc91b829b4599de73f3b63683fbf1d5ebb9",
-    "exactkey_manifest_git_blob_sha1": "f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36",
+    "exactkey_manifest_git_blob_sha1": "8d956499b8f5053335b738cc408ca8859d326a3d",
     "candidate_input_relevance_git_blob_sha1": "f4c49df0c15ba09",
     "cp0040_quarantine_key_application": "evidence/source_adjudication/CP0040_Sensitivity_Run_38897836116/CP0040_Quarantine_Key_Application.csv",
     "cp0040_input_impact": "evidence/source_adjudication/CP0040_Sensitivity_Run_38897836116/CP0040_Input_Impact.csv",
-    "cp0113_pointer_git_blob_sha1": "a4ef9e1d2a80144",
-    "frozen_rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0"
+    "cp0113_pointer_git_blob_sha1": "6d3476ed2770d1629596ea8e94e8508dabac776d",
+    "frozen_rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0",
+    "bucket_relevance_git_blob_sha1": "2ae5c36aa1f370cb143f8a30d5a61f41be0d60eb",
+    "quarantine_key_application_git_blob_sha1": "e4163cf24c4c78495a63ae85003a464ece360f43",
+    "quarantine_input_impact_git_blob_sha1": "294605dbec00fe314a641885c2454994be5909f0",
+    "cp0113_report_git_blob_sha1": "50973223cbb94eb1889f946d51369f7e7c5c63a5"
   },
   "counts": {
     "manifest_rows": 1427,
