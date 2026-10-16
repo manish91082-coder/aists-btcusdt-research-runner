@@ -358,8 +358,43 @@ def main():
                 summaries.append(result)
                 candidate_results[interval] = inspect_csv_gzip(path, anchors["input_content_anchors"][interval])
             monthly_path = candidate_dir / f"{SYMBOL}-1mo-research-candidate.csv.gz"
+            reconstructed_daily_path = candidate_dir / f"{SYMBOL}-1d-research-candidate.csv.gz"
             month_summary = builder.create_monthly_from_daily(
-                tmp_root, candidate_dir / f"{SYMBOL}-1d-research-candidate.csv.gz", monthly_path
+                tmp_root, reconstructed_daily_path, monthly_path
+            )
+
+            # The historic 1mo file records the SHA-256 of the original compressed
+            # 1d candidate ZIP as source_sha256. A fresh GZIP wrapper may have a
+            # different SHA even when its decompressed 1d CSV bytes are identical.
+            # Preserve that original, frozen lineage token only after the 1d
+            # decompressed-content anchor has already passed above; retain the
+            # newly reconstructed wrapper hash separately for complete provenance.
+            daily_result = candidate_results["1d"]
+            if not daily_result.get("matches_frozen_content_anchor"):
+                raise BlockedReconstruction("Cannot set 1mo lineage anchor until 1d content matches the frozen anchor.")
+            reconstructed_daily_wrapper_sha = sha256_file(reconstructed_daily_path)
+            frozen_daily_wrapper_sha = anchors["input_content_anchors"]["1d"]["compressed_sha256"]
+            original_monthly_gz = gzip.decompress(monthly_path.read_bytes()).decode("utf-8")
+            parsed_monthly = list(csv.DictReader(io.StringIO(original_monthly_gz, newline="")))
+            if not parsed_monthly or any(
+                row.get("source_sha256") != reconstructed_daily_wrapper_sha for row in parsed_monthly
+            ):
+                raise BlockedReconstruction(
+                    "Derived 1mo source_sha256 is not uniformly bound to the reconstructed 1d GZIP wrapper."
+                )
+            rewritten = io.StringIO(newline="")
+            writer = csv.DictWriter(rewritten, fieldnames=builder.OUTPUT_FIELDS, extrasaction="ignore")
+            writer.writeheader()
+            for row in parsed_monthly:
+                row["source_sha256"] = frozen_daily_wrapper_sha
+                writer.writerow(row)
+            with gzip.open(monthly_path, "wt", newline="", encoding="utf-8", compresslevel=6) as gz:
+                gz.write(rewritten.getvalue())
+            month_summary["source_sha256_reconstructed_wrapper"] = reconstructed_daily_wrapper_sha
+            month_summary["source_sha256"] = frozen_daily_wrapper_sha
+            month_summary["source_sha256_lineage_policy"] = (
+                "Frozen original compressed 1d candidate SHA retained in 1mo source_sha256 field only after "
+                "the decompressed 1d content anchor passed; reconstructed GZIP wrapper SHA is recorded separately."
             )
             candidate_results["1mo"] = inspect_csv_gzip(monthly_path, anchors["input_content_anchors"]["1mo"])
 
