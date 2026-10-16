@@ -579,3 +579,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Candidate-specific quarantine criterion=PASS_QUARANTINE_BRANCH_FOR_THIS_FROZEN_DIAGNOSTIC_COMPARATOR_ONLY; direct exact keys removed=9/9; replacements=0. Global G0 remains BLOCKED_GLOBAL.
 - G3=BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; TRAIN net-return delta pp=-15.89174082849894; G2 remains FAIL/NOT PROMOTED. CP-0026 builder stays fail-closed; no build or backtest.
 - All 11 relationship blockers remain open; canonical source NONE; no cases closed; live signing, broadcast and orders BLOCKED.
+
+
+## CP-0092 correction archive binary route probe run 38905894400
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38905894400; route status PASS_CORRECTION_ARCHIVE_BINARY_ACQUIRED_AND_VERIFIED; runner commit 4ccfb7f8a9311bf6cffcb9abae1fe19a1e00b262.
+- Binary route: GitHub REST Git Blobs API with application/vnd.github.raw+json; bytes=6653240; Git blob SHA-1=90631298cf50ac2e1ee8372a087767b010d78a21; ZIP CRC=PASS.
+- Exact target basename matches=0/16; daily ZIP+.CHECKSUM pairs acquired=0. Archive acquisition alone does not adjudicate source authority.
+- 60 shared conflicts, 909 unmatched rows, 11 aggregation blockers remain open; G0 BLOCKED_GLOBAL; G2 all 23 candidates FAIL; G7 LIVE_BLOCKED. No canonical source selection or case closure.
