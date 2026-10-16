@@ -190,7 +190,7 @@ def main():
             except Exception: child_status="SUMMARY_PARSE_ERROR"
         check("task_exit_and_summary",child_rc==0 and child_summary_path.exists(),
               f"exit={child_rc}; summary_exists={child_summary_path.exists()}")
-    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"):
+    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0040_quarantine_sensitivity_preflight","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"):
         script_name={"historical_reference_replay":"historical_reference_replay.py",
                      "monthly_derived_replay":"monthly_derived_replay.py",
                      "legacy_pipeline":"aists_legacy_pipeline.py",
