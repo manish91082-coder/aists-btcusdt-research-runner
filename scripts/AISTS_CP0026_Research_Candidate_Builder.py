@@ -482,7 +482,7 @@ def main():
         print(json.dumps(result,indent=2,ensure_ascii=False))
         if args.gate_test_output:
             test_out=Path(args.gate_test_output); test_out.parent.mkdir(parents=True,exist_ok=True)
-            test_out.write_text(json.dumps(result,indent=2,ensure_ascii=False,sort_keys=True)+"\\n",encoding="utf-8")
+            test_out.write_text(json.dumps(result,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
         return
     root=get_root()
     if not root.exists(): raise FileNotFoundError(f"Expected Drive data root not found: {root}")
