@@ -607,6 +607,7 @@ def main() -> int:
                     continue
                 day = reconstruct_day(target, Path(downloaded["archive_path"]), bars)
                 rec.update(day)
+                rec.update(day.get("archive_checks", {}))
                 rec["status"] = day["status"]
             except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, OSError, ValueError, zipfile.BadZipFile) as exc:
                 rec["status"] = "ERROR_OR_INTEGRITY_FAILURE"
