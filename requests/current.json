@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-CANDIDATE-INPUT-RELEVANCE-AUDIT-002",
-  "task": "cp0040_candidate_input_relevance_audit",
-  "purpose": "Retry candidate-input relevance evidence after correcting summary canonical-source field; read-only, no G0 approval.",
-  "created_at_utc": "2026-10-16T12:40:00Z",
-  "requested_commit_sha": "102ffad39f750efcfdd269b3c1bc65d5c875dddf"
+  "request_id": "CP0107-SHARED52-CANDIDATE-INPUT-DEPENDENCY-AUDIT-001",
+  "task": "cp0107_shared52_candidate_input_dependency_audit",
+  "purpose": "Map the 52 shared economic conflicts to the frozen MTF_BREAKOUT_4H_D1 direct inputs and confirm exact-key quarantine coverage; read-only, no G0 approval.",
+  "created_at_utc": "2026-10-16T13:05:00Z",
+  "requested_commit_sha": "38cdef1a9bfa9ceabf1aa2243dc8e7f8242e5ee0"
 }
