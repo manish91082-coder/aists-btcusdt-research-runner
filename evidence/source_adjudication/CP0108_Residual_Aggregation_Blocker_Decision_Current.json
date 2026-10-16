@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0108",
+  "status": "BLOCKED_NO_NEW_AUTHORITY_EVIDENCE_FOR_11_RESIDUAL_AGGREGATION_BUCKETS",
+  "reviewed_at_utc": "2026-10-16",
+  "repository": "manish91082-coder/aists-btcusdt-research-runner",
+  "branch": "main",
+  "inspection_baseline_head": "9cc1e532df745a5a04de91ea0d7a7d185e1d4490",
+  "report_path": "evidence/source_adjudication/CP0108_Residual_Aggregation_Blocker_Decision_HI.md",
+  "report_git_blob_sha1": "e14f5840b476b1a87f865274c998b6850049a2ca",
+  "report_commit_sha": "c696842752c56a53f7c8501877f1c7e587158d45",
+  "scope": {
+    "frozen_aggregation_buckets": 11,
+    "row_level_evidence_records": 78,
+    "daily_child_parent_rollups_matching": "11/11",
+    "monthly_child_parent_mismatches": "11/11",
+    "monthly_child_volume_sum_numeric_match_count": 10,
+    "canonical_source_selected": false,
+    "source_cases_closed": 0
+  },
+  "official_update_crosswalk": {
+    "path": "evidence/source_adjudication/CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv",
+    "git_blob_sha1": "718c2ac990d9fb5d9c731fdda4fc92657d375ad2",
+    "rows": 52,
+    "exact_official_daily_path_rows": 33,
+    "new_checksum_matches_frozen_daily_sha256_rows": 33,
+    "exact_utc_date_overlap_with_11_frozen_aggregation_bucket_dates": false,
+    "all_52_dispositions": "UNRESOLVED_SOURCE_CONFLICT_NO_AUTO_CORRECTION",
+    "all_52_canonical_source": "NONE",
+    "all_52_cases_closed": false
+  },
+  "missing_evidence": "Authoritative version/provenance evidence that attributes the exact child/parent archive bytes for each frozen aggregation bucket, or another independently verifiable permitted primary-source record that adjudicates these specific values.",
+  "decision": "Remain BLOCKED. Do not close or reclassify any of the 11 buckets; do not repeat the same audited correction-bundle lookup without genuinely new official evidence.",
+  "gates": {
+    "g0": "BLOCKED_GLOBAL",
+    "g2": "FAIL_CURRENT_23_CANDIDATES",
+    "g7": "LIVE_BLOCKED"
+  },
+  "non_actions": {
+    "raw_source_bytes_modified": false,
+    "timestamps_adjusted_or_rounded": false,
+    "synthetic_candles_created": false,
+    "candidate_build_performed": false,
+    "backtest_performed": false,
+    "strategy_promoted": false,
+    "live_signing_enabled": false,
+    "public_broadcast_enabled": false,
+    "binance_orders_placed": false,
+    "workflow_triggered": false
+  },
+  "next_bounded_action": "Only inspect genuinely new official provenance/version evidence scoped to the exact frozen child/parent archive files and UTC bucket keys. If no distinct applicable evidence exists, keep all 11 blockers unresolved."
+}
