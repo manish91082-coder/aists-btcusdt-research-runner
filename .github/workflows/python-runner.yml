@@ -500,6 +500,7 @@ jobs:
           if [ "$TASK" = "cp0107_official_update_package_audit" ]; then
             cp "$DEST/CP0107_Official_Update_Package_Summary.json" evidence/source_adjudication/CP0107_Official_Update_Package_Summary.json
             cp "$DEST/CP0107_Official_Update_Package_Report_HI.md" evidence/source_adjudication/CP0107_Official_Update_Package_Report_HI.md
+            cp "$DEST/CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv" evidence/source_adjudication/CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv
             python - <<'PY'
           import json, os
           from pathlib import Path
@@ -518,10 +519,17 @@ jobs:
               "text_filename_reference_hits": audit["package_inventory"]["text_filename_reference_hits"],
               "frozen_current_sha_token_hits": audit["package_inventory"]["frozen_current_sha_token_hits"],
               "member_bytes_equal_frozen_current_sha": audit["package_inventory"]["member_bytes_equal_frozen_current_sha"],
+              "shared52_economic_conflict_rows": audit["shared52_daily_crosswalk"]["input_rows"],
+              "shared52_exact_daily_path_case_hits": audit["shared52_daily_crosswalk"]["exact_official_daily_path_case_rows"],
+              "shared52_unique_daily_archive_objects_matched": audit["shared52_daily_crosswalk"]["unique_daily_archive_objects_matched"],
+              "shared52_official_new_checksum_matches_frozen_daily": audit["shared52_daily_crosswalk"]["official_new_checksum_matches_frozen_daily_sha256"],
+              "shared52_official_original_checksum_matches_frozen_daily": audit["shared52_daily_crosswalk"]["official_original_checksum_matches_frozen_daily_sha256"],
+              "shared52_no_exact_daily_path_case_rows": audit["shared52_daily_crosswalk"]["no_exact_official_daily_path_case_rows"],
+              "shared52_crosswalk_path": "evidence/source_adjudication/CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv",
               "source_authority": "NONE", "source_cases_closed": 0, "root_cause": "OPEN_NOT_ESTABLISHED"
           }
           master["status"] = "EVIDENCE_RECONCILED_OFFICIAL_UPDATE_PACKAGE_INSPECTED_SOURCE_AUTHORITY_OPEN"
-          master["next_action"] = "Review exact correction-bundle matches, if any, as version evidence only. Keep all source decisions open pending CP-0040-compliant exact-row provenance."
+          master["next_action"] = "For the 52 shared economic conflicts, retain 33 exact daily-path version matches across 14 daily archive objects as provenance-only evidence; 19 conflicts lack an exact bundle path. Keep all 52 open and continue CP-0040-compliant row-level adjudication; no canonical source or backtest."
           master_path.write_text(json.dumps(master, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
           state_path = Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
           state = state_path.read_text(encoding="utf-8")
@@ -531,6 +539,8 @@ jobs:
               note += "- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/" + os.environ["RUN_ID"] + "; status " + audit["status"] + "; checks " + str(audit["checks_passed"]) + "/" + str(audit["checks_total"]) + " PASS.\n"
               note += "- Official Git blob SHA-1 " + audit["source"]["official_git_blob_sha1"] + "; bundle SHA-256 " + audit["source"]["sha256"] + "; bytes " + str(audit["source"]["bytes"]) + "; ZIP CRC " + audit["source"]["zip_crc"] + ".\n"
               note += "- Checked 33 CP-0041 monthly archive targets. Exact archive-member hits=" + str(audit["package_inventory"]["exact_archive_member_name_hits"]) + "; text-name references=" + str(audit["package_inventory"]["text_filename_reference_hits"]) + "; frozen current SHA-token hits=" + str(audit["package_inventory"]["frozen_current_sha_token_hits"]) + ".\n"
+              crosswalk = audit["shared52_daily_crosswalk"]
+              note += "- Shared-52 daily-path crosswalk: " + str(crosswalk["exact_official_daily_path_case_rows"]) + "/52 exact paths across " + str(crosswalk["unique_daily_archive_objects_matched"]) + " daily archive objects; New checksum equals frozen daily SHA for " + str(crosswalk["official_new_checksum_matches_frozen_daily_sha256"]) + " rows; Original checksum equals it for " + str(crosswalk["official_original_checksum_matches_frozen_daily_sha256"]) + "; no exact bundle path for " + str(crosswalk["no_exact_official_daily_path_case_rows"]) + " rows. These are version diagnostics only; source authority NONE and cases stay OPEN.\n"
               note += "- Package matches are version/provenance evidence only. Canonical source NONE; cases closed 0; root cause OPEN_NOT_ESTABLISHED. No Binance market-data REST API, no row edits, no backtest or strategy promotion.\n"
               state_path.write_text(state + note, encoding="utf-8")
           PY
