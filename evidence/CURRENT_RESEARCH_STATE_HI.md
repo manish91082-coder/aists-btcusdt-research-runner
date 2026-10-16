@@ -512,3 +512,15 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - **Gates unchanged:** CP-0040 comparator remains diagnostic-only; G0 `BLOCKED_GLOBAL`; all 11 non-row aggregation blockers remain open; no canonical source selection, candidate promotion, live signing, public broadcast, or Binance order placement.
 - **Next prerequisite:** establish an authorised binary handoff that the Actions runner can read, or separately implement and verify a genuinely offline, hash-anchored cache reconstruction. Before the sensitivity calculation, verify the staged/input bytes against the frozen CP-0040 snapshot manifest.
 
+
+
+## CP-0040 baseline reconstruction audit run 38895499283
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38895499283; task status PASS_BASELINE_INPUTS_RECONSTRUCTED; runner commit 8200077aca3a375c91d6b9f620f8338cbba10eee.
+- Scope is temporary cache-only reconstruction of the frozen CP-0031 candidate input content; network/acquisition count=0; production candidate build=False; backtest=False.
+- Monthly archives used=220; daily reference archives used=80; official daily sidecars verified=80.
+- 1d reconstructed decompressed SHA-256 8cefa74df159591f87cdcfcd203ed53d35562fea041332645c1f478b53a24556; frozen anchor 8cefa74df159591f87cdcfcd203ed53d35562fea041332645c1f478b53a24556; match=True.
+- 1mo reconstructed decompressed SHA-256 09c4a052cd879cac035c6fdbe61e830947c4bc5f09d14017168dcc2af38f9278; frozen anchor 09c4a052cd879cac035c6fdbe61e830947c4bc5f09d14017168dcc2af38f9278; match=True.
+- 4h reconstructed decompressed SHA-256 1c7377e3dc26c791133d2ea0bf0a8b46cbec4287f4dc37a6032c79044c4ed357; frozen anchor 1c7377e3dc26c791133d2ea0bf0a8b46cbec4287f4dc37a6032c79044c4ed357; match=True.
+- Input content anchors reproduced. This is not a backtest, signal-impact calculation, canonical-source decision, or promotion approval.
+- G0 remains BLOCKED_GLOBAL; all 11 non-row aggregation blockers remain open; canonical source remains NONE; live signing/broadcast/orders remain blocked.
