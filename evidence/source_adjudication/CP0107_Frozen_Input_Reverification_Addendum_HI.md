@@ -21,10 +21,10 @@ Library में उपलब्ध exact source package `/AISTS_CP0041_Row_Lev
 
 ## 2. Crosswalk और derived worklist की स्वतंत्र तुलना
 
-- CP-0107 crosswalk: 450 rows, 452,986 bytes; SHA-256 `5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b`
-- Derived worklist: 996 rows, 2,099,092 bytes; SHA-256 `137ad77bfafa7f7cd788db6f744e5567ad7dba889048b58feb743a34b863d9cb`
-- Per-row audit: 996 rows, 792,477 bytes; SHA-256 `717125e5abd83f987139d76df7ba245b972ad52438d4c64bb2e8bf06901012aa`
-- Derived summary: 7,294 bytes; SHA-256 `31bf7846d3429e6590724250459bf2fc1317dcabccf71cca8c21b5ed575fee96`
+- CP-0107 crosswalk (materialized Library file; no GitHub repository path is asserted): 450 rows, 452,986 bytes; SHA-256 `5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b`
+- Derived worklist (materialized Library file): 996 rows, 2,099,092 bytes; SHA-256 `137ad77bfafa7f7cd788db6f744e5567ad7dba889048b58feb743a34b863d9cb`
+- Per-row audit (materialized Library file): 996 rows, 792,477 bytes; SHA-256 `717125e5abd83f987139d76df7ba245b972ad52438d4c64bb2e8bf06901012aa`
+- Derived summary (materialized Library file): 7,294 bytes; SHA-256 `31bf7846d3429e6590724250459bf2fc1317dcabccf71cca8c21b5ed575fee96`
 
 ताज़ा reproducible comparison का परिणाम:
 
@@ -63,7 +63,7 @@ Library में उपलब्ध exact source package `/AISTS_CP0041_Row_Lev
 
 ## 5. Execution evidence / limitation
 
-यह addendum materialized source bytes पर local hash/row-level checks और GitHub repository files की पहले से उपलब्ध committed bytes पर आधारित है। इस addendum को publish करने के लिए कोई GitHub Actions run execute नहीं किया गया; इसलिए इस addendum के लिए CI success का दावा नहीं है। GitHub पर report, JSON और state note publish होने के बाद exact fetch-back verification अलग से दर्ज किया जाना है।
+यह addendum Library से materialize किए गए source/output bytes पर local hash/row-level checks और GitHub पर इस addendum के fetch-back पर आधारित है। इस addendum को publish करने के लिए कोई GitHub Actions run execute नहीं किया गया; इसलिए इस addendum के लिए CI success का दावा नहीं है। GitHub पर report, JSON और state note publish होने के बाद exact fetch-back verification अलग से दर्ज किया जाना है।
 
 ## अगला checkpoint
 
