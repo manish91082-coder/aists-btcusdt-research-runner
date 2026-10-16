@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0092-CORRECTION-ARCHIVE-BINARY-ROUTE-PROBE-002",
-  "task": "cp0092_correction_archive_binary_probe",
-  "purpose": "Retry once from GitHub-hosted runner using official raw repository transport after the prior raw-host failure occurred only in the local container; verify expected Git blob SHA and ZIP CRC.",
-  "created_at_utc": "2026-10-16T14:20:00Z",
-  "requested_commit_sha": "f5799cbbe234036a3451c0c377528940acc1ec8c"
+  "request_id": "CP0107-DAILY-REFERENCE-REPLAY-AUDIT-002",
+  "task": "cp0107_cp0041_daily_reference_acquisition_audit",
+  "purpose": "Reuse the exact 16 daily ZIP and .CHECKSUM pairs from prior Actions artifact 38775174019, verify against 14 cached monthly archives, complete raw-row comparison and persist output; no new daily downloads, no source closure.",
+  "created_at_utc": "2026-10-16T14:45:00Z",
+  "requested_commit_sha": "eddc46175e13feb2e95546db7aa4fc5c0ca8981c"
 }
