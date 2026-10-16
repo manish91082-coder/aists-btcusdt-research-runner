@@ -229,17 +229,42 @@ def main():
 
     anchors_path = ROOT / args.anchors
     anchors = json.loads(anchors_path.read_text(encoding="utf-8"))
-    check("anchor_schema", anchors.get("checkpoint") == "CP-0040" and anchors.get("anchor_id") == "CP0040-BASELINE-RECONSTRUCTION-ANCHORS-20261016-01", anchors_path.as_posix())
+    anchor_ok = anchors.get("checkpoint") == "CP-0040" and anchors.get("anchor_id") == "CP0040-BASELINE-RECONSTRUCTION-ANCHORS-20261016-01"
+    checks.append({"check_id": "anchor_schema", "status": "PASS" if anchor_ok else "FAIL", "detail": anchors_path.as_posix()})
+    if not anchor_ok:
+        write_blocked(output, anchors, started, "Anchor schema or ID did not match the frozen CP-0040 reconstruction record.", checks)
+        print(json.dumps({"status": "BLOCKED_INPUTS_NOT_REPRODUCIBLE", "reason": "anchor schema mismatch"}, ensure_ascii=False))
+        return 0
     monthly_cache = (ROOT / args.monthly_cache).resolve()
     daily_cache = (ROOT / args.daily_cache).resolve()
-    check("monthly_cache_present", monthly_cache.is_dir(), monthly_cache)
-    check("daily_cache_present", daily_cache.is_dir(), daily_cache)
+    monthly_ok = monthly_cache.is_dir()
+    checks.append({"check_id": "monthly_cache_present", "status": "PASS" if monthly_ok else "FAIL", "detail": str(monthly_cache)})
+    if not monthly_ok:
+        write_blocked(output, anchors, started, "Monthly source cache directory is missing; no network fallback is permitted.", checks)
+        print(json.dumps({"status": "BLOCKED_INPUTS_NOT_REPRODUCIBLE", "reason": "monthly cache absent"}, ensure_ascii=False))
+        return 0
+    daily_ok = daily_cache.is_dir()
+    checks.append({"check_id": "daily_cache_present", "status": "PASS" if daily_ok else "FAIL", "detail": str(daily_cache)})
+    if not daily_ok:
+        write_blocked(output, anchors, started, "Daily-reference cache directory is missing; no network fallback is permitted.", checks)
+        print(json.dumps({"status": "BLOCKED_INPUTS_NOT_REPRODUCIBLE", "reason": "daily cache absent"}, ensure_ascii=False))
+        return 0
 
     flagged_path = ROOT / args.flagged_dates
-    with flagged_path.open("r", encoding="utf-8-sig", newline="") as f:
-        flagged_rows = list(csv.DictReader(f))
+    try:
+        with flagged_path.open("r", encoding="utf-8-sig", newline="") as f:
+            flagged_rows = list(csv.DictReader(f))
+    except OSError as exc:
+        write_blocked(output, anchors, started, f"Frozen flagged-date evidence unavailable: {exc}", checks)
+        print(json.dumps({"status": "BLOCKED_INPUTS_NOT_REPRODUCIBLE", "reason": str(exc)}, ensure_ascii=False))
+        return 0
     flagged_dates = [str(r.get("date", "")).strip() for r in flagged_rows]
-    check("flagged_dates_exactly_40_unique", len(flagged_dates) == 40 and len(set(flagged_dates)) == 40 and all(re.fullmatch(r"\d{4}-\d{2}-\d{2}", x) for x in flagged_dates), f"rows={len(flagged_dates)} unique={len(set(flagged_dates))}")
+    flagged_ok = len(flagged_dates) == 40 and len(set(flagged_dates)) == 40 and all(re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}", x) for x in flagged_dates)
+    checks.append({"check_id": "flagged_dates_exactly_40_unique", "status": "PASS" if flagged_ok else "FAIL", "detail": f"rows={len(flagged_dates)} unique={len(set(flagged_dates))}"})
+    if not flagged_ok:
+        write_blocked(output, anchors, started, "Frozen flagged-date evidence is not exactly 40 unique ISO dates.", checks)
+        print(json.dumps({"status": "BLOCKED_INPUTS_NOT_REPRODUCIBLE", "reason": "flagged-date anchor mismatch"}, ensure_ascii=False))
+        return 0
 
     builder = load_builder()
     monthly_used = 0
