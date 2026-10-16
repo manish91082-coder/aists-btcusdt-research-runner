@@ -18,6 +18,16 @@ SOURCE_PACKAGE_SHA256="23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fab
 SOURCE_WORKLIST_SHA256="f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f"
 SOURCE_MONTHLY_MANIFEST_SHA256="1fa5c6ff022d7ff10f293c55c9fb933599c16b3d5d68adc86f2a9425c1e16b65"
 RULEBOOK_SHA256="5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0"
+SHARED52_SNAPSHOT_BLOBS={
+    "evidence/source_adjudication/CP0107_CP0041_Shared52_SourceSnapshot_01.csv":"df6b78425ef3af82c4eb9fcdef8f185e11a073e6",
+    "evidence/source_adjudication/CP0107_CP0041_Shared52_SourceSnapshot_02.csv":"199dfa5ea19ed6d3ea0577c7183fb5c4645fe1da",
+}
+EXPECTED_UPDATE_CSV_ROWS=73234
+EXPECTED_SHARED52_ROWS=52
+EXPECTED_SHARED52_EXACT_PATH_ROWS=33
+EXPECTED_SHARED52_MISSING_PATH_ROWS=19
+EXPECTED_SHARED52_UNIQUE_DAILY_ARCHIVES=14
+UPDATE_CSV_MEMBER="2022-08-08_kline_updates.csv"
 README_URL="https://github.com/binance/binance-public-data"
 MAX_BUNDLE_BYTES=9_000_000
 ALLOWED_HOSTS={"api.github.com"}
@@ -60,6 +70,69 @@ def read_targets(path:Path)->list[dict]:
     if any(r.get("source_pack_sha256")!=SOURCE_PACKAGE_SHA256 or r.get("source_member_sha256")!=SOURCE_MONTHLY_MANIFEST_SHA256 for r in rows):
         raise ValueError("Target inventory source package/member references differ from frozen CP-0041")
     return rows
+
+def read_shared52_snapshots(root:Path)->tuple[list[dict],dict]:
+    combined=[]
+    provenance={}
+    required={"case_id","interval","utc_date","open_time_ms","open_time_utc","difference_fields",
+              "monthly_archive","monthly_source_sha256","daily_archive","daily_source_sha256","current_disposition"}
+    for rel,expected_blob in SHARED52_SNAPSHOT_BLOBS.items():
+        path=root/rel
+        if not path.is_file():
+            raise FileNotFoundError("Frozen CP-0107 shared-52 snapshot absent: "+str(path))
+        raw=path.read_bytes()
+        actual_blob=git_blob_sha1(raw)
+        if actual_blob!=expected_blob:
+            raise ValueError("Frozen CP-0107 shared-52 snapshot Git blob SHA-1 mismatch: "+rel)
+        with path.open("r",encoding="utf-8-sig",newline="") as f:
+            reader=csv.DictReader(f)
+            if not reader.fieldnames or not required.issubset(set(reader.fieldnames)):
+                raise ValueError("Shared-52 snapshot schema mismatch: "+rel)
+            rows=list(reader)
+        provenance[rel]={"git_blob_sha1":actual_blob,"bytes":len(raw),"rows":len(rows)}
+        for row in rows:
+            row["_snapshot_path"]=rel
+            row["_snapshot_git_blob_sha1"]=actual_blob
+        combined.extend(rows)
+    if len(combined)!=EXPECTED_SHARED52_ROWS:
+        raise ValueError("Expected exactly 52 frozen shared economic-conflict rows; got "+str(len(combined)))
+    ids=[r.get("case_id","") for r in combined]
+    if any(not case_id for case_id in ids) or len(set(ids))!=len(ids):
+        raise ValueError("Shared-52 conflict case IDs are missing or duplicated")
+    if any(r.get("current_disposition")!="UNRESOLVED_SOURCE_CONFLICT_NO_AUTO_CORRECTION" for r in combined):
+        raise ValueError("Shared-52 snapshot contains an unexpected disposition")
+    economic={"open","high","low","close","volume","quote_asset_volume","number_of_trades",
+              "taker_buy_base_asset_volume","taker_buy_quote_asset_volume"}
+    if any(not (set(filter(None,r.get("difference_fields","").split(";")))&economic) for r in combined):
+        raise ValueError("Shared-52 snapshot includes a row without an economic/trade-metric difference")
+    return combined,provenance
+
+def parse_checksum_token(value:str)->str:
+    match=re.match(r"^\s*([0-9a-fA-F]{64})(?:\s+.*)?\s*$",str(value or ""))
+    return match.group(1).lower() if match else ""
+
+def read_official_update_csv(member_content:list[tuple])->tuple[list[dict],str,str]:
+    hits=[(path,blob) for path,basename,blob,is_zip in member_content
+          if basename==UPDATE_CSV_MEMBER and path==UPDATE_CSV_MEMBER and not is_zip]
+    if len(hits)!=1:
+        raise ValueError("Expected exactly one official update-table CSV member; found "+str(len(hits)))
+    member_path,raw=hits[0]
+    with io.StringIO(raw.decode("utf-8-sig"),newline="") as stream:
+        reader=csv.DictReader(stream)
+        required={"File Path","Original File Checksum","New File Checksum"}
+        if not reader.fieldnames or not required.issubset(set(reader.fieldnames)):
+            raise ValueError("Official update-table CSV schema mismatch")
+        rows=list(reader)
+    paths=[r.get("File Path","") for r in rows]
+    if len(rows)!=EXPECTED_UPDATE_CSV_ROWS:
+        raise ValueError("Official update-table CSV row-count mismatch: "+str(len(rows)))
+    if any(not path for path in paths) or len(set(paths))!=len(paths):
+        raise ValueError("Official update-table CSV contains blank or duplicate File Path entries")
+    if any(not parse_checksum_token(r.get("Original File Checksum","")) or
+           not parse_checksum_token(r.get("New File Checksum","")) for r in rows):
+        raise ValueError("Official update-table CSV contains an invalid original/new SHA-256 token")
+    return rows,member_path,sha256(raw)
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--output-dir",required=True)
@@ -106,6 +179,93 @@ def main():
                 "is_nested_zip":str(is_zip),"member_sha256":sha256(blob)})
             member_content.append((info.filename,basename,blob,is_zip))
     check("nonempty_update_inventory",len(entries)>0,"non_directory_members="+str(len(entries)))
+    shared52_rows,snapshot_provenance=read_shared52_snapshots(root)
+    check("frozen_shared52_snapshot_blob_identity_and_rows",
+          len(shared52_rows)==EXPECTED_SHARED52_ROWS and len({r["case_id"] for r in shared52_rows})==EXPECTED_SHARED52_ROWS
+          and all(meta["rows"]==26 for meta in snapshot_provenance.values()),
+          "52 unique rows across two frozen snapshots; Git blob SHA-1s verified: "+json.dumps(snapshot_provenance,sort_keys=True))
+    update_rows,update_member_path,update_csv_sha256=read_official_update_csv(member_content)
+    update_by_path={r["File Path"]:r for r in update_rows}
+    check("official_update_csv_schema_row_count_and_unique_paths",
+          len(update_rows)==EXPECTED_UPDATE_CSV_ROWS and len(update_by_path)==EXPECTED_UPDATE_CSV_ROWS,
+          "member="+update_member_path+"; rows="+str(len(update_rows))+"; unique_paths="+str(len(update_by_path))+"; SHA-256="+update_csv_sha256)
+    shared52_crosswalk=[]
+    for source in shared52_rows:
+        interval=source["interval"]
+        daily_archive=source["daily_archive"]
+        expected_daily_sha=source["daily_source_sha256"].strip().lower()
+        official_path=f"data/spot/daily/klines/BTCUSDT/{interval}/{daily_archive}"
+        record=update_by_path.get(official_path)
+        original_sha=parse_checksum_token(record.get("Original File Checksum","")) if record else ""
+        new_sha=parse_checksum_token(record.get("New File Checksum","")) if record else ""
+        exact=record is not None
+        old_equal=bool(exact and original_sha==expected_daily_sha)
+        new_equal=bool(exact and new_sha==expected_daily_sha)
+        if not exact:
+            status="NO_EXACT_DAILY_PATH_IN_CORRECTION_BUNDLE"
+        elif new_equal and not old_equal:
+            status="EXACT_PATH_NEW_CHECKSUM_EQUALS_FROZEN_DAILY_HASH_OLD_DIFFERS"
+        elif old_equal and not new_equal:
+            status="EXACT_PATH_OLD_CHECKSUM_EQUALS_FROZEN_DAILY_HASH_NEW_DIFFERS"
+        elif old_equal and new_equal:
+            status="EXACT_PATH_BOTH_CHECKSUMS_EQUAL_FROZEN_DAILY_HASH_REVIEW_REQUIRED"
+        else:
+            status="EXACT_PATH_CHECKSUMS_DO_NOT_MATCH_FROZEN_DAILY_HASH_REVIEW_REQUIRED"
+        shared52_crosswalk.append({
+            "source_snapshot_path":source["_snapshot_path"],
+            "source_snapshot_git_blob_sha1":source["_snapshot_git_blob_sha1"],
+            "case_id":source["case_id"],
+            "interval":interval,
+            "utc_date":source["utc_date"],
+            "open_time_ms":source["open_time_ms"],
+            "open_time_utc":source["open_time_utc"],
+            "difference_fields":source["difference_fields"],
+            "monthly_archive":source["monthly_archive"],
+            "monthly_source_sha256":source["monthly_source_sha256"],
+            "daily_archive":daily_archive,
+            "frozen_daily_archive_sha256":expected_daily_sha,
+            "official_bundle_path":official_path,
+            "exact_official_daily_path_found":str(exact),
+            "official_original_file_checksum_sha256":original_sha,
+            "official_new_file_checksum_sha256":new_sha,
+            "original_checksum_matches_frozen_daily_sha256":str(old_equal),
+            "new_checksum_matches_frozen_daily_sha256":str(new_equal),
+            "version_evidence_status":status,
+            "current_disposition":source["current_disposition"],
+            "canonical_source":"NONE",
+            "case_closed":"False"
+        })
+    shared52_matches=[r for r in shared52_crosswalk if r["exact_official_daily_path_found"]=="True"]
+    shared52_missing=[r for r in shared52_crosswalk if r["exact_official_daily_path_found"]=="False"]
+    unique_matched_paths=sorted({r["official_bundle_path"] for r in shared52_matches})
+    unique_archive_counts_by_interval={}
+    for interval,path in sorted({(r["interval"],r["official_bundle_path"]) for r in shared52_matches}):
+        unique_archive_counts_by_interval[interval]=unique_archive_counts_by_interval.get(interval,0)+1
+    interval_case_counts={}
+    date_case_counts={}
+    for r in shared52_matches:
+        interval_case_counts[r["interval"]]=interval_case_counts.get(r["interval"],0)+1
+        date_case_counts[r["utc_date"]]=date_case_counts.get(r["utc_date"],0)+1
+    new_sha_matches=sum(r["new_checksum_matches_frozen_daily_sha256"]=="True" for r in shared52_matches)
+    original_sha_matches=sum(r["original_checksum_matches_frozen_daily_sha256"]=="True" for r in shared52_matches)
+    economic={"open","high","low","close","volume","quote_asset_volume","number_of_trades",
+              "taker_buy_base_asset_volume","taker_buy_quote_asset_volume"}
+    all_matched_rows_economic=all(bool(set(filter(None,r["difference_fields"].split(";")))&economic) for r in shared52_matches)
+    all_cases_open=all(r["current_disposition"]=="UNRESOLVED_SOURCE_CONFLICT_NO_AUTO_CORRECTION" and
+        r["canonical_source"]=="NONE" and r["case_closed"]=="False" for r in shared52_crosswalk)
+    check("shared52_exact_daily_path_coverage",len(shared52_crosswalk)==52 and len(shared52_matches)==33 and len(shared52_missing)==19,
+          "rows=52; exact_daily_path_hits="+str(len(shared52_matches))+"; no_exact_path="+str(len(shared52_missing)))
+    check("shared52_update_bundle_current_new_checksum_match",len(unique_matched_paths)==14 and new_sha_matches==33,
+          "matched case rows="+str(new_sha_matches)+"/33; unique daily archive objects="+str(len(unique_matched_paths))+"/14")
+    check("shared52_original_checksum_not_current_frozen_daily_hash",original_sha_matches==0,
+          "original checksum equals frozen current daily SHA-256 for "+str(original_sha_matches)+"/"+str(len(shared52_matches))+" exact-path rows")
+    check("shared52_crosswalk_economic_conflicts_remain_open",all_matched_rows_economic and all_cases_open,
+          "all linked rows are economic/trade-metric conflicts; dispositions remain unresolved; canonical source NONE; cases closed 0")
+    with (out/"CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv").open("w",encoding="utf-8",newline="") as f:
+        fields=list(shared52_crosswalk[0].keys())
+        w=csv.DictWriter(f,fieldnames=fields,lineterminator="\n")
+        w.writeheader()
+        w.writerows(shared52_crosswalk)
     target_names={x["filename"] for x in targets}
     target_by_name={x["filename"]:x for x in targets}
     matches=[]
@@ -150,7 +310,7 @@ def main():
     member_sha_current=sum(x["archive_member_sha256_matches_frozen_current"] for x in matches)
     checks_passed=sum(x["status"]=="PASS" for x in checks)
     status="PASS_OFFICIAL_UPDATE_PACKAGE_INSPECTED_SOURCE_AUTHORITY_OPEN" if checks_passed==len(checks) else "FAIL_OFFICIAL_UPDATE_PACKAGE_INSPECTION"
-    output_names=["2022-08-08_kline_updates.zip","CP0107_Official_Update_Package_Entry_Inventory.csv","CP0107_Official_Update_Package_Target_Matches.csv"]
+    output_names=["2022-08-08_kline_updates.zip","CP0107_Official_Update_Package_Entry_Inventory.csv","CP0107_Official_Update_Package_Target_Matches.csv","CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv"]
     output_manifest={}
     for name in output_names:
         p=out/name
@@ -167,9 +327,27 @@ def main():
       ,"cp0041_target_inventory":{"path":TARGET_INVENTORY_PATH,"sha256":TARGET_INVENTORY_SHA256,"rows":len(targets),
         "source_pack_sha256":SOURCE_PACKAGE_SHA256,"source_monthly_manifest_member_sha256":SOURCE_MONTHLY_MANIFEST_SHA256}
       ,"package_inventory":{"member_count":len(entries),"nested_zip_member_count":nested_zip_count,
+        "official_update_csv_member":update_member_path,"official_update_csv_rows":len(update_rows),
+        "official_update_csv_sha256":update_csv_sha256,
         "target_monthly_archive_names_checked":len(matches),"exact_archive_member_name_hits":exact_member_hits,
         "text_filename_reference_hits":text_name_hits,"frozen_current_sha_token_hits":hash_token_hits,
         "member_bytes_equal_frozen_current_sha":member_sha_current}
+      ,"shared52_daily_crosswalk":{
+        "snapshot_files":snapshot_provenance,"input_rows":len(shared52_crosswalk),
+        "unique_case_ids":len({r["case_id"] for r in shared52_crosswalk}),
+        "exact_official_daily_path_case_rows":len(shared52_matches),
+        "no_exact_official_daily_path_case_rows":len(shared52_missing),
+        "unique_daily_archive_objects_matched":len(unique_matched_paths),
+        "official_new_checksum_matches_frozen_daily_sha256":new_sha_matches,
+        "official_original_checksum_matches_frozen_daily_sha256":original_sha_matches,
+        "unique_daily_archive_objects_by_interval":unique_archive_counts_by_interval,
+        "matched_case_rows_by_interval":interval_case_counts,
+        "matched_case_rows_by_utc_date":date_case_counts,
+        "all_exact_path_rows_are_economic_conflicts":all_matched_rows_economic,
+        "all_52_cases_remain_open":all_cases_open,
+        "crosswalk_output":"CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv",
+        "interpretation":"For exact-path matches, frozen current daily archive SHA-256 equals the official bundle New File Checksum, while no row matches the Original File Checksum. This is version provenance only; not a monthly-versus-daily canonical-source decision."
+      }
       ,"decision":{"monthly_daily_canonical_source_selected":False,"source_cases_closed":0,"root_cause":"OPEN_NOT_ESTABLISHED",
         "archive_files_replaced_or_mutated":False,"timestamp_shifted_or_rounded":False,"rows_merged_replaced_or_deleted":False,
         "synthetic_candles_created":False,"backtest_rerun":False,"strategy_promoted":False,
@@ -183,9 +361,14 @@ def main():
       "- Frozen CP-0041 target set: 33 distinct monthly archive filenames from the verified 765-row monthly manifest, cross-referenced to the 996-row worklist.",
       "- Update package member count: "+str(len(entries))+"; nested ZIP members: "+str(nested_zip_count)+".",
       "- Exact package-member basename hits for the 33 target monthly ZIP names: "+str(exact_member_hits)+"/33; text filename-reference hits: "+str(text_name_hits)+"/33; current frozen SHA token hits: "+str(hash_token_hits)+"/33; nested/member bytes equal current frozen SHA: "+str(member_sha_current)+"/33.",
+      "- Official correction CSV SHA-256: "+update_csv_sha256+"; data rows="+str(len(update_rows))+"; unique daily File Path records="+str(len(update_by_path))+".",
+      "- Frozen CP-0041 shared economic conflicts: "+str(len(shared52_crosswalk))+"; exact daily correction paths="+str(len(shared52_matches))+"/52 across "+str(len(unique_matched_paths))+" daily archive objects; no exact daily path="+str(len(shared52_missing))+".",
+      "- Exact-path rows: official New File Checksum equals frozen CP-0041 daily archive SHA-256 for "+str(new_sha_matches)+"/"+str(len(shared52_matches))+"; Original File Checksum equals it for "+str(original_sha_matches)+"/"+str(len(shared52_matches))+".",
+      "- Matched case counts by interval: "+json.dumps(interval_case_counts,sort_keys=True)+"; by UTC date: "+json.dumps(date_case_counts,sort_keys=True)+".",
+      "- Durable row-level crosswalk: CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv; rows="+str(len(shared52_crosswalk))+"; SHA-256 "+sha256((out/"CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv").read_bytes())+".",
       "",
       "## Decision","",
-      "These are version/provenance diagnostics only. Do not assume daily beats monthly, or that a correction-bundle filename identifies the current canonical archive. Canonical source NONE; cases closed 0; root cause OPEN_NOT_ESTABLISHED. No Binance market-data REST API, no monthly/daily market ZIP acquisition, no raw edits, no backtest or strategy promotion."
+      "The exact daily-path and checksum findings are version-provenance evidence only. They do not explain the raw-row economic-field differences and do not select a canonical source. The 19 cases without an exact bundle path remain open. Canonical source NONE; cases closed 0; root cause OPEN_NOT_ESTABLISHED. No Binance market-data REST API, no monthly/daily market ZIP acquisition, no raw edits, no timestamp changes, no backtest or strategy promotion."
     ]
     (out/"CP0107_Official_Update_Package_Report_HI.md").write_text("\n".join(report)+"\n",encoding="utf-8")
     output_manifest["CP0107_Official_Update_Package_Report_HI.md"]={"bytes":(out/"CP0107_Official_Update_Package_Report_HI.md").stat().st_size,"sha256":sha256((out/"CP0107_Official_Update_Package_Report_HI.md").read_bytes()),"rows":None}
