@@ -195,6 +195,7 @@ def main():
                      "monthly_derived_replay":"monthly_derived_replay.py",
                      "legacy_pipeline":"aists_legacy_pipeline.py",
                      "source_adjudication_diagnostic":"AISTS_CP0103_Source_Adjudication_Diagnostic.py",
+                     "cp0040_quarantine_sensitivity_preflight":"AISTS_CP0040_Quarantine_Sensitivity_Preflight.py",
                      "cp0107_feb2018_raw_row_extract":"AISTS_CP0107_Feb2018_Raw_Row_Extract.py",
                      "cp0107_feb2018_disposition_overlay":"AISTS_CP0107_Feb2018_Disposition_Overlay.py","cp0107_dec2020_child_window_audit":"AISTS_CP0107_Dec2020_ChildWindow_Audit.py","cp0107_field_review_hash_audit":"AISTS_CP0107_FieldReview_HashAudit.py","cp0107_monthly_checksum_provenance_audit":"AISTS_CP0107_MonthlyChecksumProvenanceAudit.py","cp0107_cp0041_daily_reference_acquisition_audit":"AISTS_CP0107_CP0041_DailyReference_Acquisition_Audit.py","cp0107_cp0041_aggregation_bucket_overlay_audit":"AISTS_CP0107_CP0041_AggregationBucket_Overlay_Audit.py","cp0107_cp0041_worklist_disposition_patch_audit":"AISTS_CP0107_CP0041_Worklist_Disposition_Patch_Audit.py","cp0107_cp0041_dec2020_residual7_exact_key_audit":"AISTS_CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.py","cp0107_official_update_package_audit":"AISTS_CP0107_Official_Update_Package_Audit.py"}[task]
         child=ROOT/"scripts"/script_name
