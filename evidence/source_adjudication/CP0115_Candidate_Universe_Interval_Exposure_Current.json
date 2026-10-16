@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0115",
+  "status": "PASS_CANDIDATE_INTERVAL_OVERLAP_AUDIT_G0_STILL_BLOCKED",
+  "reviewed_at_utc": "2026-10-16",
+  "repository": "manish91082-coder/aists-btcusdt-research-runner",
+  "branch": "main",
+  "audit_type": "read-only candidate-universe interval exposure join",
+  "source_candidate_matrix": {
+    "name": "AISTS_CP0043_Candidate_G0_G1_Eligibility_Matrix.csv",
+    "library_file_id": "file_00000000aa3081f4ab84c946ccf18812",
+    "bytes": 33602,
+    "sha256": "e18d0a2bbf6e724eb11507b35b3c0c4dfebbc5bfeda3c310c3f9e1b9f15b01c9",
+    "integrity_basis": "CP-0045 package integrity record",
+    "rows": 23
+  },
+  "inputs": {
+    "cp0113_pointer_git_blob_sha1": "6d3476ed2770d1629596ea8e94e8508dabac776d",
+    "cp0113_report_git_blob_sha1": "50973223cbb94eb1889f946d51369f7e7c5c63a5",
+    "cp0114_pointer_git_blob_sha1": "ab6997b1d8dabcbaaccbba0f8f9915a8f11280cb",
+    "cp0114_report_git_blob_sha1": "1546408f8b6c77b21a62fbd92fa9aceebdfcbe25",
+    "crosswalk_path": "evidence/source_adjudication/CP0115_Candidate_Universe_Interval_Exposure_Crosswalk.csv",
+    "crosswalk_git_blob_sha1": "cdecff27f2472a59d91470cfd9ae774128ed0b37",
+    "crosswalk_rows": 23
+  },
+  "report_path": "evidence/source_adjudication/CP0115_Candidate_Universe_Interval_Exposure_Report_HI.md",
+  "report_git_blob_sha1": "2e29d2aa1b64f9a11451464897e4a6f9d0d80f75",
+  "counts": {
+    "candidates": 23,
+    "g2_fail": 23,
+    "cp0043_candidate_scoped_g0_blocked": 12,
+    "cp0043_candidate_scoped_g0_pass": 11,
+    "monthly_divergent_keys": 14,
+    "monthly_divergent_fields": 97,
+    "monthly_divergent_keys_by_interval": {
+      "5m": 9,
+      "15m": 4,
+      "30m": 1,
+      "1h": 0,
+      "4h": 0,
+      "1d": 0,
+      "1mo": 0
+    },
+    "direct_interval_overlap_candidate_count": 9,
+    "direct_overlap_candidates_by_interval": {
+      "5m": 3,
+      "15m": 3,
+      "30m": 3
+    },
+    "low_timeframe_candidates_g0_blocked_without_direct_cp0113_monthly_key": 3,
+    "exact_row_consumption_verified_for_current_builder": false,
+    "cp0040_sensitivity_application_overlap_with_14_conflict_keys": 0,
+    "unresolved_aggregation_blockers": 11
+  },
+  "direct_overlap_candidate_ids": [
+    "CP0027_5m_EMA_12_26",
+    "CP0027_5m_RSI14_30_55",
+    "CP0027_5m_DONCHIAN20_10",
+    "CP0027_15m_EMA_12_26",
+    "CP0027_15m_RSI14_30_55",
+    "CP0027_15m_DONCHIAN20_10",
+    "CP0027_30m_EMA_12_26",
+    "CP0027_30m_RSI14_30_55",
+    "CP0027_30m_DONCHIAN20_10"
+  ],
+  "decision": {
+    "source_authority": "OPEN_NOT_ESTABLISHED",
+    "canonical_source": "NONE",
+    "source_cases_closed": 0,
+    "current_global_g0": "BLOCKED_GLOBAL",
+    "current_g2": "FAIL_CURRENT_23_CANDIDATES",
+    "current_g7": "LIVE_BLOCKED",
+    "exact_candidate_row_consumption": "NOT_VERIFIED_NO_NEW_CANDIDATE_BUILD",
+    "quarantine_coverage_for_14_keys": "NOT_PROVEN_APPLIED_TO_THESE_KEYS",
+    "rulebook_precedence": "CP-0040 defines no mechanical daily-over-monthly precedence rule"
+  },
+  "non_actions": {
+    "network_used": false,
+    "archive_downloads": 0,
+    "raw_source_bytes_modified": false,
+    "candidate_build_performed": false,
+    "backtest_performed": false,
+    "strategy_promoted": false,
+    "timestamps_shifted_or_rounded": false,
+    "synthetic_candles_created": false,
+    "live_signing_enabled": false,
+    "public_broadcast_enabled": false,
+    "binance_orders_placed": false
+  },
+  "next_bounded_step": "Inspect the frozen candidate builder and input-dependency definitions to determine how exact keys are loaded and quarantined. Do not claim active exact-key exclusion without a passing, rulebook-permitted build or an equivalent reproducible static proof. Keep all affected keys unresolved until then."
+}
