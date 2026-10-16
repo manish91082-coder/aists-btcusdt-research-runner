@@ -120,7 +120,7 @@ def main():
           "monthly_volume","daily_volume","monthly_quote_asset_volume","daily_quote_asset_volume","monthly_number_of_trades","daily_number_of_trades",
           "monthly_taker_buy_base_asset_volume","daily_taker_buy_base_asset_volume","monthly_taker_buy_quote_asset_volume","daily_taker_buy_quote_asset_volume",
           "monthly_close_time","daily_close_time","monthly_ignore","daily_ignore","disposition","source_authority"]
-        econ_rows=[{k:r.get(k,"") for k in econ_columns} for r in economic]
+        econ_rows=[{**{k:r.get(k,"") for k in econ_columns},"case_closed":"False","disposition":"OPEN_REVIEW_REQUIRED"} for r in economic]
         missing_rows=[{**{k:r.get(k,"") for k in ["case_id","interval","utc_date","expected_open_time_ms","expected_open_time_utc","status","archive_filename","archive_sha256","synthetic_candle_created"]},"source_authority":"NONE","case_closed":"False","disposition":"OPEN_REVIEW_REQUIRED"} for r in missing]
         field_rows=[{"field":k,"raw_differgent_row_count":v,"economic_differgent_row_count":economic_field_counts.get(k,0)} for k,v in sorted(raw_field_counts.items())]
         signature_rows=[{"raw_difference_signature":k,"row_count":v,"interpretation":"Diagnostic only; source authority remains NONE"} for k,v in sorted(signature_counts.items(),key=lambda x:(-x[1],x[0]))]
