@@ -26,8 +26,8 @@
     "rows": 52,
     "unique_case_ids": 52,
     "per_row_checks": 780,
-    "passed_per_row_checks": 728,
-    "all_15_checks_pass_all_rows": false,
+    "passed_per_row_checks": 780,
+    "all_15_checks_pass_all_rows": true,
     "check_totals": {
       "id": 52,
       "interval": 52,
@@ -42,7 +42,7 @@
       "checksumflag": 52,
       "disposition": 52,
       "canonical": 52,
-      "closed": 0,
+      "closed": 52,
       "root": 52
     },
     "official_new_checksum_matches_frozen_daily": 33,
