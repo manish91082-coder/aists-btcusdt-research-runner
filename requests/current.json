@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-QUARANTINE-MANIFEST-001",
+  "request_id": "CP0040-QUARANTINE-MANIFEST-002",
   "task": "cp0040_quarantine_manifest_build",
-  "purpose": "Build and validate exact-key quarantine manifest from the frozen published 996-row Git index; separately report non-row blockers; no candidate build or backtest.",
-  "created_at_utc": "2026-10-16T09:45:00Z",
-  "requested_commit_sha": "7d187b18649677431cb6f634fceededf05ef8059"
+  "purpose": "Re-run exact-key quarantine manifest build after fixing scoped publisher policy check; validate row-level keys and retain non-row blockers; no candidate build or backtest.",
+  "created_at_utc": "2026-10-16T09:50:00Z",
+  "requested_commit_sha": "3b7ecc42599689372b2311581436d214c740b007"
 }
