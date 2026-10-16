@@ -399,3 +399,16 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Manifest SHA-256 d62c30c8ac7a4e5241b48e79884e68395fd1904826cfd70549886876269642b2; blocker ledger SHA-256 f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36. The published frozen index was re-hashed; the original CP-0041 package/rulebook bytes were not freshly re-hashed in this run.
 - Acquisition extension reviewed 1992 raw row pairs: 432 divergent pairs, 14 economic-field divergences, and 10 monthly-only keys. Newly added unique keys=442; overlapping keys enriched=0. No new downloads.
 - No canonical source selected, no cases closed, no candidate build/backtest, no strategy promotion, live actions remain BLOCKED.
+
+
+## CP-0040 acquisition extension and current CP-0026 gate regression — 2026-10-16
+
+- Extended the row-level quarantine manifest using the committed CP-0107/CP-0041 acquisition comparison after verifying its recorded SHA-256 and row count. No new network downloads.
+- Latest current manifest pointer: `evidence/source_adjudication/CP0040_Current_Manifest.json`; run-scoped evidence: `evidence/source_adjudication/CP0040_Run_38883343753/`.
+- Manifest is now 1,411 rows / 1,411 unique exact keys, SHA-256 `d62c30c8ac7a4e5241b48e79884e68395fd1904826cfd70549886876269642b2`. Added 442 unique keys from the acquired daily-reference comparison: 432 shared raw-divergent pairs (14 economic-field and 418 non-economic raw-field divergences) plus 10 monthly-only keys. The 10 absent expected-grid keys exactly match the 10 monthly-only keys.
+- The 16 daily archive acquisition cases were removed from the non-row blocker ledger only after their 16 ZIPs/sidecars were verified and their row-level comparisons were incorporated. This does not close source cases or choose a canonical source.
+- Remaining non-row blockers: 11 residual aggregation buckets. No timestamps guessed, no synthetic candles, no source cases closed.
+- CP-0026 builder gate regression [run 38883430122](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38883430122): runner 11/11 PASS; gate tests 5/5 PASS against the current 1,411-key manifest; builder refuses candidate processing due to the 11 unresolved buckets.
+- Report: `evidence/source_adjudication/CP0040_Acquisition_Extension_And_Gate_Regression_Report_HI.md`; summary: `evidence/source_adjudication/CP0040_Acquisition_Extension_And_Gate_Regression_Summary.json`.
+- No candidate dataset or backtest was run. G0 remains `BLOCKED_GLOBAL`; strategy approval and all live actions remain blocked.
+- Next bounded action: inspect the 11 residual aggregation buckets against committed row-level evidence and determine whether any can be dispositioned without source inference or timestamp repair.
