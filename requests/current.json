@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0092-CORRECTION-ARCHIVE-BINARY-ROUTE-PROBE-001",
+  "request_id": "CP0092-CORRECTION-ARCHIVE-BINARY-ROUTE-PROBE-002",
   "task": "cp0092_correction_archive_binary_probe",
-  "purpose": "Acquire the official Binance correction ZIP through GitHub Git Blobs raw media type, verify exact bytes and ZIP CRC, and inventory members; no source selection or row closure.",
-  "created_at_utc": "2026-10-16T14:05:00Z",
-  "requested_commit_sha": "546d07d118ea7159c738f1d5c0f8b1261b144658"
+  "purpose": "Retry once from GitHub-hosted runner using official raw repository transport after the prior raw-host failure occurred only in the local container; verify expected Git blob SHA and ZIP CRC.",
+  "created_at_utc": "2026-10-16T14:20:00Z",
+  "requested_commit_sha": "f5799cbbe234036a3451c0c377528940acc1ec8c"
 }
