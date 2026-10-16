@@ -29,6 +29,7 @@ on:
           - cp0093_daily_reference_discrepancy_triage
           - cp0094_acquisition_quarantine_coverage_audit
           - cp0095_official_correction_target_mapping_audit
+          - cp0096_correction_checksum_crosswalk_audit
           - historical_reference_replay
           - monthly_derived_replay
           - legacy_pipeline
@@ -119,7 +120,7 @@ jobs:
           github-token: ${{ github.token }}
           path: prior_daily_ref
       - name: Reuse previously verified official correction archive (no redownload)
-        if: steps.request_meta.outputs.task == 'cp0095_official_correction_target_mapping_audit'
+        if: steps.request_meta.outputs.task == 'cp0095_official_correction_target_mapping_audit' || steps.request_meta.outputs.task == 'cp0096_correction_checksum_crosswalk_audit'
         uses: actions/download-artifact@v4
         with:
           name: aists-run-38905894400-attempt-1
@@ -129,7 +130,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0040_aggregation_monthly_sidecar_audit" ] || [ "$TASK" = "cp0040_archive_integrity_conflict_matrix" ] || [ "$TASK" = "cp0040_candidate_input_relevance_audit" ] || [ "$TASK" = "cp0107_shared52_candidate_input_dependency_audit" ] || [ "$TASK" = "cp0040_rulebook_bound_eligibility_decision" ] || [ "$TASK" = "cp0092_correction_archive_binary_probe" ] || [ "$TASK" = "cp0093_daily_reference_discrepancy_triage" ] || [ "$TASK" = "cp0094_acquisition_quarantine_coverage_audit" ] || [ "$TASK" = "cp0095_official_correction_target_mapping_audit" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
+          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0040_aggregation_monthly_sidecar_audit" ] || [ "$TASK" = "cp0040_archive_integrity_conflict_matrix" ] || [ "$TASK" = "cp0040_candidate_input_relevance_audit" ] || [ "$TASK" = "cp0107_shared52_candidate_input_dependency_audit" ] || [ "$TASK" = "cp0040_rulebook_bound_eligibility_decision" ] || [ "$TASK" = "cp0092_correction_archive_binary_probe" ] || [ "$TASK" = "cp0093_daily_reference_discrepancy_triage" ] || [ "$TASK" = "cp0094_acquisition_quarantine_coverage_audit" ] || [ "$TASK" = "cp0095_official_correction_target_mapping_audit" ] || [ "$TASK" = "cp0096_correction_checksum_crosswalk_audit" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
             echo "CP-0040 provenance/crosswalk and CP-0107 cache-only audits use Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -2065,4 +2066,122 @@ jobs:
           git config user.email "41898282+actions-bot@users.noreply.github.com"
           git add "$DEST" evidence/source_adjudication/CP0095_Official_Correction_Target_Mapping_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
           git commit -m "evidence(cp0095): publish official correction target mapping result ${RUN_ID}"
+          git push origin HEAD:main
+
+  publish_cp0096_correction_checksum_crosswalk_audit:
+    if: needs.run.result == 'success' && needs.run.outputs.task == 'cp0096_correction_checksum_crosswalk_audit'
+    needs: run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Checkout main with scoped write token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ github.token }}
+          persist-credentials: true
+      - name: Download this run's checksum crosswalk artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aists-run-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: evidence_stage
+      - name: Validate checksum crosswalk and frozen gates
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv,hashlib,json,os
+          from pathlib import Path
+          root=Path("evidence_stage/cp0096_correction_checksum_crosswalk")
+          sp=root/"CP0096_Correction_Checksum_Crosswalk_Summary.json"
+          rp=root/"CP0096_Correction_Checksum_Crosswalk_Report_HI.md"
+          mp=root/"CP0096_Correction_Checksum_Crosswalk.csv"
+          hi=root/"CP0096_Correction_CSV_Checksum_Index.csv"
+          mi=root/"CP0096_Correction_Archive_Member_Inventory.csv"
+          if not all(p.is_file() for p in (sp,rp,mp,hi,mi)):
+              raise SystemExit("Missing CP0096 output; refusing persist")
+          s=json.loads(sp.read_text(encoding="utf-8"))
+          allowed={"PASS_CHECKSUM_CROSSWALK_NO_ARCHIVE_HASH_HITS_SOURCE_AUTHORITY_OPEN",
+                   "PASS_CHECKSUM_CROSSWALK_FOUND_ARCHIVE_HASH_HITS_REVIEW_REQUIRED"}
+          if s.get("task")!="cp0096_correction_checksum_crosswalk_audit" or s.get("status") not in allowed:
+              raise SystemExit("Unexpected CP0096 task/status")
+          if s.get("network_used") is not False or s.get("archive_downloads")!=0 or s.get("source_bytes_modified") is not False or s.get("worklist_mutated") is not False:
+              raise SystemExit("CP0096 exceeded read-only/no-download scope")
+          if s.get("canonical_source_selected") is not False or s.get("source_cases_closed")!=0 or s.get("g0")!="BLOCKED_GLOBAL" or s.get("g2")!="FAIL_CURRENT_23_CANDIDATES" or s.get("g7")!="LIVE_BLOCKED":
+              raise SystemExit("CP0096 source authority or global safety gates changed")
+          with mp.open("r",encoding="utf-8",newline="") as f: archives=list(csv.DictReader(f))
+          with hi.open("r",encoding="utf-8",newline="") as f: checksums=list(csv.DictReader(f))
+          if len(archives)!=30 or len(checksums)!=73234:
+              raise SystemExit("Expected 30 verified archive hashes and 73,234 correction CSV rows")
+          if any(r.get("source_authority")!="UNDETERMINED" or r.get("case_closed")!="False" for r in archives):
+              raise SystemExit("Crosswalk changed authority/closure labels")
+          if s.get("status")=="PASS_CHECKSUM_CROSSWALK_NO_ARCHIVE_HASH_HITS_SOURCE_AUTHORITY_OPEN":
+              c=s.get("crosswalk",{})
+              if c.get("daily_archive_checksum_hits")!=0 or c.get("monthly_archive_checksum_hits")!=0:
+                  raise SystemExit("No-hit status is inconsistent with archive crosswalk counts")
+          for name,rec in s.get("outputs",{}).items():
+              p=root/name
+              if not p.is_file() or p.stat().st_size!=rec.get("bytes") or hashlib.sha256(p.read_bytes()).hexdigest()!=rec.get("sha256"):
+                  raise SystemExit("Output hash/size mismatch: "+name)
+              if rec.get("rows") is not None:
+                  with p.open("r",encoding="utf-8",newline="") as f: data=list(csv.DictReader(f))
+                  if len(data)!=rec.get("rows"): raise SystemExit("Output row-count mismatch: "+name)
+          print(json.dumps({"status":"PASS_PUBLISH_PREFLIGHT","run_id":os.environ["RUN_ID"],
+                            "audit_status":s["status"],"checks":s.get("checks_passed"),
+                            "daily_hash_hits":s.get("crosswalk",{}).get("daily_archive_checksum_hits"),
+                            "monthly_hash_hits":s.get("crosswalk",{}).get("monthly_archive_checksum_hits")},sort_keys=True))
+          PY
+      - name: Persist checksum crosswalk and append current state
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          SRC="evidence_stage/cp0096_correction_checksum_crosswalk"
+          DEST="evidence/source_adjudication/CP0096_Correction_Checksum_Crosswalk_Run_${RUN_ID}"
+          mkdir -p "$DEST"
+          cp "$SRC/CP0096_Correction_Checksum_Crosswalk_Summary.json" "$DEST/"
+          cp "$SRC/CP0096_Correction_Checksum_Crosswalk.csv" "$DEST/"
+          cp "$SRC/CP0096_Correction_CSV_Checksum_Index.csv" "$DEST/"
+          cp "$SRC/CP0096_Correction_Archive_Member_Inventory.csv" "$DEST/"
+          cp "$SRC/CP0096_Correction_Checksum_Crosswalk_Report_HI.md" "$DEST/"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          rid=os.environ["RUN_ID"];commit=os.environ["RUN_COMMIT"]
+          base=Path("evidence/source_adjudication")
+          dest=base/("CP0096_Correction_Checksum_Crosswalk_Run_"+rid)
+          sp=dest/"CP0096_Correction_Checksum_Crosswalk_Summary.json"
+          s=json.loads(sp.read_text(encoding="utf-8"));c=s.get("crosswalk",{})
+          outputs={}
+          for p in sorted(dest.iterdir()):
+              if p.is_file():outputs[p.name]={"bytes":p.stat().st_size,"sha256":hashlib.sha256(p.read_bytes()).hexdigest()}
+          pointer={"run_id":int(rid),"run_commit_sha":commit,"status":s["status"],
+                   "summary_path":str(sp),"report_path":str(dest/"CP0096_Correction_Checksum_Crosswalk_Report_HI.md"),
+                   "summary_sha256":outputs[sp.name]["sha256"],"outputs":outputs,
+                   "correction_zip_sha256":s.get("source",{}).get("correction_zip_sha256"),
+                   "correction_csv_rows":s.get("source",{}).get("correction_csv_rows"),
+                   "daily_archive_checksum_hits":c.get("daily_archive_checksum_hits"),
+                   "monthly_archive_checksum_hits":c.get("monthly_archive_checksum_hits"),
+                   "canonical_source":"NONE","source_cases_closed":0,"unresolved_shared_conflicts":60,
+                   "unmatched_rows_quarantined":909,"unresolved_nonrow_aggregation_blockers":11,
+                   "g0":"BLOCKED_GLOBAL","g2":"FAIL_CURRENT_23_CANDIDATES","g7":"LIVE_BLOCKED"}
+          (base/"CP0096_Correction_Checksum_Crosswalk_Current.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+          state_path=Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state=state_path.read_text(encoding="utf-8")
+          marker="CP-0096 correction checksum crosswalk "+rid
+          if marker not in state:
+              note="\n\n## "+marker+"\n\n"
+              note+="- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/"+rid+"; status "+s["status"]+"; checks "+str(s["checks_passed"])+"/"+str(s["checks_total"])+" PASS.\n"
+              note+="- Compared every correction CSV Original/New SHA-256 field against 16 verified daily ZIP hashes and 14 verified monthly ZIP hashes. Daily hits="+str(c.get("daily_archive_checksum_hits"))+"/16; monthly hits="+str(c.get("monthly_archive_checksum_hits"))+"/14. No new download.\n"
+              note+="- Source authority remains UNDETERMINED; no case closed; 60 source conflicts, 909 unmatched rows and 11 aggregation blockers remain open; G0 BLOCKED_GLOBAL; G2 current 23 candidates FAIL; G7 LIVE_BLOCKED.\n"
+              state_path.write_text(state+note,encoding="utf-8")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+actions-bot@users.noreply.github.com"
+          git add "$DEST" evidence/source_adjudication/CP0096_Correction_Checksum_Crosswalk_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
+          git commit -m "evidence(cp0096): publish correction checksum crosswalk ${RUN_ID}"
           git push origin HEAD:main
