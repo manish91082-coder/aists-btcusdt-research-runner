@@ -1,0 +1,32 @@
+{
+  "canonical_source": "NONE",
+  "economic_keys": 14,
+  "economic_keys_quarantined": 14,
+  "g0": "BLOCKED_GLOBAL",
+  "g2": "FAIL_CURRENT_23_CANDIDATES",
+  "g7": "LIVE_BLOCKED",
+  "missing_grid_keys": 10,
+  "missing_grid_keys_quarantined": 10,
+  "outputs": {
+    "CP0094_Acquisition_Quarantine_Coverage_Matrix.csv": {
+      "bytes": 8612,
+      "sha256": "d52c7a46cc9c519b81e0f9ecbe75160573c1c30aa4ec1d7936469be1e7b3b1b3"
+    },
+    "CP0094_Acquisition_Quarantine_Coverage_Report_HI.md": {
+      "bytes": 1969,
+      "sha256": "d96b729812ffc4725142a5280a6b99385fb68fe788702452fad905e78094fe4b"
+    },
+    "CP0094_Acquisition_Quarantine_Coverage_Summary.json": {
+      "bytes": 6365,
+      "sha256": "2bc66837dbe1a24bc32f28b33c06801a61460f6f638c260a2d382339b2f88c32"
+    }
+  },
+  "report_path": "evidence/source_adjudication/CP0094_Acquisition_Quarantine_Coverage_Run_38911689643/CP0094_Acquisition_Quarantine_Coverage_Report_HI.md",
+  "run_commit_sha": "6163b4b3512a987d7674260e91982f948d2a0da8",
+  "run_id": 38911689643,
+  "source_cases_closed": 0,
+  "status": "PASS_24_ACQUISITION_KEYS_CONFIRMED_QUARANTINED_SOURCE_AUTHORITY_OPEN",
+  "summary_path": "evidence/source_adjudication/CP0094_Acquisition_Quarantine_Coverage_Run_38911689643/CP0094_Acquisition_Quarantine_Coverage_Summary.json",
+  "summary_sha256": "2bc66837dbe1a24bc32f28b33c06801a61460f6f638c260a2d382339b2f88c32",
+  "unresolved_nonrow_aggregation_blockers": 11
+}
