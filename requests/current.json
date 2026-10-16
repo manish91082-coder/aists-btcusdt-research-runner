@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0107-SHARED52-CANDIDATE-INPUT-DEPENDENCY-AUDIT-001",
+  "request_id": "CP0107-SHARED52-CANDIDATE-INPUT-DEPENDENCY-AUDIT-002",
   "task": "cp0107_shared52_candidate_input_dependency_audit",
-  "purpose": "Map the 52 shared economic conflicts to the frozen MTF_BREAKOUT_4H_D1 direct inputs and confirm exact-key quarantine coverage; read-only, no G0 approval.",
-  "created_at_utc": "2026-10-16T13:05:00Z",
-  "requested_commit_sha": "38cdef1a9bfa9ceabf1aa2243dc8e7f8242e5ee0"
+  "purpose": "Retry shared52 comparator input dependency map after correction of official package checksum-field name; read-only, no G0 approval.",
+  "created_at_utc": "2026-10-16T13:11:00Z",
+  "requested_commit_sha": "6ee3583ae012d0275487cd629ab6e51d9b82b94f"
 }
