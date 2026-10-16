@@ -354,3 +354,14 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Report `evidence/source_adjudication/CP0040_G0_Candidate_Data_Eligibility_Review_HI.md`; JSON `evidence/source_adjudication/CP0040_G0_Candidate_Data_Eligibility_Review_Summary.json`. Raw-URL vs GitHub contents fetch-back: report PASS, summary PASS. Commits: report `f8817b2398f438800571c7b1b8b5d988512a9f90`, summary `bd48ef09588c0f00012010d9b744f3a266f2424e`.
 - Next required implementation gate: create an exact-key row-level quarantine manifest, patch the candidate builder to fail closed if unresolved keys survive, test deterministic fixtures, then build and hash the quarantined candidate. Re-run historical backtest only if the candidate bytes change. No raw archive edits, no timestamp shifts, no source cases closed, no strategy promotion, and no live actions.
 - Gates remain G0 BLOCKED_GLOBAL; G1 PARTIAL_SYSTEM_LEVEL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL; G4 INSUFFICIENT_EVIDENCE; G5 NOT_RUN; G6 NOT_BUILT; G7 LIVE_BLOCKED. CI was not run for this review.
+
+
+## CP-0040 exact-key quarantine gate self-test — 2026-10-16
+
+- Added `scripts/AISTS_CP0040_Quarantine_Gate.py`: exact `(interval, open_time_ms)` key validation and quarantine partition primitives. Timestamp tokens are not rounded; fractional timestamp tokens are rejected; row objects are not mutated.
+- Added allowlisted runner task `cp0040_quarantine_gate_tests`; it uses Python standard library only and does not trigger market-data downloads or backtests.
+- Local deterministic self-test: 7/7 PASS; Python compile PASS.
+- GitHub Actions run [38874755147](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38874755147) on commit `15a2f1826e27e7bbccde74ffafc035b645a594ea`: terminal `completed/success`; runner checks 11/11 PASS; task summary 7/7 PASS. Downloaded artifact ZIP CRC PASS and summary bytes were parsed.
+- Published report `evidence/source_adjudication/CP0040_ExactKey_Quarantine_Gate_SelfTest_HI.md` (commit `c81cef287ed738b2994b97cc10ca2275368b2a62`) and JSON `evidence/source_adjudication/CP0040_ExactKey_Quarantine_Gate_Summary.json` (commit `6352b6bb6ab5592c342d8536937ac74e374e3817`).
+- Scope is strictly synthetic tests. This does not validate the actual market-data manifest, does not build/filter candidate data, and does not run a backtest. The new primitive is not yet integrated into CP-0026. G0 remains `BLOCKED_GLOBAL`; strategy approval and all live actions remain blocked.
+- Next bounded action: build and verify the complete frozen exact-key quarantine manifest, then integrate the gate into CP-0026 with fail-closed completeness/count/hash checks. Do not build a candidate until the full manifest is proven complete.
