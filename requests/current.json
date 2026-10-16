@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-QUARANTINE-SENSITIVITY-PREFLIGHT-003",
-  "task": "cp0040_quarantine_sensitivity_preflight",
-  "purpose": "Retry the read-only cache and committed baseline-evidence inventory after correcting preflight task dispatch and script mapping. No network, archive download, candidate build, backtest, or source changes.",
-  "created_at_utc": "2026-10-16T11:00:00Z",
-  "requested_commit_sha": "76e37f63e096cd4c01630d185b2e45dc9579e166"
+  "request_id": "CP0040-BASELINE-RECONSTRUCTION-AUDIT-001",
+  "task": "cp0040_baseline_reconstruction_audit",
+  "purpose": "Reconstruct frozen CP-0031 BTCUSDT 4h, 1d, and 1mo candidate CSV content from pre-existing GitHub Actions caches only. No network or market-data acquisition, no production candidate build, no backtest. Require exact decompressed CSV SHA-256 anchors; stop if any source/cache item is absent or any content anchor differs.",
+  "created_at_utc": "2026-10-16T11:40:06.886Z",
+  "requested_commit_sha": "d1bfa477872d85386f113328867c1e1bf3a69b38"
 }
