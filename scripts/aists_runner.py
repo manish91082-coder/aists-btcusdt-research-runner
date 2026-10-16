@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-ALLOWED_TASKS={"smoke","cp0040_quarantine_gate_tests","cp0040_quarantine_manifest_build","cp0040_quarantine_manifest_extend_acquisition","cp0040_quarantine_manifest_extend_aggregation","cp0040_candidate_builder_gate_tests","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"}
+ALLOWED_TASKS={"smoke","cp0040_quarantine_gate_tests","cp0040_quarantine_manifest_build","cp0040_quarantine_manifest_extend_acquisition","cp0040_quarantine_manifest_extend_aggregation","cp0040_candidate_builder_gate_tests","cp0040_quarantine_sensitivity_preflight","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"}
 REQUEST_KEYS={"request_id","task","purpose","created_at_utc","requested_commit_sha"}
 
 def file_sha(path):
@@ -212,6 +212,10 @@ def main():
                       "--output-dir","results/source_adjudication_diagnostic"]
                 timeout=1800
                 child_summary_path=output/"source_adjudication_diagnostic"/"CP0103_Run_Summary.json"
+            elif task=="cp0040_quarantine_sensitivity_preflight":
+                argv=[sys.executable,str(child)]
+                timeout=300
+                child_summary_path=output/"cp0040_quarantine_sensitivity_preflight"/"CP0040_Quarantine_Sensitivity_Preflight_Summary.json"
             elif task=="cp0107_feb2018_raw_row_extract":
                 argv=[sys.executable,str(child),"--monthly-cache",".cache/aists/binance-monthly-archives",
                       "--daily-cache",".cache/aists/binance-daily-references",
