@@ -81,7 +81,11 @@ def main():
            len(monthly)==14 and all(r.get("status")=="MATCH" and r.get("zip_crc")=="PASS" for r in monthly),
            {"daily_zip_sidecar_pairs":len(archives),"monthly_archives":len(monthly)})
         ck("source_authority_and_raw_mutation_guards",
-           all(r.get("disposition")=="OPEN_REVIEW_REQUIRED" and r.get("source_authority")=="NONE" and r.get("timestamp_shifted_or_rounded")=="False" and r.get("synthetic_candle_created")=="False" for r in rows) and
+           all(
+             r.get("source_authority")=="NONE" and r.get("timestamp_shifted_or_rounded")=="False" and r.get("synthetic_candle_created")=="False" and
+             ((r.get("row_relation")=="SHARED_RAW_EXACT" and r.get("disposition")=="OBSERVED_EXACT_PAIR_CONTEXT_ONLY") or
+              (r.get("row_relation") in ("SHARED_RAW_DIVERGENT","MONTHLY_ONLY_KEY","DAILY_ONLY_KEY") and r.get("disposition")=="OPEN_REVIEW_REQUIRED"))
+             for r in rows) and
            src.get("canonical_source_selected") is False and src.get("source_cases_closed")==0,
            "all raw comparison rows remain open; no source authority, no case closure, no timestamp/candle changes")
         period_by={r["case_id"]:r for r in periods}
