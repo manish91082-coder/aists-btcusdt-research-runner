@@ -234,7 +234,7 @@ def main():
   "- This improves diagnostic corroboration of the current daily values, but it does not establish a historical version timeline or prove which bytes were publicly available at a historical decision time.",
   "- The dated public issue snapshot records issue #504 as open with zero comments; no maintainer answer to the historical-version/timestamp question was observed. Issue #475 remains open but concerns different dates and is only contextual evidence.",
   "- CP-0116 verified the exact-key filter implementation and excluded 35/35 synthetic probe rows, but production CP-0026 main was not invoked. Production candidate inputs and policy-based final metrics were not generated.",
-  "- Frozen CP-0040 sensitivity shows TRAIN net return changed by "+(train_delta===None?"not available":format(train_delta,".6f"))+" percentage points; the rulebook-bound G3 status therefore remains blocked.",
+  "- Frozen CP-0040 sensitivity shows TRAIN net return changed by "+("not available" if train_delta is None else format(train_delta, ".6f"))+" percentage points; the rulebook-bound G3 status therefore remains blocked.",
   "",
   "## Per-case disposition","",
   "| Case | Keys | Child -> parent | Daily exact | Monthly exact | Divergent keys / field memberships | Disposition |",
