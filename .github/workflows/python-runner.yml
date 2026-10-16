@@ -15,6 +15,7 @@ on:
           - smoke
           - cp0040_quarantine_gate_tests
           - cp0040_quarantine_manifest_build
+          - cp0040_quarantine_manifest_extend_acquisition
           - cp0040_candidate_builder_gate_tests
           - historical_reference_replay
           - monthly_derived_replay
@@ -108,7 +109,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
+          if [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
             echo "CP-0107 cache-only extraction uses Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -688,7 +689,7 @@ jobs:
           git commit -m "evidence: persist CP-0107 extraction run ${RUN_ID}"
           git push origin HEAD:main
   publish_cp0040_quarantine_manifest:
-    if: needs.run.result == 'success' && needs.run.outputs.task == 'cp0040_quarantine_manifest_build'
+    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0040_quarantine_manifest_build' || needs.run.outputs.task == 'cp0040_quarantine_manifest_extend_acquisition')
     needs: run
     runs-on: ubuntu-latest
     permissions:
@@ -726,8 +727,8 @@ jobs:
           if summary.get("checks_passed") != summary.get("checks_total") or any(c.get("status") != "PASS" for c in summary.get("checks", [])):
               raise SystemExit("Manifest checks contain failures")
           expected = {
-              manifest_path.name: (969, summary["row_level_manifest"]["sha256"]),
-              blockers_path.name: (27, summary["nonrow_blockers"]["sha256"]),
+              manifest_path.name: (summary["row_level_manifest"]["rows"], summary["row_level_manifest"]["sha256"]),
+              blockers_path.name: (summary["nonrow_blockers"]["rows"], summary["nonrow_blockers"]["sha256"]),
           }
           for p in (manifest_path, blockers_path):
               rows = list(csv.DictReader(p.open("r", encoding="utf-8", newline="")))
@@ -736,11 +737,11 @@ jobs:
                   raise SystemExit("Output row-count/SHA mismatch: " + p.name)
           manifest = list(csv.DictReader(manifest_path.open("r", encoding="utf-8", newline="")))
           keys = {(r["interval"], r["open_time_ms"]) for r in manifest}
-          if len(keys) != 969 or any(r["canonical_source"] != "NONE" or r["case_closed"].lower() != "false" for r in manifest):
+          if len(keys) != summary["row_level_manifest"]["unique_exact_keys"] or len(keys) != len(manifest) or any(r["canonical_source"] != "NONE" or r["case_closed"].lower() != "false" for r in manifest):
               raise SystemExit("Exact-key uniqueness or open/no-canonical-source assertion failed")
           if summary.get("nonrow_blockers", {}).get("candidate_eligibility_blocked") is not True:
               raise SystemExit("Non-row blocker gate missing; refusing repository write")
-          print(json.dumps({"status":"PASS_PUBLISH_PREFLIGHT","manifest_rows":len(manifest),"unique_keys":len(keys),"nonrow_blockers":27},sort_keys=True))
+          print(json.dumps({"status":"PASS_PUBLISH_PREFLIGHT","manifest_rows":len(manifest),"unique_keys":len(keys),"nonrow_blockers":len(list(csv.DictReader(blockers_path.open("r", encoding="utf-8", newline=""))) )},sort_keys=True))
           PY
       - name: Persist run-scoped evidence and append state
         env:
@@ -769,13 +770,34 @@ jobs:
               note += "- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/" + run_id + "; status " + summary["status"] + "; checks " + str(summary["checks_passed"]) + "/" + str(summary["checks_total"]) + " PASS.\n"
               note += "- Row-level exact-key manifest: " + str(summary["row_level_manifest"]["rows"]) + " rows / " + str(summary["row_level_manifest"]["unique_exact_keys"]) + " unique keys. Classes: " + json.dumps(summary["row_level_manifest"]["case_class_counts"], sort_keys=True) + ".\n"
               note += "- The 450 off-grid rows are a subset of the 909 unmatched rows and were not double-counted. Shared-52 plus close-time-only 8 cover the 60 shared conflict records.\n"
-              note += "- Separate non-row blockers: " + str(summary["nonrow_blockers"]["rows"]) + " (11 aggregation buckets, 16 missing daily-reference acquisition cases). Candidate eligibility remains BLOCKED.\n"
+              note += "- Separate non-row blockers: " + str(summary["nonrow_blockers"]["rows"]) + "; counts=" + json.dumps(summary["nonrow_blockers"]["record_type_counts"], sort_keys=True) + ". Candidate eligibility remains BLOCKED.\n"
               note += "- Manifest SHA-256 " + summary["row_level_manifest"]["sha256"] + "; blocker ledger SHA-256 " + summary["nonrow_blockers"]["sha256"] + ". The published frozen index was re-hashed; the original CP-0041 package/rulebook bytes were not freshly re-hashed in this run.\n"
+              if "acquisition_extension" in summary:
+                  ext = summary["acquisition_extension"]
+                  note += "- Acquisition extension reviewed " + str(ext["raw_comparison_rows"]) + " raw row pairs: " + str(ext["raw_divergent_pairs"]) + " divergent pairs, " + str(ext["economic_field_divergent_pairs"]) + " economic-field divergences, and " + str(ext["monthly_only_keys"]) + " monthly-only keys. Newly added unique keys=" + str(summary["row_level_manifest"]["new_unique_keys_added_from_acquisition"]) + "; overlapping keys enriched=" + str(summary["row_level_manifest"]["existing_keys_enriched_with_acquisition_evidence"]) + ". No new downloads.\n"
               note += "- No canonical source selected, no cases closed, no candidate build/backtest, no strategy promotion, live actions remain BLOCKED.\n"
               state_path.write_text(state + note, encoding="utf-8")
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$DEST" evidence/CURRENT_RESEARCH_STATE_HI.md
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          run_id=os.environ["RUN_ID"]
+          base=Path("evidence/source_adjudication")
+          dest=base/("CP0040_Run_"+run_id)
+          summary=json.loads((dest/"CP0040_ExactKey_Quarantine_Manifest_Summary.json").read_text(encoding="utf-8"))
+          pointer={
+            "run_id":int(run_id),
+            "manifest_path":str(dest/"CP0040_ExactKey_Quarantine_Manifest.csv"),
+            "blockers_path":str(dest/"CP0040_NonRow_Blockers.csv"),
+            "summary_path":str(dest/"CP0040_ExactKey_Quarantine_Manifest_Summary.json"),
+            "manifest_sha256":summary["row_level_manifest"]["sha256"],
+            "status":summary["status"],
+            "candidate_eligibility_blocked":summary["nonrow_blockers"]["candidate_eligibility_blocked"]
+          }
+          (base/"CP0040_Current_Manifest.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\\n",encoding="utf-8")
+          PY
+          git add "$DEST" evidence/CP0040_Current_Manifest.json evidence/CURRENT_RESEARCH_STATE_HI.md
           git commit -m "evidence: publish CP0040 quarantine manifest run ${RUN_ID}"
           git push origin HEAD:main
