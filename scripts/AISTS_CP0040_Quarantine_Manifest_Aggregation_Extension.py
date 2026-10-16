@@ -40,7 +40,7 @@ def main():
         if not ok:raise RuntimeError(f"{name}: {detail}")
     check("current_pointer_matches_manifest",pointer.get("manifest_sha256")==base_sha==base_summary["row_level_manifest"]["sha256"],base_sha)
     base_rows=read_csv(base_manifest);base_keys={(r["interval"],r["open_time_ms"]) for r in base_rows}
-    check("current_manifest_row_key_integrity",len(base_rows)==1427-16 and len(base_keys)==len(base_rows),f"rows={len(base_rows)} keys={len(base_keys)}")
+    check("current_manifest_row_key_integrity",len(base_rows)==base_summary["row_level_manifest"]["rows"] and len(base_keys)==len(base_rows),f"rows={len(base_rows)} keys={len(base_keys)}")
     blockers=read_csv(base_blockers)
     check("eleven_aggregation_blockers_remain",len(blockers)==11 and Counter(r["record_type"] for r in blockers)=={"RESIDUAL_AGGREGATION_BUCKET":11},len(blockers))
 
