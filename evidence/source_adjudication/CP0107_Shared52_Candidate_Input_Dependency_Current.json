@@ -1,0 +1,29 @@
+{
+  "backtest_rerun": false,
+  "canonical_source": "NONE",
+  "g0": "BLOCKED_GLOBAL",
+  "network_used": false,
+  "outputs": {
+    "CP0107_Shared52_Candidate_Input_Dependency_Matrix.csv": {
+      "bytes": 19888,
+      "sha256": "daef7551b1e4243a3914c5ec21f37e64a4d2846d81bd0555e34652dc9cda44be"
+    },
+    "CP0107_Shared52_Candidate_Input_Dependency_Report_HI.md": {
+      "bytes": 2435,
+      "sha256": "af383db33e1878b7b4455467a64eb90b247e8721c5913a0e0727e046389610ad"
+    },
+    "CP0107_Shared52_Candidate_Input_Dependency_Summary.json": {
+      "bytes": 67121,
+      "sha256": "b4ef18ef234b23ca8ba03476e1300a9f8de13d61d4e4d961acca59e784fd9af1"
+    }
+  },
+  "production_candidate_build": false,
+  "report_path": "evidence/source_adjudication/CP0107_Shared52_Candidate_Input_Dependency_Run_38902949514/CP0107_Shared52_Candidate_Input_Dependency_Report_HI.md",
+  "run_commit_sha": "febdbc3ae2ec6b35f1261007b7537b2a5e683c90",
+  "run_id": 38902949514,
+  "source_cases_closed": 0,
+  "status": "PASS_SHARED52_CANDIDATE_INPUT_DEPENDENCY_MAP_COMPLETE_NOT_G0_APPROVAL",
+  "summary_path": "evidence/source_adjudication/CP0107_Shared52_Candidate_Input_Dependency_Run_38902949514/CP0107_Shared52_Candidate_Input_Dependency_Summary.json",
+  "summary_sha256": "b4ef18ef234b23ca8ba03476e1300a9f8de13d61d4e4d961acca59e784fd9af1",
+  "unresolved_nonrow_aggregation_blockers": 11
+}

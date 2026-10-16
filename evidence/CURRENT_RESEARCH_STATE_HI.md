@@ -562,3 +562,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Frozen comparator MTF_BREAKOUT_4H_D1 direct intervals 4h/1d; open aggregation relationships with direct interval overlap=0/11.
 - Exact-key quarantine impact: 4h removed=6; 1d removed=3; 1mo removed=0; TRAIN net-return delta pp=-15.89174082849894.
 - This is input-relevance evidence, not source authority or G0 approval. All 11 relationship cases remain open; G0 BLOCKED_GLOBAL; canonical source NONE; production candidate build/backtest/promotional actions remain blocked.
+
+
+## CP-0107 Shared-52 candidate input dependency audit run 38902949514
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38902949514; status PASS_SHARED52_CANDIDATE_INPUT_DEPENDENCY_MAP_COMPLETE_NOT_G0_APPROVAL; runner commit febdbc3ae2ec6b35f1261007b7537b2a5e683c90.
+- Shared-52 rows=52; conflicts intersecting frozen MTF_BREAKOUT_4H_D1 direct inputs=4 (4h=2, 1d=2); remaining intervals=48. All 52 exact keys matched the CP-0040 quarantine manifest.
+- Official correction package supplied no exact daily path for the four direct cases. Full-manifest sensitivity: TRAIN delta pp=-15.89174082849894; no 4-row causal attribution was run.
+- This is dependency evidence, not source adjudication or G0 approval. All 52 cases remain open; the 11 relationship blockers remain open; G0 BLOCKED_GLOBAL; canonical source NONE.
