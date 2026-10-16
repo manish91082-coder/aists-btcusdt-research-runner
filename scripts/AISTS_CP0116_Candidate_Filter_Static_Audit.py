@@ -82,8 +82,8 @@ def main():
       len(manifest)==1427 and len(manifest_keys)==1427 and sha_file(paths["manifest"])==ms.get("row_level_manifest",{}).get("sha256"),
       {"rows":len(manifest),"unique_keys":len(manifest_keys),"sha256":sha_file(paths["manifest"])})
     add_check(checks,"current_11_nonrow_blockers_fail_closed",
-      len(blockers)==11 and ms.get("status")=="PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN" and ms.get("candidate_eligibility_blocked") is True,
-      {"blocker_rows":len(blockers),"summary_status":ms.get("status"),"candidate_eligibility_blocked":ms.get("candidate_eligibility_blocked")})
+      len(blockers)==11 and ms.get("status")=="PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN" and ms.get("nonrow_blockers", {}).get("candidate_eligibility_blocked") is True,
+      {"blocker_rows":len(blockers),"summary_status":ms.get("status"),"candidate_eligibility_blocked":ms.get("nonrow_blockers", {}).get("candidate_eligibility_blocked")})
     add_check(checks,"cp0113_pointer_and_report_linkage",
       cp.get("checkpoint")=="CP-0113" and cp.get("status")=="PASS_FIELD_LEVEL_CROSSWALK_SOURCE_AUTHORITY_OPEN"
       and cp.get("report_git_blob_sha1")==actual["cp0113_report_git_blob_sha1"]
@@ -97,7 +97,7 @@ def main():
     gate_pos=btext.find("quarantine_keys,quarantine_cases,gate_summary=load_candidate_gate")
     dates_pos=btext.find('dates_path=root/"reports"/"cp0025_reference_dates.json"')
     outdir_pos=btext.find("outdir.mkdir(parents=True,exist_ok=True)")
-    loop_pos=btext.find("for interval in BASE_INTERVALS:")
+    loop_pos=btext.find("for interval in BASE_INTERVALS:",outdir_pos)
     order_ok=main_pos>=0 and main_pos<gate_pos<dates_pos<outdir_pos<loop_pos
     add_check(checks,"main_gate_precedes_candidate_input_read_and_output_creation",order_ok,
       {"main_line":btext[:main_pos].count("\n")+1,"gate_line":btext[:gate_pos].count("\n")+1,
@@ -107,11 +107,11 @@ def main():
       and "G0_BLOCKED_NONROW_BLOCKERS_REMAIN" in btext
       and 'if summary.get("status") != "PASS_CANDIDATE_ELIGIBILITY_READY":' in btext)
     add_check(checks,"builder_fails_closed_until_all_nonrow_blockers_resolved",guard_ok,
-      {"current_blockers":len(blockers),"candidate_eligibility_blocked":ms.get("candidate_eligibility_blocked")})
+      {"current_blockers":len(blockers),"candidate_eligibility_blocked":ms.get("nonrow_blockers", {}).get("candidate_eligibility_blocked")})
     fs=btext.find("def audit_and_write_interval(");fe=btext.find("\ndef create_monthly_from_daily(",fs)
     body=btext[fs:fe] if fs>=0 and fe>fs else ""
     tokens=["qkey=(interval,str(t))","if qkey in quarantine_keys:","quarantined.append(qr)","continue","writer.writerow(r)"]
-    pos=[body.find(t) for t in tokens]
+    pos=[body.find(tokens[0]),body.find(tokens[1]),body.find(tokens[2]),body.find("continue",body.find(tokens[1])),body.find(tokens[4],body.find(tokens[1]))]
     add_check(checks,"inline_exact_key_filter_branches_before_writer",bool(body) and all(x>=0 for x in pos) and pos==sorted(pos),
       {"function_line":btext[:fs].count("\n")+1,"ordered_token_offsets":pos})
     ps=btext.find("def partition_candidate_rows(");pe=btext.find("\ndef run_gate_self_test(",ps)
@@ -175,8 +175,8 @@ def main():
        "production_build_performed":False,"expected_fail_closed_message":"G0_BLOCKED_NONROW_BLOCKERS_REMAIN: 11 unresolved non-row cases"},
       "static_control_flow":{"gate_precedes_candidate_output":order_ok,"exact_key_filter_precedes_writer":bool(body) and all(x>=0 for x in pos) and pos==sorted(pos),
        "filter_key":"(interval, str(open_time_ms))","timestamp_rounding_for_quarantine":False,
-       "current_manifest_status":ms.get("status"),"candidate_eligibility_blocked":ms.get("candidate_eligibility_blocked")},
-      "decision":{"filter_implementation_present":filter_before_writer if False else (bool(body) and all(x>=0 for x in pos) and pos==sorted(pos)),
+       "current_manifest_status":ms.get("status"),"candidate_eligibility_blocked":ms.get("nonrow_blockers", {}).get("candidate_eligibility_blocked")},
+      "decision":{"filter_implementation_present":(bool(body) and all(x>=0 for x in pos) and pos==sorted(pos)),
        "synthetic_probe_passes_for_all_35_target_keys":probe_ok,"candidate_specific_application_to_real_outputs_proven":False,
        "canonical_source_selected":False,"source_cases_closed":0,"unresolved_aggregation_blockers":11,
        "g0":"BLOCKED_GLOBAL","g2":"FAIL_CURRENT_23_CANDIDATES","g7":"LIVE_BLOCKED"},
