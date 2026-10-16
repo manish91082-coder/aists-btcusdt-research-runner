@@ -259,7 +259,7 @@ def main():
         print(json.dumps({"status": "BLOCKED_INPUTS_NOT_REPRODUCIBLE", "reason": str(exc)}, ensure_ascii=False))
         return 0
     flagged_dates = [str(r.get("date", "")).strip() for r in flagged_rows]
-    flagged_ok = len(flagged_dates) == 40 and len(set(flagged_dates)) == 40 and all(re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}", x) for x in flagged_dates)
+    flagged_ok = len(flagged_dates) == 40 and len(set(flagged_dates)) == 40 and all(re.fullmatch(r"\d{4}-\d{2}-\d{2}", x) for x in flagged_dates)
     checks.append({"check_id": "flagged_dates_exactly_40_unique", "status": "PASS" if flagged_ok else "FAIL", "detail": f"rows={len(flagged_dates)} unique={len(set(flagged_dates))}"})
     if not flagged_ok:
         write_blocked(output, anchors, started, "Frozen flagged-date evidence is not exactly 40 unique ISO dates.", checks)
