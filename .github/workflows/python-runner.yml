@@ -796,7 +796,7 @@ jobs:
             "status":summary["status"],
             "candidate_eligibility_blocked":summary["nonrow_blockers"]["candidate_eligibility_blocked"]
           }
-          (base/"CP0040_Current_Manifest.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\\n",encoding="utf-8")
+          (base/"CP0040_Current_Manifest.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\n",encoding="utf-8")
           PY
           git add "$DEST" evidence/source_adjudication/CP0040_Current_Manifest.json evidence/CURRENT_RESEARCH_STATE_HI.md
           git commit -m "evidence: publish CP0040 quarantine manifest run ${RUN_ID}"
