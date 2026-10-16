@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "check_id": "request_json_parse",
+      "detail": "JSON parsed",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_schema_allowlist",
+      "detail": "unknown=[] missing=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_id_format",
+      "detail": "CP0107-DAILY-REFERENCE-REPLAY-AUDIT-002",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_allowlist",
+      "detail": "task='cp0107_cp0041_daily_reference_acquisition_audit'",
+      "status": "PASS"
+    },
+    {
+      "check_id": "purpose_bounded_text",
+      "detail": "223",
+      "status": "PASS"
+    },
+    {
+      "check_id": "workflow_least_privilege",
+      "detail": "top_level_contents_read=True; scoped_cp0107_publisher_write=True; forbidden=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_python_sources_parse",
+      "detail": "files=34 errors=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "commit_sha_present",
+      "detail": "39671162c28d0a83ed2e431b968bea9d864e7e2c",
+      "status": "PASS"
+    },
+    {
+      "check_id": "actions_run_id_present",
+      "detail": "38909366995",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_script_exists",
+      "detail": "/home/runner/work/aists-btcusdt-research-runner/aists-btcusdt-research-runner/scripts/AISTS_CP0107_CP0041_DailyReference_Acquisition_Audit.py",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_exit_and_summary",
+      "detail": "exit=0; summary_exists=True",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 11,
+  "checks_total": 11,
+  "child_summary_sha256": "23c6af3162b779bcd54f520369c7ddecdbe35cd3426cdf6ff519fbcaa6852211",
+  "commit_sha": "39671162c28d0a83ed2e431b968bea9d864e7e2c",
+  "event": "push",
+  "exchange_credentials_used": false,
+  "generated_at_utc": "2026-10-16T13:38:21.524834+00:00",
+  "market_data_rest_api_used": false,
+  "project": "AISTS BTCUSDT Research Runner",
+  "raw_source_archives_modified": false,
+  "request_id": "CP0107-DAILY-REFERENCE-REPLAY-AUDIT-002",
+  "request_sha256": "5c006a49a1498fc88214b56bdec9d3a362875406ea992635171839e9709d548c",
+  "research_task_status": "PASS_DAILY_REFERENCE_ACQUIRED_AND_ROW_AUDIT_RECORDED",
+  "run_attempt": "1",
+  "run_id": "38909366995",
+  "runner_sha256": "712528488d6d43973c6e642135e196e3c81d39300fded1b4e573456c07eeb86d",
+  "runner_status": "PASS",
+  "schema_version": 1,
+  "source_selected": false,
+  "strategy_promoted": false,
+  "task": "cp0107_cp0041_daily_reference_acquisition_audit",
+  "workflow_sha256": "7ce7e2b156f3a29835fbe9f4477990d6db964cef56c4ebe21e211f3a90efb3d6"
+}
