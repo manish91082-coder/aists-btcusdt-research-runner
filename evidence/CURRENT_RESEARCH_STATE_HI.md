@@ -524,3 +524,17 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - 4h reconstructed decompressed SHA-256 1c7377e3dc26c791133d2ea0bf0a8b46cbec4287f4dc37a6032c79044c4ed357; frozen anchor 1c7377e3dc26c791133d2ea0bf0a8b46cbec4287f4dc37a6032c79044c4ed357; match=True.
 - Input content anchors reproduced. This is not a backtest, signal-impact calculation, canonical-source decision, or promotion approval.
 - G0 remains BLOCKED_GLOBAL; all 11 non-row aggregation blockers remain open; canonical source remains NONE; live signing/broadcast/orders remain blocked.
+
+
+## CP-0040 quarantine sensitivity audit run 38897836116
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38897836116; task status `PASS_QUARANTINE_SENSITIVITY_DIAGNOSTIC_COMPLETE`; runner commit 93bfcc8913467839160e394399f81d2b23657bf3.
+- Frozen comparator: `MTF_BREAKOUT_4H_D1`; scope exact-key removal by (interval, open_time_ms) only; no row replacement, no market-data downloads.
+- Baseline metric gate: PASS; production candidate build=False; strategy promotion=False.
+- 4h: rows removed=6; rows retained=19969.
+- 1d: rows removed=3; rows retained=3329.
+- 1mo: rows removed=0; rows retained=110.
+- CONSUMED_OOS_DIAGNOSTIC: baseline return=-1.3846214314251704%; quarantine return=-1.3846214314251704%.
+- DEVELOPMENT_CHECK: baseline return=24.343646291056565%; quarantine return=24.343646291056565%.
+- TRAIN: baseline return=81.99313544472133%; quarantine return=66.1013946162224%.
+- G0 remains BLOCKED_GLOBAL; 11 aggregation relationship blockers remain open; canonical source remains NONE; live signing/broadcast/orders remain BLOCKED.

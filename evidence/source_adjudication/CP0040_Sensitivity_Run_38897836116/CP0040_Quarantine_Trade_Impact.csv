@@ -1,0 +1,4 @@
+period,baseline_trade_count,quarantine_trade_count,shared_entry_exit_pairs,baseline_only_entry_exit_pairs,quarantine_only_entry_exit_pairs,baseline_only_pairs,quarantine_only_pairs,interpretation
+TRAIN,69,67,64,5,3,2018-07-25T00:00:00Z|2018-07-27T00:00:00Z;2021-01-25T16:00:00Z|2021-01-27T12:00:00Z;2021-01-29T12:00:00Z|2021-02-22T16:00:00Z;2021-03-01T16:00:00Z|2021-03-04T20:00:00Z;2021-03-09T00:00:00Z|2021-03-15T08:00:00Z,2018-05-20T20:00:00Z|2018-05-21T00:00:00Z;2018-07-24T08:00:00Z|2018-07-27T00:00:00Z;2021-03-13T12:00:00Z|2021-03-15T08:00:00Z,"Trade-event comparison by exact (entry_time_utc, exit_time_utc), not by row count."
+DEVELOPMENT_CHECK,42,42,42,0,0,,,"Trade-event comparison by exact (entry_time_utc, exit_time_utc), not by row count."
+CONSUMED_OOS_DIAGNOSTIC,24,24,24,0,0,,,"Trade-event comparison by exact (entry_time_utc, exit_time_utc), not by row count."

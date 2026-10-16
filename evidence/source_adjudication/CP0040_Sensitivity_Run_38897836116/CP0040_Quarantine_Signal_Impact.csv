@@ -1,0 +1,11 @@
+metric,baseline_value,quarantine_value,common_timestamps,changed_or_flipped,meaning
+4h_common_timestamps,19975,19969,19969,,4h timestamps retained in both input scenarios
+4h_regime_up_flips_at_common_timestamps,,,19969,353,Changes to attached completed-1d regime state at common 4h bars
+4h_entry_bar_flag_flips_pre_position,,,19969,32,Pre-position breakout entry-rule boolean flips; not actual filled entries
+4h_exit_bar_flag_flips_pre_position,,,19969,343,Pre-position exit-rule boolean flips; not actual exits
+4h_prior_high20_changed_at_common_timestamps,,,19969,80,Rolling breakout threshold value changed or became/ceased missing
+4h_prior_low10_changed_at_common_timestamps,,,19969,40,Rolling exit threshold value changed or became/ceased missing
+1d_daily_ema_regime_flips_at_common_timestamps,,,3329,58,"Daily EMA20>EMA50 regime boolean flips, which is the higher-timeframe input to the 4h comparator"
+removed_4h_rows_with_baseline_entry_bar_flag,0,0,9,0,Removed bars that met the raw entry-rule boolean before position-state logic
+removed_4h_rows_with_baseline_exit_bar_flag,6,0,9,6,Removed bars that met the raw exit-rule boolean before position-state logic
+removed_4h_rows_with_regime_up,1,0,9,1,Removed bars where the attached daily regime was up
