@@ -1,0 +1,128 @@
+{
+  "checkpoint": "CP-0107",
+  "task": "shared52_row_value_and_official_checksum_crosswalk",
+  "status": "PASS_ROW_VALUE_CROSSWALK_RECONCILIATION_SOURCE_AUTHORITY_OPEN",
+  "generated_at_utc": "2026-10-16",
+  "inputs": {
+    "raw_field_provenance_audit": {
+      "library_path": "/AISTS/CP0107/shared_conflicts/CP0107_CP0041_Shared_60_Raw_Field_Provenance_Audit.csv",
+      "bytes": 179989,
+      "sha256": "7647e5f72f4ee212e2d67aff0dd9851e2556b32e1f882da1dd290b3df1076187",
+      "locally_reverified": true,
+      "selected_economic_rows": 52
+    },
+    "official_bundle_crosswalk": {
+      "repo_path": "evidence/source_adjudication/CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv",
+      "git_blob_sha1": "718c2ac990d9fb5d9c731fdda4fc92657d375ad2",
+      "rows": 52,
+      "sha256": "17a59ad312828be8aed4dedf0afff1f57e39b3ffaae302d7a8be8944197f1fcb"
+    },
+    "cp0041_source_pack_sha256_recorded": "23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc",
+    "cp0041_original_worklist_sha256_recorded": "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f",
+    "cp0040_rulebook_sha256_recorded": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0",
+    "cp0040_rulebook_fresh_raw_byte_verification": "NOT_VERIFIED"
+  },
+  "checks": {
+    "shared60_rows": 60,
+    "economic_rows": 52,
+    "unique_economic_case_ids": 52,
+    "crosswalk_rows": 52,
+    "unique_crosswalk_case_ids": 52,
+    "exact_case_id_joins": 52,
+    "duplicate_case_ids": 0,
+    "exact_official_daily_path_matches": 33,
+    "no_exact_path_in_this_bundle": 19,
+    "new_checksum_matches_daily_sha256": 33,
+    "original_checksum_matches_daily_sha256": 0,
+    "raw_row_pair_worklist_matches": 52,
+    "dispositions_preserved": 52,
+    "disposition_changes": 0,
+    "canonical_source_selected": false,
+    "source_cases_closed": 0,
+    "root_cause": "OPEN_NOT_ESTABLISHED",
+    "backtest_rerun": false,
+    "strategy_promoted": false
+  },
+  "exact_path_matches_by_interval": {
+    "15m": 8,
+    "1h": 4,
+    "30m": 4,
+    "5m": 17
+  },
+  "no_path_rows_by_interval": {
+    "15m": 3,
+    "1d": 2,
+    "1h": 2,
+    "30m": 2,
+    "4h": 2,
+    "5m": 8
+  },
+  "exact_path_matches_by_date": {
+    "2021-04-22": 5,
+    "2021-04-23": 16,
+    "2021-12-24": 8,
+    "2022-04-13": 4
+  },
+  "no_path_rows_by_date": {
+    "2018-02-11": 1,
+    "2020-12-21": 13,
+    "2021-01-21": 2,
+    "2021-09-23": 1,
+    "2021-12-24": 2
+  },
+  "economic_field_diff_counts_all_52": {
+    "volume": 52,
+    "quote_asset_volume": 52,
+    "number_of_trades": 52,
+    "taker_buy_base_asset_volume": 48,
+    "taker_buy_quote_asset_volume": 48,
+    "close": 43,
+    "high": 15,
+    "low": 12,
+    "open": 10
+  },
+  "economic_field_diff_counts_exact_path_33": {
+    "volume": 33,
+    "quote_asset_volume": 33,
+    "number_of_trades": 33,
+    "close": 29,
+    "taker_buy_base_asset_volume": 29,
+    "taker_buy_quote_asset_volume": 29,
+    "low": 3,
+    "high": 2
+  },
+  "economic_field_diff_counts_no_path_19": {
+    "volume": 19,
+    "quote_asset_volume": 19,
+    "number_of_trades": 19,
+    "taker_buy_base_asset_volume": 19,
+    "taker_buy_quote_asset_volume": 19,
+    "close": 14,
+    "high": 13,
+    "open": 10,
+    "low": 9
+  },
+  "output": {
+    "path": "evidence/source_adjudication/CP0107_Shared52_RowValue_VersionCrosswalk.csv",
+    "rows": 52,
+    "columns": 30,
+    "bytes": 116236,
+    "sha256": "6a4175567f2af0d0a7e6cf45b76485f496faa680a7248f30e118e55bb2ed0af9"
+  },
+  "interpretation_limits": [
+    "The official update bundle New File Checksum match is archive-version provenance only and does not establish daily data as canonical.",
+    "No exact path means no exact daily path in this specific bundle, not absence of all possible source/version evidence.",
+    "Raw values are copied from existing CP0107 Shared-60 audit and official crosswalk; this task did not freshly download/reparse all source archives.",
+    "Fresh raw-byte verification of the complete CP0040 standalone rulebook remains NOT_VERIFIED."
+  ],
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  }
+}

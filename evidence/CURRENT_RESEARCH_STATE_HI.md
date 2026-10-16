@@ -273,3 +273,12 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Publisher initially persisted the 52-row crosswalk in the run-specific evidence folder but its explicit `git add` list omitted the root convenience copy. The output bytes were not regenerated or edited: the root copy was published from the run-specific file in commit `83cd7f203cdd9a995d2f2ef9c9025a2e78731fe9`, and fetch-back confirmed identical Git blob SHA-1 `718c2ac990d9fb5d9c731fdda4fc92657d375ad2`, 39,723 bytes and 52 data rows.
 - Workflow staging corrected in commit `17913bfcf67782dcb8f808609b3c54a0e9204d39` to include the root crosswalk on future runs.
 - Research outcome remains version provenance only: 33 exact daily paths across 14 official daily archive objects; frozen current daily SHA equals New File Checksum for 33/33 matched conflict rows and Original File Checksum for 0/33; 19/52 rows have no exact bundle path. All 52 cases remain OPEN, canonical source NONE, source cases closed 0, root cause OPEN_NOT_ESTABLISHED. No source-selection decision, source mutation, backtest or strategy promotion.
+
+
+## CP-0107 Shared-52 raw-value / official checksum crosswalk — 2026-10-16
+
+- Added focused artifact `evidence/source_adjudication/CP0107_Shared52_RowValue_VersionCrosswalk.csv`: 52 economic rows, 30 columns, 116236 bytes, SHA-256 `6a4175567f2af0d0a7e6cf45b76485f496faa680a7248f30e118e55bb2ed0af9`. It preserves both source raw-row JSON tokens and field-level differences per case.
+- Input raw-field provenance file independently rehashed on the exact materialized bytes: 179,989 bytes; SHA-256 `7647e5f72f4ee212e2d67aff0dd9851e2556b32e1f882da1dd290b3df1076187`. Official crosswalk blob SHA-1 `718c2ac990d9fb5d9c731fdda4fc92657d375ad2`, 52 rows.
+- Exact case join 52/52; exact official daily-path matches 33/52 across 14 archives; no exact path in this bundle 19/52. New checksum equals frozen daily SHA for 33/33 path-matched rows; Original checksum equals frozen daily SHA for 0/33. Every case stays unresolved and no-auto-correction.
+- Summary: `evidence/source_adjudication/CP0107_Shared52_RowValue_VersionCrosswalk_Summary.json`; Hindi report: `evidence/source_adjudication/CP0107_Shared52_RowValue_VersionCrosswalk_Report_HI.md`. This is not a full archive refetch/reparse. CP-0040 full standalone raw-byte verification remains `NOT_VERIFIED`.
+- Gates unchanged: G0 `BLOCKED_GLOBAL`; G1 `PARTIAL_SYSTEM_LEVEL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL`; G4 `INSUFFICIENT_EVIDENCE`; G5 `NOT_RUN`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`.
