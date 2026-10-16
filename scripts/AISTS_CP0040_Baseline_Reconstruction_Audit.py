@@ -215,6 +215,8 @@ def main():
     ap.add_argument("--anchors", default="evidence/source_adjudication/CP0040_Baseline_Reconstruction_Anchors.json")
     ap.add_argument("--flagged-dates", default="evidence/runs/38725478106_flagged_dates.csv")
     ap.add_argument("--output-dir", default="results/cp0040_baseline_reconstruction_audit")
+    ap.add_argument("--copy-reconstructed-to", default=None,
+                    help="Optional temporary output directory for exact reconstructed candidate GZIP bytes after all anchors pass.")
     args = ap.parse_args()
     started = utc_now()
     output = (ROOT / args.output_dir).resolve()
@@ -414,6 +416,24 @@ def main():
                     f"actual_raw_sha={res['decompressed_sha256']}; expected_raw_sha={res['decompressed_sha256_anchor']}; rows={res['rows']}"
                 )
 
+            staged_candidate_inputs = []
+            if args.copy_reconstructed_to:
+                staged_root = Path(args.copy_reconstructed_to).resolve()
+                staged_root.mkdir(parents=True, exist_ok=True)
+                for interval in ("4h", "1d", "1mo"):
+                    source_path = candidate_dir / f"{SYMBOL}-{interval}-research-candidate.csv.gz"
+                    target_path = staged_root / source_path.name
+                    shutil.copyfile(source_path, target_path)
+                    same_bytes = sha256_file(source_path) == sha256_file(target_path) and source_path.stat().st_size == target_path.stat().st_size
+                    check(f"staged_candidate_byte_copy:{interval}", same_bytes, f"source_sha256={sha256_file(source_path)}; copy_sha256={sha256_file(target_path)}")
+                    staged_candidate_inputs.append({
+                        "interval": interval,
+                        "path": str(target_path),
+                        "bytes": target_path.stat().st_size,
+                        "sha256": sha256_file(target_path),
+                        "copy_verified": same_bytes,
+                    })
+
             summary = {
                 "schema_version": 1,
                 "checkpoint": "CP-0040",
@@ -433,6 +453,7 @@ def main():
                 "candidate_content_results": candidate_results,
                 "candidate_summaries": summaries,
                 "derived_monthly_summary": month_summary,
+                "reconstructed_candidate_staging": staged_candidate_inputs,
                 "archive_record_count": len(archive_records),
                 "archive_records_sha256": sha256_bytes(json.dumps(archive_records, sort_keys=True, separators=(",", ":")).encode()),
                 "archive_records": archive_records,
