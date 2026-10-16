@@ -109,7 +109,7 @@ def main():
               "divergent_raw_pairs":int(p.get("divergent_raw_row_pairs","0")),"economic_divergent_pairs":len(eco),
               "ignore_only_pairs":ign,"close_time_plus_ignore_pairs":cti,
               "daily_only_keys":int(p.get("daily_only_open_keys","0")),"monthly_only_keys":int(p.get("monthly_only_open_keys","0")),
-              "absent_expected_grid_keys":gap,"economic_differing_fields":";".join(sorted(economic_field_counts.keys())) if eco else "",
+              "absent_expected_grid_keys":gap,"economic_differing_fields":";".join(sorted({f for rr in g for f in rr.get("economic_differing_fields","").split(";") if f})),
               "triage_status":status,"source_authority":"NONE","case_closed":"False"})
         econ_columns=["case_id","interval","utc_date","open_time_ms","open_time_utc","differing_raw_fields","economic_differing_fields",
           "monthly_open","daily_open","monthly_high","daily_high","monthly_low","daily_low","monthly_close","daily_close",
@@ -117,7 +117,7 @@ def main():
           "monthly_taker_buy_base_asset_volume","daily_taker_buy_base_asset_volume","monthly_taker_buy_quote_asset_volume","daily_taker_buy_quote_asset_volume",
           "monthly_close_time","daily_close_time","monthly_ignore","daily_ignore","disposition","source_authority"]
         econ_rows=[{k:r.get(k,"") for k in econ_columns} for r in economic]
-        missing_rows=[{k:r.get(k,"") for k in ["case_id","interval","utc_date","expected_open_time_ms","expected_open_time_utc","status","archive_filename","archive_sha256","synthetic_candle_created"]} for r in missing]
+        missing_rows=[{**{k:r.get(k,"") for k in ["case_id","interval","utc_date","expected_open_time_ms","expected_open_time_utc","status","archive_filename","archive_sha256","synthetic_candle_created"]},"source_authority":"NONE","case_closed":"False","disposition":"OPEN_REVIEW_REQUIRED"} for r in missing]
         field_rows=[{"field":k,"raw_differgent_row_count":v,"economic_differgent_row_count":economic_field_counts.get(k,0)} for k,v in sorted(raw_field_counts.items())]
         signature_rows=[{"raw_difference_signature":k,"row_count":v,"interpretation":"Diagnostic only; source authority remains NONE"} for k,v in sorted(signature_counts.items(),key=lambda x:(-x[1],x[0]))]
         status="PASS_DAILY_REFERENCE_DISCREPANCY_TRIAGE_COMPLETE_SOURCE_AUTHORITY_OPEN" if all(c["status"]=="PASS" for c in checks) else "REVIEW_REQUIRED_DAILY_REFERENCE_TRIAGE"
