@@ -434,3 +434,14 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Report: `evidence/source_adjudication/CP0040_Aggregation_Bucket_ExactKey_Quarantine_Report_HI.md`; summary: `evidence/source_adjudication/CP0040_Aggregation_Bucket_ExactKey_Quarantine_Summary.json`.
 - No candidate build/backtest; G0 remains `BLOCKED_GLOBAL`; no strategy promotion or live actions.
 - Next: obtain a rulebook-aligned disposition for the 11 aggregation relationships. Exact-key quarantine alone does not authorize opening G0.
+
+
+## CP-0040 aggregation relationship hold decision — 2026-10-16
+
+- Published `evidence/source_adjudication/CP0040_Aggregation_Relationship_Hold_Decision_HI.md` (commit `24f3374727b00669bfbaa8ce5753ff2cd06e4d78`).
+- Decision: HOLD all 11 cross-interval aggregation relationship cases as `OPEN_NOT_ESTABLISHED`; G0 remains `BLOCKED_GLOBAL`; candidate eligibility remains BLOCKED.
+- Basis: 1,427/1,427 unique manifest keys; all 35 parent/child keys from the 11 buckets are represented; daily child rollups match daily parents in 11/11, but the monthly mismatch signature persists in 11/11. The non-row blocker ledger still contains 11 `RESIDUAL_AGGREGATION_BUCKET` cases.
+- The known frozen rulebook hash remains `5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0`. This checkpoint does not claim a fresh clause-by-clause verification of the original package; row-level quarantine is not treated as authority to close relationship-level blockers.
+- Root cause NOT ESTABLISHED; source authority NONE; canonical source selections 0; cases closed by this checkpoint 0.
+- Candidate build/backtest NOT RUN; strategy promotion NOT performed; live signing, public broadcast and exchange orders remain BLOCKED.
+- Next bounded action: retrieve the exact frozen CP-0040 rulebook bytes from the verified CP-0041 authority package and record a clause-level G0 crosswalk for each of the 11 relationship cases. If exact bytes are unavailable, preserve HOLD and do not infer clearance.
