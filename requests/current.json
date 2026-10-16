@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0094-ACQUISITION-QUARANTINE-COVERAGE-AUDIT-002",
+  "request_id": "CP0094-ACQUISITION-QUARANTINE-COVERAGE-AUDIT-003",
   "task": "cp0094_acquisition_quarantine_coverage_audit",
-  "purpose": "Retry exact-key quarantine coverage audit after binding upstream integrity checks to the actual CP-0107 acquisition summary schema; preserve read-only and no-source-selection gates.",
-  "created_at_utc": "2026-10-16T15:50:00Z",
-  "requested_commit_sha": "5dce7af9d6e8bace6bb984f290945c9b7596134a"
+  "purpose": "Retry rulebook-bound acquisition quarantine coverage after aligning source-closure guard to CP0093 published root-level fields; preserve all row/source and global gates.",
+  "created_at_utc": "2026-10-16T15:58:00Z",
+  "requested_commit_sha": "cde0c3c14ec2b800d248197d83daf2353797dbec"
 }
