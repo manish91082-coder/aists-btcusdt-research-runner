@@ -19,6 +19,7 @@ on:
           - cp0040_quarantine_manifest_extend_aggregation
           - cp0040_candidate_builder_gate_tests
           - cp0040_baseline_reconstruction_audit
+          - cp0040_quarantine_sensitivity_run
           - historical_reference_replay
           - monthly_derived_replay
           - legacy_pipeline
@@ -918,4 +919,148 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$DEST" evidence/source_adjudication/CP0040_Baseline_Reconstruction_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
           git commit -m "evidence(cp0040): publish baseline reconstruction run ${RUN_ID}"
+          git push origin HEAD:main
+
+  publish_cp0040_quarantine_sensitivity_audit:
+    if: needs.run.result == 'success' && needs.run.outputs.task == 'cp0040_quarantine_sensitivity_run'
+    needs: run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Checkout main with scoped write token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ github.token }}
+          persist-credentials: true
+      - name: Download this run's sensitivity artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aists-run-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: evidence_stage
+      - name: Validate bounded sensitivity evidence before publication
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, hashlib, json, os
+          from pathlib import Path
+          root = Path("evidence_stage/cp0040_quarantine_sensitivity_audit")
+          summary_path = root / "CP0040_Quarantine_Sensitivity_Audit_Summary.json"
+          report_path = root / "CP0040_Quarantine_Sensitivity_Audit_Report_HI.md"
+          if not summary_path.is_file() or not report_path.is_file():
+              raise SystemExit("Required sensitivity summary/report missing; refusing evidence publish")
+          summary = json.loads(summary_path.read_text(encoding="utf-8"))
+          allowed = {"PASS_QUARANTINE_SENSITIVITY_DIAGNOSTIC_COMPLETE", "BLOCKED_BASELINE_METRICS_NOT_REPRODUCIBLE"}
+          if summary.get("task") != "cp0040_quarantine_sensitivity_run" or summary.get("status") not in allowed:
+              raise SystemExit("Unexpected task/status or an early/unverified blocker; refusing evidence publish")
+          if summary.get("network_used") is not False or summary.get("market_data_downloads") != 0:
+              raise SystemExit("Network or market-data acquisition assertion failed")
+          if summary.get("production_candidate_build") is not False or summary.get("strategy_promoted") is not False:
+              raise SystemExit("Production-build/promotion restriction failed")
+          anchors = summary.get("anchors", summary.get("gate", {}))
+          if anchors.get("manifest_sha256") != "e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a":
+              raise SystemExit("Published result is not bound to the frozen CP-0040 exact-key manifest")
+          if anchors.get("blockers_sha256") != "f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36":
+              raise SystemExit("Published result is not bound to the frozen 11-row blocker ledger")
+          if summary.get("unresolved_nonrow_aggregation_blockers") != 11 or summary.get("g0") != "BLOCKED_GLOBAL" or summary.get("canonical_source") != "NONE":
+              raise SystemExit("The 11-blocker/G0/source-authority gates were not preserved")
+          if summary.get("status") == "PASS_QUARANTINE_SENSITIVITY_DIAGNOSTIC_COMPLETE":
+              if summary.get("baseline_metric_gate") != "PASS" or summary.get("quarantine_sensitivity_run") is not True:
+                  raise SystemExit("Quarantine metrics lack a passing baseline gate")
+              checks = summary.get("checks", [])
+              if not checks or any(x.get("status") != "PASS" for x in checks):
+                  raise SystemExit("Successful sensitivity summary contains non-PASS checks")
+              if len(summary.get("input_impact", [])) != 3 or len(summary.get("signal_impact", [])) < 1 or len(summary.get("trade_impact", [])) != 3:
+                  raise SystemExit("Sensitivity output row count/schema is incomplete")
+              required_files = (
+                  "CP0040_Quarantine_Performance.csv",
+                  "CP0040_Quarantine_Signal_Impact.csv",
+                  "CP0040_Quarantine_Trade_Impact.csv",
+                  "CP0040_Quarantine_Key_Application.csv",
+                  "CP0040_Input_Impact.csv",
+              )
+              for name in required_files:
+                  p = root / name
+                  if not p.is_file():
+                      raise SystemExit("Missing required diagnostic output: " + name)
+              with (root / "CP0040_Quarantine_Performance.csv").open("r",encoding="utf-8",newline="") as f:
+                  rows=list(csv.DictReader(f))
+              if len(rows) != 3 or {x.get("period") for x in rows} != {"TRAIN","DEVELOPMENT_CHECK","CONSUMED_OOS_DIAGNOSTIC"}:
+                  raise SystemExit("Expected exactly three frozen period metric rows")
+              if any(x.get("baseline_metric_anchors_match") != "True" for x in rows):
+                  raise SystemExit("A reported performance row did not pass baseline metric anchoring")
+          run_id = os.environ["RUN_ID"]
+          print(json.dumps({"status":"PASS_PUBLISH_PREFLIGHT","run_id":run_id,"research_status":summary["status"],"checks":len(summary.get("checks",[]))},sort_keys=True))
+          PY
+      - name: Persist run-scoped evidence and append canonical state
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          SRC="evidence_stage/cp0040_quarantine_sensitivity_audit"
+          DEST="evidence/source_adjudication/CP0040_Sensitivity_Run_${RUN_ID}"
+          mkdir -p "$DEST"
+          cp "$SRC/CP0040_Quarantine_Sensitivity_Audit_Summary.json" "$DEST/"
+          cp "$SRC/CP0040_Quarantine_Sensitivity_Audit_Report_HI.md" "$DEST/"
+          for name in CP0040_Quarantine_Performance.csv CP0040_Quarantine_Signal_Impact.csv CP0040_Quarantine_Trade_Impact.csv CP0040_Quarantine_Key_Application.csv CP0040_Input_Impact.csv CP0040_Baseline_Metric_Mismatches.csv; do
+            if [ -f "$SRC/$name" ]; then cp "$SRC/$name" "$DEST/"; fi
+          done
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          run_id=os.environ["RUN_ID"]
+          run_commit=os.environ["RUN_COMMIT"]
+          base=Path("evidence/source_adjudication")
+          dest=base / ("CP0040_Sensitivity_Run_" + run_id)
+          summary_path=dest / "CP0040_Quarantine_Sensitivity_Audit_Summary.json"
+          summary=json.loads(summary_path.read_text(encoding="utf-8"))
+          outputs={}
+          for p in sorted(dest.iterdir()):
+              if p.is_file():
+                  outputs[p.name]={"bytes":p.stat().st_size,"sha256":hashlib.sha256(p.read_bytes()).hexdigest()}
+          pointer={
+              "run_id":int(run_id),
+              "run_commit_sha":run_commit,
+              "status":summary["status"],
+              "comparator":"MTF_BREAKOUT_4H_D1",
+              "summary_path":str(dest/"CP0040_Quarantine_Sensitivity_Audit_Summary.json"),
+              "report_path":str(dest/"CP0040_Quarantine_Sensitivity_Audit_Report_HI.md"),
+              "summary_sha256":outputs["CP0040_Quarantine_Sensitivity_Audit_Summary.json"]["sha256"],
+              "outputs":outputs,
+              "manifest_sha256":"e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a",
+              "blockers_sha256":"f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36",
+              "production_candidate_build":False,
+              "strategy_promoted":False,
+              "g0":"BLOCKED_GLOBAL",
+              "canonical_source":"NONE"
+          }
+          (base/"CP0040_Quarantine_Sensitivity_Current.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+          state_path=Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state=state_path.read_text(encoding="utf-8")
+          marker="CP-0040 quarantine sensitivity audit run "+run_id
+          if marker not in state:
+              note="\n\n## "+marker+"\n\n"
+              note+="- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/"+run_id+"; task status `"+summary["status"]+"`; runner commit "+run_commit+".\n"
+              note+="- Frozen comparator: `MTF_BREAKOUT_4H_D1`; scope exact-key removal by (interval, open_time_ms) only; no row replacement, no market-data downloads.\n"
+              note+="- Baseline metric gate: "+str(summary.get("baseline_metric_gate","NOT_REACHED"))+"; production candidate build=False; strategy promotion=False.\n"
+              for row in summary.get("input_impact",[]):
+                  note+="- "+str(row.get("interval"))+": rows removed="+str(row.get("removed_exact_key_rows"))+"; rows retained="+str(row.get("quarantine_rows_after_filter"))+".\n"
+              for row in summary.get("performance_delta_rows",summary.get("performance",[])):
+                  note+="- "+str(row.get("period"))+" net-return delta percentage points="+str(row.get("delta_net_return_percentage_points","NOT_AVAILABLE"))+".\n"
+              if summary.get("performance_delta_semantics"):
+                  for period, qmetric in summary.get("quarantine_metrics",{}).items():
+                      base_metric=summary.get("baseline_metrics",{}).get(period,{})
+                      note+="- "+period+": baseline return="+str(base_metric.get("net_return_pct"))+"%; quarantine return="+str(qmetric.get("net_return_pct"))+"%.\n"
+              note+="- G0 remains BLOCKED_GLOBAL; 11 aggregation relationship blockers remain open; canonical source remains NONE; live signing/broadcast/orders remain BLOCKED.\n"
+              state_path.write_text(state+note,encoding="utf-8")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DEST" evidence/source_adjudication/CP0040_Quarantine_Sensitivity_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
+          git commit -m "evidence(cp0040): publish sensitivity run ${RUN_ID}"
           git push origin HEAD:main
