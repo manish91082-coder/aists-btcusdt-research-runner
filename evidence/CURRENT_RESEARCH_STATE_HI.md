@@ -266,3 +266,10 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Checked 33 CP-0041 monthly archive targets. Exact archive-member hits=0; text-name references=0; frozen current SHA-token hits=0.
 - Shared-52 daily-path crosswalk: 33/52 exact paths across 14 daily archive objects; New checksum equals frozen daily SHA for 33 rows; Original checksum equals it for 0; no exact bundle path for 19 rows. These are version diagnostics only; source authority NONE and cases stay OPEN.
 - Package matches are version/provenance evidence only. Canonical source NONE; cases closed 0; root cause OPEN_NOT_ESTABLISHED. No Binance market-data REST API, no row edits, no backtest or strategy promotion.
+
+## CP-0107 shared-52 crosswalk root-publication correction — 2026-10-16
+
+- Run [38863550950](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38863550950) completed SUCCESS in both the research runner and `publish_cp0107_evidence` jobs. The official correction-bundle audit passed **13/13 checks**.
+- Publisher initially persisted the 52-row crosswalk in the run-specific evidence folder but its explicit `git add` list omitted the root convenience copy. The output bytes were not regenerated or edited: the root copy was published from the run-specific file in commit `83cd7f203cdd9a995d2f2ef9c9025a2e78731fe9`, and fetch-back confirmed identical Git blob SHA-1 `718c2ac990d9fb5d9c731fdda4fc92657d375ad2`, 39,723 bytes and 52 data rows.
+- Workflow staging corrected in commit `17913bfcf67782dcb8f808609b3c54a0e9204d39` to include the root crosswalk on future runs.
+- Research outcome remains version provenance only: 33 exact daily paths across 14 official daily archive objects; frozen current daily SHA equals New File Checksum for 33/33 matched conflict rows and Original File Checksum for 0/33; 19/52 rows have no exact bundle path. All 52 cases remain OPEN, canonical source NONE, source cases closed 0, root cause OPEN_NOT_ESTABLISHED. No source-selection decision, source mutation, backtest or strategy promotion.
