@@ -412,3 +412,14 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Report: `evidence/source_adjudication/CP0040_Acquisition_Extension_And_Gate_Regression_Report_HI.md`; summary: `evidence/source_adjudication/CP0040_Acquisition_Extension_And_Gate_Regression_Summary.json`.
 - No candidate dataset or backtest was run. G0 remains `BLOCKED_GLOBAL`; strategy approval and all live actions remain blocked.
 - Next bounded action: inspect the 11 residual aggregation buckets against committed row-level evidence and determine whether any can be dispositioned without source inference or timestamp repair.
+
+
+## CP-0040 exact-key quarantine manifest run 38883792900
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38883792900; status PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN; checks 14/14 PASS.
+- Row-level exact-key manifest: 1427 rows / 1427 unique keys. Classes: {"ACQUISITION_ECONOMIC_CONFLICT": 14, "ACQUISITION_MONTHLY_ONLY_ROW": 10, "ACQUISITION_RAW_FIELD_CONFLICT": 418, "AGGREGATION_BUCKET_ROW_QUARANTINE": 16, "CLOSE_TIME_ONLY": 8, "DAILY_ONLY_ROW": 452, "MONTHLY_ONLY_ROW": 457, "SHARED_ECONOMIC_CONFLICT": 52}.
+- The 450 off-grid rows are a subset of the 909 unmatched rows and were not double-counted. Shared-52 plus close-time-only 8 cover the 60 shared conflict records.
+- Separate non-row blockers: 11; counts={"RESIDUAL_AGGREGATION_BUCKET": 11}. Candidate eligibility remains BLOCKED.
+- Manifest SHA-256 e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a; blocker ledger SHA-256 f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36. The published frozen index was re-hashed; the original CP-0041 package/rulebook bytes were not freshly re-hashed in this run.
+- Aggregation-bucket quarantine coverage: 11 open bucket relationships, 35 unique parent/child row keys represented; new keys added=16. The 11 relationship cases remain blockers and source authority remains NONE.
+- No canonical source selected, no cases closed, no candidate build/backtest, no strategy promotion, live actions remain BLOCKED.
