@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-QUARANTINE-EXTENSION-002",
-  "task": "cp0040_quarantine_manifest_extend_acquisition",
-  "purpose": "Extend quarantine manifest from verified CP-0041 row comparisons; add unresolved exact keys, retire acquisition-stage blockers, keep aggregation blockers. No candidate build or backtest.",
-  "created_at_utc": "2026-10-16T10:45:00Z",
-  "requested_commit_sha": "e5e6fcf8a2a7b46e6cef04526613c62136ef643f"
+  "request_id": "CP0040-CP0026-GATE-TESTS-002",
+  "task": "cp0040_candidate_builder_gate_tests",
+  "purpose": "Test CP-0026 gate against the current 1411-key manifest; confirm fail-closed behavior with 11 residual aggregation blockers and exact-key partition safety. No candidate build/backtest.",
+  "created_at_utc": "2026-10-16T10:55:00Z",
+  "requested_commit_sha": "6c903935ca28f5bf7dd704955d7a9b60f4e67f16"
 }
