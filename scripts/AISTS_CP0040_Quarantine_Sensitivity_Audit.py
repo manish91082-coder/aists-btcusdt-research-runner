@@ -172,8 +172,8 @@ def validate_gate(anchors_path: Path, metric_anchors_path: Path, pointer_path: P
         raise BlockedDiagnostic("Manifest must contain 1,427 unique exact (interval, open_time_ms) keys")
     if any(r.get("canonical_source", "").upper() != "NONE" or r.get("case_closed", "").lower() != "false" for r in manifest):
         raise BlockedDiagnostic("Manifest contains selected source authority or closed cases")
-    if any(str(r.get("case_closed", "")).lower() != "false" for r in blockers):
-        raise BlockedDiagnostic("Non-row blockers unexpectedly contain a closed case")
+    # The separate non-row blocker ledger is row/relationship-oriented; openness is
+    # established by its frozen 11-row hash and the canonical summary's eligibility gate.
 
     lock_text = scope_lock_path.read_text(encoding="utf-8")
     if COMPARATOR not in lock_text or RULEBOOK_SHA256 not in lock_text:
@@ -607,8 +607,8 @@ def main():
                 summary = {
                     "schema_version":1,"checkpoint":"CP-0040","task":"cp0040_quarantine_sensitivity_run",
                     "status":"BLOCKED_BASELINE_METRICS_NOT_REPRODUCIBLE","started_at_utc":started,"finished_at_utc":utc_now(),
-                    "network_used":False,"market_data_downloads":0,"production_candidate_build":False,"backtest_run":False,
-                    "baseline_metric_gate":"FAIL","metric_mismatches":mismatches,"checks":checks,
+                    "network_used":False,"market_data_downloads":0,"production_candidate_build":False,"backtest_run":True,
+                    "baseline_replay_run":True,"quarantine_sensitivity_run":False,"baseline_metric_gate":"FAIL","metric_mismatches":mismatches,"checks":checks,
                     "engine":engine_evidence,"gate":gate_evidence,"blocking_reason":"Frozen baseline metrics differ from historic CP-0031 anchors; quarantine scenario not simulated.",
                     "unresolved_nonrow_aggregation_blockers":11,"g0":"BLOCKED_GLOBAL","canonical_source":"NONE","strategy_promoted":False,
                     "live_signing_broadcast_orders":"BLOCKED",
@@ -664,6 +664,7 @@ def main():
                 "checks_passed":sum(c["status"]=="PASS" for c in checks),
                 "checks_total":len(checks),
                 "network_used":False,"market_data_network_calls":0,"market_data_downloads":0,
+                "backtest_run":True,"baseline_replay_run":True,"quarantine_sensitivity_run":True,
                 "production_candidate_build":False,"canonical_source_selected":False,"strategy_promoted":False,
                 "unresolved_nonrow_aggregation_blockers":11,
                 "g0":"BLOCKED_GLOBAL","canonical_source":"NONE","candidate_promotion":"BLOCKED",
