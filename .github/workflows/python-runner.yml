@@ -896,22 +896,22 @@ jobs:
               "strategy_promoted":False,
               "g0":"BLOCKED_GLOBAL"
           }
-          (base/"CP0040_Baseline_Reconstruction_Current.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\\n",encoding="utf-8")
+          (base/"CP0040_Baseline_Reconstruction_Current.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\n",encoding="utf-8")
           state_path=Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
           state=state_path.read_text(encoding="utf-8")
           marker="CP-0040 baseline reconstruction audit run "+run_id
           if marker not in state:
-              note="\\n\\n## "+marker+"\\n\\n"
-              note+="- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/"+run_id+"; task status "+summary["status"]+"; runner commit "+run_commit+".\\n"
-              note+="- Scope is temporary cache-only reconstruction of the frozen CP-0031 candidate input content; network/acquisition count=0; production candidate build=False; backtest=False.\\n"
-              note+="- Monthly archives used="+str(summary.get("monthly_archives_used",0))+"; daily reference archives used="+str(summary.get("daily_reference_archives_used",0))+"; official daily sidecars verified="+str(summary.get("official_daily_sidecars_verified",0))+".\\n"
+              note="\n\n## "+marker+"\n\n"
+              note+="- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/"+run_id+"; task status "+summary["status"]+"; runner commit "+run_commit+".\n"
+              note+="- Scope is temporary cache-only reconstruction of the frozen CP-0031 candidate input content; network/acquisition count=0; production candidate build=False; backtest=False.\n"
+              note+="- Monthly archives used="+str(summary.get("monthly_archives_used",0))+"; daily reference archives used="+str(summary.get("daily_reference_archives_used",0))+"; official daily sidecars verified="+str(summary.get("official_daily_sidecars_verified",0))+".\n"
               for iv,res in summary.get("candidate_content_results",{}).items():
-                  note+="- "+iv+" reconstructed decompressed SHA-256 "+str(res.get("decompressed_sha256",""))+"; frozen anchor "+str(res.get("decompressed_sha256_anchor",""))+"; match="+str(res.get("matches_frozen_content_anchor",False))+".\\n"
+                  note+="- "+iv+" reconstructed decompressed SHA-256 "+str(res.get("decompressed_sha256",""))+"; frozen anchor "+str(res.get("decompressed_sha256_anchor",""))+"; match="+str(res.get("matches_frozen_content_anchor",False))+".\n"
               if summary["status"]=="BLOCKED_INPUTS_NOT_REPRODUCIBLE":
-                  note+="- Decision: stop further CP-0040 sensitivity execution until the missing/mismatched input is resolved; no fabricated metrics.\\n"
+                  note+="- Decision: stop further CP-0040 sensitivity execution until the missing/mismatched input is resolved; no fabricated metrics.\n"
               else:
-                  note+="- Input content anchors reproduced. This is not a backtest, signal-impact calculation, canonical-source decision, or promotion approval.\\n"
-              note+="- G0 remains BLOCKED_GLOBAL; all 11 non-row aggregation blockers remain open; canonical source remains NONE; live signing/broadcast/orders remain blocked.\\n"
+                  note+="- Input content anchors reproduced. This is not a backtest, signal-impact calculation, canonical-source decision, or promotion approval.\n"
+              note+="- G0 remains BLOCKED_GLOBAL; all 11 non-row aggregation blockers remain open; canonical source remains NONE; live signing/broadcast/orders remain blocked.\n"
               state_path.write_text(state+note,encoding="utf-8")
           PY
           git config user.name "github-actions[bot]"
