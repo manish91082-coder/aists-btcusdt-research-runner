@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0110-TRADE-SIDECAR-PREFLIGHT-20261016-01",
-  "task": "cp0110_official_trade_sidecar_preflight",
-  "purpose": "Probe seven exact official Spot daily-trades .CHECKSUM files for the frozen aggregation dates; no trade ZIP download, REST API, source mutation, or case closure.",
-  "created_at_utc": "2026-10-16T14:55:00Z",
-  "requested_commit_sha": "c765712875ea96ccb4701640e13d2dc8be30ad00"
+  "request_id": "CP0111-TRADE-ARCHIVE-INTEGRITY-20261016-01",
+  "task": "cp0111_official_daily_trade_archive_integrity_audit",
+  "purpose": "Download only seven fixed official Spot daily-trades ZIPs; verify sidecar SHA-256, ZIP CRC, 7-column schema, UTC-day bounds and coverage anomalies; no kline mutation or source closure.",
+  "created_at_utc": "2026-10-16T17:04:00Z",
+  "requested_commit_sha": "ced804dee28a90383ca57a885a40d0fd71d3930c"
 }
