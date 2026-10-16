@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-QUARANTINE-TESTS-001",
-  "task": "cp0040_quarantine_gate_tests",
-  "purpose": "Run deterministic exact-key quarantine gate self-tests only; no market data or candidate build.",
-  "created_at_utc": "2026-10-16T08:35:49.996Z",
-  "requested_commit_sha": "faa7c3d89fd0df8fe5fecb48e1d8245be182c484"
+  "request_id": "CP0040-QUARANTINE-MANIFEST-001",
+  "task": "cp0040_quarantine_manifest_build",
+  "purpose": "Build and validate exact-key quarantine manifest from the frozen published 996-row Git index; separately report non-row blockers; no candidate build or backtest.",
+  "created_at_utc": "2026-10-16T09:45:00Z",
+  "requested_commit_sha": "7d187b18649677431cb6f634fceededf05ef8059"
 }
