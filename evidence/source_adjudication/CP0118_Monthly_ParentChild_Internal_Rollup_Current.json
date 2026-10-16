@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0118",
+  "status": "PASS_MONTHLY_PARENT_CHILD_INTERNAL_ROLLUP_AUDIT_SOURCE_AUTHORITY_OPEN",
+  "reviewed_at_utc": "2026-10-16",
+  "repository": "manish91082-coder/aists-btcusdt-research-runner",
+  "branch": "main",
+  "execution": {
+    "workflow_run_id": 38944519562,
+    "workflow_url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38944519562",
+    "run_commit_sha": "693ccaaa226c8f81f3fe0e0dfeab9003f895d9a1",
+    "workflow_conclusion": "success",
+    "runner_status": "PASS",
+    "child_status": "PASS_MONTHLY_PARENT_CHILD_INTERNAL_ROLLUP_AUDIT_SOURCE_AUTHORITY_OPEN",
+    "child_summary_sha256": "c82eba758b1a3b347af83d6bd8db1750780c94c72b3f86c0d85a4addf8ba5f94",
+    "artifact_id": 12064312282,
+    "artifact_url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38944519562/artifacts/12064312282",
+    "artifact_bytes": 13088,
+    "artifact_retention_days": 7
+  },
+  "inputs": {
+    "row_evidence_git_blob_sha1": "5ccb7fc91b829b4599de73f3b63683fbf1d5ebb9",
+    "bucket_snapshot_git_blob_sha1": "6e32188472ab45b43e1b90fe138399818c937277",
+    "cp0117_pointer_git_blob_sha1": "1515a6f07dbb5a8b84e8de05ce3794558feb0bbf",
+    "cp0117_report_git_blob_sha1": "cee4dd57a8a7a42b99cd0934177a3540f26834cb",
+    "frozen_rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0",
+    "audit_script_git_blob_sha1": "cf96ef1164bb740ecfeb50bdf38718a8cffe67f4",
+    "runner_git_blob_sha1": "4c2bafbf541bf4100d9a333e69faddf8066a00bf",
+    "workflow_git_blob_sha1": "853e641a81418909e703718c6eef9c1f1e403a44"
+  },
+  "outputs": {
+    "report": {
+      "path": "evidence/source_adjudication/CP0118_Monthly_ParentChild_Internal_Rollup_Report_HI.md",
+      "repository_git_blob_sha1": "336762296a9ac0bad06b6cc620722e16e1404c05",
+      "artifact_bytes": 5136,
+      "artifact_sha256": "1cd91d2ca6a57828a515191446d57c2dcd5d1e9e21f6a8f09359f8d5f0fe76f7"
+    },
+    "matrix": {
+      "path": "evidence/source_adjudication/CP0118_ParentChild_Internal_Rollup_Matrix.csv",
+      "repository_git_blob_sha1": "d4680d70eb0cd71d3f6d14df1ba5ebcd1bf9c8b3",
+      "repository_bytes": 3952,
+      "rows": 11,
+      "artifact_bytes": 3952,
+      "artifact_sha256": "1f783b86dc021d9c7d305cc4dc9f9c4de93c846fb903fd3aec2fc69d35f35121",
+      "artifact_generated_git_blob_sha1": "bd4de9027a724b312a5eef847eddeb2d9b699540"
+    },
+    "details": {
+      "path": "evidence/source_adjudication/CP0118_ParentChild_Internal_Rollup_Details.csv",
+      "repository_git_blob_sha1": "935edba0dee13450ef43ee67254b615cb329e728",
+      "repository_bytes": 9630,
+      "rows": 22,
+      "artifact_bytes": 9618,
+      "artifact_sha256": "65c6a4a2ff431db172a5d48f469cdfeed2dd778f2c861d3025fb43b71e12f801",
+      "artifact_generated_git_blob_sha1": "1b5b9d8199b79e559b4355205dc5bab768e68f3d",
+      "note": "The committed details CSV was reconstructed from the frozen row-evidence and preserves exact rollup values; its repository blob/byte count differs from the raw generated artifact representation, which remains available in the linked Actions artifact."
+    }
+  },
+  "counts": {
+    "buckets": 11,
+    "daily_parent_child_full_rollups": 11,
+    "monthly_parent_child_full_rollups": 0,
+    "monthly_parent_child_mismatch_cases": 11,
+    "monthly_field_mismatch_memberships_across_cases": 58,
+    "monthly_mismatch_field_frequency_by_case": {
+      "open": 2,
+      "high": 3,
+      "low": 3,
+      "close": 1,
+      "volume": 11,
+      "quote_asset_volume": 11,
+      "number_of_trades": 11,
+      "taker_buy_base_asset_volume": 8,
+      "taker_buy_quote_asset_volume": 8
+    },
+    "monthly_volume_quote_volume_trade_count_mismatch_cases": 11,
+    "duplicate_context_rows": 0,
+    "conflicting_duplicate_values": 0,
+    "source_cases_closed": 0,
+    "unresolved_aggregation_blockers": 11
+  },
+  "decision": {
+    "daily_parent_child_relation": "PASS_11_OF_11",
+    "monthly_parent_child_relation": "INTERNAL_MISMATCH_11_OF_11",
+    "monthly_volume_quote_volume_trade_count_mismatch": "PRESENT_IN_11_OF_11_MONTHLY_BUCKETS",
+    "historical_archive_version_provenance": "OPEN_NOT_ESTABLISHED",
+    "relationship_root_cause": "OPEN_NOT_ESTABLISHED",
+    "canonical_source_selected": false,
+    "source_cases_closed": 0,
+    "unresolved_aggregation_blockers": 11,
+    "g0": "BLOCKED_GLOBAL",
+    "g2": "FAIL_CURRENT_23_CANDIDATES",
+    "g3": "BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT",
+    "g7": "LIVE_BLOCKED"
+  },
+  "non_actions": {
+    "network_used": false,
+    "archive_downloads": 0,
+    "raw_source_archives_modified": false,
+    "timestamps_shifted_or_rounded": false,
+    "synthetic_candles_created": false,
+    "production_candidate_build_performed": false,
+    "backtest_performed": false,
+    "strategy_promoted": false,
+    "live_signing_enabled": false,
+    "public_broadcast_enabled": false,
+    "binance_orders_placed": false
+  },
+  "next_bounded_step": "Investigate dated correction/version evidence tied to the exact daily/monthly archive hashes. Do not assign canonical source or close cases until historical provenance is adjudicated or a formally frozen conservative quarantine policy has actual candidate-specific final metrics."
+}
