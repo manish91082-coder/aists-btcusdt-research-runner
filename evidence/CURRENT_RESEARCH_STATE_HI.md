@@ -554,3 +554,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Source crosswalk: buckets=11; raw row links=78; monthly sidecars=14/14; daily archive records=16.
 - Both monthly/daily archive sets authenticated=11/11; daily roll-up matched and frozen monthly mismatch remained=11/11.
 - Interpretation: official archive-byte integrity confirmed but source authority unresolved; all 11 buckets remain open; G0 BLOCKED_GLOBAL; canonical source NONE. No ZIP downloads, repairs, backtest or promotion.
+
+
+## CP-0040 candidate input relevance audit run 38901790221
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38901790221; status PASS_CANDIDATE_INPUT_RELEVANCE_REVIEW_COMPLETE_NOT_G0_APPROVAL; runner commit 57db5dabf4a1341b47ffc798107881d9d14eb65e.
+- Frozen comparator MTF_BREAKOUT_4H_D1 direct intervals 4h/1d; open aggregation relationships with direct interval overlap=0/11.
+- Exact-key quarantine impact: 4h removed=6; 1d removed=3; 1mo removed=0; TRAIN net-return delta pp=-15.89174082849894.
+- This is input-relevance evidence, not source authority or G0 approval. All 11 relationship cases remain open; G0 BLOCKED_GLOBAL; canonical source NONE; production candidate build/backtest/promotional actions remain blocked.

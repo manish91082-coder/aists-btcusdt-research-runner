@@ -1,0 +1,318 @@
+{
+  "archive_downloads": 0,
+  "backtest_rerun": false,
+  "canonical_source": "NONE",
+  "canonical_source_selected": false,
+  "checkpoint": "CP-0040",
+  "checks": [
+    {
+      "check_id": "all_frozen_inputs_present",
+      "detail": "all present",
+      "status": "PASS"
+    },
+    {
+      "check_id": "current_manifest_hash_and_status",
+      "detail": "sha=e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a; status=PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN",
+      "status": "PASS"
+    },
+    {
+      "check_id": "current_nonrow_blocker_hash_and_count",
+      "detail": "sha=f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36; rows=11",
+      "status": "PASS"
+    },
+    {
+      "check_id": "matrix_pointer_and_summary_status",
+      "detail": "PASS_OFFICIAL_ARCHIVE_INTEGRITY_CONFLICT_MATRIX_COMPLETE",
+      "status": "PASS"
+    },
+    {
+      "check_id": "matrix_csv_hash_and_count",
+      "detail": "sha=81de607e5b56dc721e076332cfd1fb1ca4c86d720e4de0d3ce900fddb892b7d6; rows=11",
+      "status": "PASS"
+    },
+    {
+      "check_id": "sensitivity_pointer_and_summary_status",
+      "detail": "PASS_QUARANTINE_SENSITIVITY_DIAGNOSTIC_COMPLETE",
+      "status": "PASS"
+    },
+    {
+      "check_id": "sensitivity_summary_hash_and_baseline_gate",
+      "detail": "sha=cf774e24112b3cb472853f8de725de0c4eb23f710b9d1b9266d628b9c606f809; baseline_gate=PASS",
+      "status": "PASS"
+    },
+    {
+      "check_id": "manifest_exact_keys_unique",
+      "detail": "rows=1427 unique=1427",
+      "status": "PASS"
+    },
+    {
+      "check_id": "published_11_bucket_integrity_invariants",
+      "detail": "{'buckets': 11, 'daily_official_archive_records': 16, 'matrix_buckets_with_both_archive_sets_authenticated': 11, 'matrix_buckets_with_daily_rollup_match_and_monthly_conflict': 11, 'monthly_official_archives': 14, 'monthly_sidecars_matched': 14, 'raw_row_links': 78}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "matrix_dispositions_all_open",
+      "detail": "all 11 open / canonical source NONE",
+      "status": "PASS"
+    },
+    {
+      "check_id": "frozen_engine_hash",
+      "detail": "bytes=49284 sha256=6b92b0956522ad6e6a7bdcaa364ee677c97b8926e3705d6250866c17cc70ceec",
+      "status": "PASS"
+    },
+    {
+      "check_id": "engine_frozen_interval_map",
+      "detail": "{'has_intervals': True, 'has_higher_map': True}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "engine_4h_d1_strategy_wiring",
+      "detail": "{'strategy_tuple': True, '4h_to_1d_join': True}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_11_blockers_outside_direct_4h_d1_intervals",
+      "detail": "{'blocker_intervals': ['15m', '1h', '30m', '5m'], 'direct_strategy_intervals': ['1d', '4h'], 'overlapping_cases': 0}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "quarantine_input_impact_counts",
+      "detail": "{'4h': {'removed': 6, 'rows_after': 19969}, '1d': {'removed': 3, 'rows_after': 3329}, '1mo': {'removed': 0, 'rows_after': 110}}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "three_period_quarantine_metrics_present",
+      "detail": "{'TRAIN_delta_pp': -15.89174082849894, 'DEVELOPMENT_CHECK_delta_pp': 0.0, 'CONSUMED_OOS_DIAGNOSTIC_delta_pp': 0.0}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "production_builder_still_fails_closed_on_nonrow_blockers",
+      "detail": "{'builder_sha256': '744c91d77cec78599627a6fbaa07c5e052bb232706dfa2a4bfe1790f04320579', 'gate_guard_present': True}",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 17,
+  "checks_total": 17,
+  "decision": "The 11 relationship blockers are in 5m/15m/30m/1h intervals, not the comparator's direct 4h/1d signal inputs. This is input-relevance evidence only: it does not clear the global CP-0026 gate or select a canonical source. The broader row-level quarantine materially changes TRAIN return, so the overall quarantine-policy decision remains material and unresolved.",
+  "evidence_hashes": {
+    "current_builder_sha256": "744c91d77cec78599627a6fbaa07c5e052bb232706dfa2a4bfe1790f04320579",
+    "frozen_engine_sha256": "6b92b0956522ad6e6a7bdcaa364ee677c97b8926e3705d6250866c17cc70ceec",
+    "manifest_sha256": "e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a",
+    "matrix_csv_sha256": "81de607e5b56dc721e076332cfd1fb1ca4c86d720e4de0d3ce900fddb892b7d6",
+    "nonrow_blockers_sha256": "f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36",
+    "sensitivity_summary_sha256": "cf774e24112b3cb472853f8de725de0c4eb23f710b9d1b9266d628b9c606f809"
+  },
+  "finished_at_utc": "2026-10-16T12:37:23.483002+00:00",
+  "g0": "BLOCKED_GLOBAL",
+  "live_signing_broadcast_orders": "BLOCKED",
+  "matrix": [
+    {
+      "blocker_intervals": "15m,5m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2017-12-04T09:00:00Z",
+      "case_id": "AGG-01-5m-15m-2017-12-04T09:00:00Z",
+      "child_interval": "5m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "15m"
+    },
+    {
+      "blocker_intervals": "15m,5m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2017-12-04T09:15:00Z",
+      "case_id": "AGG-02-5m-15m-2017-12-04T09:15:00Z",
+      "child_interval": "5m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "15m"
+    },
+    {
+      "blocker_intervals": "15m,5m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2018-02-05T10:00:00Z",
+      "case_id": "AGG-03-5m-15m-2018-02-05T10:00:00Z",
+      "child_interval": "5m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "15m"
+    },
+    {
+      "blocker_intervals": "15m,5m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2018-03-04T14:30:00Z",
+      "case_id": "AGG-04-5m-15m-2018-03-04T14:30:00Z",
+      "child_interval": "5m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "15m"
+    },
+    {
+      "blocker_intervals": "15m,5m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2018-03-04T14:45:00Z",
+      "case_id": "AGG-05-5m-15m-2018-03-04T14:45:00Z",
+      "child_interval": "5m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "15m"
+    },
+    {
+      "blocker_intervals": "15m,5m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2018-09-05T09:45:00Z",
+      "case_id": "AGG-06-5m-15m-2018-09-05T09:45:00Z",
+      "child_interval": "5m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "15m"
+    },
+    {
+      "blocker_intervals": "15m,30m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2017-12-04T09:00:00Z",
+      "case_id": "AGG-07-15m-30m-2017-12-04T09:00:00Z",
+      "child_interval": "15m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "30m"
+    },
+    {
+      "blocker_intervals": "15m,30m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2018-02-07T06:30:00Z",
+      "case_id": "AGG-08-15m-30m-2018-02-07T06:30:00Z",
+      "child_interval": "15m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "30m"
+    },
+    {
+      "blocker_intervals": "15m,30m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2018-03-04T14:30:00Z",
+      "case_id": "AGG-09-15m-30m-2018-03-04T14:30:00Z",
+      "child_interval": "15m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "30m"
+    },
+    {
+      "blocker_intervals": "15m,30m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2018-06-20T03:30:00Z",
+      "case_id": "AGG-10-15m-30m-2018-06-20T03:30:00Z",
+      "child_interval": "15m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "30m"
+    },
+    {
+      "blocker_intervals": "1h,30m",
+      "both_archive_families_authenticated": "",
+      "bucket_utc": "2018-03-20T03:00:00Z",
+      "case_id": "AGG-11-30m-1h-2018-03-20T03:00:00Z",
+      "child_interval": "30m",
+      "daily_rollup_matches_daily_parent": "True",
+      "decision": "No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate",
+      "direct_interval_overlap": false,
+      "direct_mtf_breakout_4h_d1_interval_overlap": "",
+      "disposition": "UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT",
+      "monthly_mismatch_signature_reproduced": "True",
+      "parent_interval": "1h"
+    }
+  ],
+  "network_used": false,
+  "next_action": "Stop repeating monthly/daily archive-provenance checks for these 11 buckets. Complete a frozen-rulebook decision on the full exact-key quarantine policy and candidate-specific eligibility; keep the production builder fail-closed until that decision satisfies the existing gate.",
+  "production_candidate_build": false,
+  "quarantine_impact": {
+    "1d_rows_after": 3329,
+    "1d_rows_removed": 3,
+    "1mo_rows_after": 110,
+    "1mo_rows_removed": 0,
+    "4h_rows_after": 19969,
+    "4h_rows_removed": 6,
+    "consumed_oos_diagnostic_return_delta_percentage_points": 0.0,
+    "development_check_return_delta_percentage_points": 0.0,
+    "manifest_rows": 1427,
+    "manifest_unique_exact_keys": 1427,
+    "train_return_delta_percentage_points": -15.89174082849894
+  },
+  "relationship_evidence": {
+    "both_archive_integrity_authenticated": 11,
+    "buckets": 11,
+    "canonical_source": "NONE",
+    "daily_rollup_matches_monthly_conflict_persists": 11,
+    "root_cause": "OPEN_NOT_ESTABLISHED"
+  },
+  "schema_version": 1,
+  "scope": "READ_ONLY_FROZEN_ENGINE_INPUT_DEPENDENCY_AND_QUARANTINE_IMPACT_REVIEW",
+  "source_bytes_modified": false,
+  "source_cases_closed": 0,
+  "started_at_utc": "2026-10-16T12:37:23.437580+00:00",
+  "status": "PASS_CANDIDATE_INPUT_RELEVANCE_REVIEW_COMPLETE_NOT_G0_APPROVAL",
+  "strategy_dependency": {
+    "blocker_intervals": [
+      "15m",
+      "1h",
+      "30m",
+      "5m"
+    ],
+    "comparator": "MTF_BREAKOUT_4H_D1",
+    "direct_higher_interval": "1d",
+    "direct_interval_set": [
+      "4h",
+      "1d"
+    ],
+    "direct_local_interval": "4h",
+    "engine_source_sha256": "6b92b0956522ad6e6a7bdcaa364ee677c97b8926e3705d6250866c17cc70ceec",
+    "engine_validated_candidate_intervals": [
+      "4h",
+      "1d",
+      "1mo"
+    ],
+    "residual_blockers_with_direct_4h_d1_interval_overlap": 0
+  },
+  "strategy_promoted": false,
+  "task": "cp0040_candidate_input_relevance_audit",
+  "unresolved_nonrow_aggregation_blockers": 11
+}
