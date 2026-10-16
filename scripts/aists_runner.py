@@ -480,10 +480,10 @@ def main():
                 argv=[sys.executable,str(child),"--output-dir","results/cp0116_candidate_filter_static_audit"]
                 timeout=600
                 child_summary_path=output/"cp0116_candidate_filter_static_audit"/"CP0116_Candidate_Filter_Static_Audit_Summary.json"
-             elif task=="cp0117_rulebook_bound_nonrow_blocker_disposition_audit":
-                 argv=[sys.executable,str(child),"--output-dir","results/cp0117_rulebook_bound_blocker_disposition"]
-                 timeout=600
-                 child_summary_path=output/"cp0117_rulebook_bound_blocker_disposition"/"CP0117_Rulebook_Bound_Blocker_Disposition_Summary.json"
+            elif task=="cp0117_rulebook_bound_nonrow_blocker_disposition_audit":
+                argv=[sys.executable,str(child),"--output-dir","results/cp0117_rulebook_bound_blocker_disposition"]
+                timeout=600
+                child_summary_path=output/"cp0117_rulebook_bound_blocker_disposition"/"CP0117_Rulebook_Bound_Blocker_Disposition_Summary.json"
             else:
                 argv=[sys.executable,str(child),"--output-dir",f"results/{task}","--cache-dir",".cache/aists/binance-monthly-archives"]
                 timeout=3300
