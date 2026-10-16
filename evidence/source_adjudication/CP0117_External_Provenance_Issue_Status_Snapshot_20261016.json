@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0117",
+  "snapshot_kind": "READ_ONLY_EXTERNAL_ISSUE_STATUS_SNAPSHOT",
+  "observed_date_utc": "2026-10-16",
+  "repository": "binance/binance-public-data",
+  "issues": [
+    {
+      "number": 504,
+      "url": "https://github.com/binance/binance-public-data/issues/504",
+      "title": "Spot historical data provenance: previous versions, corrections and point-in-time reconstruction",
+      "state": "open",
+      "created_at": "2026-09-27T18:20:58Z",
+      "updated_at": "2026-09-27T18:20:58Z",
+      "closed_at": null,
+      "comments_count": 0,
+      "maintainer_answer_observed": false,
+      "scope_note": "Asks whether prior ZIP versions are retained/retrievable; exact first-publication and replacement timestamps; complete checksum/correction history; whether closed klines can change; REST/archive parity; and official point-in-time reconstruction guarantees.",
+      "interpretation_limit": "An open question with no maintainer response observed is not proof that prior versions do not exist. It means the requested historical-version guarantee was not established by this public issue at observation time."
+    },
+    {
+      "number": 475,
+      "url": "https://github.com/binance/binance-public-data/issues/475",
+      "title": "Monthly SPOT kline archives disagree with daily archives and API for 2020-12-21 and 2021-09-29",
+      "state": "open",
+      "created_at": "2026-06-30T12:45:43Z",
+      "updated_at": "2026-07-10T20:04:37Z",
+      "closed_at": null,
+      "comments_count": 1,
+      "only_comment": {
+        "user": "QIUYEDALAO",
+        "created_at": "2026-07-10T20:04:37Z",
+        "maintainer_identity_confirmed": false,
+        "scope_note": "Reports independently reproduced monthly/daily/API disagreement on dates outside CP-0112 and additional cross-timeframe archive discrepancies for 2021 timestamps."
+      },
+      "interpretation_limit": "This is contextual evidence of reported archive inconsistencies on different dates. It is not direct evidence for the CP-0112 seven target dates and the comment is not treated as an official maintainer resolution."
+    }
+  ],
+  "official_readme_context": {
+    "url": "https://github.com/binance/binance-public-data",
+    "note": "The repository documents daily/monthly downloadable archive files and per-file CHECKSUM sidecars, and notes that archives may be updated when issues are found. This provides file-integrity/revision context, not an historical point-in-time version guarantee."
+  },
+  "decision_boundary": {
+    "historical_archive_version_provenance": "OPEN_NOT_ESTABLISHED",
+    "issue_504_resolves_provenance_question": false,
+    "issue_475_proves_cp0112_specific_root_cause": false,
+    "canonical_source_selected": false,
+    "source_cases_closed": 0,
+    "live_signing_enabled": false,
+    "public_broadcast_enabled": false,
+    "binance_orders_placed": false
+  }
+}
