@@ -1,0 +1,111 @@
+{
+  "checkpoint": "CP-0107_FROZEN_INPUT_REVERIFICATION_ADDENDUM",
+  "generated_date_utc": "2026-10-16",
+  "status": "PASS_FRESH_FROZEN_INPUT_REHASH_AND_23_TARGETED_CHECKS",
+  "repository": {
+    "full_name": "manish91082-coder/aists-btcusdt-research-runner",
+    "branch": "main",
+    "head_before_publication": "6ca808858f9dedf6bf4e775b17718ea34203db5a"
+  },
+  "source_package": {
+    "library_path": "/AISTS_CP0041_Row_Level_Evidence_Disposition_Pack.zip",
+    "bytes": 317677,
+    "sha256": "23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc",
+    "zip_crc": "PASS",
+    "member_count": 19,
+    "embedded_payload_manifest_entries": 18,
+    "embedded_payload_byte_count_checks_passed": 18,
+    "embedded_payload_sha256_checks_passed": 18
+  },
+  "frozen_inputs": {
+    "original_worklist": {
+      "member": "AISTS_CP0041_Row_Level_Disposition_Worklist.csv",
+      "bytes": 2111342,
+      "rows": 996,
+      "sha256": "f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f"
+    },
+    "cp0040_rulebook": {
+      "member": "AISTS_CP0040_Strategy_Acceptance_Rulebook_HI.md",
+      "bytes": 10630,
+      "sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0"
+    },
+    "cp0041_unmatched_ledger": {
+      "member": "AISTS_CP0041_Unmatched_Row_Disposition.csv",
+      "bytes": 1850523,
+      "rows": 909,
+      "sha256": "11eb82994d5a17469eefee9f14d360537d5871c19d303ed0466c5df4f6c34021"
+    }
+  },
+  "current_outputs": {
+    "crosswalk": {
+      "path": "evidence/source_adjudication/CP0107_CP0041_Row_Crosswalk.csv",
+      "bytes": 452986,
+      "rows": 450,
+      "sha256": "5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b"
+    },
+    "derived_worklist": {
+      "path": "evidence/source_adjudication/CP0107_Derived_996_Row_Worklist_Summary.json",
+      "bytes": 2099092,
+      "rows": 996,
+      "sha256": "137ad77bfafa7f7cd788db6f744e5567ad7dba889048b58feb743a34b863d9cb"
+    },
+    "row_audit": {
+      "path": "evidence/source_adjudication/CP0107_CP0041_Derived_996_Row_Disposition_Audit.csv",
+      "bytes": 792477,
+      "rows": 996,
+      "sha256": "717125e5abd83f987139d76df7ba245b972ad52438d4c64bb2e8bf06901012aa"
+    },
+    "derived_summary": {
+      "path": "evidence/source_adjudication/CP0107_Derived_996_Row_Worklist_Summary.json",
+      "bytes": 7294,
+      "sha256": "31bf7846d3429e6590724250459bf2fc1317dcabccf71cca8c21b5ed575fee96"
+    }
+  },
+  "validation": {
+    "checks_passed": 23,
+    "checks_total": 23,
+    "failed_checks": 0,
+    "source_package_sha256_match": true,
+    "zip_crc_pass": true,
+    "embedded_manifest_entries_passed": 18,
+    "original_and_derived_rows": 996,
+    "original_and_derived_unique_case_ids": 996,
+    "exact_case_id_sets": true,
+    "crosswalk_rows": 450,
+    "changed_rows": 450,
+    "changed_id_set_equals_crosswalk": true,
+    "changed_field": "current_disposition",
+    "non_disposition_changed_rows": 0,
+    "unchanged_rows": 546,
+    "crosswalk_monthly_archive_hash_match_rows": 450,
+    "crosswalk_12_raw_field_exact_rows": 450,
+    "audit_non_disposition_unchanged_flags_true": 996,
+    "audit_original_source_row_json_unchanged_flags_true": 996,
+    "audit_frozen_hash_references_match": true
+  },
+  "decision_limits": {
+    "canonical_source": "NONE",
+    "source_cases_closed": 0,
+    "root_cause": "OPEN_NOT_ESTABLISHED",
+    "feb2018_450_row_disposition": "QUARANTINE_REVIEW_REQUIRED",
+    "timestamp_shifted_or_rounded": false,
+    "raw_rows_merged_replaced_or_deleted": false,
+    "synthetic_candles_created": false,
+    "backtest_rerun": false,
+    "strategy_promoted": false,
+    "live_signing_public_broadcast_exchange_orders": "BLOCKED"
+  },
+  "gates": {
+    "G0": "BLOCKED_GLOBAL",
+    "G1": "PARTIAL_SYSTEM_LEVEL",
+    "G2": "FAIL_CURRENT_23_CANDIDATES",
+    "G3": "BLOCKED_PARTIAL",
+    "G4": "INSUFFICIENT_EVIDENCE",
+    "G5": "NOT_RUN",
+    "G6": "NOT_BUILT",
+    "G7": "LIVE_BLOCKED"
+  },
+  "ci_status": "NOT_RUN_FOR_THIS_ADDENDUM",
+  "supersedes": "Prior continuity report's fresh raw-byte rehash NOT_VERIFIED statement, limited to the frozen source package, embedded CP-0040 rulebook, original CP-0041 worklist and unmatched ledger verified here.",
+  "next_action": "Continue bounded evidence-linked disposition of 52 shared economic/trade-metric conflicts using official correction-bundle provenance; no broad archive refetch, no source authority inference from path absence, no candidate promotion or backtest rerun."
+}
