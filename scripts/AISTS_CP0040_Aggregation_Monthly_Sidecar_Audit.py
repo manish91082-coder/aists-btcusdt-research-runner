@@ -14,7 +14,7 @@ ROOT=Path(__file__).resolve().parents[1]
 EXPECTED_MANIFEST_SHA="e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a"
 EXPECTED_BLOCKERS_SHA="f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36"
 EXPECTED_SNAPSHOT_BLOB_SHA1="6e32188472ab45b43e1b90fe138399818c937277"
-EXPECTED_BUCKET_SUMMARY_SHA="08221ec6baab7257b61f803fe78064cc26717ef5"
+EXPECTED_BUCKET_SUMMARY_GIT_BLOB_SHA1="08221ec6baab7257b61f803fe78064cc26717ef5"
 EXPECTED_DAILY_MANIFEST_SHA="78d909e837989548f23ccb6206d32a430071fc06979472e34c33fac55d7405db"
 ALLOWED_INTERVALS={"5m","15m","30m","1h"}
 
@@ -84,12 +84,12 @@ def main():
     ck("cp0040_nonrow_blocker_sha",blocker_sha==EXPECTED_BLOCKERS_SHA,f"actual={blocker_sha}")
     bsum=read_json(bucket_sum_path); snap_sha1=git_blob_sha1(snap.read_bytes())
     ck("bucket_snapshot_git_blob_sha1",snap_sha1==EXPECTED_SNAPSHOT_BLOB_SHA1,f"actual={snap_sha1}")
-    ck("bucket_summary_sha256",sha_file(bucket_sum_path)==EXPECTED_BUCKET_SUMMARY_SHA,f"actual={sha_file(bucket_sum_path)}")
+    ck("bucket_summary_git_blob_sha1",git_blob_sha1(bucket_sum_path.read_bytes())==EXPECTED_BUCKET_SUMMARY_GIT_BLOB_SHA1,f"actual={git_blob_sha1(bucket_sum_path.read_bytes())}")
     compare_rows=read_csv(comp); compare_rec=bsum.get("outputs",{}).get("CP0107_CP0041_AggregationBucket_Comparison.csv",{})
     ck("bucket_comparison_rows_and_hash",len(compare_rows)==11 and sha_file(comp)==compare_rec.get("sha256"),f"rows={len(compare_rows)} sha={sha_file(comp)}")
     daily_rows=read_csv(daily_manifest_path); daily_sha=sha_file(daily_manifest_path)
     ck("daily_reference_manifest_sha_and_rows",daily_sha==EXPECTED_DAILY_MANIFEST_SHA and len(daily_rows)==16,f"sha={daily_sha} rows={len(daily_rows)}")
-    if not (pointer_ok and manifest_sha==EXPECTED_MANIFEST_SHA and blocker_sha==EXPECTED_BLOCKERS_SHA and snap_sha1==EXPECTED_SNAPSHOT_BLOB_SHA1 and sha_file(bucket_sum_path)==EXPECTED_BUCKET_SUMMARY_SHA and len(compare_rows)==11 and sha_file(comp)==compare_rec.get("sha256") and daily_sha==EXPECTED_DAILY_MANIFEST_SHA and len(daily_rows)==16):
+    if not (pointer_ok and manifest_sha==EXPECTED_MANIFEST_SHA and blocker_sha==EXPECTED_BLOCKERS_SHA and snap_sha1==EXPECTED_SNAPSHOT_BLOB_SHA1 and git_blob_sha1(bucket_sum_path.read_bytes())==EXPECTED_BUCKET_SUMMARY_GIT_BLOB_SHA1 and len(compare_rows)==11 and sha_file(comp)==compare_rec.get("sha256") and daily_sha==EXPECTED_DAILY_MANIFEST_SHA and len(daily_rows)==16):
         s=blocked(out,started,"Frozen evidence hashes/counts did not pass; sidecar network requests were not made.",checks);print(json.dumps({"status":s["status"],"reason":s["blocking_reason"]}));return 0
     blocker_rows=read_csv(blockers);bucket_rows=read_csv(snap);manifest_rows=read_csv(manifest)
     blocker_ids={r.get("case_id","").strip() for r in blocker_rows};bucket_ids={r.get("case_id","").strip() for r in bucket_rows}
