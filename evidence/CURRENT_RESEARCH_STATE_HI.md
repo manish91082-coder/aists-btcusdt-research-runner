@@ -375,3 +375,16 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Separate non-row blockers: 27 (11 aggregation buckets, 16 missing daily-reference acquisition cases). Candidate eligibility remains BLOCKED.
 - Manifest SHA-256 d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819; blocker ledger SHA-256 d0126152a58baecd8f61bcdcc21286ecffacba6427e7b09696ca63db33c1f0d0. The published frozen index was re-hashed; the original CP-0041 package/rulebook bytes were not freshly re-hashed in this run.
 - No canonical source selected, no cases closed, no candidate build/backtest, no strategy promotion, live actions remain BLOCKED.
+
+
+## CP-0040 manifest + CP-0026 fail-closed builder integration — 2026-10-16
+
+- Manifest workflow [38882377148](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38882377148) completed successfully; 17/17 manifest checks passed and scoped evidence publisher committed run-scoped evidence under `evidence/source_adjudication/CP0040_Run_38882377148/`.
+- Exact row-level manifest: 969 rows / 969 unique (interval, open_time_ms) keys. Counts: 452 daily-only, 457 monthly-only, 52 shared economic conflicts, 8 close-time-only. The 450 off-grid rows are a subset of the 909 unmatched rows and were not double-counted.
+- Manifest SHA-256 `d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819`; separate blocker ledger SHA-256 `d0126152a58baecd8f61bcdcc21286ecffacba6427e7b09696ca63db33c1f0d0`.
+- 27 non-row blockers remain: 11 residual aggregation buckets + 16 missing daily-reference acquisition cases. They have no exact row keys in the frozen minimal index; no timestamps were guessed. Candidate eligibility remains BLOCKED.
+- Integrated the manifest gate into `scripts/AISTS_CP0026_Research_Candidate_Builder.py`: verifies summary status, manifest SHA/rows/schema/key uniqueness/class counts, open status and canonical source NONE; refuses to proceed while any non-row blocker remains; exact-key filtering records quarantined selected-source rows to a separate audit output when eligibility is eventually ready.
+- Regression workflow [38882676704](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38882676704) completed successfully: runner 11/11 PASS, builder-gate tests 5/5 PASS, 23 Python sources parse successfully. The actual manifest was read and the gate refused build because 27 blockers remain.
+- Report: `evidence/source_adjudication/CP0040_CP0026_Quarantine_Gate_Integration_Report_HI.md`; summary: `evidence/source_adjudication/CP0040_CP0026_Quarantine_Gate_Integration_Summary.json`.
+- No candidate dataset build, no backtest, no canonical source selection, no case closure, no strategy promotion. Live signing, public broadcast and exchange orders remain BLOCKED.
+- Next: resolve or formally disposition the 27 non-row blockers with exact evidence, update manifest/gate state, and rerun regression checks before considering a candidate build.
