@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-QUARANTINE-SENSITIVITY-PREFLIGHT-002",
+  "request_id": "CP0040-QUARANTINE-SENSITIVITY-PREFLIGHT-003",
   "task": "cp0040_quarantine_sensitivity_preflight",
-  "purpose": "Retry the cache-only baseline-evidence preflight after fixing task dispatch; inventory committed evidence and restored cache only. No network, archive download, candidate build, backtest, or source changes.",
-  "created_at_utc": "2026-10-16T10:50:00Z",
-  "requested_commit_sha": "51afe376a96d1d7f539439b105d8667095e4737e"
+  "purpose": "Retry the read-only cache and committed baseline-evidence inventory after correcting preflight task dispatch and script mapping. No network, archive download, candidate build, backtest, or source changes.",
+  "created_at_utc": "2026-10-16T11:00:00Z",
+  "requested_commit_sha": "76e37f63e096cd4c01630d185b2e45dc9579e166"
 }
