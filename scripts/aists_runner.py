@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-ALLOWED_TASKS={"smoke","cp0040_quarantine_gate_tests","cp0040_quarantine_manifest_build","cp0040_quarantine_manifest_extend_acquisition","cp0040_quarantine_manifest_extend_aggregation","cp0040_candidate_builder_gate_tests","cp0040_quarantine_sensitivity_preflight","cp0040_baseline_reconstruction_audit","cp0040_quarantine_sensitivity_run","cp0040_aggregation_monthly_sidecar_audit","cp0040_archive_integrity_conflict_matrix","cp0040_candidate_input_relevance_audit","cp0107_shared52_candidate_input_dependency_audit","cp0040_rulebook_bound_eligibility_decision","cp0092_correction_archive_binary_probe","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"}
+ALLOWED_TASKS={"smoke","cp0040_quarantine_gate_tests","cp0040_quarantine_manifest_build","cp0040_quarantine_manifest_extend_acquisition","cp0040_quarantine_manifest_extend_aggregation","cp0040_candidate_builder_gate_tests","cp0040_quarantine_sensitivity_preflight","cp0040_baseline_reconstruction_audit","cp0040_quarantine_sensitivity_run","cp0040_aggregation_monthly_sidecar_audit","cp0040_archive_integrity_conflict_matrix","cp0040_candidate_input_relevance_audit","cp0107_shared52_candidate_input_dependency_audit","cp0040_rulebook_bound_eligibility_decision","cp0092_correction_archive_binary_probe","cp0093_daily_reference_discrepancy_triage","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"}
 REQUEST_KEYS={"request_id","task","purpose","created_at_utc","requested_commit_sha"}
 
 def file_sha(path):
@@ -51,7 +51,7 @@ def main():
             forbidden.append(path.name)
         writes=text.count("contents: write")
         publisher_blocks=[]
-        for publisher_name in ("publish_cp0107_evidence","publish_cp0040_quarantine_manifest","publish_cp0040_baseline_reconstruction_audit","publish_cp0040_quarantine_sensitivity_audit","publish_cp0040_aggregation_monthly_sidecar_audit","publish_cp0040_archive_integrity_conflict_matrix","publish_cp0040_candidate_input_relevance_audit","publish_cp0107_shared52_candidate_input_dependency_audit","publish_cp0040_rulebook_bound_eligibility_decision","publish_cp0092_correction_archive_binary_probe"):
+        for publisher_name in ("publish_cp0107_evidence","publish_cp0040_quarantine_manifest","publish_cp0040_baseline_reconstruction_audit","publish_cp0040_quarantine_sensitivity_audit","publish_cp0040_aggregation_monthly_sidecar_audit","publish_cp0040_archive_integrity_conflict_matrix","publish_cp0040_candidate_input_relevance_audit","publish_cp0107_shared52_candidate_input_dependency_audit","publish_cp0040_rulebook_bound_eligibility_decision","publish_cp0092_correction_archive_binary_probe","publish_cp0093_daily_reference_discrepancy_triage"):
             publisher=re.search(r"(?ms)^  "+re.escape(publisher_name)+r":\n(.*?)(?=^  [A-Za-z0-9_]+:|\Z)",text)
             publisher_blocks.append((publisher_name,publisher.group(1) if publisher else ""))
         scoped_count=0
@@ -78,12 +78,14 @@ def main():
                 task_allowlist=("cp0107_shared52_candidate_input_dependency_audit" in publisher_block)
             elif publisher_name=="publish_cp0040_rulebook_bound_eligibility_decision":
                 task_allowlist=("cp0040_rulebook_bound_eligibility_decision" in publisher_block)
-            else:
+            elif publisher_name=="publish_cp0092_correction_archive_binary_probe":
                 task_allowlist=("cp0092_correction_archive_binary_probe" in publisher_block)
+            else:
+                task_allowlist=("cp0093_daily_reference_discrepancy_triage" in publisher_block)
             if has_scoped_permissions and has_task_scope and task_allowlist:
                 scoped_count += 1
-        publisher_scoped=(scoped_count==10)
-        if writes and not (writes==scoped_count and scoped_count in (1,2,3,4,5,6,7,8,9,10)):
+        publisher_scoped=(scoped_count==11)
+        if writes and not (writes==scoped_count and scoped_count in (1,2,3,4,5,6,7,8,9,10,11)):
             forbidden.append(path.name+": unscoped contents: write")
         if publisher_scoped:
             scoped_publisher_write=True
@@ -206,7 +208,7 @@ def main():
             except Exception: child_status="SUMMARY_PARSE_ERROR"
         check("task_exit_and_summary",child_rc==0 and child_summary_path.exists(),
               f"exit={child_rc}; summary_exists={child_summary_path.exists()}")
-    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0040_quarantine_sensitivity_preflight","cp0040_baseline_reconstruction_audit","cp0040_quarantine_sensitivity_run","cp0040_aggregation_monthly_sidecar_audit","cp0040_archive_integrity_conflict_matrix","cp0040_candidate_input_relevance_audit","cp0107_shared52_candidate_input_dependency_audit","cp0040_rulebook_bound_eligibility_decision","cp0092_correction_archive_binary_probe","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"):
+    elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0040_quarantine_sensitivity_preflight","cp0040_baseline_reconstruction_audit","cp0040_quarantine_sensitivity_run","cp0040_aggregation_monthly_sidecar_audit","cp0040_archive_integrity_conflict_matrix","cp0040_candidate_input_relevance_audit","cp0107_shared52_candidate_input_dependency_audit","cp0040_rulebook_bound_eligibility_decision","cp0092_correction_archive_binary_probe","cp0093_daily_reference_discrepancy_triage","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"):
         script_name={"historical_reference_replay":"historical_reference_replay.py",
                      "monthly_derived_replay":"monthly_derived_replay.py",
                      "legacy_pipeline":"aists_legacy_pipeline.py",
@@ -220,6 +222,7 @@ def main():
                      "cp0107_shared52_candidate_input_dependency_audit":"AISTS_CP0107_Shared52_Candidate_Input_Dependency_Audit.py",
                      "cp0040_rulebook_bound_eligibility_decision":"AISTS_CP0040_Rulebook_Bound_Eligibility_Decision.py",
                      "cp0092_correction_archive_binary_probe":"AISTS_CP0092_Correction_Archive_Binary_Route_Probe.py",
+                     "cp0093_daily_reference_discrepancy_triage":"AISTS_CP0093_DailyReference_Discrepancy_Triage.py",
                      "cp0107_feb2018_raw_row_extract":"AISTS_CP0107_Feb2018_Raw_Row_Extract.py",
                      "cp0107_feb2018_disposition_overlay":"AISTS_CP0107_Feb2018_Disposition_Overlay.py","cp0107_dec2020_child_window_audit":"AISTS_CP0107_Dec2020_ChildWindow_Audit.py","cp0107_field_review_hash_audit":"AISTS_CP0107_FieldReview_HashAudit.py","cp0107_monthly_checksum_provenance_audit":"AISTS_CP0107_MonthlyChecksumProvenanceAudit.py","cp0107_cp0041_daily_reference_acquisition_audit":"AISTS_CP0107_CP0041_DailyReference_Acquisition_Audit.py","cp0107_cp0041_aggregation_bucket_overlay_audit":"AISTS_CP0107_CP0041_AggregationBucket_Overlay_Audit.py","cp0107_cp0041_worklist_disposition_patch_audit":"AISTS_CP0107_CP0041_Worklist_Disposition_Patch_Audit.py","cp0107_cp0041_dec2020_residual7_exact_key_audit":"AISTS_CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.py","cp0107_official_update_package_audit":"AISTS_CP0107_Official_Update_Package_Audit.py"}[task]
         child=ROOT/"scripts"/script_name
@@ -324,6 +327,12 @@ def main():
                 argv=[sys.executable,str(child),"--output-dir","results/cp0092_correction_archive_binary_probe"]
                 timeout=180
                 child_summary_path=output/"cp0092_correction_archive_binary_probe"/"CP0092_Correction_Archive_Binary_Route_Summary.json"
+            elif task=="cp0093_daily_reference_discrepancy_triage":
+                argv=[sys.executable,str(child),
+                      "--source-dir","evidence/source_adjudication/CP0107_Run_38909366995",
+                      "--output-dir","results/cp0093_daily_reference_discrepancy_triage"]
+                timeout=600
+                child_summary_path=output/"cp0093_daily_reference_discrepancy_triage"/"CP0093_DailyReference_Discrepancy_Triage_Summary.json"
             elif task=="cp0107_feb2018_raw_row_extract":
                 argv=[sys.executable,str(child),"--monthly-cache",".cache/aists/binance-monthly-archives",
                       "--daily-cache",".cache/aists/binance-daily-references",
