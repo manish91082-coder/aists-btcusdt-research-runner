@@ -546,3 +546,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Official monthly .CHECKSUM text requests=14; verified=14; failed/unavailable=0. Monthly ZIP downloads=0; daily archive downloads=0; Binance market-data REST calls=0.
 - This confirms sidecar-token/cache-ZIP hash linkage only; it does not adjudicate which interval is canonical.
 - The 11 cross-interval aggregation blockers remain open; G0 BLOCKED_GLOBAL; canonical source NONE; no backtest or strategy promotion; live actions BLOCKED.
+
+
+## CP-0040 official archive integrity conflict matrix run 38900802182
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38900802182; status PASS_OFFICIAL_ARCHIVE_INTEGRITY_CONFLICT_MATRIX_COMPLETE; runner commit 748b6f9feadc0fb0cfe4e6661707a259ddb07148.
+- Source crosswalk: buckets=11; raw row links=78; monthly sidecars=14/14; daily archive records=16.
+- Both monthly/daily archive sets authenticated=11/11; daily roll-up matched and frozen monthly mismatch remained=11/11.
+- Interpretation: official archive-byte integrity confirmed but source authority unresolved; all 11 buckets remain open; G0 BLOCKED_GLOBAL; canonical source NONE. No ZIP downloads, repairs, backtest or promotion.
