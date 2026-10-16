@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0040",
+  "snapshot_id": "CP0040-QS-BASELINE-SNAPSHOT-20261016-01",
+  "status": "PASS_SNAPSHOT_BYTES_VERIFIED_LOCAL_GITHUB_STAGING_PENDING",
+  "package": {
+    "file_name": "AISTS_CP0040_Baseline_Snapshot_20261016.zip",
+    "bytes": 1884382,
+    "sha256": "1e5f528d1c09fb8b598e75f5c08b23530f0073882553cb272558aa89b047981f",
+    "zip_integrity": "PASS",
+    "members": 22,
+    "embedded_manifest_sha256": "30099220a75dedc8e0cde3d52d55e3b96f3de45f35cbdf3bb4c3d3859c5b56d3"
+  },
+  "original_source_bundle": {
+    "file_name": "AISTS-20261013T133241Z-1-001.zip",
+    "bytes": 192946548,
+    "sha256": "7a75a0f030886980b03db92bd8182c0274d1f64ff805f3975445a3f5325c52de",
+    "zip_integrity": "PASS",
+    "member_count": 1338
+  },
+  "cp0026_manifest_sha256": "baf72b07d2dd9e970ada0dc18eece57cab066a4a375b62e628938dba3fb7b6de",
+  "frozen_engine": {
+    "path": "engine/AISTS_CP0031_Research_Engine_R1.py",
+    "sha256": "6b92b0956522ad6e6a7bdcaa364ee677c97b8926e3705d6250866c17cc70ceec"
+  },
+  "candidate_inputs": {
+    "4h": {
+      "path": "inputs/BTCUSDT-4h-research-candidate.csv.gz",
+      "rows": 19975,
+      "sha256": "989a4c2023a28b991455b9bb4149dd0a0a56e6435b34f805f56de5e888d907e1"
+    },
+    "1d": {
+      "path": "inputs/BTCUSDT-1d-research-candidate.csv.gz",
+      "rows": 3332,
+      "sha256": "dc9a4cb53818ed6ffed10825989cb621c0ec4306c316b15fa8136010601fb76b"
+    },
+    "1mo": {
+      "path": "inputs/BTCUSDT-1mo-research-candidate.csv.gz",
+      "manifest_rows": 110,
+      "used_rows_after_partial_month_exclusion": 109,
+      "sha256": "2fb1005954d2dab96fe1c848a06bd7c5044547a531f208f81c630bea5866f1a0"
+    }
+  },
+  "original_cp0031_results": {
+    "path": "baseline/AISTS_CP0031_Offline_Replay_Risk_Stress_Bundle.zip",
+    "bytes": 34711,
+    "sha256": "e6998e59cd50683a3f3b92f1bd9afee0c6bbb44714d87893b33d33e4e83936f",
+    "member_hashes_verified": true
+  },
+  "cp0040_quarantine": {
+    "manifest_path": "quarantine/CP0040_ExactKey_Quarantine_Manifest.csv",
+    "rows": 1427,
+    "unique_exact_keys": 1427,
+    "sha256": "e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a",
+    "case_class_counts": {
+      "ACQUISITION_ECONOMIC_CONFLICT": 14,
+      "ACQUISITION_MONTHLY_ONLY_ROW": 10,
+      "ACQUISITION_RAW_FIELD_CONFLICT": 418,
+      "AGGREGATION_BUCKET_ROW_QUARANTINE": 16,
+      "CLOSE_TIME_ONLY": 8,
+      "DAILY_ONLY_ROW": 452,
+      "MONTHLY_ONLY_ROW": 457,
+      "SHARED_ECONOMIC_CONFLICT": 52
+    },
+    "nonrow_blockers": {
+      "rows": 11,
+      "sha256": "f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36"
+    }
+  },
+  "rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0",
+  "scope_lock": {
+    "path": "evidence/source_adjudication/CP0040_Quarantine_Sensitivity_Scope_Lock_HI.md",
+    "blob_sha": "0b13e2f979b6d6c61eb0e2f76ed940e722697923"
+  },
+  "constraints": {
+    "comparator": "MTF_BREAKOUT_4H_D1",
+    "production_candidate_build": "NOT_RUN",
+    "sensitivity_execution": "NOT_RUN",
+    "g0": "BLOCKED_GLOBAL",
+    "strategy_promotion": "BLOCKED",
+    "live_orders_signing_broadcast": "BLOCKED"
+  },
+  "staging_note": "Package bytes and included file hashes were independently verified in the current working environment. The binary package has not been committed to the GitHub repository or loaded in a GitHub Actions runner; only this metadata record is being added to GitHub. Do not treat the metadata commit as proof of runtime staging."
+}
