@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0095-OFFICIAL-CORRECTION-TARGET-MAPPING-AUDIT-002",
-  "task": "cp0095_official_correction_target_mapping_audit",
-  "purpose": "Reuse the verified correction ZIP; match correction paths/checksums to 16 exact daily targets. No download, source selection, mutation, closure, build or backtest.",
-  "created_at_utc": "2026-10-16T16:12:00Z",
-  "requested_commit_sha": "36fbd535e8223f8dd878f75b3d42e6d7574cdc93"
+  "request_id": "CP0096-CORRECTION-CHECKSUM-CROSSWALK-AUDIT-001",
+  "task": "cp0096_correction_checksum_crosswalk_audit",
+  "purpose": "Compare all official correction Original/New SHA-256 tokens against 16 verified daily ZIP and 14 monthly ZIP hashes; reuse prior artifact only, no download, source selection, mutation or backtest.",
+  "created_at_utc": "2026-10-16T16:25:00Z",
+  "requested_commit_sha": "d57a98e3afddb821faf5d6e62f7ca2ef0df06454"
 }
