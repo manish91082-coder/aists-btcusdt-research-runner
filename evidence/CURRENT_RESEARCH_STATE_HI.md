@@ -596,3 +596,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Union key rows 1992; shared 1982; exact raw pairs 1550; divergent pairs 432; daily-only 0; monthly-only 10.
 - All unequal/missing rows remain OPEN_REVIEW_REQUIRED. Canonical source NONE, cases closed 0, no timestamp shifts/rounding/merge/replace/delete, no synthetic bars/backtest/promotion.
 - CP-0041 package SHA-256 23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc; queue member SHA-256 b6660083860d5d90afc5d2661353ecf4c8f1aa2d355a9db99d6fc7a40e9b045d; rulebook SHA-256 5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0.
+
+
+## CP-0093 daily-reference discrepancy triage 38910674953
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38910674953; status PASS_DAILY_REFERENCE_DISCREPANCY_TRIAGE_COMPLETE_SOURCE_AUTHORITY_OPEN; checks 14/14 PASS.
+- Existing CP-0107 acquisition run 38909366995: 16/16 daily ZIP/.CHECKSUM pairs and 14/14 monthly cache archives revalidated; this triage used existing artifacts, no downloads.
+- Raw comparison: 1,992 union rows; shared 1,982; exact 1,550; divergent 432; economic-field divergent 14; monthly-only 10; daily-only 0.
+- All 16 target cases remain open; canonical source NONE; cases closed 0. Global G0 BLOCKED_GLOBAL; G2 current 23 candidates FAIL; G7 LIVE_BLOCKED. No market data edits, synthetic candles, backtest or promotion.

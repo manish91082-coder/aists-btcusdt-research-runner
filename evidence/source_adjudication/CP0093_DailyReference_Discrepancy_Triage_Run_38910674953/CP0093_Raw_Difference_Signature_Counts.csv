@@ -1,0 +1,13 @@
+raw_difference_signature,row_count,interpretation
+ignore,415,Diagnostic only; source authority remains NONE
+close_time;ignore,3,Diagnostic only; source authority remains NONE
+close;high;low;number_of_trades;open;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,2,Diagnostic only; source authority remains NONE
+close;high;low;number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,2,Diagnostic only; source authority remains NONE
+close;number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,2,Diagnostic only; source authority remains NONE
+close;number_of_trades;quote_asset_volume;volume,2,Diagnostic only; source authority remains NONE
+close;high;ignore;low;number_of_trades;open;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,1,Diagnostic only; source authority remains NONE
+close;high;ignore;number_of_trades;open;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,1,Diagnostic only; source authority remains NONE
+close;high;ignore;number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,1,Diagnostic only; source authority remains NONE
+close;ignore;low;number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,1,Diagnostic only; source authority remains NONE
+close;low;number_of_trades;quote_asset_volume;taker_buy_base_asset_volume;taker_buy_quote_asset_volume;volume,1,Diagnostic only; source authority remains NONE
+close;low;number_of_trades;quote_asset_volume;volume,1,Diagnostic only; source authority remains NONE

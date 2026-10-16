@@ -1,0 +1,184 @@
+{
+  "archive_downloads": 0,
+  "backtest_rerun": false,
+  "canonical_source_selected": false,
+  "checkpoint": "CP-0093",
+  "checks": [
+    {
+      "check_id": "all_published_input_files_present",
+      "detail": "source summary + 6 CSVs present",
+      "status": "PASS"
+    },
+    {
+      "check_id": "source_acquisition_98_checks_pass",
+      "detail": "{'status': 'PASS_DAILY_REFERENCE_ACQUIRED_AND_ROW_AUDIT_RECORDED', 'checks': '98/98'}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "source_hash_size:CP0107_CP0041_DailyReference_Period_Summary.csv",
+      "detail": "{'actual_bytes': 7855, 'actual_sha256': 'ac0049d157ea7a9d881389a6f38f6e292201bcdce0f6c5317504ef8dc5e2c32e', 'source_record': {'bytes': 7855, 'rows': 16, 'sha256': 'ac0049d157ea7a9d881389a6f38f6e292201bcdce0f6c5317504ef8dc5e2c32e'}}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "source_hash_size:CP0107_CP0041_DailyReference_Archive_Manifest.csv",
+      "detail": "{'actual_bytes': 14055, 'actual_sha256': '78d909e837989548f23ccb6206d32a430071fc06979472e34c33fac55d7405db', 'source_record': {'bytes': 14055, 'rows': 16, 'sha256': '78d909e837989548f23ccb6206d32a430071fc06979472e34c33fac55d7405db'}}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "source_hash_size:CP0107_CP0041_DailyReference_RawRow_Comparison.csv",
+      "detail": "{'actual_bytes': 1509065, 'actual_sha256': 'ac08f6839e172919634d2823ae1f6df4d74613e473419b8c00881527e40906ba', 'source_record': {'bytes': 1509065, 'rows': 1992, 'sha256': 'ac08f6839e172919634d2823ae1f6df4d74613e473419b8c00881527e40906ba'}}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "source_hash_size:CP0107_CP0041_DailyReference_MissingExpectedKeys.csv",
+      "detail": "{'actual_bytes': 2308, 'actual_sha256': 'bd53c87ae8dbf4273d86bbe5ece6dc84446571111b7be41443004a88d452df19', 'source_record': {'bytes': 2308, 'rows': 10, 'sha256': 'bd53c87ae8dbf4273d86bbe5ece6dc84446571111b7be41443004a88d452df19'}}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "source_hash_size:CP0107_CP0041_DailyReference_Queue_Snapshot.csv",
+      "detail": "{'actual_bytes': 7889, 'actual_sha256': 'f2b9c2223e41571147d96cbb41ffad16ca591ea5411cfd30b6e9369e4cddd0d5', 'source_record': {'bytes': 7889, 'rows': 16, 'sha256': 'f2b9c2223e41571147d96cbb41ffad16ca591ea5411cfd30b6e9369e4cddd0d5'}}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "source_hash_size:CP0107_CP0041_MonthlyArchive_Manifest_Subset.csv",
+      "detail": "{'actual_bytes': 3800, 'actual_sha256': 'bac82156cddfcab88b4c01ed0d74de9a3970b36f030ab48608191e2fff4f0340', 'source_record': {'bytes': 3800, 'rows': 14, 'sha256': 'bac82156cddfcab88b4c01ed0d74de9a3970b36f030ab48608191e2fff4f0340'}}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "source_denominators",
+      "detail": "{'periods': 16, 'archives': 16, 'comparison_rows': 1992, 'missing_expected': 10, 'queue': 16, 'monthly': 14}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "comparison_row_keys_unique",
+      "detail": "{'rows': 1992, 'unique_case_interval_open_keys': 1992}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "independent_relation_counts_match_source_summary",
+      "detail": "{'relations': {'SHARED_RAW_DIVERGENT': 432, 'MONTHLY_ONLY_KEY': 10, 'SHARED_RAW_EXACT': 1550}, 'economic_rows': 14}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "divergence_classes_reconcile",
+      "detail": "{'ignore_only': 415, 'close_time_plus_ignore': 3, 'economic': 14, 'all_divergent': 432}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_archive_sidecar_pairs_and_monthly_rows_pass",
+      "detail": "{'daily_zip_sidecar_pairs': 16, 'monthly_archives': 14}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "source_authority_and_raw_mutation_guards",
+      "detail": "all raw comparison rows remain open; no source authority, no case closure, no timestamp/candle changes",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 14,
+  "checks_total": 14,
+  "comparison": {
+    "case_triage_rows": 16,
+    "cases_with_economic_divergence": 9,
+    "cases_with_missing_expected_grid_keys": 2,
+    "close_time_plus_ignore_pairs": 3,
+    "daily_only_keys": 0,
+    "divergent_raw_row_pairs": 432,
+    "economic_field_count_by_field": {
+      "close": 14,
+      "high": 7,
+      "low": 8,
+      "number_of_trades": 14,
+      "open": 4,
+      "quote_asset_volume": 14,
+      "taker_buy_base_asset_volume": 11,
+      "taker_buy_quote_asset_volume": 11,
+      "volume": 14
+    },
+    "economic_field_divergent_pairs": 14,
+    "exact_raw_row_pairs": 1550,
+    "ignore_only_pairs": 415,
+    "missing_expected_grid_keys": 10,
+    "monthly_only_keys": 10,
+    "periods_complete_expected_grid": 14,
+    "periods_open_coverage_review": 2,
+    "shared_open_keys": 1982,
+    "union_open_key_rows": 1992
+  },
+  "finished_at_utc": "2026-10-16T13:48:15.181270+00:00",
+  "g0": "BLOCKED_GLOBAL",
+  "g2": "FAIL_CURRENT_23_CANDIDATES",
+  "g7": "LIVE_BLOCKED",
+  "input_source_run_id": 38909366995,
+  "network_used": false,
+  "outputs": {
+    "CP0093_DailyReference_Case_Triage.csv": {
+      "bytes": 7148,
+      "rows": 16,
+      "sha256": "9bed2918fabfba5d3f3619e1e07728dae32f7d781c7659783d5610e5214ef3d7"
+    },
+    "CP0093_DailyReference_Discrepancy_Triage_Report_HI.md": {
+      "bytes": 1774,
+      "rows": null,
+      "sha256": "90c7dae7ca0a5393509fc95d6f1058c1ea4539eea755276dd1a408ec06fcb031"
+    },
+    "CP0093_Economic_Divergence_14_Row_Detail.csv": {
+      "bytes": 8695,
+      "rows": 14,
+      "sha256": "1baa916e8343e1d1db7a6f59185199b60649177ee527d4a94f1901815159d2f0"
+    },
+    "CP0093_Field_Divergence_Counts.csv": {
+      "bytes": 257,
+      "rows": 11,
+      "sha256": "63d0fa2c26270e3f4d07b31d42ef9a7497fb061f8bf74bb54521260c9da0caf0"
+    },
+    "CP0093_MonthlyOnly_10_Key_Review.csv": {
+      "bytes": 2602,
+      "rows": 10,
+      "sha256": "ff443b7a01139d6ab034ab427058a8ad88b66777afce9151ccc79cec42f23beb"
+    },
+    "CP0093_Raw_Difference_Signature_Counts.csv": {
+      "bytes": 1703,
+      "rows": 12,
+      "sha256": "c8035418a332d2266c14dd12d6b45e848a1331552d2edf8322a6950dfc466969"
+    }
+  },
+  "production_candidate_build": false,
+  "root_cause": "OPEN_NOT_ESTABLISHED",
+  "schema_version": 1,
+  "source_bytes_modified": false,
+  "source_cases_closed": 0,
+  "source_checks": "98/98",
+  "source_evidence_hashes": {
+    "CP0107_CP0041_DailyReference_Archive_Manifest.csv": {
+      "bytes": 14055,
+      "sha256": "78d909e837989548f23ccb6206d32a430071fc06979472e34c33fac55d7405db"
+    },
+    "CP0107_CP0041_DailyReference_MissingExpectedKeys.csv": {
+      "bytes": 2308,
+      "sha256": "bd53c87ae8dbf4273d86bbe5ece6dc84446571111b7be41443004a88d452df19"
+    },
+    "CP0107_CP0041_DailyReference_Period_Summary.csv": {
+      "bytes": 7855,
+      "sha256": "ac0049d157ea7a9d881389a6f38f6e292201bcdce0f6c5317504ef8dc5e2c32e"
+    },
+    "CP0107_CP0041_DailyReference_Queue_Snapshot.csv": {
+      "bytes": 7889,
+      "sha256": "f2b9c2223e41571147d96cbb41ffad16ca591ea5411cfd30b6e9369e4cddd0d5"
+    },
+    "CP0107_CP0041_DailyReference_RawRow_Comparison.csv": {
+      "bytes": 1509065,
+      "sha256": "ac08f6839e172919634d2823ae1f6df4d74613e473419b8c00881527e40906ba"
+    },
+    "CP0107_CP0041_MonthlyArchive_Manifest_Subset.csv": {
+      "bytes": 3800,
+      "sha256": "bac82156cddfcab88b4c01ed0d74de9a3970b36f030ab48608191e2fff4f0340"
+    }
+  },
+  "source_status": "PASS_DAILY_REFERENCE_ACQUIRED_AND_ROW_AUDIT_RECORDED",
+  "started_at_utc": "2026-10-16T13:48:15.087673+00:00",
+  "status": "PASS_DAILY_REFERENCE_DISCREPANCY_TRIAGE_COMPLETE_SOURCE_AUTHORITY_OPEN",
+  "strategy_promoted": false,
+  "task": "cp0093_daily_reference_discrepancy_triage",
+  "unresolved_nonrow_aggregation_blockers": 11
+}
