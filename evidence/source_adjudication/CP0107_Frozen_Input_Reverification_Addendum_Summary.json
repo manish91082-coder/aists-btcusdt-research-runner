@@ -38,27 +38,35 @@
   },
   "current_outputs": {
     "crosswalk": {
-      "path": "evidence/source_adjudication/CP0107_CP0041_Row_Crosswalk.csv",
+      "location": "Materialized Library file; no GitHub repository path asserted",
       "bytes": 452986,
       "rows": 450,
       "sha256": "5b296995a5ac43562498b3360c0afa2da839097026b0e79099cb2274e393382b"
     },
     "derived_worklist": {
-      "path": "evidence/source_adjudication/CP0107_Derived_996_Row_Worklist_Summary.json",
+      "location": "Materialized Library file",
       "bytes": 2099092,
       "rows": 996,
       "sha256": "137ad77bfafa7f7cd788db6f744e5567ad7dba889048b58feb743a34b863d9cb"
     },
     "row_audit": {
-      "path": "evidence/source_adjudication/CP0107_CP0041_Derived_996_Row_Disposition_Audit.csv",
+      "location": "Materialized Library file",
       "bytes": 792477,
       "rows": 996,
       "sha256": "717125e5abd83f987139d76df7ba245b972ad52438d4c64bb2e8bf06901012aa"
     },
     "derived_summary": {
-      "path": "evidence/source_adjudication/CP0107_Derived_996_Row_Worklist_Summary.json",
+      "location": "Materialized Library file",
       "bytes": 7294,
       "sha256": "31bf7846d3429e6590724250459bf2fc1317dcabccf71cca8c21b5ed575fee96"
+    },
+    "addendum_report": {
+      "path": "evidence/source_adjudication/CP0107_Frozen_Input_Reverification_Addendum_HI.md",
+      "publication_status": "committed to GitHub main; fetch-back verification pending"
+    },
+    "addendum_summary": {
+      "path": "evidence/source_adjudication/CP0107_Frozen_Input_Reverification_Addendum_Summary.json",
+      "publication_status": "committed to GitHub main; fetch-back verification pending"
     }
   },
   "validation": {
@@ -81,7 +89,8 @@
     "crosswalk_12_raw_field_exact_rows": 450,
     "audit_non_disposition_unchanged_flags_true": 996,
     "audit_original_source_row_json_unchanged_flags_true": 996,
-    "audit_frozen_hash_references_match": true
+    "audit_frozen_hash_references_match": true,
+    "output_origin": "Source package and derived outputs were materialized from the user's Library. No repository path is asserted for the materialized CSVs unless independently listed in the repository tree."
   },
   "decision_limits": {
     "canonical_source": "NONE",
