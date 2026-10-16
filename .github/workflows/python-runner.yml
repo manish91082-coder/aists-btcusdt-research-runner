@@ -16,6 +16,7 @@ on:
           - cp0040_quarantine_gate_tests
           - cp0040_quarantine_manifest_build
           - cp0040_quarantine_manifest_extend_acquisition
+          - cp0040_quarantine_manifest_extend_aggregation
           - cp0040_candidate_builder_gate_tests
           - historical_reference_replay
           - monthly_derived_replay
@@ -109,7 +110,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
+          if [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
             echo "CP-0107 cache-only extraction uses Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -689,7 +690,7 @@ jobs:
           git commit -m "evidence: persist CP-0107 extraction run ${RUN_ID}"
           git push origin HEAD:main
   publish_cp0040_quarantine_manifest:
-    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0040_quarantine_manifest_build' || needs.run.outputs.task == 'cp0040_quarantine_manifest_extend_acquisition')
+    if: needs.run.result == 'success' && (needs.run.outputs.task == 'cp0040_quarantine_manifest_build' || needs.run.outputs.task == 'cp0040_quarantine_manifest_extend_acquisition' || needs.run.outputs.task == 'cp0040_quarantine_manifest_extend_aggregation')
     needs: run
     runs-on: ubuntu-latest
     permissions:
@@ -775,6 +776,9 @@ jobs:
               if "acquisition_extension" in summary:
                   ext = summary["acquisition_extension"]
                   note += "- Acquisition extension reviewed " + str(ext["raw_comparison_rows"]) + " raw row pairs: " + str(ext["raw_divergent_pairs"]) + " divergent pairs, " + str(ext["economic_field_divergent_pairs"]) + " economic-field divergences, and " + str(ext["monthly_only_keys"]) + " monthly-only keys. Newly added unique keys=" + str(summary["row_level_manifest"]["new_unique_keys_added_from_acquisition"]) + "; overlapping keys enriched=" + str(summary["row_level_manifest"]["existing_keys_enriched_with_acquisition_evidence"]) + ". No new downloads.\n"
+              if "aggregation_bucket_quarantine" in summary:
+                  agg = summary["aggregation_bucket_quarantine"]
+                  note += "- Aggregation-bucket quarantine coverage: " + str(agg["buckets"]) + " open bucket relationships, " + str(agg["unique_exact_keys"]) + " unique parent/child row keys represented; new keys added=" + str(agg["new_exact_keys_quarantined"]) + ". The 11 relationship cases remain blockers and source authority remains NONE.\n"
               note += "- No canonical source selected, no cases closed, no candidate build/backtest, no strategy promotion, live actions remain BLOCKED.\n"
               state_path.write_text(state + note, encoding="utf-8")
           PY
