@@ -1214,8 +1214,8 @@ jobs:
               raise SystemExit("Source-authority/11-blocker/G0 guard changed")
           with mp.open("r",encoding="utf-8",newline="") as f: matrix=list(csv.DictReader(f))
           with dp.open("r",encoding="utf-8",newline="") as f: details=list(csv.DictReader(f))
-          if len(matrix)!=11 or len(details)!=78:
-              raise SystemExit("Expected 11 bucket rows and 78 source-row crosswalk rows")
+          if len(matrix)!=11 or len(details)!=44:
+              raise SystemExit("Expected 11 bucket rows and 44 archive-source crosswalk rows")
           if s.get("status")=="PASS_OFFICIAL_ARCHIVE_INTEGRITY_CONFLICT_MATRIX_COMPLETE":
               if s.get("checks_passed")!=s.get("checks_total") or any(x.get("status")!="PASS" for x in s.get("checks",[])):
                   raise SystemExit("Successful matrix includes a failed check")
