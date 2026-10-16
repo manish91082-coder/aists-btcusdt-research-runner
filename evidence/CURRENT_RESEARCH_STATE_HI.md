@@ -333,3 +333,13 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - No Actions run was triggered for this matrix. CI success is not claimed for this commit.
 - Next bounded step: inspect the actual frozen candidate code/config and build a dependency map for these four 4h/1d cases first, then other cases only for the intervals/features those candidates consume. Use the frozen CP-0040 G0 quarantine rule; do not fetch archives again unless a specific missing evidence item is identified.
 
+
+
+## CP-0107 unmatched-909 distribution and gate triage — 2026-10-16
+
+- Materialized Library audit bytes independently hashed: `/AISTS/CP0107/unmatched_provenance/CP0107_CP0041_Unmatched_909_Provenance_Audit.csv`, 963,228 bytes; SHA-256 `b8ffd2a98f9296fdb04a2296f2190caca5387bbb286185a564717aadcb40d980`; matches the existing summary hash.
+- Parsed 909 rows / 909 unique IDs: 452 daily-only and 457 monthly-only. All 909 monthly manifest hash references, daily manifest/sidecar references, source-row JSON references, frozen worklist key/raw JSON, and existing disposition checks match. All 909 remain exact-counterpart-absent, quarantine-pending-source-attribution, canonical source NONE, root cause OPEN_NOT_ESTABLISHED, case_closed FALSE; no-shift/round/merge/replace/delete flag true.
+- Distribution: 2017-09-06=5 daily-only; 2018-02-09=266 daily-only + 270 monthly-only; 2018-02-10=168+168; 2018-02-11=13+12; 2020-12-21=0+7. February 9-11 account for 897/909 (98.68%) of unmatched keys. This is exact-key distribution only, not permission to timestamp-shift.
+- Published report `evidence/source_adjudication/CP0107_Unmatched_909_Distribution_Gate_Triage_HI.md` and summary `evidence/source_adjudication/CP0107_Unmatched_909_Distribution_Gate_Triage_Summary.json`. Raw-URL vs GitHub contents fetch-back exact comparisons: report PASS, summary PASS. Publication commits report `f677429e8e6f23ac0654b4e3df50aff5faf9993c`, summary `b13bbb5c6ab0f5fc211bb20bafc754c6ab57227a`.
+- Decision: stop repeating the same 909-row provenance audit and stop reprocessing the same 2022-08-08 official correction bundle. The available evidence proves ledger/manifest consistency only; it does not select a canonical source. Treat unmatched keys as quarantined documented data limitations unless distinct official source/version evidence is already available. G0 remains BLOCKED_GLOBAL. No new archive fetched, no source mutation, no backtest rerun, no strategy promotion; live actions remain blocked.
+- Next bounded task: frozen-CP0040 candidate-data eligibility review, explicitly excluding quarantined rows, and determine whether any research-eligible dataset remains. If none, report a hard BLOCKED decision instead of looping.
