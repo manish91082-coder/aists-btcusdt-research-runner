@@ -22,6 +22,7 @@ on:
           - cp0040_quarantine_sensitivity_run
           - cp0040_aggregation_monthly_sidecar_audit
           - cp0040_archive_integrity_conflict_matrix
+          - cp0040_candidate_input_relevance_audit
           - historical_reference_replay
           - monthly_derived_replay
           - legacy_pipeline
@@ -114,7 +115,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0040_aggregation_monthly_sidecar_audit" ] || [ "$TASK" = "cp0040_archive_integrity_conflict_matrix" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
+          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0040_aggregation_monthly_sidecar_audit" ] || [ "$TASK" = "cp0040_archive_integrity_conflict_matrix" ] || [ "$TASK" = "cp0040_candidate_input_relevance_audit" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
             echo "CP-0040 provenance/crosswalk and CP-0107 cache-only audits use Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -1271,4 +1272,108 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$DEST" evidence/source_adjudication/CP0040_Archive_Integrity_Matrix_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
           git commit -m "evidence(cp0040): publish archive integrity conflict matrix ${RUN_ID}"
+          git push origin HEAD:main
+
+  publish_cp0040_candidate_input_relevance_audit:
+    if: needs.run.result == 'success' && needs.run.outputs.task == 'cp0040_candidate_input_relevance_audit'
+    needs: run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Checkout main with scoped write token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ github.token }}
+          persist-credentials: true
+      - name: Download this run's candidate input relevance artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aists-run-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: evidence_stage
+      - name: Validate candidate-input relevance evidence
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv,json,os
+          from pathlib import Path
+          root=Path("evidence_stage/cp0040_candidate_input_relevance_audit")
+          sn=root/"CP0040_Candidate_Input_Relevance_Audit_Summary.json"
+          rp=root/"CP0040_Candidate_Input_Relevance_Audit_Report_HI.md"
+          mp=root/"CP0040_Candidate_Input_Relevance_Matrix.csv"
+          if not all(p.is_file() for p in (sn,rp,mp)):
+              raise SystemExit("Missing candidate-input relevance audit output; refusing publish")
+          s=json.loads(sn.read_text(encoding="utf-8"))
+          allowed={"PASS_CANDIDATE_INPUT_RELEVANCE_REVIEW_COMPLETE_NOT_G0_APPROVAL","REVIEW_REQUIRED_INPUT_RELEVANCE_GATE_FAILURE"}
+          if s.get("task")!="cp0040_candidate_input_relevance_audit" or s.get("status") not in allowed:
+              raise SystemExit("Unexpected audit task/status")
+          if s.get("network_used") is not False or s.get("archive_downloads")!=0 or s.get("production_candidate_build") is not False or s.get("backtest_rerun") is not False:
+              raise SystemExit("Candidate-input review exceeded read-only scope")
+          if s.get("canonical_source")!="NONE" or s.get("source_cases_closed")!=0 or s.get("unresolved_nonrow_aggregation_blockers")!=11 or s.get("g0")!="BLOCKED_GLOBAL":
+              raise SystemExit("Canonical source, case closure, blocker count, or G0 guard changed")
+          with mp.open("r",encoding="utf-8",newline="") as f: rows=list(csv.DictReader(f))
+          if len(rows)!=11:
+              raise SystemExit("Expected one relevance row per open aggregation relationship")
+          if s.get("status")=="PASS_CANDIDATE_INPUT_RELEVANCE_REVIEW_COMPLETE_NOT_G0_APPROVAL":
+              if s.get("checks_passed")!=17 or s.get("checks_total")!=17 or any(c.get("status")!="PASS" for c in s.get("checks",[])):
+                  raise SystemExit("Candidate input relevance evidence checks were not all PASS")
+              dep=s.get("strategy_dependency",{})
+              impact=s.get("quarantine_impact",{})
+              if dep.get("residual_blockers_with_direct_4h_d1_interval_overlap")!=0:
+                  raise SystemExit("An open relationship overlaps the comparator's direct 4h/1d inputs")
+              if [impact.get("4h_rows_removed"),impact.get("1d_rows_removed"),impact.get("1mo_rows_removed")] != [6,3,0]:
+                  raise SystemExit("Unexpected exact-key quarantine input impact counts")
+          print(json.dumps({"status":"PASS_PUBLISH_PREFLIGHT","run_id":os.environ["RUN_ID"],
+                            "audit_status":s["status"],"check_count":s.get("checks_passed"),
+                            "relationship_rows":len(rows)},sort_keys=True))
+          PY
+      - name: Persist candidate-input relevance evidence and append canonical state
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          SRC="evidence_stage/cp0040_candidate_input_relevance_audit"
+          DEST="evidence/source_adjudication/CP0040_Candidate_Input_Relevance_Run_${RUN_ID}"
+          mkdir -p "$DEST"
+          cp "$SRC/CP0040_Candidate_Input_Relevance_Audit_Summary.json" "$DEST/"
+          cp "$SRC/CP0040_Candidate_Input_Relevance_Audit_Report_HI.md" "$DEST/"
+          cp "$SRC/CP0040_Candidate_Input_Relevance_Matrix.csv" "$DEST/"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          rid=os.environ["RUN_ID"];commit=os.environ["RUN_COMMIT"]
+          base=Path("evidence/source_adjudication")
+          dest=base/("CP0040_Candidate_Input_Relevance_Run_"+rid)
+          sp=dest/"CP0040_Candidate_Input_Relevance_Audit_Summary.json"
+          summary=json.loads(sp.read_text(encoding="utf-8"))
+          outputs={}
+          for p in sorted(dest.iterdir()):
+              if p.is_file():outputs[p.name]={"bytes":p.stat().st_size,"sha256":hashlib.sha256(p.read_bytes()).hexdigest()}
+          pointer={"run_id":int(rid),"run_commit_sha":commit,"status":summary["status"],
+                   "summary_path":str(sp),"report_path":str(dest/"CP0040_Candidate_Input_Relevance_Audit_Report_HI.md"),
+                   "summary_sha256":outputs[sp.name]["sha256"],"outputs":outputs,
+                   "network_used":False,"production_candidate_build":False,"backtest_rerun":False,
+                   "canonical_source":"NONE","source_cases_closed":0,"unresolved_nonrow_aggregation_blockers":11,"g0":"BLOCKED_GLOBAL"}
+          (base/"CP0040_Candidate_Input_Relevance_Current.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+          state_path=Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state=state_path.read_text(encoding="utf-8")
+          marker="CP-0040 candidate input relevance audit run "+rid
+          if marker not in state:
+              note="\n\n## "+marker+"\n\n"
+              note+="- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/"+rid+"; status "+summary["status"]+"; runner commit "+commit+".\n"
+              dep=summary.get("strategy_dependency",{});impact=summary.get("quarantine_impact",{})
+              note+="- Frozen comparator MTF_BREAKOUT_4H_D1 direct intervals 4h/1d; open aggregation relationships with direct interval overlap="+str(dep.get("residual_blockers_with_direct_4h_d1_interval_overlap", "NOT_AVAILABLE"))+"/11.\n"
+              note+="- Exact-key quarantine impact: 4h removed="+str(impact.get("4h_rows_removed"))+"; 1d removed="+str(impact.get("1d_rows_removed"))+"; 1mo removed="+str(impact.get("1mo_rows_removed"))+"; TRAIN net-return delta pp="+str(impact.get("train_return_delta_percentage_points"))+".\n"
+              note+="- This is input-relevance evidence, not source authority or G0 approval. All 11 relationship cases remain open; G0 BLOCKED_GLOBAL; canonical source NONE; production candidate build/backtest/promotional actions remain blocked.\n"
+              state_path.write_text(state+note,encoding="utf-8")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DEST" evidence/source_adjudication/CP0040_Candidate_Input_Relevance_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
+          git commit -m "evidence(cp0040): publish candidate-input relevance audit ${RUN_ID}"
           git push origin HEAD:main
