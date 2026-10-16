@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-AGGREGATION-MONTHLY-SIDECAR-AUDIT-001",
-  "task": "cp0040_aggregation_monthly_sidecar_audit",
-  "purpose": "Verify official monthly checksum sidecars for 14 cached ZIPs tied to 11 open buckets; no ZIP downloads or source decisions.",
-  "created_at_utc": "2026-10-16T12:18:00Z",
-  "requested_commit_sha": "a8b0c9892d0b0c714a76363cbcd18cfcff162d0e"
+  "request_id": "CP0040-ARCHIVE-INTEGRITY-CONFLICT-MATRIX-001",
+  "task": "cp0040_archive_integrity_conflict_matrix",
+  "purpose": "Crosswalk official monthly and daily archive hashes against 11 open aggregation conflicts; read-only, no downloads or source selection.",
+  "created_at_utc": "2026-10-16T12:32:00Z",
+  "requested_commit_sha": "15d08e5dabf85575c25b9d8bc7e832e7c0d49914"
 }
