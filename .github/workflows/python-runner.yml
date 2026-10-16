@@ -50,6 +50,7 @@ on:
           - cp0113_fieldlevel_trade_corroboration_disposition_audit
           - cp0114_quarantine_overlap_g0_impact_audit
           - cp0116_candidate_filter_static_audit
+          - cp0117_rulebook_bound_nonrow_blocker_disposition_audit
         default: legacy_pipeline
 
 permissions:
