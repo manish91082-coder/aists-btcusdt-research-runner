@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-ARCHIVE-INTEGRITY-CONFLICT-MATRIX-002",
-  "task": "cp0040_archive_integrity_conflict_matrix",
-  "purpose": "Crosswalk verified monthly and daily archive hashes against 11 open aggregation conflicts; read-only, no downloads or source selection.",
-  "created_at_utc": "2026-10-16T12:38:00Z",
-  "requested_commit_sha": "db794b788c6dc5fdd8fb7f33bdf1a7f18501bfd0"
+  "request_id": "CP0040-CANDIDATE-INPUT-RELEVANCE-AUDIT-001",
+  "task": "cp0040_candidate_input_relevance_audit",
+  "purpose": "Verify frozen MTF_BREAKOUT_4H_D1 input intervals against 11 open aggregation blockers and the published quarantine sensitivity; read-only, no G0 approval.",
+  "created_at_utc": "2026-10-16T12:45:00Z",
+  "requested_commit_sha": "a3a445abdbc50131f4fc96523a81691d8a847c5f"
 }
