@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0114",
+  "status": "PASS_MANIFEST_OVERLAP_AUDIT_G0_STILL_BLOCKED",
+  "reviewed_at_utc": "2026-10-16",
+  "repository": "manish91082-coder/aists-btcusdt-research-runner",
+  "branch": "main",
+  "execution": {
+    "workflow_run_id": 38940457832,
+    "workflow_url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38940457832",
+    "run_commit_sha": "95d01d16e36505a4b207775b16394d3bddcdcbac",
+    "workflow_conclusion": "success",
+    "runner_status": "PASS",
+    "runner_checks_passed": 11,
+    "runner_checks_total": 11,
+    "child_summary_sha256": "1f33e12681a4be4f0280ac27a25f112714dd1e5555ca253fcb6ad58e39e3d1f0",
+    "artifact_id": 12062208828,
+    "artifact_url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38940457832/artifacts/12062208828",
+    "artifact_bytes": 9906,
+    "artifact_zip_sha256": "45fe350b7770f69276f2eb18ba2f70d6497ec2df19e2143872964f7046467434",
+    "artifact_retention_days": 7
+  },
+  "report_path": "evidence/source_adjudication/CP0114_Quarantine_Overlap_G0_Impact_Report_HI.md",
+  "report_git_blob_sha1": "1546408f8b6c77b21a62fbd92fa9aceebdfcbe25",
+  "inputs": {
+    "row_evidence_git_blob_sha1": "5ccb7fc91b829b4599de73f3b63683fbf1d5ebb9",
+    "exactkey_manifest_git_blob_sha1": "f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36",
+    "candidate_input_relevance_git_blob_sha1": "f4c49df0c15ba09",
+    "cp0040_quarantine_key_application": "evidence/source_adjudication/CP0040_Sensitivity_Run_38897836116/CP0040_Quarantine_Key_Application.csv",
+    "cp0040_input_impact": "evidence/source_adjudication/CP0040_Sensitivity_Run_38897836116/CP0040_Input_Impact.csv",
+    "cp0113_pointer_git_blob_sha1": "a4ef9e1d2a80144",
+    "frozen_rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0"
+  },
+  "counts": {
+    "manifest_rows": 1427,
+    "manifest_unique_keys": 1427,
+    "target_keys": 35,
+    "target_keys_in_manifest": 35,
+    "target_class_counts": {
+      "ACQUISITION_ECONOMIC_CONFLICT": 14,
+      "ACQUISITION_RAW_FIELD_CONFLICT": 5,
+      "AGGREGATION_BUCKET_ROW_QUARANTINE": 16
+    },
+    "target_disposition_counts": {
+      "OPEN_REVIEW_REQUIRED": 35
+    },
+    "monthly_divergent_keys": 14,
+    "monthly_divergent_fields": 97,
+    "divergent_keys_in_manifest": 14,
+    "divergent_keys_with_economic_conflict_class": 14,
+    "divergent_keys_closed": 0,
+    "target_keys_in_sensitivity_applied_list": 0,
+    "divergent_keys_in_sensitivity_applied_list": 0,
+    "candidate_relevance_buckets": 11,
+    "buckets_with_direct_4h_d1_interval_overlap": 0,
+    "target_keys_direct_to_frozen_4h_d1_comparator": 0,
+    "sensitivity_application": {
+      "rows_removed_4h": 6,
+      "rows_removed_1d": 3,
+      "rows_removed_1mo": 0,
+      "replacements_added_total": 0
+    },
+    "consistent_duplicate_context_rows": {
+      "DAILY": 4,
+      "MONTHLY": 4
+    },
+    "conflicting_duplicate_values": 0
+  },
+  "decision": {
+    "all_35_keys_in_manifest": true,
+    "all_14_divergent_keys_are_open_economic_conflicts": true,
+    "accepted_quarantine_coverage_for_these_keys_proven": false,
+    "direct_input_scope": "No target key is a direct interval input to frozen MTF_BREAKOUT_4H_D1; this does not establish irrelevance across all 23 G2-failing candidates.",
+    "source_authority": "OPEN_NOT_ESTABLISHED",
+    "canonical_source": "NONE",
+    "source_cases_closed": 0,
+    "unresolved_aggregation_blockers": 11,
+    "g0": "BLOCKED_GLOBAL",
+    "g2": "FAIL_CURRENT_23_CANDIDATES",
+    "g7": "LIVE_BLOCKED"
+  },
+  "outputs": {
+    "CP0114_Quarantine_Overlap_G0_Impact_Crosswalk.csv": {
+      "bytes": 12212,
+      "sha256": "3028e71be4dedebbdae8c1ce475936b5475bacc32689ff6e70569454d468bed3"
+    },
+    "CP0114_MonthlyConflict_Quarantine_Overlap.csv": {
+      "bytes": 5913,
+      "sha256": "ed1ea276992c40cd2826ec67c328c4be52d85295cc47bfc8d7815900164a21c7"
+    },
+    "CP0114_Quarantine_Overlap_G0_Impact_Report_HI.md": {
+      "bytes": 2041,
+      "sha256": "5d4e1d42b24a3d15a561768e2228e67eb5861a8ccd9f4497b08b26f81a09f82b"
+    }
+  },
+  "non_actions": {
+    "network_used": false,
+    "archive_downloads": 0,
+    "raw_archive_bytes_modified": false,
+    "timestamps_shifted_or_rounded": false,
+    "synthetic_candles_created": false,
+    "candidate_build_performed": false,
+    "backtest_performed": false,
+    "strategy_promoted": false,
+    "live_signing_enabled": false,
+    "public_broadcast_enabled": false,
+    "binance_orders_placed": false
+  },
+  "next_bounded_step": "Cross-check these exact 14 conflict keys against the frozen builder inputs for each of the 23 candidates and prove which candidate inputs are removed or remain active. Do not change source data or introduce source precedence."
+}
