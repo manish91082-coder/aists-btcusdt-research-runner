@@ -423,3 +423,14 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Manifest SHA-256 e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a; blocker ledger SHA-256 f45431edcaf657404b9f5405b239f25cd7761af21e9e8115cd71002f7be1bf36. The published frozen index was re-hashed; the original CP-0041 package/rulebook bytes were not freshly re-hashed in this run.
 - Aggregation-bucket quarantine coverage: 11 open bucket relationships, 35 unique parent/child row keys represented; new keys added=16. The 11 relationship cases remain blockers and source authority remains NONE.
 - No canonical source selected, no cases closed, no candidate build/backtest, no strategy promotion, live actions remain BLOCKED.
+
+
+## CP-0040 aggregation bucket exact-key quarantine extension — 2026-10-16
+
+- Added the 16 previously missing exact keys identified by the committed CP0107 aggregation-bucket row evidence. Across 11 buckets, 78 row-evidence records cover 35 unique interval/open_time_ms keys; 19 were already quarantined and 16 were added.
+- Current manifest pointer `evidence/source_adjudication/CP0040_Current_Manifest.json`; latest manifest run `CP0040_Run_38883792900`; 1,427 rows / 1,427 unique keys; SHA-256 `e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a`.
+- All 35 parent/child exact keys from the aggregation evidence are now represented in the quarantine manifest. The 11 aggregation relationship cases remain open; daily child rollups match daily parents in 11/11, while the frozen monthly mismatch signature remains in 11/11. No canonical source selected, no root cause established, no case closed.
+- CP-0026 gate regression [run 38883871540](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38883871540): runner 11/11 PASS; gate tests 5/5 PASS; builder correctly refuses candidate processing because the 11 relationship blockers remain.
+- Report: `evidence/source_adjudication/CP0040_Aggregation_Bucket_ExactKey_Quarantine_Report_HI.md`; summary: `evidence/source_adjudication/CP0040_Aggregation_Bucket_ExactKey_Quarantine_Summary.json`.
+- No candidate build/backtest; G0 remains `BLOCKED_GLOBAL`; no strategy promotion or live actions.
+- Next: obtain a rulebook-aligned disposition for the 11 aggregation relationships. Exact-key quarantine alone does not authorize opening G0.
