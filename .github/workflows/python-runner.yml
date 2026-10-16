@@ -21,6 +21,7 @@ on:
           - cp0040_baseline_reconstruction_audit
           - cp0040_quarantine_sensitivity_run
           - cp0040_aggregation_monthly_sidecar_audit
+          - cp0040_archive_integrity_conflict_matrix
           - historical_reference_replay
           - monthly_derived_replay
           - legacy_pipeline
@@ -113,8 +114,8 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0040_aggregation_monthly_sidecar_audit" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
-            echo "CP-0040 reconstruction/monthly-sidecar and CP-0107 cache-only audits use Python standard library; skipping pip dependencies."
+          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0040_aggregation_monthly_sidecar_audit" ] || [ "$TASK" = "cp0040_archive_integrity_conflict_matrix" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
+            echo "CP-0040 provenance/crosswalk and CP-0107 cache-only audits use Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
           fi
@@ -1167,4 +1168,107 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$DEST" evidence/source_adjudication/CP0040_Aggregation_Monthly_Sidecar_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
           git commit -m "evidence(cp0040): publish monthly sidecar audit run ${RUN_ID}"
+          git push origin HEAD:main
+
+  publish_cp0040_archive_integrity_conflict_matrix:
+    if: needs.run.result == 'success' && needs.run.outputs.task == 'cp0040_archive_integrity_conflict_matrix'
+    needs: run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Checkout main with scoped write token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ github.token }}
+          persist-credentials: true
+      - name: Download this run's conflict matrix artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aists-run-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: evidence_stage
+      - name: Validate archive integrity matrix before publication
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, json, os
+          from pathlib import Path
+          root=Path("evidence_stage/cp0040_archive_integrity_conflict_matrix")
+          sn=root/"CP0040_Archive_Integrity_Conflict_Matrix_Summary.json"
+          rp=root/"CP0040_Archive_Integrity_Conflict_Matrix_Report_HI.md"
+          mp=root/"CP0040_Archive_Integrity_Conflict_Matrix.csv"
+          dp=root/"CP0040_Archive_Integrity_Row_Crosswalk.csv"
+          if not all(p.is_file() for p in (sn,rp,mp,dp)):
+              raise SystemExit("Missing conflict matrix output; refusing publish")
+          s=json.loads(sn.read_text(encoding="utf-8"))
+          allowed={"PASS_OFFICIAL_ARCHIVE_INTEGRITY_CONFLICT_MATRIX_COMPLETE","REVIEW_REQUIRED_MATRIX_GATE_FAILURE"}
+          if s.get("task")!="cp0040_archive_integrity_conflict_matrix" or s.get("status") not in allowed:
+              raise SystemExit("Unexpected matrix task/status")
+          if s.get("network_used") is not False or s.get("monthly_zip_downloads")!=0 or s.get("daily_archive_downloads")!=0:
+              raise SystemExit("Matrix audit must remain read-only with zero downloads")
+          if s.get("canonical_source")!="NONE" or s.get("source_cases_closed")!=0 or s.get("unresolved_nonrow_aggregation_blockers")!=11 or s.get("g0")!="BLOCKED_GLOBAL":
+              raise SystemExit("Source-authority/11-blocker/G0 guard changed")
+          with mp.open("r",encoding="utf-8",newline="") as f: matrix=list(csv.DictReader(f))
+          with dp.open("r",encoding="utf-8",newline="") as f: details=list(csv.DictReader(f))
+          if len(matrix)!=11 or len(details)!=78:
+              raise SystemExit("Expected 11 bucket rows and 78 source-row crosswalk rows")
+          if s.get("status")=="PASS_OFFICIAL_ARCHIVE_INTEGRITY_CONFLICT_MATRIX_COMPLETE":
+              if s.get("checks_passed")!=s.get("checks_total") or any(x.get("status")!="PASS" for x in s.get("checks",[])):
+                  raise SystemExit("Successful matrix includes a failed check")
+              evidence=s.get("source_evidence",{})
+              if evidence.get("matrix_buckets_with_both_archive_sets_authenticated")!=11 or evidence.get("matrix_buckets_with_daily_rollup_match_and_monthly_conflict")!=11:
+                  raise SystemExit("The official-source integrity/aggregation conflict result is not 11/11")
+          print(json.dumps({"status":"PASS_PUBLISH_PREFLIGHT","run_id":os.environ["RUN_ID"],
+                            "matrix_status":s["status"],"buckets":len(matrix),"row_links":len(details)},sort_keys=True))
+          PY
+      - name: Persist the matrix and append canonical state
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          SRC="evidence_stage/cp0040_archive_integrity_conflict_matrix"
+          DEST="evidence/source_adjudication/CP0040_Archive_Integrity_Matrix_Run_${RUN_ID}"
+          mkdir -p "$DEST"
+          cp "$SRC/CP0040_Archive_Integrity_Conflict_Matrix_Summary.json" "$DEST/"
+          cp "$SRC/CP0040_Archive_Integrity_Conflict_Matrix_Report_HI.md" "$DEST/"
+          cp "$SRC/CP0040_Archive_Integrity_Conflict_Matrix.csv" "$DEST/"
+          cp "$SRC/CP0040_Archive_Integrity_Row_Crosswalk.csv" "$DEST/"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          rid=os.environ["RUN_ID"];commit=os.environ["RUN_COMMIT"]
+          base=Path("evidence/source_adjudication")
+          dest=base/("CP0040_Archive_Integrity_Matrix_Run_"+rid)
+          sp=dest/"CP0040_Archive_Integrity_Conflict_Matrix_Summary.json"
+          s=json.loads(sp.read_text(encoding="utf-8"))
+          outputs={}
+          for p in sorted(dest.iterdir()):
+              if p.is_file():outputs[p.name]={"bytes":p.stat().st_size,"sha256":hashlib.sha256(p.read_bytes()).hexdigest()}
+          pointer={"run_id":int(rid),"run_commit_sha":commit,"status":s["status"],
+                   "summary_path":str(sp),"report_path":str(dest/"CP0040_Archive_Integrity_Conflict_Matrix_Report_HI.md"),
+                   "summary_sha256":outputs[sp.name]["sha256"],"outputs":outputs,
+                   "network_used":False,"monthly_zip_downloads":0,"daily_archive_downloads":0,
+                   "canonical_source":"NONE","source_cases_closed":0,"unresolved_nonrow_aggregation_blockers":11,"g0":"BLOCKED_GLOBAL"}
+          (base/"CP0040_Archive_Integrity_Matrix_Current.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+          state_path=Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state=state_path.read_text(encoding="utf-8")
+          marker="CP-0040 official archive integrity conflict matrix run "+rid
+          if marker not in state:
+              note="\n\n## "+marker+"\n\n"
+              note+="- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/"+rid+"; status "+s["status"]+"; runner commit "+commit+".\n"
+              ev=s.get("source_evidence",{})
+              note+="- Source crosswalk: buckets="+str(ev.get("buckets",0))+"; raw row links="+str(ev.get("raw_row_links",0))+"; monthly sidecars=14/14; daily archive records="+str(ev.get("daily_official_archive_records",0))+".\n"
+              note+="- Both monthly/daily archive sets authenticated="+str(ev.get("matrix_buckets_with_both_archive_sets_authenticated",0))+"/11; daily roll-up matched and frozen monthly mismatch remained="+str(ev.get("matrix_buckets_with_daily_rollup_match_and_monthly_conflict",0))+"/11.\n"
+              note+="- Interpretation: official archive-byte integrity confirmed but source authority unresolved; all 11 buckets remain open; G0 BLOCKED_GLOBAL; canonical source NONE. No ZIP downloads, repairs, backtest or promotion.\n"
+              state_path.write_text(state+note,encoding="utf-8")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DEST" evidence/source_adjudication/CP0040_Archive_Integrity_Matrix_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
+          git commit -m "evidence(cp0040): publish archive integrity conflict matrix ${RUN_ID}"
           git push origin HEAD:main
