@@ -626,3 +626,12 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38913040361; status PASS_CHECKSUM_CROSSWALK_NO_ARCHIVE_HASH_HITS_SOURCE_AUTHORITY_OPEN; checks 11/11 PASS.
 - Compared every correction CSV Original/New SHA-256 field against 16 verified daily ZIP hashes and 14 verified monthly ZIP hashes. Daily hits=0/16; monthly hits=0/14. No new download.
 - Source authority remains UNDETERMINED; no case closed; 60 source conflicts, 909 unmatched rows and 11 aggregation blockers remain open; G0 BLOCKED_GLOBAL; G2 current 23 candidates FAIL; G7 LIVE_BLOCKED.
+
+
+## CP-0097 official Binance correction-route closure
+
+- Official Binance Public Data README at `binance/binance-public-data:master/README.md` preserved byte-identically at `evidence/source_adjudication/CP0097_Official_Binance_Public_Data_README_master.md`; official and preserved Git blob SHA-1 both `e01e34a0b0cd91d62386a5a237190a3167138bae`. The documented exhaustive Updates table lists one kline correction bundle: `2022-08-08_kline_updates.zip`; the other listed update is for aggregate trades.
+- CP-0095 exact path/basename mapping for 16 daily targets: 0/16 and 0/16. CP-0096 correction Original/New SHA-256 crosswalk hits: daily 0/16, monthly 0/14. No new archive download.
+- Decision: close only this official correction-search route for the frozen target set. This does not adjudicate daily versus monthly candle values. Canonical source NONE; cases closed 0; 60 source conflicts, 909 unmatched rows quarantined and 11 non-row aggregation blockers remain open.
+- Global gates unchanged: G0 `BLOCKED_GLOBAL`; G2 current 23 candidates `FAIL`; G7 `LIVE_BLOCKED`. No raw data mutation, worklist mutation, candidate build, backtest, or strategy promotion.
+- CP-0097 report: `e0d19fcbdfd288148a3a45e8a4e4feb0da06dddd`; current pointer: `084a401073c573fb80d005d6982cb955c737b841`; official README snapshot: `e01e34a0b0cd91d62386a5a237190a3167138bae`.
