@@ -307,3 +307,15 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Decisions/gates unchanged: canonical source NONE; cases closed 0; root cause OPEN_NOT_ESTABLISHED; G0 BLOCKED_GLOBAL; G1 PARTIAL_SYSTEM_LEVEL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL; G4 INSUFFICIENT_EVIDENCE; G5 NOT_RUN; G6 NOT_BUILT; G7 LIVE_BLOCKED. No raw-source mutation, timestamp shift, synthetic candles, backtest rerun, strategy promotion or exchange action.
 - Next bounded objective: adjudicate the 52 shared economic/trade-metric conflicts against the already inspected official correction-bundle version evidence, keeping the 33 path matches as provenance-only and 19 no-path cases unresolved. No broad archive refetch.
 
+
+
+## CP-0107 Shared-52 evidence-linked matrix independent verification — 2026-10-16
+
+- Independently fetched and parsed the committed matrix `evidence/source_adjudication/CP0107_Shared52_EvidenceLinked_Disposition_Matrix.csv`: Git blob SHA-1 `8e727ea57035240a912040972e73a3ed12c2a653`, 112,361 bytes, 52 rows, 26 columns.
+- Compared each of the 52 matrix case IDs to both committed crosswalks: exact joins 52/52 to `CP0107_Shared52_RowValue_VersionCrosswalk.csv` (blob `acbdf6fc6e161cbf18abde221a050701e88a9c01`) and 52/52 to `CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv` (blob `718c2ac990d9fb5d9c731fdda4fc92657d375ad2`). No duplicate or missing matrix case IDs.
+- Matrix-vs-raw-crosswalk equality checks for monthly/daily raw-row JSON, raw-row hashes, monthly/daily archive hashes, official bundle path, exact-path flag, and Original/New official checksums: 0 mismatches. Exact-path status agrees with official crosswalk 52/52.
+- Evidence classification: 33 rows have exact official daily path and New File Checksum equals frozen daily SHA for 33/33; 19 rows have no exact path in this one inspected bundle. Original File Checksum matches frozen daily SHA for 0/33 matched rows.
+- All 52 dispositions remain `UNRESOLVED_SOURCE_CONFLICT_NO_AUTO_CORRECTION`; canonical source NONE 52/52; root cause OPEN_NOT_ESTABLISHED 52/52; case_closed FALSE 52/52. Matrix decision-state/join issues: 0. This validates matrix integrity, not source authority or root cause.
+- Report: `evidence/source_adjudication/CP0107_Shared52_EvidenceLinked_Disposition_Matrix_Report_HI.md`; companion JSON: `evidence/source_adjudication/CP0107_Shared52_EvidenceLinked_Disposition_Matrix_Summary.json`. Raw-URL vs GitHub contents fetch-back exact comparison: report PASS, summary PASS.
+- No Actions run was triggered for this report; CI is not claimed. No market archives were fetched, no raw data altered, no backtest rerun, no strategy promoted, no source case closed. Gates unchanged: G0 BLOCKED_GLOBAL; G1 PARTIAL_SYSTEM_LEVEL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL; G4 INSUFFICIENT_EVIDENCE; G5 NOT_RUN; G6 NOT_BUILT; G7 LIVE_BLOCKED.
+- Next: inspect only the already committed official correction-package inventory/manifest for further authoritative evidence. If it contains none, record a documented limitation and move to the next global blocker. Do not repeat the same 52-case crosswalk checks or fetch broad archives.
