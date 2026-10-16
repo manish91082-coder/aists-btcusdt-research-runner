@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0040-QUARANTINE-SENSITIVITY-RUN-001",
-  "task": "cp0040_quarantine_sensitivity_run",
-  "purpose": "Compare frozen MTF_BREAKOUT_4H_D1 baseline and exact-key quarantine. Baseline metrics must match first; no source downloads or promotion.",
-  "created_at_utc": "2026-10-16T12:00:00Z",
-  "requested_commit_sha": "52a3856950cb79b4ebf0adbf382681b0fa5785fe"
+  "request_id": "CP0040-AGGREGATION-MONTHLY-SIDECAR-AUDIT-001",
+  "task": "cp0040_aggregation_monthly_sidecar_audit",
+  "purpose": "Verify official monthly checksum sidecars for 14 cached ZIPs tied to 11 open buckets; no ZIP downloads or source decisions.",
+  "created_at_utc": "2026-10-16T12:18:00Z",
+  "requested_commit_sha": "a8b0c9892d0b0c714a76363cbcd18cfcff162d0e"
 }
