@@ -1,0 +1,27 @@
+{
+  "canonical_source": "NONE",
+  "daily_archive_downloads": 0,
+  "g0": "BLOCKED_GLOBAL",
+  "monthly_zip_downloads": 0,
+  "outputs": {
+    "CP0040_Aggregation_Monthly_Sidecar_Audit_Details.csv": {
+      "bytes": 12247,
+      "sha256": "c95a404d6651754f68f25d9b70653b9e48d6257326a2100c700018fed9ecfc9a"
+    },
+    "CP0040_Aggregation_Monthly_Sidecar_Audit_Report_HI.md": {
+      "bytes": 745,
+      "sha256": "683ec92ef0910109a922ad9cc176a01f8a8f0341775aa4ff07920180f6e1d9d5"
+    },
+    "CP0040_Aggregation_Monthly_Sidecar_Audit_Summary.json": {
+      "bytes": 27976,
+      "sha256": "2a100613172c7e0d4a364eb6968a981bc40a531d8b05b10bea6553b3c4990478"
+    }
+  },
+  "report_path": "evidence/source_adjudication/CP0040_Monthly_Sidecar_Run_38900214067/CP0040_Aggregation_Monthly_Sidecar_Audit_Report_HI.md",
+  "run_commit_sha": "33dd389d09cb8107076dfe0bb806b34d8dfc5483",
+  "run_id": 38900214067,
+  "source_cases_closed": 0,
+  "status": "PASS_MONTHLY_SIDECARS_MATCH_CACHED_ARCHIVE_BYTES",
+  "summary_path": "evidence/source_adjudication/CP0040_Monthly_Sidecar_Run_38900214067/CP0040_Aggregation_Monthly_Sidecar_Audit_Summary.json",
+  "summary_sha256": "2a100613172c7e0d4a364eb6968a981bc40a531d8b05b10bea6553b3c4990478"
+}

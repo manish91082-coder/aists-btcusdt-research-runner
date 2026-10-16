@@ -538,3 +538,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - DEVELOPMENT_CHECK: baseline return=24.343646291056565%; quarantine return=24.343646291056565%.
 - TRAIN: baseline return=81.99313544472133%; quarantine return=66.1013946162224%.
 - G0 remains BLOCKED_GLOBAL; 11 aggregation relationship blockers remain open; canonical source remains NONE; live signing/broadcast/orders remain BLOCKED.
+
+
+## CP-0040 aggregation monthly sidecar audit run 38900214067
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38900214067; status PASS_MONTHLY_SIDECARS_MATCH_CACHED_ARCHIVE_BYTES; runner commit 33dd389d09cb8107076dfe0bb806b34d8dfc5483.
+- Official monthly .CHECKSUM text requests=14; verified=14; failed/unavailable=0. Monthly ZIP downloads=0; daily archive downloads=0; Binance market-data REST calls=0.
+- This confirms sidecar-token/cache-ZIP hash linkage only; it does not adjudicate which interval is canonical.
+- The 11 cross-interval aggregation blockers remain open; G0 BLOCKED_GLOBAL; canonical source NONE; no backtest or strategy promotion; live actions BLOCKED.
