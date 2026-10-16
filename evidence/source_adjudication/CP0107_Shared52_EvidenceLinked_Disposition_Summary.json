@@ -1,0 +1,51 @@
+{
+  "checkpoint": "CP0107_SHARED52_EVIDENCE_LINKED_DISPOSITION_MATRIX",
+  "generated_date_utc": "2026-10-16",
+  "inputs": [
+    {
+      "path": "evidence/source_adjudication/CP0107_Shared52_RowValue_VersionCrosswalk.csv",
+      "git_blob_sha1": "acbdf6fc6e161cbf18abde221a050701e88a9c01",
+      "bytes": 116236,
+      "rows": 52
+    },
+    {
+      "path": "evidence/source_adjudication/CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv",
+      "git_blob_sha1": "718c2ac990d9fb5d9c731fdda4fc92657d375ad2",
+      "bytes": 39723,
+      "rows": 52
+    }
+  ],
+  "matrix": {
+    "path": "evidence/source_adjudication/CP0107_Shared52_EvidenceLinked_Disposition_Matrix.csv",
+    "git_blob_sha1": "8e727ea57035240a912040972e73a3ed12c2a653",
+    "bytes": 112361,
+    "rows": 52,
+    "columns": 26
+  },
+  "validation": {
+    "rows_52": 52,
+    "unique_case_ids": 52,
+    "exact_joins_and_fields_pass": 0,
+    "checks_total": 52,
+    "all_cases_open": true,
+    "official_new_checksum_matches_frozen_daily": 33,
+    "no_exact_path_in_bundle": 19,
+    "original_checksum_matches_frozen_daily": 0,
+    "no_path_by_date": {
+      "2020-12-21": 13,
+      "2021-01-21": 2,
+      "2021-12-24": 2,
+      "2018-02-11": 1,
+      "2021-09-23": 1
+    }
+  },
+  "decision": {
+    "canonical_source": "NONE",
+    "cases_closed": 0,
+    "root_cause": "OPEN_NOT_ESTABLISHED",
+    "strategy_promotion": "NOT_ALLOWED",
+    "backtest_rerun": "NOT_RUN",
+    "live_signing_public_broadcast_exchange_orders": "BLOCKED"
+  },
+  "next": "Build candidate-input dependency map against frozen CP0040 G0 quarantine rule. Do not re-fetch archives or infer canonical source from checksum/path absence."
+}
