@@ -146,7 +146,7 @@ def load_candidate_gate(manifest_path: Path, blockers_path: Path, summary_path: 
         raise RuntimeError(f"G0_BLOCKED_MANIFEST_SHA256_MISMATCH: actual={actual_manifest_sha}; expected={expected_manifest_sha}")
     manifest=load_dict_csv(manifest_path)
     expected_rows=summary.get("row_level_manifest",{}).get("rows")
-    if len(manifest) != expected_rows or len(manifest) != 969:
+    if len(manifest) != expected_rows:
         raise RuntimeError(f"G0_BLOCKED_MANIFEST_ROW_COUNT: actual={len(manifest)}; expected={expected_rows}")
     required={"case_id","case_class","interval","open_time_ms","disposition","canonical_source","case_closed"}
     if not manifest or not required.issubset(manifest[0]):
@@ -198,9 +198,13 @@ def run_gate_self_test(manifest_path: Path, blockers_path: Path, summary_path: P
         load_candidate_gate(manifest_path,blockers_path,summary_path)
         blocked=False; message="gate unexpectedly allowed candidate build"
     except RuntimeError as exc:
-        blocked="G0_BLOCKED_NONROW_BLOCKERS_REMAIN" in str(exc)
         message=str(exc)
-    check("current_27_nonrow_blockers_fail_closed",blocked,message)
+        try:
+            expected_blocker_count=len(load_dict_csv(blockers_path))
+        except Exception:
+            expected_blocker_count=-1
+        blocked=f"G0_BLOCKED_NONROW_BLOCKERS_REMAIN: {expected_blocker_count} unresolved non-row cases" in message
+    check("current_nonrow_blockers_fail_closed",blocked,message)
     keys={("5m","1518170294789")}
     fixture=[{"open_time_ms":"1518170294789","raw_open_time_token":"1518170294789"},
              {"open_time_ms":"1518170294790","raw_open_time_token":"1518170294790"}]
