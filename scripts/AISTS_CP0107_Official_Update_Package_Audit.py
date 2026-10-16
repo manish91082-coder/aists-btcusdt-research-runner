@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Inspect the official GitHub kline-correction bundle against the frozen CP-0041 monthly archive names."""
 from __future__ import annotations
-import argparse,base64,csv,hashlib,io,json,re,shutil,zipfile
+import argparse,base64,csv,gzip,hashlib,io,json,re,shutil,zipfile
 from datetime import datetime,timezone
 from pathlib import Path,PurePosixPath
 from urllib.request import Request,urlopen,build_opener,HTTPRedirectHandler
@@ -18,10 +18,11 @@ SOURCE_PACKAGE_SHA256="23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fab
 SOURCE_WORKLIST_SHA256="f69229b7bb49a539bae6a8b878447b569c9450760998bfa33a50af9ef6f6ce0f"
 SOURCE_MONTHLY_MANIFEST_SHA256="1fa5c6ff022d7ff10f293c55c9fb933599c16b3d5d68adc86f2a9425c1e16b65"
 RULEBOOK_SHA256="5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0"
-SHARED52_SNAPSHOT_BLOBS={
-    "evidence/source_adjudication/CP0107_CP0041_Shared52_SourceSnapshot_01.csv":"df6b78425ef3af82c4eb9fcdef8f185e11a073e6",
-    "evidence/source_adjudication/CP0107_CP0041_Shared52_SourceSnapshot_02.csv":"199dfa5ea19ed6d3ea0577c7183fb5c4645fe1da",
-}
+SHARED52_SNAPSHOT_PATH="evidence/source_adjudication/CP0107_CP0041_Shared52_EconomicConflict_Snapshot.csv.gz"
+SHARED52_SNAPSHOT_GIT_BLOB_SHA1="8ea5ffa219387d17ed5b77aaf450db15ea559bda"
+SHARED52_SNAPSHOT_GZIP_SHA256="59baabba0491ff0ccbd006cee230fed8f074f3bb8b4e59cf75a871b1d81ef2dc"
+SHARED52_SNAPSHOT_CSV_SHA256="023ef4ebaf064a0d828c9af1818328f77b9a3d026fc734f189e1b78e97430c3b"
+SHARED52_SNAPSHOT_CSV_BYTES=38435
 EXPECTED_UPDATE_CSV_ROWS=73234
 EXPECTED_SHARED52_ROWS=52
 EXPECTED_SHARED52_EXACT_PATH_ROWS=33
@@ -72,40 +73,49 @@ def read_targets(path:Path)->list[dict]:
     return rows
 
 def read_shared52_snapshots(root:Path)->tuple[list[dict],dict]:
-    combined=[]
-    provenance={}
+    rel=SHARED52_SNAPSHOT_PATH
+    path=root/rel
+    if not path.is_file():
+        raise FileNotFoundError("Frozen CP-0107 compact shared-52 snapshot absent: "+str(path))
+    packed=path.read_bytes()
+    actual_blob=git_blob_sha1(packed)
+    if actual_blob!=SHARED52_SNAPSHOT_GIT_BLOB_SHA1:
+        raise ValueError("Frozen CP-0107 shared-52 snapshot Git blob SHA-1 mismatch")
+    if sha256(packed)!=SHARED52_SNAPSHOT_GZIP_SHA256:
+        raise ValueError("Frozen CP-0107 shared-52 snapshot gzip SHA-256 mismatch")
+    raw=gzip.decompress(packed)
+    if len(raw)!=SHARED52_SNAPSHOT_CSV_BYTES or sha256(raw)!=SHARED52_SNAPSHOT_CSV_SHA256:
+        raise ValueError("Expanded shared-52 CSV byte count/SHA-256 mismatch")
     required={"case_id","interval","utc_date","open_time_ms","open_time_utc","difference_fields",
-              "monthly_archive","monthly_source_sha256","daily_archive","daily_source_sha256","current_disposition"}
-    for rel,expected_blob in SHARED52_SNAPSHOT_BLOBS.items():
-        path=root/rel
-        if not path.is_file():
-            raise FileNotFoundError("Frozen CP-0107 shared-52 snapshot absent: "+str(path))
-        raw=path.read_bytes()
-        actual_blob=git_blob_sha1(raw)
-        if actual_blob!=expected_blob:
-            raise ValueError("Frozen CP-0107 shared-52 snapshot Git blob SHA-1 mismatch: "+rel)
-        with path.open("r",encoding="utf-8-sig",newline="") as f:
-            reader=csv.DictReader(f)
-            if not reader.fieldnames or not required.issubset(set(reader.fieldnames)):
-                raise ValueError("Shared-52 snapshot schema mismatch: "+rel)
-            rows=list(reader)
-        provenance[rel]={"git_blob_sha1":actual_blob,"bytes":len(raw),"rows":len(rows)}
-        for row in rows:
-            row["_snapshot_path"]=rel
-            row["_snapshot_git_blob_sha1"]=actual_blob
-        combined.extend(rows)
-    if len(combined)!=EXPECTED_SHARED52_ROWS:
-        raise ValueError("Expected exactly 52 frozen shared economic-conflict rows; got "+str(len(combined)))
-    ids=[r.get("case_id","") for r in combined]
+              "monthly_archive","monthly_source_sha256","daily_archive","daily_source_sha256",
+              "monthly_row_canonical_sha256","daily_row_canonical_sha256","current_disposition",
+              "raw_row_pair_json_match_worklist","source_pack_sha256","worklist_sha256","shared_ledger_sha256"}
+    with io.StringIO(raw.decode("utf-8-sig"),newline="") as stream:
+        reader=csv.DictReader(stream)
+        if not reader.fieldnames or not required.issubset(set(reader.fieldnames)):
+            raise ValueError("Compact shared-52 snapshot schema mismatch")
+        rows=list(reader)
+    if len(rows)!=EXPECTED_SHARED52_ROWS:
+        raise ValueError("Expected exactly 52 frozen shared economic-conflict rows; got "+str(len(rows)))
+    ids=[r.get("case_id","") for r in rows]
     if any(not case_id for case_id in ids) or len(set(ids))!=len(ids):
         raise ValueError("Shared-52 conflict case IDs are missing or duplicated")
-    if any(r.get("current_disposition")!="UNRESOLVED_SOURCE_CONFLICT_NO_AUTO_CORRECTION" for r in combined):
+    if any(r.get("current_disposition")!="UNRESOLVED_SOURCE_CONFLICT_NO_AUTO_CORRECTION" for r in rows):
         raise ValueError("Shared-52 snapshot contains an unexpected disposition")
+    if any(r.get("raw_row_pair_json_match_worklist")!="True" or
+           r.get("source_pack_sha256")!=SOURCE_PACKAGE_SHA256 or
+           r.get("worklist_sha256")!=SOURCE_WORKLIST_SHA256 for r in rows):
+        raise ValueError("Shared-52 snapshot has a failed worklist/provenance linkage")
     economic={"open","high","low","close","volume","quote_asset_volume","number_of_trades",
               "taker_buy_base_asset_volume","taker_buy_quote_asset_volume"}
-    if any(not (set(filter(None,r.get("difference_fields","").split(";")))&economic) for r in combined):
+    if any(not (set(filter(None,r.get("difference_fields","").split(";")))&economic) for r in rows):
         raise ValueError("Shared-52 snapshot includes a row without an economic/trade-metric difference")
-    return combined,provenance
+    provenance={rel:{"git_blob_sha1":actual_blob,"bytes":len(packed),"gzip_sha256":sha256(packed),
+        "expanded_csv_bytes":len(raw),"expanded_csv_sha256":sha256(raw),"rows":len(rows)}}
+    for row in rows:
+        row["_snapshot_path"]=rel
+        row["_snapshot_git_blob_sha1"]=actual_blob
+    return rows,provenance
 
 def parse_checksum_token(value:str)->str:
     match=re.match(r"^\s*([0-9a-fA-F]{64})(?:\s+.*)?\s*$",str(value or ""))
@@ -182,7 +192,7 @@ def main():
     shared52_rows,snapshot_provenance=read_shared52_snapshots(root)
     check("frozen_shared52_snapshot_blob_identity_and_rows",
           len(shared52_rows)==EXPECTED_SHARED52_ROWS and len({r["case_id"] for r in shared52_rows})==EXPECTED_SHARED52_ROWS
-          and all(meta["rows"]==26 for meta in snapshot_provenance.values()),
+          and len(snapshot_provenance)==1 and all(meta["rows"]==EXPECTED_SHARED52_ROWS for meta in snapshot_provenance.values()),
           "52 unique rows across two frozen snapshots; Git blob SHA-1s verified: "+json.dumps(snapshot_provenance,sort_keys=True))
     update_rows,update_member_path,update_csv_sha256=read_official_update_csv(member_content)
     update_by_path={r["File Path"]:r for r in update_rows}
