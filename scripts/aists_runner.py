@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-ALLOWED_TASKS={"smoke","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"}
+ALLOWED_TASKS={"smoke","cp0040_quarantine_gate_tests","historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"}
 REQUEST_KEYS={"request_id","task","purpose","created_at_utc","requested_commit_sha"}
 
 def file_sha(path):
@@ -77,6 +77,24 @@ def main():
     if task=="smoke":
         check("smoke_no_network",True,"No HTTP requests; standard library only.")
         child_status="SMOKE_ONLY"
+    elif task=="cp0040_quarantine_gate_tests":
+        child=ROOT/"scripts"/"AISTS_CP0040_Quarantine_Gate.py"
+        check("task_script_exists",child.exists(),str(child))
+        child_summary_path=output/"cp0040_quarantine_gate"/"CP0040_Quarantine_Gate_Summary.json"
+        argv=[sys.executable,str(child),"--self-test","--output",str(child_summary_path)]
+        try:
+            proc=subprocess.run(argv,cwd=str(ROOT),text=True,capture_output=True,timeout=120)
+            (output/"cp0040_quarantine_gate_stdout.txt").write_text(proc.stdout[-60000:],encoding="utf-8")
+            (output/"cp0040_quarantine_gate_stderr.txt").write_text(proc.stderr[-30000:],encoding="utf-8")
+            child_rc=proc.returncode
+        except subprocess.TimeoutExpired as exc:
+            child_rc=124
+            (output/"cp0040_quarantine_gate_stderr.txt").write_text(f"Self-test timeout: {exc}",encoding="utf-8")
+        if child_summary_path.exists():
+            try: child_status=json.loads(child_summary_path.read_text(encoding="utf-8")).get("status","UNKNOWN")
+            except Exception: child_status="SUMMARY_PARSE_ERROR"
+        check("task_exit_and_summary",child_rc==0 and child_summary_path.exists(),
+              f"exit={child_rc}; summary_exists={child_summary_path.exists()}")
     elif task in ("historical_reference_replay","monthly_derived_replay","legacy_pipeline","source_adjudication_diagnostic","cp0107_feb2018_raw_row_extract","cp0107_feb2018_disposition_overlay","cp0107_dec2020_child_window_audit","cp0107_field_review_hash_audit","cp0107_monthly_checksum_provenance_audit","cp0107_cp0041_daily_reference_acquisition_audit","cp0107_cp0041_aggregation_bucket_overlay_audit","cp0107_cp0041_worklist_disposition_patch_audit","cp0107_cp0041_dec2020_residual7_exact_key_audit","cp0107_official_update_package_audit"):
         script_name={"historical_reference_replay":"historical_reference_replay.py",
                      "monthly_derived_replay":"monthly_derived_replay.py",
