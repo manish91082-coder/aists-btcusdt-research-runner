@@ -7,6 +7,7 @@ represented in the frozen CP-0040 manifest. Does not choose a source or close a 
 """
 from __future__ import annotations
 import argparse,csv,hashlib,json
+from collections import Counter
 from datetime import datetime,timezone
 from pathlib import Path
 
@@ -41,6 +42,7 @@ def main():
     try:
         triage_dir=(ROOT/a.triage_dir).resolve();acq_dir=(ROOT/a.acquisition_dir).resolve()
         triage_summary_path=triage_dir/"CP0093_DailyReference_Discrepancy_Triage_Summary.json"
+        acquisition_summary_path=acq_dir/"CP0107_CP0041_DailyReference_Acquisition_Summary.json"
         econ_path=triage_dir/"CP0093_Economic_Divergence_14_Row_Detail.csv"
         gaps_path=triage_dir/"CP0093_MonthlyOnly_10_Key_Review.csv"
         case_path=triage_dir/"CP0093_DailyReference_Case_Triage.csv"
@@ -51,11 +53,11 @@ def main():
         rule_path=(ROOT/a.rulebook).resolve();pointer=read_json(ROOT/a.manifest_pointer)
         manifest_path=ROOT/pointer["manifest_path"];manifest_summary_path=ROOT/pointer["summary_path"]
         blockers_path=ROOT/pointer["blockers_path"]
-        required=[triage_summary_path,econ_path,gaps_path,case_path,raw_path,archive_path,period_path,monthly_path,rule_path,manifest_path,manifest_summary_path,blockers_path]
+        required=[triage_summary_path,acquisition_summary_path,econ_path,gaps_path,case_path,raw_path,archive_path,period_path,monthly_path,rule_path,manifest_path,manifest_summary_path,blockers_path]
         missing=[str(p) for p in required if not p.is_file()]
         ck("all_frozen_input_files_present",not missing,missing or "all 12 input files found")
         if missing:raise ValueError("Missing required frozen input: "+", ".join(missing))
-        triage=read_json(triage_summary_path);manifest_summary=read_json(manifest_summary_path)
+        triage=read_json(triage_summary_path);acquisition=read_json(acquisition_summary_path);manifest_summary=read_json(manifest_summary_path)
         econ=read_csv(econ_path);gaps=read_csv(gaps_path);case_rows=read_csv(case_path)
         raw=read_csv(raw_path);archives=read_csv(archive_path);periods=read_csv(period_path);monthly=read_csv(monthly_path)
         manifest=read_csv(manifest_path);blockers=read_csv(blockers_path)
@@ -83,11 +85,12 @@ def main():
            {"sha256":blocker_sha,"rows":len(blockers),"pointer_status":pointer.get("status")})
         ck("upstream_source_audits_pass",triage.get("status")=="PASS_DAILY_REFERENCE_DISCREPANCY_TRIAGE_COMPLETE_SOURCE_AUTHORITY_OPEN" and
            triage.get("checks_passed")==14 and triage.get("checks_total")==14 and
-           triage.get("acquisition",{}).get("daily_zip_sha256_tokens_matched")==16 and
-           triage.get("acquisition",{}).get("daily_zip_crc_pass")==16 and
+           acquisition.get("status")=="PASS_DAILY_REFERENCE_ACQUIRED_AND_ROW_AUDIT_RECORDED" and
+           acquisition.get("checks_passed")==98 and acquisition.get("checks_total")==98 and
            len(archives)==16 and all(r.get("fetch_status")=="PASS" and r.get("zip_crc")=="PASS" and r.get("sidecar_token_matches_zip")=="True" for r in archives) and
            len(monthly)==14 and all(r.get("status")=="MATCH" and r.get("zip_crc")=="PASS" for r in monthly),
            {"triage_status":triage.get("status"),"triage_checks":str(triage.get("checks_passed"))+"/"+str(triage.get("checks_total")),
+            "acquisition_status":acquisition.get("status"),"acquisition_checks":str(acquisition.get("checks_passed"))+"/"+str(acquisition.get("checks_total")),
             "daily_pairs":len(archives),"monthly_archives":len(monthly)})
         ck("triage_denominators_stable",len(econ)==14 and len(gaps)==10 and len(case_rows)==16 and len(raw)==1992 and
            triage.get("comparison",{}).get("economic_field_divergent_pairs")==14 and triage.get("comparison",{}).get("missing_expected_grid_keys")==10,
@@ -197,6 +200,7 @@ def main():
           "schema_version":1,"checkpoint":"CP-0094","task":"cp0094_acquisition_quarantine_coverage_audit",
           "status":status,"started_at_utc":started,"finished_at_utc":now(),
           "inputs":{"triage_summary_status":triage.get("status"),"triage_summary_sha256":sha(triage_summary_path.read_bytes()),
+            "acquisition_summary_status":acquisition.get("status"),"acquisition_summary_sha256":sha(acquisition_summary_path.read_bytes()),
             "rulebook_sha256":sha(rule_bytes),"manifest_sha256":manifest_sha,"manifest_pointer_sha1":hashlib.sha1(manifest_path.read_bytes()).hexdigest(),
             "blockers_sha256":blocker_sha,"raw_row_comparison_sha256":sha(raw_path.read_bytes())},
           "coverage":{"economic_keys":len(econ_rows),"economic_exact_keys_quarantined":sum(r["quarantine_coverage_gate"]=="PASS" for r in econ_rows),
