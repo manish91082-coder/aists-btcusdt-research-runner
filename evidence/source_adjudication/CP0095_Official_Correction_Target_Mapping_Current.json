@@ -1,0 +1,38 @@
+{
+  "basename_matches": 0,
+  "canonical_source": "NONE",
+  "correction_zip_sha256": "1404dbfb3d62534b2576a6c0c046826fe652f895b9bebfe4c13df58bc8cf6240",
+  "daily_targets": 16,
+  "exact_path_matches": 0,
+  "g0": "BLOCKED_GLOBAL",
+  "g2": "FAIL_CURRENT_23_CANDIDATES",
+  "g7": "LIVE_BLOCKED",
+  "outputs": {
+    "CP0095_Correction_Archive_Member_Inventory.csv": {
+      "bytes": 125,
+      "sha256": "265406c3eb3e6ef8077daec275a63ba1770fd3612f971bd91d2f7b5881efb004"
+    },
+    "CP0095_Correction_Target_Mapping_Matrix.csv": {
+      "bytes": 8017,
+      "sha256": "824b44af47d82bed9f0450d5dd8ee413dae06e7f7eb3c5d8a09a81f1f9b7c41b"
+    },
+    "CP0095_Correction_Target_Mapping_Report_HI.md": {
+      "bytes": 1738,
+      "sha256": "7ac3d3c4413e14687608d44641705840d63fd94d9a7d5f49e52ea6dbe788ecf8"
+    },
+    "CP0095_Correction_Target_Mapping_Summary.json": {
+      "bytes": 3743,
+      "sha256": "42665b86387b9c7b53645a851292f0355311c9b9f8a87978af91dd97e908e94f"
+    }
+  },
+  "report_path": "evidence/source_adjudication/CP0095_Official_Correction_Target_Mapping_Run_38912641513/CP0095_Correction_Target_Mapping_Report_HI.md",
+  "run_commit_sha": "f54fa39257c5ddacfff0616184dedc09ed590639",
+  "run_id": 38912641513,
+  "source_cases_closed": 0,
+  "status": "PASS_OFFICIAL_CORRECTION_CSV_HAS_NO_EXACT_PATHS_FOR_16_TARGETS_SOURCE_AUTHORITY_OPEN",
+  "summary_path": "evidence/source_adjudication/CP0095_Official_Correction_Target_Mapping_Run_38912641513/CP0095_Correction_Target_Mapping_Summary.json",
+  "summary_sha256": "42665b86387b9c7b53645a851292f0355311c9b9f8a87978af91dd97e908e94f",
+  "unmatched_rows_quarantined": 909,
+  "unresolved_nonrow_aggregation_blockers": 11,
+  "unresolved_shared_conflicts": 60
+}

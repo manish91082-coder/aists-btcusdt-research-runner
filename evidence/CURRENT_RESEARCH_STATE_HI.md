@@ -611,3 +611,11 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38911689643; status PASS_24_ACQUISITION_KEYS_CONFIRMED_QUARANTINED_SOURCE_AUTHORITY_OPEN; checks 15/15 PASS.
 - Frozen CP-0040 manifest: 1427 unique keys; CP-0093 inputs remained hash-verified. Exact-key quarantine coverage: economic conflicts 14/14; missing daily-grid keys 10/10.
 - This verifies conservative quarantine coverage only. Source authority NONE; all 24 cases remain open; 11 non-row aggregation blockers remain open; global G0 BLOCKED_GLOBAL; G2 current 23 candidates FAIL; G7 LIVE_BLOCKED. No source selection, raw data change, candidate build or backtest.
+
+
+## CP-0095 official correction target mapping 38912641513
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38912641513; status PASS_OFFICIAL_CORRECTION_CSV_HAS_NO_EXACT_PATHS_FOR_16_TARGETS_SOURCE_AUTHORITY_OPEN; checks 9/9 PASS.
+- Reused verified correction ZIP SHA-256 1404dbfb3d62534b2576a6c0c046826fe652f895b9bebfe4c13df58bc8cf6240; correction CSV rows=73234. No new download.
+- Exact correction paths for 16 daily targets=0/16; basename matches=0/16. Correction bundle provides no mapping for this target set.
+- Source authority remains UNDETERMINED; no case closed; 60 source conflicts, 909 unmatched rows and 11 aggregation blockers remain open; G0 BLOCKED_GLOBAL; G2 current 23 candidates FAIL; G7 LIVE_BLOCKED.
