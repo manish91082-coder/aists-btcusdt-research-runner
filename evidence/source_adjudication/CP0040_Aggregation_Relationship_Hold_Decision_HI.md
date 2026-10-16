@@ -36,3 +36,26 @@ Retrieve the exact frozen CP-0040 rulebook from the verified CP-0041 authority p
 - Current manifest pointer: https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/main/evidence/source_adjudication/CP0040_Current_Manifest.json
 - Aggregation quarantine report: https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/main/evidence/source_adjudication/CP0040_Aggregation_Bucket_ExactKey_Quarantine_Report_HI.md
 - Gate regression run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38883871540
+
+
+---
+
+## Amendment 1 — exact frozen rulebook recovered and clause-level crosswalk (2026-10-16)
+
+The verified CP-0041 authority package was materialized from the conversation file `AISTS_CP0041_Row_Level_Evidence_Disposition_Pack.zip`. Verification reproduced:
+- Package SHA-256: `23d8c4479f7ec4591e861f4e3a67f1db5cdb4641ff3da3d23a9484fabfc64fcc`.
+- ZIP CRC test: PASS.
+- Embedded `AISTS_CP0040_Strategy_Acceptance_Rulebook_HI.md` SHA-256: `5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0`, exact match to the frozen hash already recorded.
+
+### Direct rulebook mapping
+- **G0 clause 18:** every cross-timeframe aggregation conflict needs a disposition; until source adjudication, mark the item `UNRESOLVED` and run quarantine sensitivity separately from signal-influence research.
+- **G0 clause 19:** PASS is possible only if no unresolved item can affect the selected candidate's actual signal/position/valuation inputs, **or** each unresolved item is explicitly quarantined **and final metrics are based on that quarantine policy**.
+- **G3 clause 38:** source-policy/quarantine sensitivities must be shown; material metric differences keep the data gate open unless the source is adjudicated or the conservative quarantine policy is frozen.
+
+### Row-level crosswalk result
+The actual `AISTS_CP0041_Residual_Aggregation_Bucket_Disposition.csv` has 11/11 cases still `UNRESOLVED_CROSS_INTERVAL_AGGREGATION_CONFLICT`. All 11 have verified monthly archive/raw rows and saved candidate values, but exact-date official daily reference availability is `False` for 11/11. Public evidence grades: 3 `SAME_DATE_CONTEXT_ONLY`, 2 `MONTH_CONTEXT_ONLY`, 6 `NO_MATCH`. Each closure requirement calls for exact-date official daily ZIP/checksum evidence for both child and parent intervals, then reconciliation of the UTC bucket and OHLCV/trade count, without correction before attribution.
+
+### Final interpretation
+The rulebook does **not** require every source conflict to be causally resolved before any diagnostic can occur. It does, however, require the quarantine policy to be explicit and final metrics to be based on that policy before using the G0 quarantine alternative as a PASS. Current evidence proves exact row-key quarantine coverage, but no candidate build/backtest or final metrics under the current 1,427-key quarantine manifest have been run. Therefore the 11 relationship blockers remain open, G0 remains `BLOCKED_GLOBAL`, and no candidate build/backtest is authorized by this checkpoint.
+
+The earlier statement that the full rulebook bytes were not available as a standalone repository file remains true for the GitHub tree; the exact frozen bytes have now been independently recovered from the verified authority package and hash-checked. This amendment supersedes any implication that the rulebook itself is still unavailable.
