@@ -23,6 +23,7 @@ on:
           - cp0040_aggregation_monthly_sidecar_audit
           - cp0040_archive_integrity_conflict_matrix
           - cp0040_candidate_input_relevance_audit
+          - cp0107_shared52_candidate_input_dependency_audit
           - historical_reference_replay
           - monthly_derived_replay
           - legacy_pipeline
@@ -115,7 +116,7 @@ jobs:
       - name: Install pinned backtest dependencies only when task needs them
         run: |
           TASK=$(python -c 'import json; print(json.load(open("requests/current.json", encoding="utf-8")).get("task", ""))')
-          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0040_aggregation_monthly_sidecar_audit" ] || [ "$TASK" = "cp0040_archive_integrity_conflict_matrix" ] || [ "$TASK" = "cp0040_candidate_input_relevance_audit" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
+          if [ "$TASK" = "cp0040_quarantine_sensitivity_preflight" ] || [ "$TASK" = "cp0040_quarantine_gate_tests" ] || [ "$TASK" = "cp0040_quarantine_manifest_build" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_acquisition" ] || [ "$TASK" = "cp0040_quarantine_manifest_extend_aggregation" ] || [ "$TASK" = "cp0040_candidate_builder_gate_tests" ] || [ "$TASK" = "cp0040_baseline_reconstruction_audit" ] || [ "$TASK" = "cp0040_aggregation_monthly_sidecar_audit" ] || [ "$TASK" = "cp0040_archive_integrity_conflict_matrix" ] || [ "$TASK" = "cp0040_candidate_input_relevance_audit" ] || [ "$TASK" = "cp0107_shared52_candidate_input_dependency_audit" ] || [ "$TASK" = "cp0107_feb2018_raw_row_extract" ] || [ "$TASK" = "cp0107_feb2018_disposition_overlay" ] || [ "$TASK" = "cp0107_dec2020_child_window_audit" ] || [ "$TASK" = "cp0107_field_review_hash_audit" ] || [ "$TASK" = "cp0107_monthly_checksum_provenance_audit" ] || [ "$TASK" = "cp0107_cp0041_daily_reference_acquisition_audit" ] || [ "$TASK" = "cp0107_cp0041_aggregation_bucket_overlay_audit" ] || [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ] || [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ] || [ "$TASK" = "cp0107_official_update_package_audit" ]; then
             echo "CP-0040 provenance/crosswalk and CP-0107 cache-only audits use Python standard library; skipping pip dependencies."
           else
             python -m pip install --disable-pip-version-check -r requirements.txt
@@ -1376,4 +1377,106 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$DEST" evidence/source_adjudication/CP0040_Candidate_Input_Relevance_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
           git commit -m "evidence(cp0040): publish candidate-input relevance audit ${RUN_ID}"
+          git push origin HEAD:main
+
+  publish_cp0107_shared52_candidate_input_dependency_audit:
+    if: needs.run.result == 'success' && needs.run.outputs.task == 'cp0107_shared52_candidate_input_dependency_audit'
+    needs: run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Checkout main with scoped write token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ github.token }}
+          persist-credentials: true
+      - name: Download this run's Shared-52 dependency artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aists-run-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: evidence_stage
+      - name: Validate candidate-input dependency evidence
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv,json,os
+          from pathlib import Path
+          root=Path("evidence_stage/cp0107_shared52_candidate_input_dependency_audit")
+          sp=root/"CP0107_Shared52_Candidate_Input_Dependency_Summary.json"
+          rp=root/"CP0107_Shared52_Candidate_Input_Dependency_Report_HI.md"
+          mp=root/"CP0107_Shared52_Candidate_Input_Dependency_Matrix.csv"
+          if not all(p.is_file() for p in (sp,rp,mp)):
+              raise SystemExit("Missing Shared-52 dependency audit output; refusing publish")
+          s=json.loads(sp.read_text(encoding="utf-8"))
+          allowed={"PASS_SHARED52_CANDIDATE_INPUT_DEPENDENCY_MAP_COMPLETE_NOT_G0_APPROVAL","REVIEW_REQUIRED_SHARED52_INPUT_MAP_GATE_FAILURE"}
+          if s.get("task")!="cp0107_shared52_candidate_input_dependency_audit" or s.get("status") not in allowed:
+              raise SystemExit("Unexpected task/status")
+          if s.get("network_used") is not False or s.get("archive_downloads")!=0 or s.get("production_candidate_build") is not False or s.get("backtest_rerun") is not False:
+              raise SystemExit("Read-only candidate-input scope was exceeded")
+          if s.get("canonical_source_selected") is not False or s.get("source_cases_closed")!=0 or s.get("unresolved_nonrow_aggregation_blockers")!=11 or s.get("g0")!="BLOCKED_GLOBAL":
+              raise SystemExit("Source authority/case-closure/G0 guard changed")
+          with mp.open("r",encoding="utf-8",newline="") as f: rows=list(csv.DictReader(f))
+          if len(rows)!=52:
+              raise SystemExit("Expected 52 exact Shared-52 rows")
+          if s.get("status")=="PASS_SHARED52_CANDIDATE_INPUT_DEPENDENCY_MAP_COMPLETE_NOT_G0_APPROVAL":
+              if s.get("checks_passed")!=19 or s.get("checks_total")!=19 or any(c.get("status")!="PASS" for c in s.get("checks",[])):
+                  raise SystemExit("Shared-52 dependency checks were not all PASS")
+              dep=s.get("candidate_dependency",{})
+              if dep.get("direct_input_conflicts")!=4 or dep.get("direct_4h_conflicts")!=2 or dep.get("direct_1d_conflicts")!=2 or dep.get("not_direct_interval_conflicts")!=48:
+                  raise SystemExit("Candidate dependency counts do not match frozen direct input intervals")
+              if dep.get("all_52_exact_keys_in_cp0040_quarantine_manifest") is not True or dep.get("all_four_direct_keys_in_quarantine_manifest") is not True:
+                  raise SystemExit("Exact-key quarantine coverage check failed")
+          print(json.dumps({"status":"PASS_PUBLISH_PREFLIGHT","run_id":os.environ["RUN_ID"],
+                            "audit_status":s["status"],"checks":s.get("checks_passed"),"shared52_rows":len(rows)},sort_keys=True))
+          PY
+      - name: Persist Shared-52 dependency evidence and append canonical state
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          SRC="evidence_stage/cp0107_shared52_candidate_input_dependency_audit"
+          DEST="evidence/source_adjudication/CP0107_Shared52_Candidate_Input_Dependency_Run_${RUN_ID}"
+          mkdir -p "$DEST"
+          cp "$SRC/CP0107_Shared52_Candidate_Input_Dependency_Summary.json" "$DEST/"
+          cp "$SRC/CP0107_Shared52_Candidate_Input_Dependency_Report_HI.md" "$DEST/"
+          cp "$SRC/CP0107_Shared52_Candidate_Input_Dependency_Matrix.csv" "$DEST/"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          rid=os.environ["RUN_ID"];commit=os.environ["RUN_COMMIT"]
+          base=Path("evidence/source_adjudication")
+          dest=base/("CP0107_Shared52_Candidate_Input_Dependency_Run_"+rid)
+          sp=dest/"CP0107_Shared52_Candidate_Input_Dependency_Summary.json"
+          summary=json.loads(sp.read_text(encoding="utf-8"))
+          outputs={}
+          for p in sorted(dest.iterdir()):
+              if p.is_file():outputs[p.name]={"bytes":p.stat().st_size,"sha256":hashlib.sha256(p.read_bytes()).hexdigest()}
+          pointer={"run_id":int(rid),"run_commit_sha":commit,"status":summary["status"],
+                   "summary_path":str(sp),"report_path":str(dest/"CP0107_Shared52_Candidate_Input_Dependency_Report_HI.md"),
+                   "summary_sha256":outputs[sp.name]["sha256"],"outputs":outputs,
+                   "network_used":False,"production_candidate_build":False,"backtest_rerun":False,
+                   "canonical_source":"NONE","source_cases_closed":0,"unresolved_nonrow_aggregation_blockers":11,"g0":"BLOCKED_GLOBAL"}
+          (base/"CP0107_Shared52_Candidate_Input_Dependency_Current.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+          state_path=Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          state=state_path.read_text(encoding="utf-8")
+          marker="CP-0107 Shared-52 candidate input dependency audit run "+rid
+          if marker not in state:
+              note="\n\n## "+marker+"\n\n"
+              note+="- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/"+rid+"; status "+summary["status"]+"; runner commit "+commit+".\n"
+              dep=summary.get("candidate_dependency",{});imp=summary.get("quarantine_effect",{})
+              note+="- Shared-52 rows=52; conflicts intersecting frozen MTF_BREAKOUT_4H_D1 direct inputs=4 (4h=2, 1d=2); remaining intervals=48. All 52 exact keys matched the CP-0040 quarantine manifest.\n"
+              note+="- Official correction package supplied no exact daily path for the four direct cases. Full-manifest sensitivity: TRAIN delta pp="+str(imp.get("TRAIN_net_return_delta_percentage_points"))+"; no 4-row causal attribution was run.\n"
+              note+="- This is dependency evidence, not source adjudication or G0 approval. All 52 cases remain open; the 11 relationship blockers remain open; G0 BLOCKED_GLOBAL; canonical source NONE.\n"
+              state_path.write_text(state+note,encoding="utf-8")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DEST" evidence/source_adjudication/CP0107_Shared52_Candidate_Input_Dependency_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
+          git commit -m "evidence(cp0107): publish shared52 candidate input dependency map ${RUN_ID}"
           git push origin HEAD:main
