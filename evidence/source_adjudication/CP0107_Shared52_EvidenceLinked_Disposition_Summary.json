@@ -23,29 +23,40 @@
     "columns": 26
   },
   "validation": {
-    "rows_52": 52,
+    "rows": 52,
     "unique_case_ids": 52,
-    "exact_joins_and_fields_pass": 0,
-    "checks_total": 52,
-    "all_cases_open": true,
+    "per_row_checks": 780,
+    "passed_per_row_checks": 728,
+    "all_15_checks_pass_all_rows": false,
+    "check_totals": {
+      "id": 52,
+      "interval": 52,
+      "date": 52,
+      "open": 52,
+      "diff": 52,
+      "monthlyhash": 52,
+      "dailyhash": 52,
+      "original": 52,
+      "new": 52,
+      "rawrowhashes": 52,
+      "checksumflag": 52,
+      "disposition": 52,
+      "canonical": 52,
+      "closed": 0,
+      "root": 52
+    },
     "official_new_checksum_matches_frozen_daily": 33,
     "no_exact_path_in_bundle": 19,
     "original_checksum_matches_frozen_daily": 0,
-    "no_path_by_date": {
-      "2020-12-21": 13,
-      "2021-01-21": 2,
-      "2021-12-24": 2,
-      "2018-02-11": 1,
-      "2021-09-23": 1
-    }
+    "all_cases_open": true
   },
   "decision": {
     "canonical_source": "NONE",
-    "cases_closed": 0,
+    "source_cases_closed": 0,
     "root_cause": "OPEN_NOT_ESTABLISHED",
     "strategy_promotion": "NOT_ALLOWED",
     "backtest_rerun": "NOT_RUN",
     "live_signing_public_broadcast_exchange_orders": "BLOCKED"
   },
-  "next": "Build candidate-input dependency map against frozen CP0040 G0 quarantine rule. Do not re-fetch archives or infer canonical source from checksum/path absence."
+  "next": "Build candidate-input dependency map against frozen CP0040 G0 quarantine rule. No archive refetch; no source-authority inference from checksum/path absence."
 }
