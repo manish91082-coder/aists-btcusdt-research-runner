@@ -76,7 +76,7 @@ def main():
         cp41=next((x for x in packages if x.get("filename")=="AISTS_CP0041_Row_Level_Evidence_Disposition_Pack.zip"),{})
         cp46=next((x for x in packages if x.get("filename")=="AISTS_CP0046_Candidate_Source_Impact_Audit_Pack.zip"),{})
         ck("dual_original_pack_provenance",rr.get("sha256")==RULEBOOK_SHA and rr.get("bytes")==RULEBOOK_BYTES and rr.get("byte_identical_across_packages") is True and cp41.get("sha256")==CP0041_PACK_SHA and cp46.get("sha256")==CP0046_PACK_SHA and cp41.get("zip_crc")=="PASS" and cp46.get("zip_crc")=="PASS",{"CP0041_pack":cp41.get("sha256"),"CP0046_pack":cp46.get("sha256")})
-        g0_clause=("G0 — Source/data eligibility" in rule_text and "each unresolved item explicitly quarantined" in rule_text and "final metrics based on that quarantine policy" in rule_text)
+        g0_clause=("G0 — Source/data eligibility" in rule_text and "प्रत्येक unresolved item स्पष्ट रूप से quarantined हो" in rule_text and "final metrics उस quarantine policy पर आधारित हों" in rule_text)
         g3_clause=("G3 — Candidate stability / stress" in rule_text and "Material metric differences caused by a source policy mean the data gate remains open" in rule_text)
         s3_clause=("MTF_BREAKOUT_4H_D1" in rule_text and "FAIL / NOT PROMOTED under current screen" in rule_text and "No candidate currently passes the frozen acceptance gates" in rule_text)
         ck("frozen_G0_G3_and_current_candidate_decision_clauses_present",g0_clause and g3_clause and s3_clause,{"G0_quarantine_branch":g0_clause,"G3_material_sensitivity_rule":g3_clause,"Section_3_frozen_fail":s3_clause})
@@ -154,7 +154,7 @@ def main():
           "open_relationships":{"count":len(blocker_rows),"candidate_direct_overlap":0,"all_remain_open":True,"root_cause":"OPEN_NOT_ESTABLISHED"},
           "decision":decision,"checks":checks,"checks_passed":sum(c["status"]=="PASS" for c in checks),"checks_total":len(checks),
           "network_used":False,"archive_downloads":0,"source_bytes_modified":False,"production_candidate_build":False,
-          "backtest_rerun":False,"canonical_source_selected":False,"strategy_promoted":False,
+          "backtest_rerun":False,"canonical_source_selected":False,"source_cases_closed":0,"unresolved_nonrow_aggregation_blockers":len(blocker_rows),"strategy_promoted":False,
           "live_signing_broadcast_orders":"BLOCKED","g0_global":"BLOCKED_GLOBAL","g2":"FAIL_NOT_PROMOTED","g3":"BLOCKED_PARTIAL"}
         write_json(out/"CP0040_Rulebook_Bound_Eligibility_Decision_Summary.json",summary)
         write_csv(out/"CP0040_Rulebook_Eligibility_Check_Register.csv",checks)
