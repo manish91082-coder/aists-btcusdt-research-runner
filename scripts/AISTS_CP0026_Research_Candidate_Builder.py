@@ -473,12 +473,16 @@ def main():
     ap.add_argument("--manifest")
     ap.add_argument("--blockers")
     ap.add_argument("--gate-summary")
+    ap.add_argument("--gate-test-output")
     args=ap.parse_args()
     if args.gate_self_test:
         if not (args.manifest and args.blockers and args.gate_summary):
             ap.error("--gate-self-test requires --manifest, --blockers, and --gate-summary")
         result=run_gate_self_test(Path(args.manifest),Path(args.blockers),Path(args.gate_summary))
         print(json.dumps(result,indent=2,ensure_ascii=False))
+        if args.gate_test_output:
+            test_out=Path(args.gate_test_output); test_out.parent.mkdir(parents=True,exist_ok=True)
+            test_out.write_text(json.dumps(result,indent=2,ensure_ascii=False,sort_keys=True)+"\\n",encoding="utf-8")
         return
     root=get_root()
     if not root.exists(): raise FileNotFoundError(f"Expected Drive data root not found: {root}")
