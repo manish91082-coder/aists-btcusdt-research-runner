@@ -1,0 +1,83 @@
+{
+  "artifact_files": [
+    {
+      "bytes": 6653240,
+      "path": "2022-08-08_kline_updates.zip",
+      "sha256": "1404dbfb3d62534b2576a6c0c046826fe652f895b9bebfe4c13df58bc8cf6240"
+    },
+    {
+      "bytes": 638834,
+      "path": "CP0107_Feb2018_DailyCoverage_RawRows.csv",
+      "sha256": "5dd5f5b314ff8518f06f6370db5502c79c3fd2a110653b05822921ff2b5dbcde"
+    },
+    {
+      "bytes": 3414,
+      "path": "CP0107_Feb2018_Extraction_Summary.json",
+      "sha256": "af75c6ce537cc3b879b51c968c679f503e1276d942c83d1493af4af9b0f0e435"
+    },
+    {
+      "bytes": 367591,
+      "path": "CP0107_Feb2018_OffGrid_RawRows.csv",
+      "sha256": "379b1b9b258eed3fa55dfc95238e43e849300b14b85dd7643c0034befd841d64"
+    },
+    {
+      "bytes": 5364,
+      "path": "CP0107_Feb2018_SegmentCoverage.csv",
+      "sha256": "652562ecd179896e0ecd48f2d434be3c5b81bf139d2ac4098062e43f38caf200"
+    },
+    {
+      "bytes": 8050,
+      "path": "CP0107_Feb2018_SourceVerification.csv",
+      "sha256": "3692b0dc2378e5115326834a2b09a625341aa245396a4cca8ac1670474ae19b5"
+    },
+    {
+      "bytes": 409,
+      "path": "CP0107_Official_Update_Package_Entry_Inventory.csv",
+      "sha256": "1a2e1ded8b3109fe3d2290a3415f17e80fdc6b1683445d538688505c314f2ef5"
+    },
+    {
+      "bytes": 1977,
+      "path": "CP0107_Official_Update_Package_Report_HI.md",
+      "sha256": "3e9e3a69fae54a58fd04474bd9c894d3b5dbe68369b2937dc141eddc57cb50d1"
+    },
+    {
+      "bytes": 39723,
+      "path": "CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv",
+      "sha256": "17a59ad312828be8aed4dedf0afff1f57e39b3ffaae302d7a8be8944197f1fcb"
+    },
+    {
+      "bytes": 8323,
+      "path": "CP0107_Official_Update_Package_Summary.json",
+      "sha256": "8ab851a00d7c3c63587a41b0777c14729b94808abd9026271ff1783ba567ed39"
+    },
+    {
+      "bytes": 5659,
+      "path": "CP0107_Official_Update_Package_Target_Matches.csv",
+      "sha256": "effaa80b98bdb4f8bf9506742263ead8404e485ecf21ed1e59a138fedc00e748"
+    },
+    {
+      "bytes": 766,
+      "path": "Runner_Checks.csv",
+      "sha256": "265a000a90784f895c9cc70b6a9cc04d978f204673c01f50d8d2742fa10c4589"
+    },
+    {
+      "bytes": 413,
+      "path": "Runner_Child_Stdout.txt",
+      "sha256": "4b53875612584cbba8b80ae13623b666ebc552e3b09d4a742e21d87be4b8d4a9"
+    },
+    {
+      "bytes": 2604,
+      "path": "Runner_Run_Summary.json",
+      "sha256": "a65b0b4eae831d1a813f8e3a25437ac930c3705a10cca33b25b667f66582e72a"
+    }
+  ],
+  "backtest_rerun": false,
+  "canonical_source_selected": false,
+  "cases_closed": 0,
+  "checkpoint": "CP-0107",
+  "publish_status": "PASS_HASH_AND_ROW_COUNT_VALIDATED",
+  "run_id": 38863550950,
+  "source_authority": "NOT_ASSIGNED",
+  "strategy_promoted": false,
+  "trigger_commit_sha": "3150359d658a7a2011b3458f6b4e0ffe3ae88aa9"
+}

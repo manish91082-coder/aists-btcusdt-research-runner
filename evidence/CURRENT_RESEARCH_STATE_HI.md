@@ -257,3 +257,12 @@ Locate exact frozen CP-0040 rulebook and CP-0041 authoritative source ledgers in
 - Official Git blob SHA-1 90631298cf50ac2e1ee8372a087767b010d78a21; bundle SHA-256 1404dbfb3d62534b2576a6c0c046826fe652f895b9bebfe4c13df58bc8cf6240; bytes 6653240; ZIP CRC PASS.
 - Checked 33 CP-0041 monthly archive targets. Exact archive-member hits=0; text-name references=0; frozen current SHA-token hits=0.
 - Package matches are version/provenance evidence only. Canonical source NONE; cases closed 0; root cause OPEN_NOT_ESTABLISHED. No Binance market-data REST API, no row edits, no backtest or strategy promotion.
+
+
+## CP-0107 official correction-bundle audit 38863550950
+
+- GitHub Actions run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38863550950; status PASS_OFFICIAL_UPDATE_PACKAGE_INSPECTED_SOURCE_AUTHORITY_OPEN; checks 13/13 PASS.
+- Official Git blob SHA-1 90631298cf50ac2e1ee8372a087767b010d78a21; bundle SHA-256 1404dbfb3d62534b2576a6c0c046826fe652f895b9bebfe4c13df58bc8cf6240; bytes 6653240; ZIP CRC PASS.
+- Checked 33 CP-0041 monthly archive targets. Exact archive-member hits=0; text-name references=0; frozen current SHA-token hits=0.
+- Shared-52 daily-path crosswalk: 33/52 exact paths across 14 daily archive objects; New checksum equals frozen daily SHA for 33 rows; Original checksum equals it for 0; no exact bundle path for 19 rows. These are version diagnostics only; source authority NONE and cases stay OPEN.
+- Package matches are version/provenance evidence only. Canonical source NONE; cases closed 0; root cause OPEN_NOT_ESTABLISHED. No Binance market-data REST API, no row edits, no backtest or strategy promotion.

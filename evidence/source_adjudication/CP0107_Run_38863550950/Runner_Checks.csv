@@ -1,0 +1,12 @@
+check_id,status,detail
+request_json_parse,PASS,JSON parsed
+request_schema_allowlist,PASS,unknown=[] missing=[]
+request_id_format,PASS,AISTS-CP0107-OFFICIAL-UPDATE-PROVENANCE-20261016-05
+task_allowlist,PASS,task='cp0107_official_update_package_audit'
+purpose_bounded_text,PASS,191
+workflow_least_privilege,PASS,top_level_contents_read=True; scoped_cp0107_publisher_write=True; forbidden=[]
+all_python_sources_parse,PASS,files=21 errors=[]
+commit_sha_present,PASS,3150359d658a7a2011b3458f6b4e0ffe3ae88aa9
+actions_run_id_present,PASS,38863550950
+task_script_exists,PASS,/home/runner/work/aists-btcusdt-research-runner/aists-btcusdt-research-runner/scripts/AISTS_CP0107_Official_Update_Package_Audit.py
+task_exit_and_summary,PASS,exit=0; summary_exists=True

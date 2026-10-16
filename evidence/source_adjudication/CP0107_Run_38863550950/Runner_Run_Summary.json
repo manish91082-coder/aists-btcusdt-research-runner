@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "check_id": "request_json_parse",
+      "detail": "JSON parsed",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_schema_allowlist",
+      "detail": "unknown=[] missing=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "request_id_format",
+      "detail": "AISTS-CP0107-OFFICIAL-UPDATE-PROVENANCE-20261016-05",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_allowlist",
+      "detail": "task='cp0107_official_update_package_audit'",
+      "status": "PASS"
+    },
+    {
+      "check_id": "purpose_bounded_text",
+      "detail": "191",
+      "status": "PASS"
+    },
+    {
+      "check_id": "workflow_least_privilege",
+      "detail": "top_level_contents_read=True; scoped_cp0107_publisher_write=True; forbidden=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "all_python_sources_parse",
+      "detail": "files=21 errors=[]",
+      "status": "PASS"
+    },
+    {
+      "check_id": "commit_sha_present",
+      "detail": "3150359d658a7a2011b3458f6b4e0ffe3ae88aa9",
+      "status": "PASS"
+    },
+    {
+      "check_id": "actions_run_id_present",
+      "detail": "38863550950",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_script_exists",
+      "detail": "/home/runner/work/aists-btcusdt-research-runner/aists-btcusdt-research-runner/scripts/AISTS_CP0107_Official_Update_Package_Audit.py",
+      "status": "PASS"
+    },
+    {
+      "check_id": "task_exit_and_summary",
+      "detail": "exit=0; summary_exists=True",
+      "status": "PASS"
+    }
+  ],
+  "checks_passed": 11,
+  "checks_total": 11,
+  "child_summary_sha256": "8ab851a00d7c3c63587a41b0777c14729b94808abd9026271ff1783ba567ed39",
+  "commit_sha": "3150359d658a7a2011b3458f6b4e0ffe3ae88aa9",
+  "event": "push",
+  "exchange_credentials_used": false,
+  "generated_at_utc": "2026-10-16T06:51:10.764591+00:00",
+  "market_data_rest_api_used": false,
+  "project": "AISTS BTCUSDT Research Runner",
+  "raw_source_archives_modified": false,
+  "request_id": "AISTS-CP0107-OFFICIAL-UPDATE-PROVENANCE-20261016-05",
+  "request_sha256": "bc333525dbd23f67496603350b2c2046643cb34fd860bcd34a4d776f3ab7b60d",
+  "research_task_status": "PASS_OFFICIAL_UPDATE_PACKAGE_INSPECTED_SOURCE_AUTHORITY_OPEN",
+  "run_attempt": "1",
+  "run_id": "38863550950",
+  "runner_sha256": "8540f042e8b925b7a0420421322f30f4645d8c8a4c5687c6b5e73dc9cefc4934",
+  "runner_status": "PASS",
+  "schema_version": 1,
+  "source_selected": false,
+  "strategy_promoted": false,
+  "task": "cp0107_official_update_package_audit",
+  "workflow_sha256": "a8fc7c70cba1e6bea3d3ce576cd7e6acb79bdc3ca6b796586fe26e9ea795d4d0"
+}

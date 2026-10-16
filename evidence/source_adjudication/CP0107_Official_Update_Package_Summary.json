@@ -32,13 +32,43 @@
       "status": "PASS"
     },
     {
+      "check_id": "frozen_shared52_snapshot_blob_identity_and_rows",
+      "detail": "52 unique rows across two frozen snapshots; Git blob SHA-1s verified: {\"evidence/source_adjudication/CP0107_CP0041_Shared52_EconomicConflict_Snapshot.csv.gz\": {\"bytes\": 7565, \"expanded_csv_bytes\": 38435, \"expanded_csv_sha256\": \"023ef4ebaf064a0d828c9af1818328f77b9a3d026fc734f189e1b78e97430c3b\", \"git_blob_sha1\": \"8ea5ffa219387d17ed5b77aaf450db15ea559bda\", \"gzip_sha256\": \"59baabba0491ff0ccbd006cee230fed8f074f3bb8b4e59cf75a871b1d81ef2dc\", \"rows\": 52}}",
+      "status": "PASS"
+    },
+    {
+      "check_id": "official_update_csv_schema_row_count_and_unique_paths",
+      "detail": "member=2022-08-08_kline_updates.csv; rows=73234; unique_paths=73234; SHA-256=94fea6dfad2903b5a1b0ed0193c9694318655e00f7d164224be72e82d7599046",
+      "status": "PASS"
+    },
+    {
+      "check_id": "shared52_exact_daily_path_coverage",
+      "detail": "rows=52; exact_daily_path_hits=33; no_exact_path=19",
+      "status": "PASS"
+    },
+    {
+      "check_id": "shared52_update_bundle_current_new_checksum_match",
+      "detail": "matched case rows=33/33; unique daily archive objects=14/14",
+      "status": "PASS"
+    },
+    {
+      "check_id": "shared52_original_checksum_not_current_frozen_daily_hash",
+      "detail": "original checksum equals frozen current daily SHA-256 for 0/33 exact-path rows",
+      "status": "PASS"
+    },
+    {
+      "check_id": "shared52_crosswalk_economic_conflicts_remain_open",
+      "detail": "all linked rows are economic/trade-metric conflicts; dispositions remain unresolved; canonical source NONE; cases closed 0",
+      "status": "PASS"
+    },
+    {
       "check_id": "all_33_cp0041_target_names_checked",
       "detail": "target_names_checked=33",
       "status": "PASS"
     }
   ],
-  "checks_passed": 7,
-  "checks_total": 7,
+  "checks_passed": 13,
+  "checks_total": 13,
   "cp0041_target_inventory": {
     "path": "evidence/source_adjudication/CP0107_Official_Update_Target_Monthly_Archive_Filenames.csv",
     "rows": 33,
@@ -68,7 +98,7 @@
     "G6": "NOT_BUILT",
     "G7": "LIVE_BLOCKED"
   },
-  "generated_at_utc": "2026-10-16T06:38:58.711891+00:00",
+  "generated_at_utc": "2026-10-16T06:51:10.744547+00:00",
   "outputs": {
     "2022-08-08_kline_updates.zip": {
       "bytes": 6653240,
@@ -81,9 +111,14 @@
       "sha256": "1a2e1ded8b3109fe3d2290a3415f17e80fdc6b1683445d538688505c314f2ef5"
     },
     "CP0107_Official_Update_Package_Report_HI.md": {
-      "bytes": 1107,
+      "bytes": 1977,
       "rows": null,
-      "sha256": "4e6ae03b0e8a878e4470852a3d0e4b78d41c7807e4b1bd22d2765a87ba5923b8"
+      "sha256": "3e9e3a69fae54a58fd04474bd9c894d3b5dbe68369b2937dc141eddc57cb50d1"
+    },
+    "CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv": {
+      "bytes": 39723,
+      "rows": 52,
+      "sha256": "17a59ad312828be8aed4dedf0afff1f57e39b3ffaae302d7a8be8944197f1fcb"
     },
     "CP0107_Official_Update_Package_Target_Matches.csv": {
       "bytes": 5659,
@@ -97,8 +132,52 @@
     "member_bytes_equal_frozen_current_sha": 0,
     "member_count": 2,
     "nested_zip_member_count": 0,
+    "official_update_csv_member": "2022-08-08_kline_updates.csv",
+    "official_update_csv_rows": 73234,
+    "official_update_csv_sha256": "94fea6dfad2903b5a1b0ed0193c9694318655e00f7d164224be72e82d7599046",
     "target_monthly_archive_names_checked": 33,
     "text_filename_reference_hits": 0
+  },
+  "shared52_daily_crosswalk": {
+    "all_52_cases_remain_open": true,
+    "all_exact_path_rows_are_economic_conflicts": true,
+    "crosswalk_output": "CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv",
+    "exact_official_daily_path_case_rows": 33,
+    "input_rows": 52,
+    "interpretation": "For exact-path matches, frozen current daily archive SHA-256 equals the official bundle New File Checksum, while no row matches the Original File Checksum. This is version provenance only; not a monthly-versus-daily canonical-source decision.",
+    "matched_case_rows_by_interval": {
+      "15m": 8,
+      "1h": 4,
+      "30m": 4,
+      "5m": 17
+    },
+    "matched_case_rows_by_utc_date": {
+      "2021-04-22": 5,
+      "2021-04-23": 16,
+      "2021-12-24": 8,
+      "2022-04-13": 4
+    },
+    "no_exact_official_daily_path_case_rows": 19,
+    "official_new_checksum_matches_frozen_daily_sha256": 33,
+    "official_original_checksum_matches_frozen_daily_sha256": 0,
+    "snapshot_files": {
+      "evidence/source_adjudication/CP0107_CP0041_Shared52_EconomicConflict_Snapshot.csv.gz": {
+        "bytes": 7565,
+        "expanded_csv_bytes": 38435,
+        "expanded_csv_sha256": "023ef4ebaf064a0d828c9af1818328f77b9a3d026fc734f189e1b78e97430c3b",
+        "git_blob_sha1": "8ea5ffa219387d17ed5b77aaf450db15ea559bda",
+        "gzip_sha256": "59baabba0491ff0ccbd006cee230fed8f074f3bb8b4e59cf75a871b1d81ef2dc",
+        "rows": 52
+      }
+    },
+    "unique_case_ids": 52,
+    "unique_daily_archive_objects_by_interval": {
+      "15m": 4,
+      "1h": 3,
+      "30m": 3,
+      "5m": 4
+    },
+    "unique_daily_archive_objects_matched": 14
   },
   "source": {
     "actual_git_blob_sha1": "90631298cf50ac2e1ee8372a087767b010d78a21",
