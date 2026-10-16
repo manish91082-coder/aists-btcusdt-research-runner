@@ -668,7 +668,7 @@ jobs:
           if [ "$TASK" = "cp0107_field_review_hash_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_Dec2020_FieldReview_Summary.json evidence/source_adjudication/CP0107_Dec2020_FieldReview_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_official_update_package_audit" ]; then
-            git add "$DEST" evidence/source_adjudication/CP0107_Official_Update_Package_Summary.json evidence/source_adjudication/CP0107_Official_Update_Package_Report_HI.md evidence/source_adjudication/CP0107_Summary.json evidence/CURRENT_RESEARCH_STATE_HI.md
+            git add "$DEST" evidence/source_adjudication/CP0107_Official_Update_Package_Summary.json evidence/source_adjudication/CP0107_Official_Update_Package_Report_HI.md evidence/source_adjudication/CP0107_Official_Update_Package_Shared52_DailyCrosswalk.csv evidence/source_adjudication/CP0107_Summary.json evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_dec2020_residual7_exact_key_audit" ]; then
             git add "$DEST" evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_ExactKey_Audit.csv evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_ArchiveVerification.csv evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Summary.json evidence/source_adjudication/CP0107_CP0041_Dec2020_Residual7_Report_HI.md evidence/CURRENT_RESEARCH_STATE_HI.md
           elif [ "$TASK" = "cp0107_cp0041_worklist_disposition_patch_audit" ]; then
