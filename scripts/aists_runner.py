@@ -335,7 +335,7 @@ def main():
                 child_summary_path=output/"cp0092_correction_archive_binary_probe"/"CP0092_Correction_Archive_Binary_Route_Summary.json"
             elif task=="cp0095_official_correction_target_mapping_audit":
                 argv=[sys.executable,str(child),
-                      "--correction-zip","prior_correction_archive/cp0092_correction_archive_binary_probe/source/2022-08-08_kline_updates.zip",
+                      "--correction-zip","prior_correction_archive/cp0092_correction_archive_probe/source/2022-08-08_kline_updates.zip",
                       "--acquisition-dir","evidence/source_adjudication/CP0107_Run_38909366995",
                       "--output-dir","results/cp0095_official_correction_target_mapping"]
                 timeout=600
