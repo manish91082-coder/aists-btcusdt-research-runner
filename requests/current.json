@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0116-CANDIDATE-FILTER-STATIC-AUDIT-20261016-02",
-  "task": "cp0116_candidate_filter_static_audit",
-  "purpose": "Statically verify CP-0026 G0 and exact-key filtering; run gate self-tests and synthetic probes for 35 CP-0113 keys. No production build or backtest.",
-  "created_at_utc": "2026-10-16T18:41:00Z",
-  "requested_commit_sha": "4111ba3b780e8880f87124b99c7c7190826049a3"
+  "request_id": "CP0117-RULEBOOK-NONROW-BLOCKER-DISPOSITION-20261016-01",
+  "task": "cp0117_rulebook_bound_nonrow_blocker_disposition_audit",
+  "purpose": "Disposition 11 aggregation blockers against frozen CP-0040 rules, CP0112-0116 evidence and dated public provenance snapshot. No source selection, closure, production build or backtest.",
+  "created_at_utc": "2026-10-16T19:02:00Z",
+  "requested_commit_sha": "fb3805faff726a9dccc6905f41eccc55cf062ca5"
 }
