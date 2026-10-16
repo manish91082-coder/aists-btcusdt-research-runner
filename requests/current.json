@@ -1,7 +1,7 @@
 {
-  "request_id": "CP0116-CANDIDATE-FILTER-STATIC-AUDIT-20261016-01",
+  "request_id": "CP0116-CANDIDATE-FILTER-STATIC-AUDIT-20261016-02",
   "task": "cp0116_candidate_filter_static_audit",
-  "purpose": "Statically inspect the frozen CP-0026 builder G0 guard and exact-key quarantine branch; run the builder's own gate self-test and synthetic partition probes for all 35 CP-0113 target keys; do not invoke production main, read/build actual candle outputs, or backtest.",
-  "created_at_utc": "2026-10-16T18:36:00Z",
-  "requested_commit_sha": "8c2469261feee96c14ec85231204c087e4481465"
+  "purpose": "Statically verify CP-0026 G0 and exact-key filtering; run gate self-tests and synthetic probes for 35 CP-0113 keys. No production build or backtest.",
+  "created_at_utc": "2026-10-16T18:41:00Z",
+  "requested_commit_sha": "4111ba3b780e8880f87124b99c7c7190826049a3"
 }
