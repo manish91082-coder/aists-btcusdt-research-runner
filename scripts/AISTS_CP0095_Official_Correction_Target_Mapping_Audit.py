@@ -40,7 +40,13 @@ def main():
     a=ap.parse_args();started=now();out=(ROOT/a.output_dir).resolve();out.mkdir(parents=True,exist_ok=True);checks=[]
     def ck(n,ok,d):checks.append({"check_id":n,"status":"PASS" if ok else "FAIL","detail":str(d)})
     try:
-        zipp=(ROOT/a.correction_zip).resolve();ad=(ROOT/a.acquisition_dir).resolve()
+        zipp=(ROOT/a.correction_zip).resolve()
+        if zipp.is_dir():
+            candidates=sorted(zipp.rglob("2022-08-08_kline_updates.zip"))
+            if len(candidates)!=1:
+                raise ValueError("Expected exactly one reused correction ZIP under artifact directory; found "+str(len(candidates)))
+            zipp=candidates[0]
+        ad=(ROOT/a.acquisition_dir).resolve()
         archive_path=ad/"CP0107_CP0041_DailyReference_Archive_Manifest.csv"
         acq_summary_path=ad/"CP0107_CP0041_DailyReference_Acquisition_Summary.json"
         missing=[str(p) for p in (zipp,archive_path,acq_summary_path) if not p.is_file()]
