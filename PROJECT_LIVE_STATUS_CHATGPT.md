@@ -1,7 +1,7 @@
 # AISTS Project Live Status for ChatGPT
 
 Last updated: 2026-10-17
-Status checkpoint: CP-0140 verified; next action is goal-direction reset before CP-0141.
+Status checkpoint: CP-0141 implementation pushed; exact final-head CI verification pending.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2 (must remain OPEN; do not merge)
@@ -48,3 +48,12 @@ The next action must address the actual blocker to useful strategy evaluation, n
 4. Before every project response, explicitly check whether the proposed next action removes a goal blocker; state drift if it only adds infrastructure without unblocking evidence.
 5. Update this file and the roadmap checkpoint on each material project response/checkpoint, then verify the resulting branch/PR head and CI terminal outcome. Do not claim a GitHub update or CI pass until verified.
 6. Keep all gate statuses and safety controls unchanged unless new admissible evidence independently justifies a change.
+
+
+## CP-0141 work performed in this session
+- Goal-direction check first: inspected current CP-0117/CP-0118/CP-0119 evidence, the exact frozen CP-0040 rulebook and the CP-0040 candidate-specific decision. No new official historical-version evidence was found in repository evidence; CP-0119 records 0 version-timeline links for 11 cases, and the recorded Binance issue #504 snapshot remains open with 0 comments/no maintainer answer. Do not repeat this same provenance search absent new official evidence.
+- Found existing evidence is decisive about current limits: monthly parent-child rollups mismatch in 11/11 cases; the MTF_BREAKOUT_4H_D1 comparator's candidate-specific quarantine branch does not clear global G0, G2 is FAIL/NOT PROMOTED, G3 is blocked, and full-manifest quarantine changes TRAIN net return by -15.891741 percentage points. Do not present this diagnostic as validated profitability.
+- To advance the actual AI brain rather than add another evidence-index module, added `aists_brain/strategy_action_engine.py`. It maps existing candidate eligibility into offline BUY_CANDIDATE/SELL_CANDIDATE/NO_TRADE actions and explicit rule exits. No automatic SL/TP or exchange-order behavior is added.
+- Added `tests/test_market_strategy_action_engine.py` with 8 tests; added the module to CI compile list; appended CP-0141 to the roadmap. This is a new unvalidated deterministic rules adapter, not trained AI and not profitability evidence.
+- CP-0141 CI exact final-head result must be recorded only after fetching live branch SHA, PR #2 head/state and the matching Actions terminal logs. Until then, this checkpoint is implementation pushed / verification pending.
+- Next after a verified CI pass: connect the action engine to a provenance-gated causal decision artifact producer, ensuring G0 BLOCKED still rejects any real-market run. Do not create or use a fake PASS manifest.
