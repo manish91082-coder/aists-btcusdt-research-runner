@@ -64,6 +64,24 @@ class AccountingReconciliationTests(unittest.TestCase):
         with self.assertRaisesRegex(ReconciliationError, "cumulative fees"):
             reconcile_simulation_with_ledger(self.sim, altered)
 
+    def test_matching_but_incorrect_event_and_ledger_fee_is_detected(self):
+        altered_sim = copy.deepcopy(self.sim)
+        altered_sim["events"][0]["fee_usdt"] += 0.01
+        altered_ledger = create_ledger(initial_cash_usdt=1000.0)
+        for event in altered_sim["events"]:
+            altered_ledger = append_paper_fill(
+                altered_ledger,
+                timestamp_ms=event["fill_open_time_ms"],
+                side=event["side"],
+                quantity_btc=event["quantity_btc"],
+                price_usdt=event["fill_price_usdt"],
+                fee_usdt=event["fee_usdt"],
+                decision_id=event["decision_id"],
+                reason="tampered fee regression fixture",
+            )
+        with self.assertRaisesRegex(ReconciliationError, "fee arithmetic mismatch"):
+            reconcile_simulation_with_ledger(altered_sim, altered_ledger)
+
     def test_mark_to_market_mismatch_is_detected(self):
         altered = copy.deepcopy(self.sim)
         altered["equity_usdt_after_estimated_exit_costs"] += 5.0
