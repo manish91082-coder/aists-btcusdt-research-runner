@@ -133,6 +133,16 @@ def reconcile_simulation_with_ledger(
                            simulation.get("equity_usdt_after_estimated_exit_costs"))
     if abs(independently_marked_equity - reported_equity) > tolerance_usdt:
         raise ReconciliationError("independent mark-to-market does not match simulator equity")
+    if initial_cash <= 0:
+        raise ReconciliationError("initial cash must be positive")
+    expected_net_pnl = independently_marked_equity - initial_cash
+    reported_net_pnl = _num("net_pnl_usdt_after_modeled_costs", simulation.get("net_pnl_usdt_after_modeled_costs"))
+    if abs(expected_net_pnl - reported_net_pnl) > tolerance_usdt:
+        raise ReconciliationError("net PnL summary does not match independently reconciled equity")
+    expected_return_pct = (independently_marked_equity / initial_cash - 1.0) * 100.0
+    reported_return_pct = _num("net_return_pct_after_modeled_costs", simulation.get("net_return_pct_after_modeled_costs"))
+    if abs(expected_return_pct - reported_return_pct) > max(1e-10, abs(expected_return_pct) * 1e-12):
+        raise ReconciliationError("net return summary does not match independently reconciled equity")
 
     return {
         "schema_version": "aists.accounting_reconciliation.v1",
