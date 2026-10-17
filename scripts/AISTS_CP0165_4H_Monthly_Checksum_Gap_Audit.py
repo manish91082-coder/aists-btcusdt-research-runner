@@ -274,7 +274,7 @@ def main():
     write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv",details,
               ["period","filename","cache_path","cache_match_count","cache_status","local_sha256","inventory_sha256","inventory_bytes","baseline_sha256_status","baseline_bytes_status","zip_crc","timestamp_unit","timestamp_unit_counts","timestamp_unit_status","sidecar_status","sidecar_sha256","sidecar_hashes","sidecar_filename_match","checksum_status","error"])
     write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv",gaps,
-              ["previous_open_time_utc","next_open_time_utc","delta_ms","missing_intervals_estimate","gap_class"])
+              ["previous_open_time_utc","next_open_time_utc","delta_us","missing_intervals_estimate","gap_class"])
     summary={"schema_version":1,"checkpoint":"CP-0165","task":TASK,"status":status,"started_at_utc":started,"finished_at_utc":utc_now(),
              "expected_months":110,"archive_inventory_rows":len(rows),"months_with_single_cache_match":sum(r["cache_match_count"]==1 for r in details),
              "checksum_matches":matches,"checksum_unavailable_or_mismatched":unavailable,"official_sidecar_requests":sum(r["sidecar_status"] not in ("NOT_REQUESTED",) for r in details),
