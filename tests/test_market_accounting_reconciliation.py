@@ -106,6 +106,18 @@ class AccountingReconciliationTests(unittest.TestCase):
         with self.assertRaisesRegex(ReconciliationError, "mark-to-market"):
             reconcile_simulation_with_ledger(altered, self.ledger)
 
+    def test_net_pnl_summary_mismatch_is_detected(self):
+        altered = copy.deepcopy(self.sim)
+        altered["net_pnl_usdt_after_modeled_costs"] += 1.0
+        with self.assertRaisesRegex(ReconciliationError, "net PnL summary"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
+    def test_net_return_summary_mismatch_is_detected(self):
+        altered = copy.deepcopy(self.sim)
+        altered["net_return_pct_after_modeled_costs"] += 1.0
+        with self.assertRaisesRegex(ReconciliationError, "net return summary"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
     def test_event_count_mismatch_is_detected(self):
         altered = copy.deepcopy(self.sim)
         altered["events"] = altered["events"][:1]
