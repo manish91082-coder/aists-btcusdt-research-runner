@@ -23,6 +23,6 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile brain modules
-        run: python -m py_compile aists_brain/market_context.py aists_brain/market_regime.py
-      - name: Run market-context and regime unit tests
+        run: python -m py_compile aists_brain/market_context.py aists_brain/market_regime.py aists_brain/strategy_candidates.py
+      - name: Run brain unit tests
         run: python -m unittest discover -s tests -p 'test_market_*.py' -v
