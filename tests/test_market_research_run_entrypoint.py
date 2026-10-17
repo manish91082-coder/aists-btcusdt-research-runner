@@ -10,6 +10,7 @@ from aists_brain.research_run_entrypoint import (
     ResearchRunEntryPointError,
     run_research_entrypoint,
 )
+from aists_brain.research_report_verifier import verify_research_audit_report
 
 
 GATES_BLOCKED = {
@@ -43,6 +44,22 @@ class ResearchRunEntryPointTests(unittest.TestCase):
         self.assertIsNone(report["run"])
         self.assertEqual(report["gate_snapshot"]["G0"], "BLOCKED_GLOBAL")
         self.assertEqual(serialize_research_audit_report(report).count("report_sha256"), 1)
+
+    def test_g0_pass_with_missing_arguments_is_blocked_input_and_not_inspected(self):
+        report = run_research_entrypoint(
+            gate_snapshot={**GATES_BLOCKED, "G0": "PASS"},
+            run_id="cp0177-missing-args",
+            repository_head_sha=HEAD,
+        )
+        self.assertEqual(report["status"], "BLOCKED_INPUT")
+        self.assertEqual(report["entrypoint"]["blocked_reason"], "REQUIRED_INPUT_ARGUMENT_MISSING")
+        self.assertFalse(report["entrypoint"]["input_artifacts_inspected"])
+        self.assertFalse(report["entrypoint"]["simulation_attempted"])
+        self.assertIsNone(report["run"])
+        self.assertEqual(report["input_hashes"], {})
+        verified = verify_research_audit_report(report)
+        self.assertEqual(verified["report_status"], "BLOCKED_INPUT")
+        self.assertEqual(verified["status"], "PASS_STRUCTURAL_INTEGRITY")
 
     def test_blocked_report_is_deterministic_for_same_inputs(self):
         kwargs = dict(
