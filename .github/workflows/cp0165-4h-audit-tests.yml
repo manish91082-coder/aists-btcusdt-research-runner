@@ -1,0 +1,110 @@
+name: CP-0165 4h Archive Audit Static Tests
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py'
+      - 'scripts/AISTS_CP0026_Research_Candidate_Builder.py'
+      - 'scripts/AISTS_CP0027_MultiTimeframe_Baseline_Backtest.py'
+      - 'tests/test_cp0204_backtest_gap_gate.py'
+      - 'tests/test_cp0206_frozen_gap_policy.py'
+      - 'tests/test_cp0207_accounting_invariants.py'
+      - 'tests/test_cp0208_synthetic_ledger_reconciliation.py'
+      - 'tests/test_cp0209_gap_boundary_verification.py'
+      - 'tests/test_cp0210_segment_censor_contract.py'
+      - 'docs/CP0210_Segment_Censor_Accounting_Contract.md'
+      - 'docs/CP0207_Independent_Accounting_Reconciliation_Preflight.md'
+      - 'evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy.json'
+      - 'evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy_SHA256.json'
+      - 'scripts/AISTS_CP0203_GapPolicy_Gate.py'
+      - 'tests/test_cp0203_gap_policy_gate.py'
+      - 'scripts/aists_runner.py'
+      - '.github/workflows/python-runner.yml'
+      - '.github/workflows/cp0165-4h-audit-tests.yml'
+      - '.github/workflows/cp0165-4h-audit-execution.yml'
+      - 'tests/test_cp0165_4h_audit.py'
+      - 'scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py'
+      - 'tests/test_cp0192_gap_triage.py'
+      - 'scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py'
+      - 'tests/test_cp0197_evidence_linkage.py'
+      - 'scripts/AISTS_CP0198_DailyReference_4H_ExactKey_Audit.py'
+      - 'tests/test_cp0198_daily_reference_exact_key.py'
+      - 'scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py'
+      - 'tests/test_cp0199_source_conflict_probe.py'
+      - 'scripts/AISTS_CP0200_G0_Rulebook_Bound_Gap_Disposition.py'
+      - 'tests/test_cp0200_g0_rulebook_disposition.py'
+      - 'scripts/AISTS_CP0201_Gap_Quarantine_Overlap_Crosswalk.py'
+      - 'tests/test_cp0201_gap_quarantine_crosswalk.py'
+      - 'docs/AISTS_LIVE_STATUS_ROADMAP.md'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py'
+      - 'scripts/AISTS_CP0026_Research_Candidate_Builder.py'
+      - 'scripts/AISTS_CP0203_GapPolicy_Gate.py'
+      - 'tests/test_cp0203_gap_policy_gate.py'
+      - 'scripts/aists_runner.py'
+      - '.github/workflows/python-runner.yml'
+      - '.github/workflows/cp0165-4h-audit-tests.yml'
+      - '.github/workflows/cp0165-4h-audit-execution.yml'
+      - 'tests/test_cp0165_4h_audit.py'
+      - 'scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py'
+      - 'tests/test_cp0192_gap_triage.py'
+      - 'scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py'
+      - 'tests/test_cp0197_evidence_linkage.py'
+      - 'scripts/AISTS_CP0198_DailyReference_4H_ExactKey_Audit.py'
+      - 'tests/test_cp0198_daily_reference_exact_key.py'
+      - 'scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py'
+      - 'tests/test_cp0199_source_conflict_probe.py'
+      - 'scripts/AISTS_CP0200_G0_Rulebook_Bound_Gap_Disposition.py'
+      - 'tests/test_cp0200_g0_rulebook_disposition.py'
+      - 'scripts/AISTS_CP0201_Gap_Quarantine_Overlap_Crosswalk.py'
+      - 'tests/test_cp0201_gap_quarantine_crosswalk.py'
+      - 'docs/AISTS_LIVE_STATUS_ROADMAP.md'
+
+permissions:
+  contents: read
+
+jobs:
+  static-audit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install simulator test dependencies
+        run: python -m pip install --disable-pip-version-check numpy pandas
+      - name: Compile audit and runner
+        run: python -m py_compile scripts/AISTS_CP0026_Research_Candidate_Builder.py scripts/AISTS_CP0027_MultiTimeframe_Baseline_Backtest.py scripts/AISTS_CP0203_GapPolicy_Gate.py scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py scripts/AISTS_CP0198_DailyReference_4H_ExactKey_Audit.py scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py scripts/AISTS_CP0200_G0_Rulebook_Bound_Gap_Disposition.py scripts/AISTS_CP0201_Gap_Quarantine_Overlap_Crosswalk.py scripts/aists_runner.py
+      - name: Test bounded audit helpers
+        run: python -m unittest discover -s tests -p 'test_cp0165_4h_audit.py' -v
+      - name: Test cache-only gap triage
+        run: python -m unittest discover -s tests -p 'test_cp0192_gap_triage.py' -v
+      - name: Test prior-evidence linkage
+        run: python -m unittest discover -s tests -p 'test_cp0197_evidence_linkage.py' -v
+      - name: Test daily-reference exact-key audit
+        run: python -m unittest discover -s tests -p 'test_cp0198_daily_reference_exact_key.py' -v
+      - name: Test exact-key conflict probe
+        run: python -m unittest discover -s tests -p 'test_cp0199_source_conflict_probe.py' -v
+      - name: Test G0 rulebook-bound disposition
+        run: python -m unittest discover -s tests -p 'test_cp0200_g0_rulebook_disposition.py' -v
+      - name: Test gap/quarantine overlap crosswalk
+        run: python -m unittest discover -s tests -p 'test_cp0201_gap_quarantine_crosswalk.py' -v
+      - name: Test CP-0203 fail-closed candidate gap policy gate
+        run: python -m unittest discover -s tests -p 'test_cp0203_gap_policy_gate.py' -v
+      - name: Test CP-0204 backtest G0 gap gate
+        run: python -m unittest discover -s tests -p 'test_cp0204_backtest_gap_gate.py' -v
+      - name: Test CP-0206 frozen policy and hash receipt
+        run: python -m unittest discover -s tests -p 'test_cp0206_frozen_gap_policy.py' -v
+      - name: Test CP-0207 independent accounting oracle
+        run: python -m unittest discover -s tests -p 'test_cp0207_accounting_invariants.py' -v
+      - name: Test CP-0208 synthetic ledger reconciliation
+        run: python -m unittest discover -s tests -p 'test_cp0208_synthetic_ledger_reconciliation.py' -v
+      - name: Test CP-0209 synthetic gap-boundary verification
+        run: python -m unittest discover -s tests -p 'test_cp0209_gap_boundary_verification.py' -v
+      - name: Test CP-0210 segment/censor contract oracle
+        run: python -m unittest discover -s tests -p 'test_cp0210_segment_censor_contract.py' -v

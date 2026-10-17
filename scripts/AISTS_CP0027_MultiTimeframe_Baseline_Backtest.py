@@ -36,6 +36,10 @@ import csv, gc, gzip, hashlib, json, os, zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+# CP-0204: mandatory G0 gap-policy gate; unresolved gaps block all backtest execution.
+from AISTS_CP0203_GapPolicy_Gate import load_gap_policy_gate
+from AISTS_CP0026_Research_Candidate_Builder import load_candidate_gate
+
 import numpy as np
 import pandas as pd
 
@@ -208,7 +212,7 @@ def metrics_from_equity(equity, start_ms, end_ms):
         "equity_points":len(curve)
     }
 
-def simulate_strategy(df, interval, start_idx, end_idx, strategy, fee_bps, slippage_bps, trade_log=False):
+def simulate_strategy(df, interval, start_idx, end_idx, strategy, fee_bps, slippage_bps, trade_log=False, ledger_log=False):
     """
     Causal spot backtest for one time window. Indicators already calculated without looking forward.
     Signals are created at close i and filled at open i+1 only if timestamps are contiguous.
@@ -234,6 +238,7 @@ def simulate_strategy(df, interval, start_idx, end_idx, strategy, fee_bps, slipp
     entry_cost=None; entry_time=None; entry_price=None
     fees_paid=0.0; slippage_paid=0.0; total_buys=0; total_sells=0; closed_pnls=[]
     trades=[]
+    ledger_events=[]
     equity=[]
     interval_days=[]
     for i in range(start_idx,end_idx):
@@ -247,6 +252,8 @@ def simulate_strategy(df, interval, start_idx, end_idx, strategy, fee_bps, slipp
                 fees_paid+=fee; slippage_paid+=max(0.0,fill-ref)*qty
                 entry_cost=notion+fee; entry_time=int(t[i]); entry_price=fill
                 cash=max(0.0,cash-notion-fee); total_buys+=1
+                if ledger_log:
+                    ledger_events.append({"event":"BUY_FILL","open_time_ms":int(t[i]),"cash":float(cash),"quantity":float(qty),"fill_price":float(fill),"equity":float(cash+qty*fill),"fees_paid":float(fees_paid),"estimated_slippage_cost":float(slippage_paid),"net_realized_pnl":float(sum(closed_pnls))})
             elif target==0 and qty>0:
                 ref=op[i]; fill=ref*(1-slip_rate)
                 notion=qty*fill; fee=notion*fee_rate; net=notion-fee
@@ -259,9 +266,13 @@ def simulate_strategy(df, interval, start_idx, end_idx, strategy, fee_bps, slipp
                                    "entry_fill":entry_price,"exit_fill":fill,"net_trade_pnl":pnl,
                                    "exit_type":"strategy_signal","fee_bps_per_side":fee_bps,"slippage_bps_per_side":slippage_bps})
                 qty=0.0; cash+=net; entry_cost=entry_time=entry_price=None
+                if ledger_log:
+                    ledger_events.append({"event":"SELL_FILL","open_time_ms":int(t[i]),"cash":float(cash),"quantity":float(qty),"fill_price":float(fill),"equity":float(cash),"fees_paid":float(fees_paid),"estimated_slippage_cost":float(slippage_paid),"net_realized_pnl":float(sum(closed_pnls))})
         pending=None
         # Equity marked at each bar close. If still invested through a gap, the new close captures the price change.
         current_equity=cash+qty*cl[i]
+        if ledger_log:
+            ledger_events.append({"event":"BAR_CLOSE_MARK","open_time_ms":int(t[i]),"cash":float(cash),"quantity":float(qty),"fill_price":None,"equity":float(current_equity),"fees_paid":float(fees_paid),"estimated_slippage_cost":float(slippage_paid),"net_realized_pnl":float(sum(closed_pnls))})
         # Final forced liquidation for measuring a closed-window result.
         if i==end_idx-1 and qty>0:
             ref=cl[i]; fill=ref*(1-slip_rate)
@@ -276,8 +287,15 @@ def simulate_strategy(df, interval, start_idx, end_idx, strategy, fee_bps, slipp
                                "entry_fill":entry_price,"exit_fill":fill,"net_trade_pnl":pnl,
                                "exit_type":"window_end_liquidation","fee_bps_per_side":fee_bps,"slippage_bps_per_side":slippage_bps})
             entry_cost=entry_time=entry_price=None
+            if ledger_log:
+                ledger_events.append({"event":"WINDOW_END_LIQUIDATION","open_time_ms":int(t[i]),"cash":float(cash),"quantity":float(qty),"fill_price":float(fill),"equity":float(cash),"fees_paid":float(fees_paid),"estimated_slippage_cost":float(slippage_paid),"net_realized_pnl":float(sum(closed_pnls))})
         equity.append(current_equity)
         if i+1>=end_idx or not contiguous[i+1]:
+            pending=None
+            continue
+        # A non-contiguous row is a segment boundary, not a valid signal origin.
+        # This prevents finite/stale boundary indicators from creating a next-bar fill.
+        if not contiguous[i]:
             pending=None
             continue
         # Decide at the current completed close, for the next open.
@@ -301,7 +319,7 @@ def simulate_strategy(df, interval, start_idx, end_idx, strategy, fee_bps, slipp
         **met,"closed_trades":len(closed_pnls),"buy_fills":total_buys,"sell_fills":total_sells,
         "win_rate_pct":(sum(p>0 for p in closed_pnls)/len(closed_pnls)*100) if closed_pnls else None,
         "net_realized_pnl":float(sum(closed_pnls)),"fees_paid":fees_paid,"estimated_slippage_cost":slippage_paid,
-        "trade_log":trades
+        "trade_log":trades,"ledger_log":ledger_events if ledger_log else []
     }
 
 def simulate_benchmark(df, start_idx, end_idx, name, fee_bps, slippage_bps):
@@ -384,6 +402,19 @@ def main():
     candidate_dir=root/"derived"/"research_candidate_v1"/SYMBOL/"intervals"
     result_dir=root/"derived"/"research_candidate_v1"/SYMBOL/"backtest_cp0027"
     report_dir=root/"reports"
+    # CP-0204: block before manifest reads, output-directory creation, or any backtest computation.
+    load_gap_policy_gate(
+        report_dir/"CP0200_G0_Gap_Quarantine_Recommendation.csv",
+        report_dir/"CP0200_Summary.json",
+        report_dir/"CP0201_Gap_Quarantine_Overlap_Crosswalk.csv",
+        report_dir/"CP0201_Summary.json",
+    )
+    # Also enforce the row-level manifest and non-row blocker gate; old candidate files cannot bypass G0.
+    load_candidate_gate(
+        report_dir/"CP0040_ExactKey_Quarantine_Manifest.csv",
+        report_dir/"CP0040_NonRow_Blockers.csv",
+        report_dir/"CP0040_ExactKey_Quarantine_Manifest_Summary.json",
+    )
     manifest_path=report_dir/"cp0026_research_candidate_manifest.json"
     if not manifest_path.exists():
         raise FileNotFoundError(f"CP-0026 manifest missing: {manifest_path}. Run CP-0026 first.")

@@ -1,0 +1,182 @@
+{
+  "checkpoint": "CP-0206",
+  "policy_id": "AISTS-4H-GAP-WINDOW-QUARANTINE-POLICY-B-v1",
+  "status": "FROZEN_FOR_SENSITIVITY_ONLY_NOT_G0_CLEARANCE",
+  "decision": "Policy B frozen solely as a conservative sensitivity contract. It does not adjudicate source authority, close source cases, apply production quarantine, or clear G0.",
+  "scope": {
+    "symbol": "BTCUSDT",
+    "market": "Binance Spot historical research",
+    "interval": "4h",
+    "exact_missing_slot_count": 17,
+    "existing_row_case_overlap_count": 1,
+    "gap_window_only_count": 16,
+    "source_case_closed_count": 0,
+    "canonical_source": "NONE",
+    "g0": "BLOCKED_GLOBAL"
+  },
+  "frozen_inputs": {
+    "cp0040_rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0",
+    "cp0200_recommendation_csv_sha256": "e59c95764d4db76a8a707d07526d44b2b7e3487c534687584bd9936a5742b3bf",
+    "cp0201_crosswalk_csv_sha256": "de8d829f405aa60f83e43744d4c281469fec6acb9bb99cfe6aa8823c8509be56",
+    "cp0205_contract_git_blob_sha": "4631e1616471ca8d0c4ae5675dbb1f2796d83c49"
+  },
+  "identity_rule": "Each missing expected 4h slot t is coverage [t,t+4h). Every exact key stays traceable; a gap window is not a candle row.",
+  "expected_missing_slots": [
+    {
+      "interval": "4h",
+      "open_time_ms": "1504713600000",
+      "expected_open_time_utc": "2017-09-06T16:00:00.000Z",
+      "coverage_end_utc": "2017-09-06T20:00:00.000Z",
+      "classification": "EXISTING_ROW_CASE_OVERLAP_UNMATCHED-D-4h-1504713600000"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1518062400000",
+      "expected_open_time_utc": "2018-02-08T04:00:00.000Z",
+      "coverage_end_utc": "2018-02-08T08:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1518076800000",
+      "expected_open_time_utc": "2018-02-08T08:00:00.000Z",
+      "coverage_end_utc": "2018-02-08T12:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1518091200000",
+      "expected_open_time_utc": "2018-02-08T12:00:00.000Z",
+      "coverage_end_utc": "2018-02-08T16:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1518105600000",
+      "expected_open_time_utc": "2018-02-08T16:00:00.000Z",
+      "coverage_end_utc": "2018-02-08T20:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1518120000000",
+      "expected_open_time_utc": "2018-02-08T20:00:00.000Z",
+      "coverage_end_utc": "2018-02-09T00:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1518134400000",
+      "expected_open_time_utc": "2018-02-09T00:00:00.000Z",
+      "coverage_end_utc": "2018-02-09T04:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1518148800000",
+      "expected_open_time_utc": "2018-02-09T04:00:00.000Z",
+      "coverage_end_utc": "2018-02-09T08:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1529985600000",
+      "expected_open_time_utc": "2018-06-26T04:00:00.000Z",
+      "coverage_end_utc": "2018-06-26T08:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1530000000000",
+      "expected_open_time_utc": "2018-06-26T08:00:00.000Z",
+      "coverage_end_utc": "2018-06-26T12:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1530676800000",
+      "expected_open_time_utc": "2018-07-04T04:00:00.000Z",
+      "coverage_end_utc": "2018-07-04T08:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1542168000000",
+      "expected_open_time_utc": "2018-11-14T04:00:00.000Z",
+      "coverage_end_utc": "2018-11-14T08:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1552363200000",
+      "expected_open_time_utc": "2019-03-12T04:00:00.000Z",
+      "coverage_end_utc": "2019-03-12T08:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1557892800000",
+      "expected_open_time_utc": "2019-05-15T04:00:00.000Z",
+      "coverage_end_utc": "2019-05-15T08:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1557907200000",
+      "expected_open_time_utc": "2019-05-15T08:00:00.000Z",
+      "coverage_end_utc": "2019-05-15T12:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1565841600000",
+      "expected_open_time_utc": "2019-08-15T04:00:00.000Z",
+      "coverage_end_utc": "2019-08-15T08:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    },
+    {
+      "interval": "4h",
+      "open_time_ms": "1582113600000",
+      "expected_open_time_utc": "2020-02-19T12:00:00.000Z",
+      "coverage_end_utc": "2020-02-19T16:00:00.000Z",
+      "classification": "GAP_WINDOW_ONLY"
+    }
+  ],
+  "policy_b": {
+    "name": "SEGMENT_QUARANTINE_CENSOR_GAP_EXPOSED_EPISODES",
+    "rules": [
+      "Do not synthesize missing candles or alter raw source rows/timestamps.",
+      "Do not create a duplicate row case for 2017-09-06T16:00:00Z; retain UNMATCHED-D-4h-1504713600000.",
+      "Do not fill pending signals across a non-contiguous boundary; clear pending signals at the boundary.",
+      "Restart indicators only on post-gap contiguous rows and enforce each strategy's own warm-up requirements.",
+      "If a position is open at a gap boundary, label CENSORED_GAP_EXPOSED and exclude it from scored metrics unless separately approved accounting treatment makes it scorable.",
+      "Do not invent an exit fill or infer an intragap path; endpoint mark does not bound maximum drawdown.",
+      "Keep affected full-period acceptance BLOCKED/UNSCORABLE when gap-exposed valuation remains unresolved."
+    ]
+  },
+  "policy_a": "Carry-through-gap with next observed close mark is diagnostic only; cannot clear G0 or support risk acceptance.",
+  "policy_c": "Hypothetical boundary closeout is optional counterfactual only after separate approval; label hypothetical and reconcile declared fees/slippage, cash, quantity, equity and segment P&L.",
+  "independent_preconditions_before_any_sensitivity_runner": [
+    "Independent non-tautological accounting tests reconcile cash, quantity, fees, realized/unrealized P&L, equity and segment P&L to <= 1e-8 USDT per matched comparison.",
+    "Fixtures verify exact 17-key identity, one overlap plus 16 gap-only items, boundaries, no synthetic rows/fills, censoring, strategy-specific warm-up.",
+    "CP-0040 row-level/non-row G0 gate remains enforced before any candidate/backtest outputs.",
+    "Independent review and evidence application required; policy freeze alone is not application."
+  ],
+  "explicit_non_effects": {
+    "candidate_build_authorized": false,
+    "backtest_authorized": false,
+    "quarantine_applied_to_candidate_builder": false,
+    "source_adjudication_performed": false,
+    "strategy_promoted": false,
+    "live_signing_broadcast_orders": "BLOCKED",
+    "profitability": "NOT ESTABLISHED"
+  },
+  "excluded_unresolved_population": {
+    "unmatched_rows": 909,
+    "shared_economic_conflicts": 52,
+    "close_time_only_cases": 8,
+    "february_2018_off_grid_subset_included_in_unmatched_rows": 450,
+    "non_row_blockers": 11
+  },
+  "change_control": "Append-only versioning; semantic change requires new version, reason, comparison, hash and independent approval."
+}
