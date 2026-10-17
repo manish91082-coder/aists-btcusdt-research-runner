@@ -149,3 +149,61 @@ def run_manifest_driven_simulation(
             "no automatic stop-loss/take-profit and no live exchange action",
         ],
     }
+
+def run_manifest_driven_simulation_from_stored_features(
+    csv_path: str | Path,
+    manifest_path: str | Path,
+    stored_artifact_path: str | Path,
+    *,
+    expected_interval: str,
+    initial_cash_usdt: float,
+    allocation_fraction: float = 0.25,
+    fee_bps_per_side: float = 10.0,
+    slippage_bps_per_side: float = 5.0,
+) -> dict[str, Any]:
+    """Verify a create-only stored feature artifact, then use it in the harness.
+
+    The data provenance gate is checked before the artifact is trusted. The
+    store reload verifies envelope/payload hashes and causal lineage against
+    candle close times. The underlying harness repeats the data and decision
+    checks before simulation. A synthetic PASS manifest in tests is only a
+    software fixture and is not real-world adjudication evidence.
+    """
+    try:
+        loaded = load_provenance_cleared_candles(
+            csv_path, manifest_path, expected_interval=expected_interval
+        )
+    except (ProvenanceGateError, OSError, ValueError) as exc:
+        raise ResearchHarnessError(
+            f"historical data gate rejected stored-feature input: {exc}"
+        ) from exc
+    try:
+        from aists_brain.feature_artifact_store import (
+            FeatureArtifactStoreError, load_feature_artifact,
+        )
+        stored = load_feature_artifact(
+            stored_artifact_path,
+            candle_close_times_ms=[candle["close_time_ms"] for candle in loaded["candles"]],
+        )
+    except (FeatureArtifactStoreError, OSError, ValueError) as exc:
+        raise ResearchHarnessError(
+            f"stored feature artifact integrity gate rejected input: {exc}"
+        ) from exc
+    if stored["artifact"].get("source_csv_sha256") != loaded["csv_sha256"]:
+        raise ResearchHarnessError("stored feature artifact is bound to a different candle CSV")
+    result = run_manifest_driven_simulation(
+        csv_path, manifest_path, stored_artifact_path,
+        expected_interval=expected_interval,
+        initial_cash_usdt=initial_cash_usdt,
+        allocation_fraction=allocation_fraction,
+        fee_bps_per_side=fee_bps_per_side,
+        slippage_bps_per_side=slippage_bps_per_side,
+    )
+    result["decision_input"]["stored_artifact_integrity_status"] = stored["status"]
+    result["decision_input"]["stored_artifact_payload_sha256"] = stored["payload_sha256"]
+    result["decision_input"]["stored_artifact_file_sha256"] = stored["file_sha256"]
+    result["decision_input"]["stored_artifact_store_schema"] = stored["schema_version"]
+    result["limitations"].append(
+        "stored-artifact wrapper validates hashes and causal contract, not independent source provenance"
+    )
+    return result
