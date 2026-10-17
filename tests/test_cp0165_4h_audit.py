@@ -23,7 +23,7 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         self.assertTrue(named)
 
     def test_checksum_parser_does_not_invent_missing_hash(self):
-        hashes, named = AUDIT.parse_checksum("checksum not available", "BTCUSDT-4h-2017-08.zip")
+        hashes, named = AUDIT.parse_checksum("missing hash for BTCUSDT-4h-2017-08.zip", "BTCUSDT-4h-2017-08.zip")
         self.assertEqual(hashes, [])
         self.assertTrue(named)
 
