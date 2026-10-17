@@ -29,6 +29,13 @@ def normalized_key(interval, open_time):
     except (TypeError, ValueError):
         return interval.strip(), str(open_time).strip()
 
+def classify_gap_key(matches):
+    if matches:
+        return ("OVERLAPS_EXISTING_ROW_LEVEL_CASE_DO_NOT_DUPLICATE",
+                "LINK_TO_EXISTING_CASE; retain separate gap-window semantics; do not create a duplicate row case")
+    return ("GAP_WINDOW_ONLY_NO_ROW_CASE_IN_INSPECTED_LEDGERS",
+            "KEEP_AS_GAP_POLICY_ITEM; no source row exists at this key in inspected ledgers; do not synthesize a bar")
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--gap-manifest", default="results/cp0200_g0_rulebook_bound_gap_disposition/CP0200_G0_Gap_Quarantine_Recommendation.csv")
@@ -87,12 +94,7 @@ def main():
         cp0040 = [m for m in matches if m["ledger"] == "cp0040_quarantine"]
         case_ids = sorted({m["case_id"] for m in matches if m["case_id"]})
         ledger_names = sorted({m["ledger"] for m in matches})
-        if matches:
-            disposition = "OVERLAPS_EXISTING_ROW_LEVEL_CASE_DO_NOT_DUPLICATE"
-            gap_action = "LINK_TO_EXISTING_CASE; retain separate gap-window semantics; do not create a duplicate row case"
-        else:
-            disposition = "GAP_WINDOW_ONLY_NO_ROW_CASE_IN_INSPECTED_LEDGERS"
-            gap_action = "KEEP_AS_GAP_POLICY_ITEM; no source row exists at this key in inspected ledgers; do not synthesize a bar"
+        disposition, gap_action = classify_gap_key(matches)
         output.append({
             "expected_open_time_utc": gap["expected_open_time_utc"],
             "interval": "4h", "open_time_ms": open_ms,
