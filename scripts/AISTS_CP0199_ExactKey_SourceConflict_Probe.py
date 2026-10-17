@@ -61,7 +61,7 @@ def read_archive_rows(path):
     for row in rows:
         counts[row["open_time_us"]] = counts.get(row["open_time_us"], 0) + 1
     off_grid = sum(row["open_time_us"] % INTERVAL_US != 0 for row in rows)
-    duplicates = sum(raw_opens.count(value) - 1 for value in set(raw_opens))
+    duplicates = sum(count - 1 for count in counts.values() if count > 1)
     return {
         "member": member, "rows": rows, "unit_counts": unit_counts,
         "timestamp_unit": next(iter(unit_counts)) if len(unit_counts) == 1 else "MIXED" if unit_counts else "EMPTY",
