@@ -87,7 +87,9 @@ def inspect_cached_archive(path, interval, period):
            "cache_path": str(path), "cache_status": "MISSING",
            "sha256": "", "bytes": "", "zip_crc": "NOT_CHECKED",
            "csv_member": "", "rows": 0, "timestamp_unit": "",
-           "timestamp_unit_status": "NOT_CHECKED", "first_open_time_utc": "",
+           "timestamp_unit_status": "NOT_CHECKED", "open_grid_status": "NOT_CHECKED",
+           "off_grid_rows": 0, "duplicate_open_times": 0, "first_off_grid_open_time_utc": "",
+           "last_off_grid_open_time_utc": "", "first_open_time_utc": "",
            "last_open_time_utc": "", "error": ""}
     if not path.is_file():
         return rec, set()
@@ -95,6 +97,8 @@ def inspect_cached_archive(path, interval, period):
     rec["bytes"] = path.stat().st_size
     rec["sha256"] = sha256_file(path)
     opens = set()
+    raw_opens = []
+    off_grid_opens = []
     unit_counts = {"milliseconds": 0, "microseconds": 0}
     try:
         with zipfile.ZipFile(path, "r") as archive:
@@ -118,10 +122,19 @@ def inspect_cached_archive(path, interval, period):
                             continue
                         raise ValueError(f"invalid open_time at CSV line {line_no}")
                     normalized, unit = normalize_timestamp_to_us(value)
+                    raw_opens.append(normalized)
                     opens.add(normalized)
+                    if normalized % INTERVAL_US[interval]:
+                        off_grid_opens.append(normalized)
                     unit_counts[unit] += 1
         rec["zip_crc"] = "PASS"
         rec["rows"] = sum(unit_counts.values())
+        rec["off_grid_rows"] = len(off_grid_opens)
+        rec["duplicate_open_times"] = len(raw_opens) - len(opens)
+        rec["open_grid_status"] = "PASS" if not off_grid_opens and len(raw_opens) == len(opens) else "FAIL"
+        if off_grid_opens:
+            rec["first_off_grid_open_time_utc"] = timestamp_to_iso(min(off_grid_opens))
+            rec["last_off_grid_open_time_utc"] = timestamp_to_iso(max(off_grid_opens))
         observed = sorted(unit for unit, count in unit_counts.items() if count)
         rec["timestamp_unit"] = "EMPTY" if not observed else observed[0] if len(observed) == 1 else "MIXED"
         expected = "microseconds" if period >= "2025-01" else "milliseconds"
@@ -170,7 +183,7 @@ def main():
             path = expected_archive_path(cache_root, interval, period)
             record, opens = inspect_cached_archive(path, interval, period)
             archive_rows.append(record)
-            open_index[(interval, period)] = opens if record["cache_status"] == "PRESENT" and record["zip_crc"] == "PASS" and record["timestamp_unit_status"] == "PASS" else None
+            open_index[(interval, period)] = opens if record["cache_status"] == "PRESENT" and record["zip_crc"] == "PASS" and record["timestamp_unit_status"] == "PASS" and record["open_grid_status"] == "PASS" else None
 
     detail_rows = []
     for slot in slots:
@@ -209,7 +222,7 @@ def main():
         detail_rows.append(row)
 
     missing = sum(r["cache_status"] != "PRESENT" for r in archive_rows)
-    invalid = sum(r["cache_status"] == "PRESENT" and (r["zip_crc"] != "PASS" or r["timestamp_unit_status"] != "PASS") for r in archive_rows)
+    invalid = sum(r["cache_status"] == "PRESENT" and (r["zip_crc"] != "PASS" or r["timestamp_unit_status"] != "PASS" or r["open_grid_status"] != "PASS") for r in archive_rows)
     complete_5m = sum(r["5m_coverage_status"] == "COMPLETE" for r in detail_rows)
     complete_1h = sum(r["1h_coverage_status"] == "COMPLETE" for r in detail_rows)
     complete_any = sum(r["triage_status"] == "COMPLETE_FINER_INTERVAL_COVERAGE" for r in detail_rows)
@@ -232,6 +245,9 @@ def main():
         "expected_4h_missing_slots": len(slots), "source_gap_events": len({(r["source_gap_previous_open_time_utc"], r["source_gap_next_open_time_utc"]) for r in slots}),
         "months_inspected": periods, "intervals_checked": ["5m", "1h"],
         "expected_child_archives": len(periods) * 2, "cache_archives_missing": missing, "cache_archives_invalid_or_wrong_unit": invalid,
+        "child_archives_with_off_grid_or_duplicate_timestamps": sum(r["open_grid_status"] == "FAIL" for r in archive_rows),
+        "child_archive_off_grid_rows": sum(int(r["off_grid_rows"] or 0) for r in archive_rows),
+        "child_archive_duplicate_open_times": sum(int(r["duplicate_open_times"] or 0) for r in archive_rows),
         "slots_with_complete_5m_coverage": complete_5m, "slots_with_complete_1h_coverage": complete_1h,
         "slots_with_complete_5m_and_1h_coverage": complete_any,
         "slots_with_any_child_open_inside_missing_4h_windows": slots_with_any_child_open,
@@ -254,6 +270,8 @@ def main():
     write_csv(out / "CP0192_Cache_Archive_Manifest.csv", archive_rows, [
         "interval", "period", "filename", "cache_path", "cache_status", "sha256", "bytes",
         "zip_crc", "csv_member", "rows", "timestamp_unit", "timestamp_unit_status",
+        "open_grid_status", "off_grid_rows", "duplicate_open_times",
+        "first_off_grid_open_time_utc", "last_off_grid_open_time_utc",
         "first_open_time_utc", "last_open_time_utc", "error"])
     (out / "CP0192_Summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     report = [
@@ -266,12 +284,13 @@ def main():
         f"- Slots with complete 1h coverage: {complete_1h}/{len(slots)}.",
         f"- Slots with complete 5m and 1h coverage: {complete_any}/{len(slots)}.",
         f"- Slots with any 5m or 1h open inside the missing 4h windows: {slots_with_any_child_open}/{len(slots)}.",
+        f"- Child archives with off-grid/duplicate open times: {summary['child_archives_with_off_grid_or_duplicate_timestamps']}; off-grid rows: {summary['child_archive_off_grid_rows']}; duplicate opens: {summary['child_archive_duplicate_open_times']}.",
         "- Boundary timestamps and estimated child-interval gaps are recorded for each missing 4h window.",
         "- This is presence/coverage triage only. It does not reconstruct candles, establish source authority, or close any source case.",
         "- Network access, downloads, Binance REST, cache mutation, interpolation, backtests, candidate builds, and live actions are prohibited by this task."
     ]
     (out / "CP0192_Report_HI.md").write_text("\n".join(report) + "\n", encoding="utf-8")
-    print(json.dumps({k: summary[k] for k in ("status", "expected_4h_missing_slots", "expected_child_archives", "cache_archives_missing", "cache_archives_invalid_or_wrong_unit", "slots_with_complete_5m_coverage", "slots_with_complete_1h_coverage", "slots_with_complete_5m_and_1h_coverage", "slots_with_any_child_open_inside_missing_4h_windows", "network_used", "archive_downloads", "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
+    print(json.dumps({k: summary[k] for k in ("status", "expected_4h_missing_slots", "expected_child_archives", "cache_archives_missing", "cache_archives_invalid_or_wrong_unit", "child_archives_with_off_grid_or_duplicate_timestamps", "child_archive_off_grid_rows", "child_archive_duplicate_open_times", "slots_with_complete_5m_coverage", "slots_with_complete_1h_coverage", "slots_with_complete_5m_and_1h_coverage", "slots_with_any_child_open_inside_missing_4h_windows", "network_used", "archive_downloads", "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
     return 0
 
 if __name__ == "__main__":
