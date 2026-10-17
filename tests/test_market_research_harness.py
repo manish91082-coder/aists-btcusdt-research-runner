@@ -92,6 +92,8 @@ class ResearchHarnessTests(unittest.TestCase):
         self.assertEqual(result["data_input"]["row_count"], 3)
         self.assertEqual(result["decision_input"]["brain_version"], "test-brain-v1")
         self.assertEqual(result["simulation"]["closed_round_trip_count"], 1)
+        self.assertEqual(result["accounting_reconciliation"]["status"], "PASS_ACCOUNTING_RECONCILIATION")
+        self.assertEqual(result["paper_ledger_integrity"]["status"], "PASS_HASH_CHAIN")
         self.assertFalse(result["simulation"]["events"][0]["is_order_instruction"])
 
     def test_global_g0_blocked_refuses_run(self):
