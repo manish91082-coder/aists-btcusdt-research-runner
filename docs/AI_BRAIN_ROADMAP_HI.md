@@ -158,3 +158,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - The CP-0040 rulebook-bound diagnostic for `MTF_BREAKOUT_4H_D1` remains candidate-specific only: G2 FAIL/NOT PROMOTED, G3 blocked; full-manifest quarantine changes TRAIN net return by -15.891741 percentage points, and consumed OOS diagnostic was negative. This is not global G0 clearance or promotion authority.
 - Gates unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`.
 - Next: verify the final documentation commit's compile/tests and exact PR head. After that verification, connect this action adapter to a strictly provenance-gated decision artifact producer, without running real-market performance research while G0 is blocked.
+
+
+## CP-0142 — Causal strategy decision artifact producer (2026-10-17)
+- Added `aists_brain/causal_decision_producer.py` to join the causal feature producer's prefix-only semantics with the existing market-regime classifier and strategy action engine. Each decision binds a completed-candle close cutoff, source CSV SHA-256, strategy/brain versions, per-feature prefix hash, snapshot hash, action, selected strategy and reason.
+- Output actions are `BUY_CANDIDATE`, `SELL_CANDIDATE`, or `NO_TRADE`; every record explicitly states it is not an order instruction. Live signing, public broadcast, exchange orders and automatic SL/TP remain disabled. Position state updates are hypothetical next-contiguous-open research assumptions only.
+- Added eight software tests for artifact lineage, candidate generation, abstention, future-candle invariance, future timestamps, duplicate decision IDs, gap rejection and invalid metadata. Synthetic candles are fixtures only, never market evidence. CI compile list updated.
+- The CSV entry point uses the existing provenance-gated loader. It cannot authenticate external adjudication; G0 remains BLOCKED_GLOBAL and no real historical run was performed.
+- Goal-direction review: this closes the strategy-to-artifact software integration gap, but does not unblock historical-source provenance or validate profitability. G2 remains FAIL for all 23 current candidates; all research gates remain unchanged.
+- Exact final branch/PR head and terminal CI/test count must be verified before calling CP-0142 complete. PR #2 remains OPEN and must not be merged.
