@@ -14,15 +14,13 @@ from pathlib import Path
 from typing import Any
 
 from aists_brain.accounting_reconciliation import reconcile_simulation_with_ledger
+from aists_brain.decision_lineage import DECISION_SCHEMA, DecisionLineageError, validate_causal_decision_artifact
 from aists_brain.cost_aware_simulator import simulate_next_open
 from aists_brain.paper_portfolio import append_paper_fill, create_ledger, verify_ledger
 from aists_brain.provenance_input import (
     ProvenanceGateError,
     load_provenance_cleared_candles,
 )
-
-DECISION_SCHEMA = "aists.research_decisions.v1"
-
 
 class ResearchHarnessError(ValueError):
     """Raised when inputs are incomplete, unbound, or fail closed."""
@@ -69,18 +67,17 @@ def run_manifest_driven_simulation(
         raise ResearchHarnessError(f"cannot read decision artifact: {exc}") from exc
     if not isinstance(decision_artifact, dict):
         raise ResearchHarnessError("decision artifact must be a JSON object")
-    if decision_artifact.get("schema_version") != DECISION_SCHEMA:
-        raise ResearchHarnessError("unsupported decision artifact schema")
-    if decision_artifact.get("status") != "PASS":
-        raise ResearchHarnessError("decision artifact status is not PASS")
-    if decision_artifact.get("source_csv_sha256") != loaded["csv_sha256"]:
-        raise ResearchHarnessError("decision artifact is not bound to this exact candle CSV")
-    brain_version = decision_artifact.get("brain_version")
-    if not isinstance(brain_version, str) or not brain_version.strip():
-        raise ResearchHarnessError("brain_version must be a non-empty string")
-    decisions = decision_artifact.get("decisions")
-    if not isinstance(decisions, list):
-        raise ResearchHarnessError("decisions must be a JSON list")
+    try:
+        lineage = validate_causal_decision_artifact(
+            decision_artifact,
+            candle_csv_sha256=loaded["csv_sha256"],
+            candle_close_times_ms=[candle["close_time_ms"] for candle in loaded["candles"]],
+        )
+    except DecisionLineageError as exc:
+        raise ResearchHarnessError(f"causal decision lineage rejected input: {exc}") from exc
+    brain_version = lineage["brain_version"]
+    strategy_version = lineage["strategy_version"]
+    decisions = lineage["decisions"]
 
     try:
         simulation = simulate_next_open(
@@ -133,7 +130,10 @@ def run_manifest_driven_simulation(
         "decision_input": {
             "artifact_sha256": _sha256(decisions_path),
             "brain_version": brain_version,
+            "strategy_version": strategy_version,
             "decision_count": len(decisions),
+            "causal_lineage_status": lineage["status"],
+            "lineage_limitations": lineage["limitations"],
             "external_status_claim": "PASS",
         },
         "simulation": simulation,
