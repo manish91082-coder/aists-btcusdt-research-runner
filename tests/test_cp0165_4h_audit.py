@@ -43,5 +43,69 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         self.assertIn('s.get("g0")!="BLOCKED_GLOBAL"', workflow)
         self.assertIn('s.get("monthly_zip_downloads")!=0', workflow)
 
+    def test_missing_inventory_writes_blocked_evidence_without_failing_runner(self):
+        import tempfile
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with patch.object(AUDIT, "ROOT", root), patch("sys.argv", [
+                "audit", "--archive-inventory", "missing.csv",
+                "--monthly-cache", "cache", "--output-dir", "out"
+            ]):
+                rc = AUDIT.main()
+            summary = __import__("json").loads(
+                (root / "out" / "CP0165_4H_Monthly_Checksum_Gap_Audit_Summary.json").read_text()
+            )
+            self.assertEqual(rc, 0)
+            self.assertEqual(summary["status"], "BLOCKED_4H_AUDIT_INPUT_INVALID")
+            self.assertFalse(summary["network_used"])
+
+    def test_invalid_inventory_writes_blocked_evidence_without_failing_runner(self):
+        import tempfile
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            inventory = root / "inventory.csv"
+            inventory.write_text("source,interval,filename\\nmonthly_cache,4h,BTCUSDT-4h-2017-08.zip\\n")
+            with patch.object(AUDIT, "ROOT", root), patch("sys.argv", [
+                "audit", "--archive-inventory", "inventory.csv",
+                "--monthly-cache", "cache", "--output-dir", "out"
+            ]):
+                rc = AUDIT.main()
+            summary = __import__("json").loads(
+                (root / "out" / "CP0165_4H_Monthly_Checksum_Gap_Audit_Summary.json").read_text()
+            )
+            self.assertEqual(rc, 0)
+            self.assertEqual(summary["status"], "BLOCKED_4H_AUDIT_INPUT_INVALID")
+            self.assertFalse(summary["network_used"])
+
+    def test_missing_cache_writes_blocked_evidence_without_failing_runner(self):
+        import csv
+        import tempfile
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            inventory = root / "inventory.csv"
+            with inventory.open("w", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=["source", "interval", "filename"])
+                writer.writeheader()
+                for month in AUDIT.expected_periods():
+                    writer.writerow({
+                        "source": "monthly_cache", "interval": "4h",
+                        "filename": f"BTCUSDT-4h-{month}.zip"
+                    })
+            with patch.object(AUDIT, "ROOT", root), patch("sys.argv", [
+                "audit", "--archive-inventory", "inventory.csv",
+                "--monthly-cache", "missing-cache", "--output-dir", "out"
+            ]):
+                rc = AUDIT.main()
+            summary = __import__("json").loads(
+                (root / "out" / "CP0165_4H_Monthly_Checksum_Gap_Audit_Summary.json").read_text()
+            )
+            self.assertEqual(rc, 0)
+            self.assertEqual(summary["status"], "BLOCKED_4H_AUDIT_INPUT_INVALID")
+            self.assertEqual(summary["archive_inventory_rows"], 110)
+            self.assertFalse(summary["network_used"])
+
 if __name__ == "__main__":
     unittest.main()
