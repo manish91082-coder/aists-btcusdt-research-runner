@@ -77,7 +77,8 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertEqual(result["event_count"], 1)
         self.assertEqual(result["closed_round_trip_count"], 0)
         self.assertGreater(result["btc_quantity"], 0)
-        self.assertIn("estimated_exit_costs", result.keys().__str__())
+        self.assertIn("equity_usdt_after_estimated_exit_costs", result)
+        self.assertGreater(result["equity_usdt_after_estimated_exit_costs"], 0)
 
     def test_rejects_decision_that_does_not_reference_candle_close(self):
         with self.assertRaisesRegex(ValueError, "reference a supplied candle close"):
