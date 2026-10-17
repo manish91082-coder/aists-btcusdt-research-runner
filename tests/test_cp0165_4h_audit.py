@@ -33,6 +33,8 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         runner = (root / "scripts" / "aists_runner.py").read_text(encoding="utf-8")
         workflow = (root / ".github" / "workflows" / "python-runner.yml").read_text(encoding="utf-8")
         self.assertIn('"cp0165_4h_monthly_checksum_gap_audit"', runner)
+        self.assertIn('"cp0118_monthly_parent_child_internal_rollup_audit","cp0165_4h_monthly_checksum_gap_audit"):', runner)
+        self.assertIn('"cp0165_4h_monthly_checksum_gap_audit":"AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py"', runner)
         self.assertIn('elif task=="cp0165_4h_monthly_checksum_gap_audit":', runner)
         self.assertIn("workflow_dispatch:", workflow)
         self.assertIn("- cp0165_4h_monthly_checksum_gap_audit", workflow)
