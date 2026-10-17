@@ -172,3 +172,11 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - Scope does not relax frozen CP-0040 thresholds or G0. Before any run, require exact-key quarantine lineage and actual row-exclusion proof, verified INR→USDT basis, fees/slippage, BTCUSDT lot-size/min-notional constraints, and frozen allocation/cash reserve. Unverifiable capital/quantity results are `NOT_COMPUTABLE`.
 - Gate status unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`. Eleven non-row aggregation blockers remain open; no profitability is established.
 - Goal-direction decision: this prepares a concrete reviewable scope rather than repeating failed work or adding a code-only module. It clears no empirical gate. Do not execute the proposed candidate until the scope is explicitly approved and all applicable frozen rulebook prerequisites are satisfied.
+
+
+## CP-0153 — CP-0152 exact-HEAD CI terminal verification (2026-10-17)
+- Branch and PR #2 head before this status update: `4e1cf587122f831b916f5733500b6f99da2fcb6d`; PR #2 OPEN/unmerged.
+- Exact-head Actions run [39035650619](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39035650619) terminal SUCCESS; `brain-unit-tests`, compile brain modules and unit tests all SUCCESS.
+- G0 summary re-read: `BLOCKED_EXISTING_CP0026_BUILDER_LACKS_ROW_LEVEL_CP0107_QUARANTINE`; 909 unmatched exact-open key rows, 52 shared economic conflicts and 11 non-row blockers remain unresolved. Production builder lacks the needed row-level CP0107 exclusion lookup and fails closed.
+- This CI result is not market-data or strategy evidence. CP-0152 remains `PENDING_EXPLICIT_APPROVAL`; execution `NOT_AUTHORIZED`; candidate build/backtest `NOT_RUN`.
+- Gates unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`. Profitability is not established.
