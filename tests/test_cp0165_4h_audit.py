@@ -46,6 +46,11 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         with self.assertRaises(ValueError):
             AUDIT.normalize_timestamp_to_us(12345)
 
+    def test_gap_output_schema_labels_delta_unit_correctly(self):
+        source = SCRIPT.read_text(encoding="utf-8")
+        self.assertIn('"delta_us","missing_intervals_estimate","gap_class"', source)
+        self.assertNotIn('"delta_ms","missing_intervals_estimate","gap_class"', source)
+
     def test_checksum_parser_requires_hash_and_archive_name(self):
         digest = "a" * 64
         hashes, named = AUDIT.parse_checksum(f"{digest}  BTCUSDT-4h-2017-08.zip", "BTCUSDT-4h-2017-08.zip")
