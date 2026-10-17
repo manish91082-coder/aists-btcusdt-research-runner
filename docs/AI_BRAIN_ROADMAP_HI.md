@@ -88,3 +88,11 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Live signing, public broadcast, exchange orders, automatic stop-loss and automatic take-profit remain blocked/not implemented. PR remains open and must not be merged.
 - Next: inspect exact final branch SHA and CI terminal result, correct any failures, then proceed to the next bounded research-engine component without weakening gates.
 
+## CP-0135 — Causal decision snapshot lineage guard (2026-10-17)
+- Added `aists_brain/decision_lineage.py` and integrated it into `research_harness.py`. The harness now requires schema `aists.causal_research_decisions.v1`, exact candle-CSV SHA binding, non-empty brain/strategy versions, unique ordered decision IDs, a known candle-close cutoff, snapshot SHA-256, feature source hashes, finite numeric feature values, and feature observation timestamps no later than the decision cutoff.
+- This closes a concrete gap in CP-0132: decisions are no longer accepted merely because their `as_of_ms` points to a candle close. A snapshot hash binds its contents; a future-dated feature is rejected even if its snapshot hash is recomputed.
+- Added seven direct lineage tests and updated integration fixtures to include causal snapshots. CI compilation includes the new module.
+- **Trust boundary:** timestamp and hash checks do not prove feature values were genuinely calculated from the declared source, and a SHA-256 does not authenticate source truth. No model signal generation or historical performance claim is added.
+- G0 remains `BLOCKED_GLOBAL`; no real historical run is permitted. All live signing, public broadcast, exchange orders and automatic SL/TP remain blocked/not implemented. PR #2 remains open and must not be merged.
+- Next: verify compile, all tests and exact final HEAD CI. If green, continue with a reproducible feature/snapshot producer that computes features only from source candles at or before each decision cutoff, while keeping G0 closed.
+
