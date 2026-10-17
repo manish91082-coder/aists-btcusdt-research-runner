@@ -16,7 +16,7 @@ Do not build the proposed candidate and do not run a market backtest. The propos
 - Non-row blocker ledger: `evidence/source_adjudication/CP0040_Run_38883792900/CP0040_NonRow_Blockers.csv`; records remain unresolved and explicitly state candidate eligibility remains blocked.
 - CP-0119 exact-key archive-version provenance: `BLOCKED_INPUTS_NOT_REPRODUCIBLE`.
 - CP-0117 rulebook-bound disposition: `PASS_RULEBOOK_BOUND_NONROW_DISPOSITION_G0_STILL_BLOCKED`; successful audit checks did not clear G0.
-- Existing builder `scripts/AISTS_CP0026_Research_Candidate_Builder.py` contains a fail-closed gate and does not implement the required row-level CP0107 exclusion lookup, according to CP-0040 G0 review.
+- **Correction from direct source inspection in CP-0155:** `scripts/AISTS_CP0026_Research_Candidate_Builder.py` DOES contain `load_candidate_gate()` (lines 135–180), exact-key `partition_candidate_rows()` (182–190), production gate loading at line 497, quarantine application in `audit_and_write_interval()` (line 368), and a quarantined-row audit output (line 536). CP-0040 integration report also documents the builder gate and exact-key exclusion. Therefore the earlier claim that the builder lacks row-level exclusion is not supported by the current branch source and is superseded. The true blocker is that the gate refuses to proceed while non-row blockers remain and the current eligibility summary is not `PASS_CANDIDATE_ELIGIBILITY_READY`; no real candidate build has proven the current manifest was applied to market rows.
 
 ## 3. Prerequisite status
 
@@ -25,7 +25,7 @@ Do not build the proposed candidate and do not run a market backtest. The propos
 | Explicit approval of exact CP-0152 scope | Pending | No candidate run |
 | Official archive-version provenance / canonical source | Blocked; no canonical source selected | G0 remains blocked |
 | Non-row aggregation blocker disposition | 11 unresolved | No builder bypass |
-| Row-level quarantine applied in production input path | Not proven; required lookup absent in existing builder | No build |
+| Row-level quarantine implementation in builder | Present in current source; exact-key partition helper and production call path found | Current real-data application remains unverified because fail-closed gate stops before candidate processing |
 | INR ₹10,000 to USDT conversion basis | Not verified in the reviewed anchors; historical anchor uses 10,000 USDT | User-capital returns not computable |
 | Fee/slippage evidence and frozen cost assumptions | Proposal defines a sensitivity grid; applicable fee tier/source still requires evidence | No performance claim |
 | BTCUSDT lot-size / step-size / minimum notional | Not verified in this read-only review | Quantity simulation not authorized |
@@ -49,3 +49,13 @@ The next permissible action is to preserve this preflight decision and wait for 
 Profitability: `NOT_ESTABLISHED`.
 Live signing, public broadcast, exchange orders and automatic SL/TP: `BLOCKED`.
 This preflight is read-only evidence organization, not a market-data evaluation and not a gate clearance.
+
+
+## CP-0155 Correction Addendum (2026-10-17)
+
+A direct line-level reread of the current branch builder corrected one inaccurate statement in this preflight:
+- `load_candidate_gate()`: lines 135–180 validates the exact-key manifest, hash, row count, schema, key uniqueness, non-row blockers and eligibility status.
+- `partition_candidate_rows()`: lines 182–190 implements exact `(interval, open_time_ms)` exclusion without rounding.
+- Production path loads the gate at line 497, applies quarantine in `audit_and_write_interval()` (line 368), and writes `cp0026_quarantined_candidate_rows.csv` (line 536).
+- The CP-0040 integration report independently documents the gate and synthetic exact-key regression tests.
+- Thus the earlier statement that the builder lacks row-level exclusion was incorrect and is superseded. The actual state is: integration exists, deterministic/synthetic tests exist, but the production build remains blocked before real market rows are processed because 11 non-row blockers remain and the eligibility summary is not candidate-ready. Do not call the integration “missing”; do not claim real-data quarantine application was proven.
