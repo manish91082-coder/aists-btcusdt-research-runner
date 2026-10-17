@@ -41,6 +41,8 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         self.assertIn("publish_cp0165_4h_monthly_checksum_gap_audit:", workflow)
         self.assertIn('s.get("canonical_source")!="NONE"', workflow)
         self.assertIn('s.get("g0")!="BLOCKED_GLOBAL"', workflow)
+        self.assertIn('if s.get("status")!="BLOCKED_4H_AUDIT_INPUT_INVALID" and rows!=110:', workflow)
+        self.assertIn('rows<0', workflow)
         self.assertIn('s.get("monthly_zip_downloads")!=0', workflow)
 
     def test_missing_inventory_writes_blocked_evidence_without_failing_runner(self):
