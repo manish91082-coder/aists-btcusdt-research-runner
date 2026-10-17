@@ -1,0 +1,37 @@
+name: CP-0165 4h Archive Audit Static Tests
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py'
+      - 'scripts/aists_runner.py'
+      - '.github/workflows/python-runner.yml'
+      - '.github/workflows/cp0165-4h-audit-tests.yml'
+      - 'tests/test_cp0165_4h_audit.py'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py'
+      - 'scripts/aists_runner.py'
+      - '.github/workflows/python-runner.yml'
+      - '.github/workflows/cp0165-4h-audit-tests.yml'
+      - 'tests/test_cp0165_4h_audit.py'
+
+permissions:
+  contents: read
+
+jobs:
+  static-audit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile audit and runner
+        run: python -m py_compile scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py scripts/aists_runner.py
+      - name: Test bounded audit helpers
+        run: python -m unittest discover -s tests -p 'test_cp0165_4h_audit.py' -v
