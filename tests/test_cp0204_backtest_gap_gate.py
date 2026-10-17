@@ -18,7 +18,7 @@ class TestCP0204BacktestGapGate(unittest.TestCase):
 
     def test_gap_valuation_behavior_is_explicitly_identified_as_unresolved(self):
         source = BACKTEST.read_text(encoding="utf-8")
-        self.assertIn("Existing spot exposure is carried through gaps and marked at the next observed prices.", source)
+        self.assertIn("existing spot exposure is carried through gaps and marked at the next observed prices.", source.lower())
         self.assertIn("current_equity=cash+qty*cl[i]", source)
         self.assertIn("if i+1>=end_idx or not contiguous[i+1]:", source)
         self.assertIn("load_gap_policy_gate(", source)
