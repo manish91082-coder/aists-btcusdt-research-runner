@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest research checkpoint: CP-0151 candidate-run admissibility audit. Subsequent commits are documentation-metadata reconciliation only; re-fetch current branch HEAD and exact-HEAD CI each session before claiming a terminal result.
+Latest checkpoint: CP-0152 scope proposal (not approved; no run). CP-0151 remains the latest empirical admissibility audit; no empirical gate has cleared. Re-fetch current branch HEAD and exact-HEAD CI each session before claiming a terminal result.
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -252,3 +252,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Decision: do not repeat that failed comparator, scale old metrics, build a candidate through the unsafe existing builder, or add more infrastructure. Current evidence does not authorize a new real-market run. Keep all gates unchanged.
 - Smallest unblock: new official archive-version/publication evidence for exact-key adjudication, or separate explicit approval for a genuinely new frozen candidate-specific evaluation with exact quarantine lineage and verified INR→USDT, fees, slippage and lot-size assumptions; no G0/builder bypass.
 - G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. No profitability established and live trading remains blocked.
+
+
+## CP-0152 — New 4h candidate scope proposal (2026-10-17)
+- Re-verified branch/PR head before changes: `9883051893f0b6675a060bee21eede299bf80f21`; PR #2 OPEN/unmerged; exact-head Actions run `39035163301` terminal SUCCESS.
+- Created `evidence/research_scopes/CP0152_4H_EMA20_50_CAUSAL_ATR_SCOPE_PROPOSAL_HI.md`, proposing a genuinely new 4h EMA20/EMA50 crossover with a causal ATR% percentile filter using only the prior 252 completed 4h observations (20th–90th percentile eligibility band), next-contiguous-open hypothetical fills, and no automatic SL/TP or exchange actions.
+- This is a proposal only: approval is `PENDING_EXPLICIT_APPROVAL`; candidate build/backtest `NOT_RUN`. It does not change the frozen CP-0040 rulebook or bypass G0.
+- Scope records required verified inputs: exact-key quarantine lineage and actual row-exclusion proof, INR→USDT basis, fees/slippage, lot-size/min-notional constraints and frozen allocation/cash reserve. If any required basis is unavailable, affected capital/quantity metrics must be `NOT_COMPUTABLE`.
+- G0 remains `BLOCKED_GLOBAL`; 11 non-row aggregation blockers remain open. G2 remains `FAIL_CURRENT_23_CANDIDATES`; G3 blocked, G4 insufficient, G6 not built, G7 live blocked. The proposed candidate has no performance evidence and is not promoted.
+- Next: verify the proposal and this roadmap on the resulting exact branch/PR HEAD and exact-head CI; do not execute any market-data build/backtest until explicit scope approval and all rulebook data/capital gates permit it.
