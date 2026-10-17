@@ -9,10 +9,12 @@ class TestCP0204BacktestGapGate(unittest.TestCase):
     def test_gap_gate_runs_before_manifest_or_output_creation(self):
         source = BACKTEST.read_text(encoding="utf-8")
         gate = source.index("load_gap_policy_gate(")
+        row_gate = source.index("load_candidate_gate(")
         manifest = source.index('manifest_path=report_dir/"cp0026_research_candidate_manifest.json"')
         output_creation = source.index("result_dir.mkdir")
         candidate_load = source.index("load_candidate(root,interval,manifest)")
-        self.assertLess(gate, manifest)
+        self.assertLess(gate, row_gate)
+        self.assertLess(row_gate, manifest)
         self.assertLess(gate, output_creation)
         self.assertLess(gate, candidate_load)
 
