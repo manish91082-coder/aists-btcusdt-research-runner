@@ -91,6 +91,17 @@ class TestCP0192CacheOnlyTriage(unittest.TestCase):
             self.assertEqual(len(record["sha256"]), 64)
             self.assertEqual(len(opens), 2)
 
+    def test_off_grid_open_time_invalidates_archive_coverage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            archive_path = Path(tmp) / "BTCUSDT-5m-2017-08.zip"
+            with zipfile.ZipFile(archive_path, "w", zipfile.ZIP_DEFLATED) as archive:
+                archive.writestr("BTCUSDT-5m-2017-08.csv", "1502942400000,1,1,1,1,1\n1502942700001,1,1,1,1,1\n")
+            record, opens = TRIAGE.inspect_cached_archive(archive_path, "5m", "2017-08")
+            self.assertEqual(record["zip_crc"], "PASS")
+            self.assertEqual(record["open_grid_status"], "FAIL")
+            self.assertEqual(record["off_grid_rows"], 1)
+            self.assertEqual(record["duplicate_open_times"], 0)
+
     def test_wrong_timestamp_unit_is_not_used_as_coverage(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
