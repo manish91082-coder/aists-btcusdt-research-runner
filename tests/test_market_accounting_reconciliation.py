@@ -76,6 +76,12 @@ class AccountingReconciliationTests(unittest.TestCase):
         with self.assertRaisesRegex(ReconciliationError, "must not be an order instruction"):
             reconcile_simulation_with_ledger(altered, self.ledger)
 
+    def test_event_slippage_assumption_mismatch_is_rejected(self):
+        altered = copy.deepcopy(self.sim)
+        altered["events"][0]["slippage_bps_per_side"] = 0.0
+        with self.assertRaisesRegex(ReconciliationError, "event slippage assumption mismatch"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
     def test_matching_but_incorrect_event_and_ledger_fee_is_detected(self):
         altered_sim = copy.deepcopy(self.sim)
         altered_sim["events"][0]["fee_usdt"] += 0.01
