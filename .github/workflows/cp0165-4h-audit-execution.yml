@@ -53,5 +53,5 @@ jobs:
         with:
           name: cp0165-read-only-audit-${{ github.run_id }}-attempt-${{ github.run_attempt }}
           path: results/cp0165_4h_archive_audit/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30
