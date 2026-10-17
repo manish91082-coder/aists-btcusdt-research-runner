@@ -96,3 +96,11 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - G0 remains `BLOCKED_GLOBAL`; no real historical run is permitted. All live signing, public broadcast, exchange orders and automatic SL/TP remain blocked/not implemented. PR #2 remains open and must not be merged.
 - Next: verify compile, all tests and exact final HEAD CI. If green, continue with a reproducible feature/snapshot producer that computes features only from source candles at or before each decision cutoff, while keeping G0 closed.
 
+## CP-0136 — Prefix-only causal feature/snapshot producer (2026-10-17)
+- Added `aists_brain/causal_feature_producer.py`. For every supplied completed candle, it computes market-context features from only the prefix ending at that candle, hashes the canonical prefix, binds the snapshot to brain/strategy versions, and emits a snapshot SHA-256. Later candles cannot change an earlier snapshot.
+- The producer emits `NO_TRADE` for every row by design: it is a feature producer, not a signal generator. It rejects malformed OHLCV, invalid timestamps, unsupported intervals and any gap; it never repairs or fills data.
+- Added a second entry point that loads candles through `load_provenance_cleared_candles` first. A blocked G0 manifest is rejected before feature generation. This does not authenticate the external adjudicator; an external PASS claim still needs independent evidence.
+- Added eight tests covering snapshot generation, no-trade-only output, earlier-snapshot invariance when later candles change, feature timestamp cutoffs, gaps, invalid OHLC, hash/version validation, interval duration and blocked-G0 refusal. CI compiles the new module.
+- **No real historical feature run or performance backtest was performed.** Synthetic candles exist only inside software tests. Current G0 remains `BLOCKED_GLOBAL`; do not create a manifest claiming PASS to bypass it. No live signing, public broadcast, exchange orders, automatic SL/TP, or PR merge.
+- Next: inspect exact final HEAD and CI terminal logs; fix any failures before proceeding. Following a green gate, the next step is to persist deterministic feature artifacts with exact source hashes and connect the producer to the offline research harness without relaxing G0.
+
