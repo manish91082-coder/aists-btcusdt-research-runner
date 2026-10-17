@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest checkpoint: CP-0151 candidate-run admissibility audit; exact-head CI SUCCESS on `9572c1c6d5285c0d23525209ad790bffa7041e6e` (run [39030054762](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39030054762); compile + unit tests SUCCESS). This is a metadata reconciliation; no empirical gate cleared.
+Latest research checkpoint: CP-0151 candidate-run admissibility audit. Subsequent commits are documentation-metadata reconciliation only; re-fetch current branch HEAD and exact-HEAD CI each session before claiming a terminal result.
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
