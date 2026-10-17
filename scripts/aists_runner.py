@@ -51,7 +51,7 @@ def main():
             forbidden.append(path.name)
         writes=text.count("contents: write")
         publisher_blocks=[]
-        for publisher_name in ("publish_cp0107_evidence","publish_cp0040_quarantine_manifest","publish_cp0040_baseline_reconstruction_audit","publish_cp0040_quarantine_sensitivity_audit","publish_cp0040_aggregation_monthly_sidecar_audit","publish_cp0040_archive_integrity_conflict_matrix","publish_cp0040_candidate_input_relevance_audit","publish_cp0107_shared52_candidate_input_dependency_audit","publish_cp0040_rulebook_bound_eligibility_decision","publish_cp0092_correction_archive_binary_probe","publish_cp0093_daily_reference_discrepancy_triage","publish_cp0094_acquisition_quarantine_coverage_audit","publish_cp0095_official_correction_target_mapping_audit","publish_cp0096_correction_checksum_crosswalk_audit","publish_cp0097_official_kline_correction_inventory_audit"):
+        for publisher_name in ("publish_cp0107_evidence","publish_cp0040_quarantine_manifest","publish_cp0040_baseline_reconstruction_audit","publish_cp0040_quarantine_sensitivity_audit","publish_cp0040_aggregation_monthly_sidecar_audit","publish_cp0040_archive_integrity_conflict_matrix","publish_cp0040_candidate_input_relevance_audit","publish_cp0107_shared52_candidate_input_dependency_audit","publish_cp0040_rulebook_bound_eligibility_decision","publish_cp0092_correction_archive_binary_probe","publish_cp0093_daily_reference_discrepancy_triage","publish_cp0094_acquisition_quarantine_coverage_audit","publish_cp0095_official_correction_target_mapping_audit","publish_cp0096_correction_checksum_crosswalk_audit","publish_cp0097_official_kline_correction_inventory_audit","publish_cp0165_4h_monthly_checksum_gap_audit"):
             publisher=re.search(r"(?ms)^  "+re.escape(publisher_name)+r":\n(.*?)(?=^  [A-Za-z0-9_]+:|\Z)",text)
             publisher_blocks.append((publisher_name,publisher.group(1) if publisher else ""))
         scoped_count=0
@@ -88,12 +88,14 @@ def main():
                 task_allowlist=("cp0095_official_correction_target_mapping_audit" in publisher_block)
             elif publisher_name=="publish_cp0096_correction_checksum_crosswalk_audit":
                 task_allowlist=("cp0096_correction_checksum_crosswalk_audit" in publisher_block)
-            else:
+            elif publisher_name=="publish_cp0097_official_kline_correction_inventory_audit":
                 task_allowlist=("cp0097_official_kline_correction_inventory_audit" in publisher_block)
+            else:
+                task_allowlist=("cp0165_4h_monthly_checksum_gap_audit" in publisher_block)
             if has_scoped_permissions and has_task_scope and task_allowlist:
                 scoped_count += 1
-        publisher_scoped=(scoped_count==15)
-        if writes and not (writes==scoped_count and scoped_count in (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)):
+        publisher_scoped=(scoped_count==16)
+        if writes and not (writes==scoped_count and scoped_count in (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)):
             forbidden.append(path.name+": unscoped contents: write")
         if publisher_scoped:
             scoped_publisher_write=True
