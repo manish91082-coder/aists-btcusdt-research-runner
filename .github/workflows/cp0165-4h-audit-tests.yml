@@ -17,6 +17,8 @@ on:
       - 'tests/test_cp0198_daily_reference_exact_key.py'
       - 'scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py'
       - 'tests/test_cp0199_source_conflict_probe.py'
+      - 'scripts/AISTS_CP0200_G0_Rulebook_Bound_Gap_Disposition.py'
+      - 'tests/test_cp0200_g0_rulebook_disposition.py'
       - 'docs/AISTS_LIVE_STATUS_ROADMAP.md'
   push:
     branches: [main]
@@ -35,6 +37,8 @@ on:
       - 'tests/test_cp0198_daily_reference_exact_key.py'
       - 'scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py'
       - 'tests/test_cp0199_source_conflict_probe.py'
+      - 'scripts/AISTS_CP0200_G0_Rulebook_Bound_Gap_Disposition.py'
+      - 'tests/test_cp0200_g0_rulebook_disposition.py'
       - 'docs/AISTS_LIVE_STATUS_ROADMAP.md'
 
 permissions:
@@ -52,7 +56,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Compile audit and runner
-        run: python -m py_compile scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py scripts/AISTS_CP0198_DailyReference_4H_ExactKey_Audit.py scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py scripts/aists_runner.py
+        run: python -m py_compile scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py scripts/AISTS_CP0198_DailyReference_4H_ExactKey_Audit.py scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py scripts/AISTS_CP0200_G0_Rulebook_Bound_Gap_Disposition.py scripts/aists_runner.py
       - name: Test bounded audit helpers
         run: python -m unittest discover -s tests -p 'test_cp0165_4h_audit.py' -v
       - name: Test cache-only gap triage
@@ -63,3 +67,5 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_cp0198_daily_reference_exact_key.py' -v
       - name: Test exact-key conflict probe
         run: python -m unittest discover -s tests -p 'test_cp0199_source_conflict_probe.py' -v
+      - name: Test G0 rulebook-bound disposition
+        run: python -m unittest discover -s tests -p 'test_cp0200_g0_rulebook_disposition.py' -v
