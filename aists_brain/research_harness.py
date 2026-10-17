@@ -13,7 +13,9 @@ import math
 from pathlib import Path
 from typing import Any
 
+from aists_brain.accounting_reconciliation import reconcile_simulation_with_ledger
 from aists_brain.cost_aware_simulator import simulate_next_open
+from aists_brain.paper_portfolio import append_paper_fill, create_ledger, verify_ledger
 from aists_brain.provenance_input import (
     ProvenanceGateError,
     load_provenance_cleared_candles,
@@ -92,6 +94,28 @@ def run_manifest_driven_simulation(
     except (TypeError, ValueError, KeyError) as exc:
         raise ResearchHarnessError(f"decision/simulation contract rejected input: {exc}") from exc
 
+    paper_ledger = create_ledger(
+        initial_cash_usdt=initial_cash_usdt,
+        provenance_status="EXTERNAL_PASS_CLAIM_NOT_AUTHENTICATED",
+        fee_assumption_note=(
+            f"simulator assumptions: fee_bps_per_side={fee_bps_per_side}; "
+            f"slippage_bps_per_side={slippage_bps_per_side}"
+        ),
+    )
+    for event in simulation["events"]:
+        paper_ledger = append_paper_fill(
+            paper_ledger,
+            timestamp_ms=event["fill_open_time_ms"],
+            side=event["side"],
+            quantity_btc=event["quantity_btc"],
+            price_usdt=event["fill_price_usdt"],
+            fee_usdt=event["fee_usdt"],
+            decision_id=event["decision_id"],
+            reason="offline simulator event reconciliation",
+        )
+    accounting = reconcile_simulation_with_ledger(simulation, paper_ledger)
+    ledger_integrity = verify_ledger(paper_ledger)
+
     return {
         "schema_version": "aists.manifest_research_harness.v1",
         "status": "SIMULATED_NOT_VALIDATED",
@@ -113,6 +137,8 @@ def run_manifest_driven_simulation(
             "external_status_claim": "PASS",
         },
         "simulation": simulation,
+        "accounting_reconciliation": accounting,
+        "paper_ledger_integrity": ledger_integrity,
         "limitations": [
             "PASS statuses are externally asserted and are not independently authenticated by this harness",
             "decision generation, causal feature lineage and strategy acceptance are not implemented here",
