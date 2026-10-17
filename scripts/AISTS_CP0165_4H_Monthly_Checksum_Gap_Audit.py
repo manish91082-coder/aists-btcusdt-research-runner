@@ -120,6 +120,17 @@ def read_open_times(zip_path):
                     raise ValueError(f"non-integer open_time at line {line_no}")
                 values.append(value)
     return values
+def compare_frozen_inventory(row, local_sha256, local_bytes):
+    expected_sha = str(row.get("sha256_local", "")).strip().lower()
+    expected_bytes = str(row.get("bytes", "")).strip()
+    sha_status = ("MATCH" if expected_sha == local_sha256.lower() else "MISMATCH") if re.fullmatch(r"[0-9a-f]{64}", expected_sha) and local_sha256 else "UNAVAILABLE"
+    try:
+        expected_size = int(expected_bytes)
+        bytes_status = "MATCH" if expected_size == local_bytes else "MISMATCH"
+    except (TypeError, ValueError):
+        bytes_status = "UNAVAILABLE"
+    return expected_sha, expected_bytes, sha_status, bytes_status
+
 def blocked_outputs(out, started, reason, inventory_rows=0):
     summary={"schema_version":1,"checkpoint":"CP-0165","task":TASK,"status":"BLOCKED_4H_AUDIT_INPUT_INVALID",
              "started_at_utc":started,"finished_at_utc":utc_now(),"blocking_reason":reason,
@@ -166,6 +177,7 @@ def main():
         period=filename.removeprefix("BTCUSDT-4h-").removesuffix(".zip")
         matches=[p for p in cache.rglob(filename) if p.is_file()]
         rec={"period":period,"filename":filename,"cache_status":"","local_sha256":"","zip_crc":"",
+             "inventory_sha256":"","inventory_bytes":"","baseline_sha256_status":"UNAVAILABLE","baseline_bytes_status":"UNAVAILABLE",
              "sidecar_status":"","sidecar_sha256":"","sidecar_hashes":"","sidecar_filename_match":False,
              "checksum_status":"","error":"","cache_match_count":len(matches)}
         if len(matches)!=1:
@@ -176,6 +188,10 @@ def main():
         rec["cache_path"]=str(path.relative_to(ROOT))
         try:
             rec["local_sha256"]=sha256_file(path)
+            (rec["inventory_sha256"], rec["inventory_bytes"],
+             rec["baseline_sha256_status"], rec["baseline_bytes_status"]) = compare_frozen_inventory(
+                row, rec["local_sha256"], path.stat().st_size
+            )
             with zipfile.ZipFile(path,"r") as zf:
                 bad=zf.testzip()
             rec["zip_crc"]="PASS" if bad is None else "FAIL"
@@ -230,13 +246,15 @@ def main():
     checks=[
         {"check_id":"frozen_inventory_has_110_unique_4h_months","status":"PASS" if len(rows)==110 and len(details)==110 else "FAIL","detail":f"inventory_rows={len(rows)} details={len(details)}"},
         {"check_id":"all_cached_archives_have_single_csv_crc_pass","status":"PASS" if all(r["cache_status"]=="PRESENT" and r["zip_crc"]=="PASS" for r in details) else "FAIL","detail":f"valid={sum(r['cache_status']=='PRESENT' and r['zip_crc']=='PASS' for r in details)}/110"},
+        {"check_id":"cached_archives_match_frozen_inventory_sha256","status":"PASS" if sum(r["baseline_sha256_status"]=="MATCH" for r in details)==110 else "FAIL","detail":f"matches={sum(r['baseline_sha256_status']=='MATCH' for r in details)}/110; mismatches={sum(r['baseline_sha256_status']=='MISMATCH' for r in details)}; unavailable={sum(r['baseline_sha256_status']=='UNAVAILABLE' for r in details)}"},
+        {"check_id":"cached_archives_match_frozen_inventory_bytes","status":"PASS" if sum(r["baseline_bytes_status"]=="MATCH" for r in details)==110 else "FAIL","detail":f"matches={sum(r['baseline_bytes_status']=='MATCH' for r in details)}/110; mismatches={sum(r['baseline_bytes_status']=='MISMATCH' for r in details)}; unavailable={sum(r['baseline_bytes_status']=='UNAVAILABLE' for r in details)}"},
         {"check_id":"all_110_official_sidecar_hashes_match","status":"PASS" if matches==110 else "FAIL","detail":f"matches={matches}; unavailable_or_mismatched={unavailable}"},
         {"check_id":"raw_candle_timestamps_audited","status":"PASS" if bool(all_times) else "FAIL","detail":f"rows={len(all_times)} duplicates={duplicates} off_grid={off_grid} gap_events={len(gaps)}"},
     ]
     status="PASS_ALL_110_OFFICIAL_CHECKSUMS_MATCH" if all(c["status"]=="PASS" for c in checks) and matches==110 else "REVIEW_REQUIRED_4H_ARCHIVE_PROVENANCE_INCOMPLETE"
     out.mkdir(parents=True,exist_ok=True)
     write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv",details,
-              ["period","filename","cache_path","cache_match_count","cache_status","local_sha256","zip_crc","sidecar_status","sidecar_sha256","sidecar_hashes","sidecar_filename_match","checksum_status","error"])
+              ["period","filename","cache_path","cache_match_count","cache_status","local_sha256","inventory_sha256","inventory_bytes","baseline_sha256_status","baseline_bytes_status","zip_crc","sidecar_status","sidecar_sha256","sidecar_hashes","sidecar_filename_match","checksum_status","error"])
     write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv",gaps,
               ["previous_open_time_utc","next_open_time_utc","delta_ms","missing_intervals_estimate","gap_class"])
     summary={"schema_version":1,"checkpoint":"CP-0165","task":TASK,"status":status,"started_at_utc":started,"finished_at_utc":utc_now(),
