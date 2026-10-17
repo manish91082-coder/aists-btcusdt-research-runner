@@ -175,3 +175,13 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - No production code change, candidate build, market-data backtest, policy application, source adjudication, case closure, or counterfactual closeout was performed.
 - Next bounded action CP-0212: prepare an approval/application-readiness checklist and independent-review sign-off record. Do not implement/run the sensitivity scorer before the separate approval/application record exists.
 - Current state: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain FAIL; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
+
+
+## CP-0212: Policy B approval/application-readiness checklist
+
+- Added [CP-0212 Policy B Readiness Checklist](CP0212_Policy_B_Approval_Application_Readiness_Checklist.md). It pins the exact CP-0040/0206/0210/0211 evidence identifiers and enumerates missing executable evidence: censor event with no boundary fill, later sale remains diagnostic, post-gap flat-state/warm-up reset, exact-key window grouping, blocked full-window risk metrics, exact 17-key identity, event-level Decimal reconciliation, scored/diagnostic isolation, fail-closed G0 gate, and repeatable evidence receipts.
+- The independent sign-off record is intentionally blank: reviewer identity/authority, timestamp, reviewed SHA, evidence-hash verification, decision, scope/conditions, and application-record reference are all `NOT PRESENT`. No human approval is inferred from CI.
+- CP-0212 disposition: `CHECKLIST_RECORDED_APPROVAL_ABSENT_APPLICATION_NOT_AUTHORIZED`. Policy B remains sensitivity-only and unapplied; production scorer modification and candidate build/backtest remain unauthorized/blocked.
+- No market archives, candidate build, market-data backtest, source adjudication, case closure, strategy promotion, synthetic candle/fill, or live action occurred.
+- Global state unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain `FAIL`; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
+- Next bounded action: implement only deterministic synthetic censor-ledger tests for the listed gaps, then obtain a real independent review and a separate scoped application record before any Policy B scoring is considered.
