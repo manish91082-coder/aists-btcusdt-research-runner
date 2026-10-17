@@ -36,6 +36,9 @@ import csv, gc, gzip, hashlib, json, os, zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+# CP-0204: mandatory G0 gap-policy gate; unresolved gaps block all backtest execution.
+from AISTS_CP0203_GapPolicy_Gate import load_gap_policy_gate
+
 import numpy as np
 import pandas as pd
 
@@ -384,6 +387,13 @@ def main():
     candidate_dir=root/"derived"/"research_candidate_v1"/SYMBOL/"intervals"
     result_dir=root/"derived"/"research_candidate_v1"/SYMBOL/"backtest_cp0027"
     report_dir=root/"reports"
+    # CP-0204: block before manifest reads, output-directory creation, or any backtest computation.
+    load_gap_policy_gate(
+        report_dir/"CP0200_G0_Gap_Quarantine_Recommendation.csv",
+        report_dir/"CP0200_Summary.json",
+        report_dir/"CP0201_Gap_Quarantine_Overlap_Crosswalk.csv",
+        report_dir/"CP0201_Summary.json",
+    )
     manifest_path=report_dir/"cp0026_research_candidate_manifest.json"
     if not manifest_path.exists():
         raise FileNotFoundError(f"CP-0026 manifest missing: {manifest_path}. Run CP-0026 first.")
