@@ -48,10 +48,12 @@ def run_manifest_driven_simulation(
     """Run offline simulation only when both data and decision contracts pass.
 
     Decision JSON contract:
-      schema_version='aists.research_decisions.v1',
+      schema_version='aists.causal_research_decisions.v1',
       status='PASS', source_csv_sha256=<exact manifest CSV hash>,
-      brain_version=<nonempty version identifier>,
-      decisions=[{decision_id, as_of_ms, action}, ...].
+      brain_version and strategy_version=<nonempty version identifiers>,
+      decisions=[{decision_id, as_of_ms, action, snapshot, snapshot_sha256}, ...].
+    Each snapshot contains timestamped, hash-referenced feature observations; the
+    lineage validator rejects feature timestamps later than the decision cutoff.
     A PASS is an external assertion, not proof of the decision producer's quality.
     """
     try:
