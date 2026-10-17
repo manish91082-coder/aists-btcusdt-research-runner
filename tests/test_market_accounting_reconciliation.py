@@ -124,6 +124,18 @@ class AccountingReconciliationTests(unittest.TestCase):
         with self.assertRaisesRegex(ReconciliationError, "event count mismatch"):
             reconcile_simulation_with_ledger(altered, self.ledger)
 
+    def test_reported_event_count_mismatch_is_detected(self):
+        altered = copy.deepcopy(self.sim)
+        altered["event_count"] += 1
+        with self.assertRaisesRegex(ReconciliationError, "event_count summary mismatch"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
+    def test_closed_round_trip_count_mismatch_is_detected(self):
+        altered = copy.deepcopy(self.sim)
+        altered["closed_round_trip_count"] = 0
+        with self.assertRaisesRegex(ReconciliationError, "closed round-trip summary mismatch"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
 
 if __name__ == "__main__":
     unittest.main()
