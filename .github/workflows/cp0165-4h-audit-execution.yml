@@ -11,6 +11,7 @@ on:
       - 'scripts/AISTS_CP0198_DailyReference_4H_ExactKey_Audit.py'
       - 'scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py'
       - 'scripts/AISTS_CP0200_G0_Rulebook_Bound_Gap_Disposition.py'
+      - 'scripts/AISTS_CP0201_Gap_Quarantine_Overlap_Crosswalk.py'
       - 'evidence/source_adjudication/CP0040_Original_Frozen_Strategy_Acceptance_Rulebook_HI.md'
       - 'evidence/source_adjudication/CP0040_Original_Rulebook_Verification_Receipt.json'
       - 'evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv'
@@ -77,6 +78,14 @@ jobs:
             --rulebook evidence/source_adjudication/CP0040_Original_Frozen_Strategy_Acceptance_Rulebook_HI.md \
             --rulebook-receipt evidence/source_adjudication/CP0040_Original_Rulebook_Verification_Receipt.json \
             --output-dir results/cp0200_g0_rulebook_bound_gap_disposition
+          python scripts/AISTS_CP0201_Gap_Quarantine_Overlap_Crosswalk.py \
+            --gap-manifest results/cp0200_g0_rulebook_bound_gap_disposition/CP0200_G0_Gap_Quarantine_Recommendation.csv \
+            --existing-quarantine evidence/source_adjudication/CP0040_Run_38883792900/CP0040_ExactKey_Quarantine_Manifest.csv \
+            --worklist-delta evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_450.csv \
+            --feb2018-disposition evidence/source_adjudication/CP0107_Feb2018_OffGrid_RowDisposition.csv \
+            --shared52 evidence/source_adjudication/CP0107_Shared52_EvidenceLinked_Disposition_Matrix.csv \
+            --close-time-only evidence/source_adjudication/CP0107_CloseTimeOnly_FieldDisposition_Final.csv \
+            --output-dir results/cp0201_gap_quarantine_overlap_crosswalk
           python scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py \
             --triage-csv results/cp0192_cross_interval_gap_triage/CP0192_Cross_Interval_Gap_Triage.csv \
             --prior-evidence-dir evidence/source_adjudication/CP0107_Run_38777979719 \
@@ -93,5 +102,6 @@ jobs:
             results/cp0198_daily_reference_4h_exact_key_audit/
             results/cp0199_exact_key_source_conflict_probe/
             results/cp0200_g0_rulebook_bound_gap_disposition/
+            results/cp0201_gap_quarantine_overlap_crosswalk/
           if-no-files-found: warn
           retention-days: 30
