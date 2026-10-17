@@ -279,3 +279,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Capital basis (₹10,000 INR to USDT), applicable fee source, BTCUSDT lot-size/minimum notional, frozen allocation and cash reserve remain unverified/unfrozen for this proposed evaluation.
 - Gate state unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. No profitability established.
 - Next: wait for explicit approval of the exact CP-0152 proposal, then re-check prerequisites. Approval alone cannot override G0 or builder safeguards.
+
+
+## CP-0155 — Correction: builder exact-key exclusion is integrated (2026-10-17)
+- Direct line-level inspection of the current `scripts/AISTS_CP0026_Research_Candidate_Builder.py` corrected the CP-0154 preflight statement that the required row-level exclusion lookup was absent. That statement was inaccurate and is superseded.
+- Current source has `load_candidate_gate()` at lines 135–180, exact-key `partition_candidate_rows()` at 182–190, production gate loading at 497, quarantine application in `audit_and_write_interval()` at line 368, and quarantined-row audit output at line 536. CP-0040 integration report also records builder gate integration and synthetic exact-key tests.
+- The real blocker is unchanged: the builder fails closed while 11 non-row blockers remain and current eligibility status is not `PASS_CANDIDATE_ELIGIBILITY_READY`. Therefore no real candidate build has reached market-row processing and production application of the current manifest is not proven.
+- Corrected preflight report: `evidence/research_scopes/CP0154_CP0152_Preflight_Readiness_HI.md` includes CP-0155 addendum.
+- Latest HEAD before this documentation correction: `af1da38f0aec95946211690940aed8d9c28002a4`; its exact-head CI run 39036029613 completed SUCCESS. This correction creates a new HEAD and requires its own exact-head CI verification.
+- CP-0152 approval remains pending; no build/backtest. G0 remains BLOCKED_GLOBAL; other release gates unchanged.
