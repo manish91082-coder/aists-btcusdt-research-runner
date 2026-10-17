@@ -7,6 +7,7 @@ on:
       - '.github/workflows/cp0165-4h-audit-execution.yml'
       - 'scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py'
       - 'scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py'
+      - 'scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py'
       - 'evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv'
 
 permissions:
@@ -52,6 +53,10 @@ jobs:
             --monthly-cache .cache/aists/binance-monthly-archives \
             --gaps-csv results/cp0165_4h_archive_audit/CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv \
             --output-dir results/cp0192_cross_interval_gap_triage
+          python scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py \
+            --triage-csv results/cp0192_cross_interval_gap_triage/CP0192_Cross_Interval_Gap_Triage.csv \
+            --prior-evidence-dir evidence/source_adjudication/CP0107_Run_38777979719 \
+            --output-dir results/cp0197_feb2018_evidence_linkage
       - name: Upload audit evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -60,5 +65,6 @@ jobs:
           path: |
             results/cp0165_4h_archive_audit/
             results/cp0192_cross_interval_gap_triage/
+            results/cp0197_feb2018_evidence_linkage/
           if-no-files-found: warn
           retention-days: 30
