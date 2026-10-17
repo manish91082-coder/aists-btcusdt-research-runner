@@ -1,7 +1,7 @@
 # AISTS Project Live Status for ChatGPT
 
 Last updated: 2026-10-17
-Status checkpoint: CP-0151 candidate-run admissibility audit recorded; exact-head CI independently reverified on 2026-10-17. Re-fetch live GitHub state on every new session.
+Research checkpoint: CP-0151 candidate-run admissibility audit. Subsequent commits are documentation-metadata reconciliation only; always re-fetch current branch/PR and exact-HEAD CI before relying on state.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2 (must remain OPEN; do not merge)
@@ -17,12 +17,11 @@ Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 - Never merge PR #2. Keep updates append-only except narrowly necessary corrections to status metadata.
 
 ## Latest verified GitHub state
-- Latest verified checkpoint: CP-0151 candidate-run admissibility audit; no empirical gate cleared.
-- Working branch HEAD and PR #2 HEAD both `9572c1c6d5285c0d23525209ad790bffa7041e6e`.
-- PR #2 is OPEN and unmerged; never merge it.
-- Exact-HEAD GitHub Actions run [39030054762](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39030054762) completed SUCCESS on the exact current HEAD; job `brain-unit-tests`, compile and unit-test steps both SUCCESS. The matching pull-request run [39030057875](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39030057875) also completed SUCCESS on the same SHA.
-- Current status-file blob SHA before this metadata reconciliation: `0483b8491f2eef7bf95820207f9ad4c2a02f924c`. This entry is metadata reconciliation only and does not change any research gate.
-- Historical CP-0143 and earlier checkpoint records remain in the append-only history below; they are not the current verified state.
+- Latest research checkpoint: CP-0151 candidate-run admissibility audit. The two documentation-only metadata commits after CP-0151 do not represent empirical research progress.
+- Current branch HEAD, PR #2 HEAD, and exact-head CI must be re-fetched at each session start. Historical run [39030054762](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39030054762) was SUCCESS on CP-0151 HEAD `9572c1c6d5285c0d23525209ad790bffa7041e6e`, not on any later documentation-only commit.
+- PR #2 must remain OPEN and unmerged.
+- This section intentionally avoids claiming a terminal result for any later head until its own workflow run is verified.
+- Historical checkpoint records remain append-only below.
 
 ## Research gates (must not be inferred from code/test progress)
 - G0: BLOCKED_GLOBAL.
