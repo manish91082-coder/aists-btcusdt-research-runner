@@ -121,6 +121,10 @@ class TestCP0192CacheOnlyTriage(unittest.TestCase):
         self.assertIn('"archive_downloads": 0', source)
         self.assertIn('"canonical_source": "NONE"', source)
         self.assertIn('"live_signing_broadcast_orders": "BLOCKED"', source)
+        self.assertIn('record["open_grid_status"] == "PASS"', source)
+        self.assertIn("slots_with_zero_child_opens_in_valid_archives", source)
+        self.assertIn("slots_with_unavailable_or_invalid_child_archives", source)
+        self.assertNotIn("slots_with_no_child_opens_inside_missing_4h_windows", source)
 
 if __name__ == "__main__":
     unittest.main()
