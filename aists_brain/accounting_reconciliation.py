@@ -69,10 +69,22 @@ def reconcile_simulation_with_ledger(
     checks: list[dict[str, Any]] = []
     expected_round_trips: list[dict[str, Any]] = []
     open_entry: dict[str, Any] | None = None
+    previous_fill_open_time_ms: int | None = None
 
     for index, (event, ledger_event) in enumerate(zip(sim_events, ledger_events), start=1):
         if not isinstance(event, Mapping) or not isinstance(ledger_event, Mapping):
             raise ReconciliationError(f"event {index} is not an object")
+        signal_as_of_ms = event.get("signal_as_of_ms")
+        fill_open_time_ms = event.get("fill_open_time_ms")
+        if (isinstance(signal_as_of_ms, bool) or not isinstance(signal_as_of_ms, int)
+                or signal_as_of_ms < 0):
+            raise ReconciliationError(f"event {index} signal_as_of_ms must be a non-negative integer")
+        if (isinstance(fill_open_time_ms, bool) or not isinstance(fill_open_time_ms, int)
+                or fill_open_time_ms != signal_as_of_ms + 1):
+            raise ReconciliationError(f"event {index} fill must occur at signal_as_of_ms + 1")
+        if previous_fill_open_time_ms is not None and fill_open_time_ms <= previous_fill_open_time_ms:
+            raise ReconciliationError("simulator fill timestamps must be strictly increasing")
+        previous_fill_open_time_ms = fill_open_time_ms
         side = event.get("side")
         if side not in ("BUY", "SELL"):
             raise ReconciliationError(f"unsupported simulator event side at event {index}")
