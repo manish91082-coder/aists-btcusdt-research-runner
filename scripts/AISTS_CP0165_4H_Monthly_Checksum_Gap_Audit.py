@@ -116,15 +116,18 @@ def main():
     cache=(ROOT/args.monthly_cache).resolve()
     out=(ROOT/args.output_dir).resolve()
     if not inventory_path.is_file():
-        return 1 if blocked_outputs(out,started,"Frozen baseline archive inventory is missing.").get("status")=="PASS" else 0
+        blocked_outputs(out,started,"Frozen baseline archive inventory is missing.")
+        return 0
     all_rows=read_csv(inventory_path)
     rows=[r for r in all_rows if r.get("source")=="monthly_cache" and r.get("interval")=="4h"]
     periods=list(expected_periods())
     period_counts={p:sum(1 for r in rows if str(r.get("filename","")).endswith(f"4h-{p}.zip")) for p in periods}
     if len(rows)!=EXPECTED_MONTHS or len(set(r.get("filename","") for r in rows))!=EXPECTED_MONTHS or periods!=[p for p,c in period_counts.items() if c==1]:
-        return 0 if blocked_outputs(out,started,f"Expected exactly one frozen monthly 4h archive for each of 110 months; found rows={len(rows)} unique_files={len(set(r.get('filename','') for r in rows))}.",len(rows)) else 1
+        blocked_outputs(out,started,f"Expected exactly one frozen monthly 4h archive for each of 110 months; found rows={len(rows)} unique_files={len(set(r.get('filename','') for r in rows))}.",len(rows))
+        return 0
     if not cache.is_dir():
-        return 0 if blocked_outputs(out,started,"Restored monthly archive cache is absent; ZIP downloads are prohibited.",len(rows)) else 1
+        blocked_outputs(out,started,"Restored monthly archive cache is absent; ZIP downloads are prohibited.",len(rows))
+        return 0
     by_period={str(r["date"]):r for r in rows if r.get("date")}
     # Inventory date fields are not authoritative for scope; filenames define period keys.
     by_period={str(r["filename"]).rsplit("-",1)[-1].removesuffix(".zip"):r for r in rows}
