@@ -21,6 +21,7 @@ on:
           - cp0040_baseline_reconstruction_audit
           - cp0040_quarantine_sensitivity_run
           - cp0040_aggregation_monthly_sidecar_audit
+          - cp0165_4h_monthly_checksum_gap_audit
           - cp0040_archive_integrity_conflict_matrix
           - cp0040_candidate_input_relevance_audit
           - cp0107_shared52_candidate_input_dependency_audit
@@ -1192,6 +1193,101 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$DEST" evidence/source_adjudication/CP0040_Aggregation_Monthly_Sidecar_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
           git commit -m "evidence(cp0040): publish monthly sidecar audit run ${RUN_ID}"
+          git push origin HEAD:main
+
+
+  publish_cp0165_4h_monthly_checksum_gap_audit:
+    if: needs.run.result == 'success' && needs.run.outputs.task == 'cp0165_4h_monthly_checksum_gap_audit'
+    needs: run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Checkout main with scoped write token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ github.token }}
+          persist-credentials: true
+      - name: Download this run's audit artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aists-run-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: evidence_stage
+      - name: Validate bounded 4h audit evidence
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path("evidence_stage/cp0165_4h_archive_audit")
+          sp=root/"CP0165_4H_Monthly_Checksum_Gap_Audit_Summary.json"
+          rp=root/"CP0165_4H_Monthly_Checksum_Gap_Audit_Report_HI.md"
+          dp=root/"CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv"
+          gp=root/"CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv"
+          if not all(p.is_file() for p in (sp,rp,dp,gp)):
+              raise SystemExit("Missing required CP-0165 evidence output; refusing publish")
+          s=json.loads(sp.read_text(encoding="utf-8"))
+          allowed={"PASS_ALL_110_OFFICIAL_CHECKSUMS_MATCH","REVIEW_REQUIRED_4H_ARCHIVE_PROVENANCE_INCOMPLETE","BLOCKED_4H_AUDIT_INPUT_INVALID"}
+          if s.get("task")!="cp0165_4h_monthly_checksum_gap_audit" or s.get("status") not in allowed:
+              raise SystemExit("Unexpected CP-0165 task/status; refusing publish")
+          if s.get("expected_months")!=110 or s.get("archive_inventory_rows")!=110:
+              raise SystemExit("CP-0165 must report the exact 110-month expected scope")
+          if s.get("monthly_zip_downloads")!=0 or s.get("daily_archive_downloads")!=0 or s.get("market_data_rest_api_used") is not False:
+              raise SystemExit("Archive acquisition boundary assertion failed")
+          if s.get("canonical_source")!="NONE" or s.get("source_cases_closed")!=0 or s.get("g0")!="BLOCKED_GLOBAL":
+              raise SystemExit("CP-0165 must not change source authority or G0")
+          if s.get("checks_passed")!=s.get("checks_total") and s.get("status")=="PASS_ALL_110_OFFICIAL_CHECKSUMS_MATCH":
+              raise SystemExit("PASS status contains failed checks")
+          print(json.dumps({"status":"PASS_PUBLISH_PREFLIGHT","run_id":os.environ["RUN_ID"],
+                            "research_status":s["status"],"checksum_matches":s.get("checksum_matches",0),
+                            "checksum_unavailable_or_mismatched":s.get("checksum_unavailable_or_mismatched",0),
+                            "gap_events":s.get("gap_events",0)},sort_keys=True))
+          PY
+      - name: Persist CP-0165 run evidence and append state
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          SRC="evidence_stage/cp0165_4h_archive_audit"
+          DEST="evidence/source_adjudication/CP0165_4H_Monthly_Checksum_Gap_Audit_Run_${RUN_ID}"
+          mkdir -p "$DEST"
+          cp "$SRC/CP0165_4H_Monthly_Checksum_Gap_Audit_Summary.json" "$DEST/"
+          cp "$SRC/CP0165_4H_Monthly_Checksum_Gap_Audit_Report_HI.md" "$DEST/"
+          cp "$SRC/CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv" "$DEST/"
+          cp "$SRC/CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv" "$DEST/"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          rid=os.environ["RUN_ID"];commit=os.environ["RUN_COMMIT"]
+          base=Path("evidence/source_adjudication")
+          dest=base/("CP0165_4H_Monthly_Checksum_Gap_Audit_Run_"+rid)
+          outputs={}
+          for p in sorted(dest.iterdir()):
+              if p.is_file(): outputs[p.name]={"bytes":p.stat().st_size,"sha256":hashlib.sha256(p.read_bytes()).hexdigest()}
+          sp=dest/"CP0165_4H_Monthly_Checksum_Gap_Audit_Summary.json"
+          s=json.loads(sp.read_text(encoding="utf-8"))
+          pointer={"run_id":int(rid),"run_commit_sha":commit,"status":s["status"],
+                   "summary_path":str(sp),"report_path":str(dest/"CP0165_4H_Monthly_Checksum_Gap_Audit_Report_HI.md"),
+                   "summary_sha256":outputs[sp.name]["sha256"],"outputs":outputs,
+                   "monthly_zip_downloads":0,"daily_archive_downloads":0,"market_data_rest_api_used":False,
+                   "canonical_source":"NONE","source_cases_closed":0,"g0":"BLOCKED_GLOBAL"}
+          (base/"CP0165_4H_Monthly_Checksum_Gap_Audit_Current.json").write_text(json.dumps(pointer,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+          state=Path("evidence/CURRENT_RESEARCH_STATE_HI.md")
+          note=f"\n\n## CP-0165 4h archive checksum/gap audit (run {rid})\n- Status: {s['status']}\n- Summary: {sp}\n- Source authority remains NONE; G0 remains BLOCKED_GLOBAL; no strategy promotion or backtest implied.\n"
+          if state.exists() and note.strip() not in state.read_text(encoding="utf-8"):
+              with state.open("a",encoding="utf-8") as f:f.write(note)
+          for p in dest.iterdir():
+              if p.is_file(): print(f"{p}: bytes={p.stat().st_size} sha256={outputs[p.name]['sha256']}")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DEST" evidence/source_adjudication/CP0165_4H_Monthly_Checksum_Gap_Audit_Current.json evidence/CURRENT_RESEARCH_STATE_HI.md
+          git commit -m "evidence(cp0165): publish 4h archive checksum and gap audit ${RUN_ID}"
           git push origin HEAD:main
 
   publish_cp0040_archive_integrity_conflict_matrix:
