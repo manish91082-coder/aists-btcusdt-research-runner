@@ -45,6 +45,15 @@ def reconcile_simulation_with_ledger(
         raise ReconciliationError("simulator and ledger events must be lists")
     if len(sim_events) != len(ledger_events):
         raise ReconciliationError("event count mismatch between simulator and paper ledger")
+    reported_event_count = simulation.get("event_count")
+    if isinstance(reported_event_count, bool) or not isinstance(reported_event_count, int) or reported_event_count != len(sim_events):
+        raise ReconciliationError("simulator event_count summary mismatch")
+    reported_round_trip_count = simulation.get("closed_round_trip_count")
+    round_trips = simulation.get("closed_round_trips")
+    if isinstance(reported_round_trip_count, bool) or not isinstance(reported_round_trip_count, int):
+        raise ReconciliationError("simulator closed_round_trip_count must be an integer")
+    if not isinstance(round_trips, list) or reported_round_trip_count != len(round_trips):
+        raise ReconciliationError("simulator closed round-trip summary mismatch")
 
     fee_bps = _num("fee_bps_per_side", simulation.get("fee_bps_per_side"))
     slip_bps = _num("slippage_bps_per_side", simulation.get("slippage_bps_per_side"))
