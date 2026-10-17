@@ -1,6 +1,6 @@
 # AISTS Live Status & Mission Roadmap
 
-Last verified checkpoint: **CP-0201**  
+Last verified checkpoint: **CP-0202 (source-code-only eligibility matrix; review pending)**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
@@ -8,9 +8,9 @@ Current global gate: **G0 = BLOCKED_GLOBAL**
 ## Latest verified GitHub runs
 
 - Read-only execution pipeline through CP-0201: [run 39062577687](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062577687), completed successfully.
-- Latest static CI including CP-0201 overlap-crosswalk tests: [run 39062614659](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062614659), completed successfully.
-- Execution commit: `b6b16ab2da9111e4a44a67c5c6d091b46729b8d3`.
-- Static-test commit: `12e932a5dff9570640bfc32dd77159c54dd4a372`.
+- Latest static CI at the pre-CP-0202 branch head: [run 39062651557](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062651557), completed successfully on branch SHA `72fe22a06ef54be7969b16f44d485c3940eefc0c`.
+- Latest execution evidence through CP-0201: [run 39062577687](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062577687), completed successfully; execution commit `b6b16ab2da9111e4a44a67c5c6d091b46729b8d3`.
+- Note: static CI validates CP-0165 and CP-0192 through CP-0201 tests, but does not compile or invoke CP-0026/CP-0040 gate tests.
 - The PR remains open and unmerged; `main` remains at `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`.
 
 ## Verified findings
@@ -75,3 +75,16 @@ Current global gate: **G0 = BLOCKED_GLOBAL**
 - Profitability: **NOT ESTABLISHED**.
 
 A green GitHub Actions run confirms the bounded audit program and tests executed successfully. It does not establish source authority, clear G0, or prove profitability.
+
+
+## CP-0202: Candidate Builder Eligibility Matrix (source-code-only)
+
+- Matrix: [docs/CP0202_Candidate_Builder_Eligibility_Matrix.md](CP0202_Candidate_Builder_Eligibility_Matrix.md).
+- CP-0199 artifact downloaded and inspected: 17 keys; 20/20 scoped archives validate against the frozen inventory and prior integrity evidence. One daily-only zero-trade placeholder conflict; 16 keys absent from both inspected cached sources.
+- CP-0200/0201 reconciliation: 16 unresolved missing-key gap windows and one unresolved placeholder conflict; one exact-key overlap links to existing case `UNMATCHED-D-4h-1504713600000`; no duplicate case created.
+- Code inspection: CP-0026 exact-key row quarantine exists, but its gate only checks the manifest SHA against the accompanying mutable summary and does not consume CP-0200/0201 gap-policy evidence. Gap events are recorded, not independently enforced as a candidate-eligibility policy. CP-0026/CP-0040 gate tests are not wired into current static CI.
+- Decision: no candidate build or backtest. Preserve the current fail-closed behavior and all 11 non-row blockers. The 17-item gap policy must be integrated into a pinned, tested eligibility gate before any future candidate build.
+- Files changed in CP-0202: `docs/CP0202_Candidate_Builder_Eligibility_Matrix.md`; this roadmap entry.
+- Checkpoint code changes: none. Source authority: `NONE`; G0: `BLOCKED_GLOBAL`; source cases closed: 0; strategy promotion: false; profitability: **NOT ESTABLISHED**.
+- Review boundary: matrix review precedes any CP-0026 gate implementation. Next bounded action after review: implement the minimal fail-closed gap-policy gate and regression tests; keep candidate build/backtest disabled.
+- Safety: live signing, broadcast, and exchange orders remain `BLOCKED`.
