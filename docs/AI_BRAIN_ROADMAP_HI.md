@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest checkpoint: CP-0128
+Latest checkpoint: CP-0129
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -40,5 +40,5 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - CP-0119 was inspected from the current repository tree: `BLOCKED_INPUTS_NOT_REPRODUCIBLE`; 11/11 aggregation blockers remain open, 0 source cases closed, no canonical source selected. Current daily/monthly archive identities are recorded, but historical version timeline links established = 0. Binance issue #504 remained open with zero comments in the recorded snapshot; no maintainer answer was observed.
 - This is an evidence gap, not proof that historical versions do not exist. No production candidate build, backtest, strategy promotion or data repair was performed as part of this inspection.
 - Keep G0 `BLOCKED_GLOBAL`, G2 `FAIL_CURRENT_23_CANDIDATES`, G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`, G4 `INSUFFICIENT_EVIDENCE`, G6 `NOT_BUILT`, and G7 `LIVE_BLOCKED` until their own evidence gates change.
-- **Implemented CP-0129 (CI verification pending):** `paper_portfolio.py` now binds eligible research-candidate fills to a brain version, causal snapshot SHA-256, decision timestamp, selected strategy and confirming timeframes. It adds append-only JSONL persistence, reconstruction on restart, hash-chain verification, prefix-only append, rollback refusal and tamper/truncation checks. The JSONL writer is single-writer only; this is not tamper-proof external storage, and all fills remain hypothetical.
-- **CP-0129 verification and next step:** CI must pass on the exact latest branch HEAD. If green, the next goal-directed step is to build a no-lookahead, cost-aware fill simulator/backtest that consumes only provenance-cleared market data. Do not fabricate performance or bypass the blocked source gate.
+- **Implemented CP-0129 (CI verified on commit `15858c5`; 61/61 tests passed):** `paper_portfolio.py` now binds eligible research-candidate fills to a brain version, causal snapshot SHA-256, decision timestamp, selected strategy and confirming timeframes. It adds append-only JSONL persistence, reconstruction on restart, hash-chain verification, prefix-only append, rollback refusal and tamper/truncation checks. The JSONL writer is single-writer only; this is not tamper-proof external storage, and all fills remain hypothetical.
+- **CP-0129 verification and next step:** CI run [39017061105](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39017061105) completed successfully on exact commit `15858c57fbd67049b9b470288c5c039caee8a3aa`; Python compilation passed and 61/61 tests passed. The next goal-directed step is to resolve the historical data provenance gate before any performance run, then build a no-lookahead, cost-aware fill simulator using only provenance-cleared market data. Do not fabricate performance or bypass the blocked source gate.
