@@ -180,3 +180,11 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - G0 summary re-read: `BLOCKED_EXISTING_CP0026_BUILDER_LACKS_ROW_LEVEL_CP0107_QUARANTINE`; 909 unmatched exact-open key rows, 52 shared economic conflicts and 11 non-row blockers remain unresolved. Production builder lacks the needed row-level CP0107 exclusion lookup and fails closed.
 - This CI result is not market-data or strategy evidence. CP-0152 remains `PENDING_EXPLICIT_APPROVAL`; execution `NOT_AUTHORIZED`; candidate build/backtest `NOT_RUN`.
 - Gates unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`. Profitability is not established.
+
+
+## CP-0154 — CP-0152 preflight readiness review (2026-10-17)
+- Read-only inspection verified the CP-0040 G0 review summary remains `BLOCKED_EXISTING_CP0026_BUILDER_LACKS_ROW_LEVEL_CP0107_QUARANTINE`; CP-0119 provenance remains `BLOCKED_INPUTS_NOT_REPRODUCIBLE`; CP-0117 disposition explicitly says G0 remains blocked.
+- Existing frozen manifest is not proof of current production-path exclusion. Builder review records the required row-level CP0107 exclusion lookup is absent. Eleven non-row aggregation blockers remain unresolved.
+- Created `evidence/research_scopes/CP0154_CP0152_Preflight_Readiness_HI.md` with prerequisite matrix. CP-0152 explicit approval remains pending; user message “next” is not treated as approval of exact candidate rules.
+- ₹10,000 INR→USDT basis, fee evidence, BTCUSDT lot-size/minimum notional and frozen allocation/cash reserve remain unverified/unfrozen. No candidate build or backtest run.
+- Gates unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`. Profitability `NOT_ESTABLISHED`.
