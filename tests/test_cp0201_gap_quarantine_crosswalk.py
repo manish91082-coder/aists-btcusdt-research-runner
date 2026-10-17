@@ -35,7 +35,8 @@ class TestCP0201GapQuarantineCrosswalk(unittest.TestCase):
         self.assertIn('"duplicate_cases_created": 0', source)
         self.assertIn('"quarantine_applied_to_candidate_builder": False', source)
         self.assertIn('"canonical_source": "NONE"', source)
-        self.assertIn('"source_cases_closed": 0', source)
+        self.assertIn('"source_cases_closed": closed', source)
+        self.assertIn('"source_case_closed": False', source)
         self.assertIn('"live_signing_broadcast_orders": "BLOCKED"', source)
 
 if __name__ == "__main__":
