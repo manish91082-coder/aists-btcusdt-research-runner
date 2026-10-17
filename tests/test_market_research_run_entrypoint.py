@@ -67,10 +67,9 @@ class ResearchRunEntryPointTests(unittest.TestCase):
             )
             persisted = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(persisted["report_sha256"], report["report_sha256"])
-            self.assertEqual(
-                hashlib.sha256(path.read_bytes()).hexdigest(),
-                report["report_file_sha256"],
-            )
+            self.assertEqual(path.read_text(encoding="utf-8"), serialize_research_audit_report(report))
+            self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),
+                             hashlib.sha256(serialize_research_audit_report(report).encode("utf-8")).hexdigest())
             with self.assertRaisesRegex(ResearchRunEntryPointError, "overwrite refused"):
                 run_research_entrypoint(
                     gate_snapshot=GATES_BLOCKED,
