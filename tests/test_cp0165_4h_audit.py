@@ -36,6 +36,16 @@ class TestCP0165AuditHelpers(unittest.TestCase):
             ("", "", "UNAVAILABLE", "UNAVAILABLE"),
         )
 
+    def test_timestamp_units_normalize_to_common_microsecond_scale(self):
+        legacy_ms = 1502942400000
+        modern_us = 1735689600000000
+        self.assertEqual(AUDIT.normalize_timestamp_to_us(legacy_ms), (legacy_ms * 1000, "milliseconds"))
+        self.assertEqual(AUDIT.normalize_timestamp_to_us(modern_us), (modern_us, "microseconds"))
+        self.assertEqual(AUDIT.timestamp_to_iso(modern_us), "2025-01-01T00:00:00+00:00")
+        self.assertEqual(AUDIT.timestamp_to_iso(legacy_ms * 1000), "2017-08-17T04:00:00+00:00")
+        with self.assertRaises(ValueError):
+            AUDIT.normalize_timestamp_to_us(12345)
+
     def test_checksum_parser_requires_hash_and_archive_name(self):
         digest = "a" * 64
         hashes, named = AUDIT.parse_checksum(f"{digest}  BTCUSDT-4h-2017-08.zip", "BTCUSDT-4h-2017-08.zip")
@@ -163,6 +173,7 @@ class TestCP0165AuditHelpers(unittest.TestCase):
                 "period", "filename", "cache_path", "cache_match_count", "cache_status",
                 "local_sha256", "inventory_sha256", "inventory_bytes",
                 "baseline_sha256_status", "baseline_bytes_status", "zip_crc",
+                "timestamp_unit", "timestamp_unit_counts", "timestamp_unit_status",
                 "sidecar_status", "sidecar_sha256", "sidecar_hashes",
                 "sidecar_filename_match", "checksum_status", "error",
             ])
