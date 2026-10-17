@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest checkpoint: CP-0129
+Latest checkpoint: CP-0130
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -42,3 +42,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Keep G0 `BLOCKED_GLOBAL`, G2 `FAIL_CURRENT_23_CANDIDATES`, G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`, G4 `INSUFFICIENT_EVIDENCE`, G6 `NOT_BUILT`, and G7 `LIVE_BLOCKED` until their own evidence gates change.
 - **Implemented CP-0129 (CI verified on commit `15858c5`; 61/61 tests passed):** `paper_portfolio.py` now binds eligible research-candidate fills to a brain version, causal snapshot SHA-256, decision timestamp, selected strategy and confirming timeframes. It adds append-only JSONL persistence, reconstruction on restart, hash-chain verification, prefix-only append, rollback refusal and tamper/truncation checks. The JSONL writer is single-writer only; this is not tamper-proof external storage, and all fills remain hypothetical.
 - **CP-0129 verification and next step:** CI run [39017061105](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39017061105) completed successfully on exact commit `15858c57fbd67049b9b470288c5c039caee8a3aa`; Python compilation passed and 61/61 tests passed. The next goal-directed step is to resolve the historical data provenance gate before any performance run, then build a no-lookahead, cost-aware fill simulator using only provenance-cleared market data. Do not fabricate performance or bypass the blocked source gate.
+
+
+## CP-0130 — Cost-aware next-open simulator (2026-10-17)
+- Added `aists_brain/cost_aware_simulator.py`, a pure offline simulator that accepts caller-supplied candle bars and explicit research actions. It fills only at the immediately next contiguous bar open after the referenced candle close, applies configurable per-side fee and slippage assumptions, enforces one long position at a time, and logs gap-skipped decisions.
+- Added seven deterministic unit tests for cost-adjusted fill prices, gap skip behavior, no-trade/no-automatic-SL/TP behavior, open-position marking, timestamp contract, duplicate decisions, invalid allocation, and candle ordering.
+- The simulator does **not** generate signals, adjudicate source provenance, fetch data, or place orders. Test candles are synthetic fixtures solely for engine correctness. No historical performance was computed.
+- Updated CI compilation to include the new simulator. CP-0130 is not complete until GitHub Actions passes on the exact final branch HEAD.
+- Existing source gate remains unchanged: global G0 `BLOCKED_GLOBAL`; the frozen `MTF_BREAKOUT_4H_D1` diagnostic has candidate-specific quarantine eligibility only, but G2 remains FAIL/NOT PROMOTED and G3 remains blocked due material TRAIN sensitivity. No candidate or strategy is promoted.
+- Next: verify CI, then integrate only provenance-cleared historical candle inputs and independent accounting reconciliation. If the current data gate remains blocked, do not run a performance backtest or invent results.
