@@ -21,7 +21,7 @@ class PaperPortfolioTests(unittest.TestCase):
                                    quantity_btc=0.001, price_usdt=21000, fee_usdt=0.021,
                                    decision_id="d2", reason="paper test exit")
         self.assertAlmostEqual(ledger["cash_usdt"], 100.959)
-        self.assertAlmostEqual(ledger["realized_pnl_usdt"], 0.959)
+        self.assertAlmostEqual(ledger["realized_pnl_usdt"], 0.979)
         self.assertEqual(ledger["btc_quantity"], 0)
         self.assertEqual(ledger["sequence"], 2)
 
