@@ -261,3 +261,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Scope records required verified inputs: exact-key quarantine lineage and actual row-exclusion proof, INR→USDT basis, fees/slippage, lot-size/min-notional constraints and frozen allocation/cash reserve. If any required basis is unavailable, affected capital/quantity metrics must be `NOT_COMPUTABLE`.
 - G0 remains `BLOCKED_GLOBAL`; 11 non-row aggregation blockers remain open. G2 remains `FAIL_CURRENT_23_CANDIDATES`; G3 blocked, G4 insufficient, G6 not built, G7 live blocked. The proposed candidate has no performance evidence and is not promoted.
 - Next: verify the proposal and this roadmap on the resulting exact branch/PR HEAD and exact-head CI; do not execute any market-data build/backtest until explicit scope approval and all rulebook data/capital gates permit it.
+
+
+## CP-0153 — CP-0152 exact-HEAD CI terminal verification (2026-10-17)
+- Re-fetched live branch, PR, scope proposal, roadmap and live status after CP-0152 documentation writes.
+- Branch `cp-0120-ai-brain-foundation` HEAD and PR #2 head both equal `4e1cf587122f831b916f5733500b6f99da2fcb6d`; PR #2 remains OPEN/unmerged.
+- Exact-head GitHub Actions run [39035650619](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39035650619) reached terminal SUCCESS. Job `brain-unit-tests`: compile brain modules PASS; brain unit tests PASS.
+- Re-read G0 eligibility summary and builder: status remains `BLOCKED_EXISTING_CP0026_BUILDER_LACKS_ROW_LEVEL_CP0107_QUARANTINE`; 909 unmatched exact-open key rows, 52 shared economic conflicts and 11 non-row blockers remain unresolved. Existing builder has no row-level CP0107 exclusion lookup and fails closed unless all non-row blockers are resolved.
+- Decision: CI validates documentation/code compilation/unit tests only; it does not validate market data, candidate performance, or G0. No candidate build/backtest and no gate change.
+- Next admissible action: obtain explicit approval of the exact CP-0152 proposal and separately satisfy all frozen rulebook prerequisites. Approval alone cannot override G0 or the builder guard.
