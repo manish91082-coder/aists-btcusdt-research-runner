@@ -90,8 +90,27 @@ def verify_research_audit_report(
             value = input_hashes.get(key)
             if not isinstance(value, str) or len(value) != 64 or any(c not in "0123456789abcdef" for c in value.lower()):
                 raise ResearchReportVerificationError("missing or invalid input hash: " + key)
-        if not isinstance(run.get("accounting_reconciliation"), Mapping) or run["accounting_reconciliation"].get("status") != "PASS_ACCOUNTING_RECONCILIATION":
+        simulation = run.get("simulation")
+        if not isinstance(simulation, Mapping) or simulation.get("status") != "SIMULATED_NOT_VALIDATED":
+            raise ResearchReportVerificationError("simulated report has invalid nested simulation status")
+        events = simulation.get("events")
+        skipped = simulation.get("skipped_decisions")
+        event_count = simulation.get("event_count")
+        round_trips = simulation.get("closed_round_trips")
+        round_trip_count = simulation.get("closed_round_trip_count")
+        if not isinstance(events, list) or isinstance(event_count, bool) or not isinstance(event_count, int) or event_count != len(events):
+            raise ResearchReportVerificationError("nested simulation event count mismatch")
+        if not isinstance(skipped, list) or report.get("skipped_decisions") != skipped:
+            raise ResearchReportVerificationError("skipped decision summary mismatch")
+        if not isinstance(round_trips, list) or isinstance(round_trip_count, bool) or not isinstance(round_trip_count, int) or round_trip_count != len(round_trips):
+            raise ResearchReportVerificationError("nested simulation round-trip count mismatch")
+        if any(not isinstance(event, Mapping) or event.get("is_order_instruction") is not False for event in events):
+            raise ResearchReportVerificationError("nested simulation contains an invalid or actionable event")
+        accounting = run.get("accounting_reconciliation")
+        if not isinstance(accounting, Mapping) or accounting.get("status") != "PASS_ACCOUNTING_RECONCILIATION":
             raise ResearchReportVerificationError("accounting reconciliation is not PASS")
+        if accounting.get("event_count") != event_count:
+            raise ResearchReportVerificationError("accounting event count does not match nested simulation")
         if not isinstance(run.get("paper_ledger_integrity"), Mapping) or run["paper_ledger_integrity"].get("status") != "PASS_HASH_CHAIN":
             raise ResearchReportVerificationError("paper ledger integrity is not PASS")
     elif status == "READY_NO_RUN":
