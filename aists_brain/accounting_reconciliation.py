@@ -65,6 +65,11 @@ def reconcile_simulation_with_ledger(
         side = event.get("side")
         if side not in ("BUY", "SELL"):
             raise ReconciliationError(f"unsupported simulator event side at event {index}")
+        expected_side_by_action = {"BUY_CANDIDATE": "BUY", "SELL_CANDIDATE": "SELL"}
+        if event.get("action") not in expected_side_by_action or expected_side_by_action[event["action"]] != side:
+            raise ReconciliationError(f"simulator action/side mismatch at event {index}")
+        if event.get("is_order_instruction") is not False:
+            raise ReconciliationError(f"simulator event must not be an order instruction at event {index}")
         if event.get("decision_id") != ledger_event.get("decision_id"):
             raise ReconciliationError(f"decision ID mismatch at event {index}")
         if event.get("fill_open_time_ms") != ledger_event.get("timestamp_ms"):
