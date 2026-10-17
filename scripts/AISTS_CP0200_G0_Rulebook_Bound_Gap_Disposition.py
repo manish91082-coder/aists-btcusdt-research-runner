@@ -26,6 +26,23 @@ def write_csv(path, rows, fields):
         writer.writeheader()
         writer.writerows(rows)
 
+def classify_g0_disposition(monthly, daily, disposition):
+    if monthly == "UNKNOWN" or daily == "UNKNOWN" or "UNRESOLVED" in disposition:
+        return ("UNRESOLVED_ARCHIVE_EVIDENCE_UNAVAILABLE",
+                "HOLD_FROM_SIGNAL_POSITION_VALUATION; resolve archive evidence or quarantine the affected window")
+    if "ZERO_TRADE_PLACEHOLDER" in disposition or "CLOSE_TIME_ANOMALY" in disposition:
+        return ("UNRESOLVED_DAILY_PLACEHOLDER_CONFLICT",
+                "DO_NOT_TREAT_AS_VALID_CANDLE; preserve raw tokens; quarantine exact key until source adjudication")
+    if "SOURCE_CONFLICT" in disposition or monthly != daily:
+        return ("UNRESOLVED_CROSS_SOURCE_EXACT_KEY_CONFLICT",
+                "DO_NOT_SELECT_MONTHLY_OR_DAILY; exact-key quarantine required before candidate input")
+    if monthly == "NO" and daily == "NO":
+        return ("UNRESOLVED_MISSING_KEY_BOTH_SOURCES",
+                "DO_NOT_SYNTHESIZE_BAR; record gap and apply frozen gap-window quarantine policy")
+    return ("UNRESOLVED_REQUIRES_RULEBOOK_REVIEW",
+            "KEEP OUT OF PROMOTION; retain raw evidence and require explicit source disposition")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--conflict-matrix", default="results/cp0199_exact_key_source_conflict_probe/CP0199_ExactKey_SourceConflict_Matrix.csv")
@@ -54,21 +71,7 @@ def main():
         monthly = source.get("monthly_exact_open_key_present", "UNKNOWN")
         daily = source.get("daily_exact_open_key_present", "UNKNOWN")
         disposition = source.get("disposition", "")
-        if monthly == "UNKNOWN" or daily == "UNKNOWN" or "UNRESOLVED" in disposition:
-            status = "UNRESOLVED_ARCHIVE_EVIDENCE_UNAVAILABLE"
-            handling = "HOLD_FROM_SIGNAL_POSITION_VALUATION; resolve archive evidence or quarantine the affected window"
-        elif "ZERO_TRADE_PLACEHOLDER" in disposition or "CLOSE_TIME_ANOMALY" in disposition:
-            status = "UNRESOLVED_DAILY_PLACEHOLDER_CONFLICT"
-            handling = "DO_NOT_TREAT_AS_VALID_CANDLE; preserve raw tokens; quarantine exact key until source adjudication"
-        elif "SOURCE_CONFLICT" in disposition or monthly != daily:
-            status = "UNRESOLVED_CROSS_SOURCE_EXACT_KEY_CONFLICT"
-            handling = "DO_NOT_SELECT_MONTHLY_OR_DAILY; exact-key quarantine required before candidate input"
-        elif monthly == "NO" and daily == "NO":
-            status = "UNRESOLVED_MISSING_KEY_BOTH_SOURCES"
-            handling = "DO_NOT_SYNTHESIZE_BAR; record gap and apply frozen gap-window quarantine policy"
-        else:
-            status = "UNRESOLVED_REQUIRES_RULEBOOK_REVIEW"
-            handling = "KEEP OUT OF PROMOTION; retain raw evidence and require explicit source disposition"
+        status, handling = classify_g0_disposition(monthly, daily, disposition)
         dispositions.append({
             "expected_open_time_utc": source.get("expected_open_time_utc", ""),
             "date_utc": source.get("date_utc", ""),
