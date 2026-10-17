@@ -51,3 +51,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Updated CI compilation to include the new simulator. CP-0130 is not complete until GitHub Actions passes on the exact final branch HEAD.
 - Existing source gate remains unchanged: global G0 `BLOCKED_GLOBAL`; the frozen `MTF_BREAKOUT_4H_D1` diagnostic has candidate-specific quarantine eligibility only, but G2 remains FAIL/NOT PROMOTED and G3 remains blocked due material TRAIN sensitivity. No candidate or strategy is promoted.
 - Next: verify CI, then integrate only provenance-cleared historical candle inputs and independent accounting reconciliation. If the current data gate remains blocked, do not run a performance backtest or invent results.
+
+
+## CP-0131 — Provenance-bound historical candle input guard (2026-10-17)
+- Added `aists_brain/provenance_input.py`: offline CSV loader bound to a JSON manifest via SHA-256. It fails closed unless the manifest explicitly claims both adjudication PASS and global G0 PASS, identifies BTCUSDT Spot and a supported interval, supplies valid source/archive/report hashes, reports at least 99.5% coverage, accounts for all missing intervals and gap events, and certifies completed candles only.
+- The loader independently verifies the actual CSV hash, row count, first/last timestamps, timestamp order, candle interval duration, finite OHLCV, OHLC range and non-negative volume. It does not repair gaps or alter source data.
+- Important boundary: this code validates manifest claims and file integrity, but does not authenticate the adjudicator or prove the historical archive-version provenance itself. A manifest cannot legitimately claim PASS until external evidence independently supports it.
+- Added 10 unit tests for accepted contract, blocked global gate, tampering, interval mismatch, coverage, gap accounting, OHLC, row count and source hashes. CI compiles the new module and discovers the test file.
+- **No historical performance run was performed.** Current global G0 remains `BLOCKED_GLOBAL`, so real project data must continue to fail closed until the existing evidence gap is independently resolved. No source data, frozen acceptance rulebook, strategy gate, or live-trading control was changed.
+- Next: verify the complete test suite on the exact final branch HEAD and inspect CI logs; if green, move to a manifest-driven integration harness that refuses to run when G0 is blocked.
