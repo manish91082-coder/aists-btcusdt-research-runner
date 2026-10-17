@@ -47,6 +47,36 @@ class ResearchReportVerifierTests(unittest.TestCase):
         with self.assertRaisesRegex(ResearchReportVerificationError, "SHA-256 mismatch"):
             verify_research_audit_report(report)
 
+    def test_supplied_g0_pass_is_machine_labeled_unauthenticated(self):
+        report = build_research_audit_report(
+            gate_snapshot={**GATES_BLOCKED, "G0": "PASS"},
+            run_id="cp0176-supplied-pass-claim",
+            repository_head_sha=HEAD,
+        )
+        self.assertEqual(
+            report["gate_evidence_authentication"]["status"], "NOT_AUTHENTICATED"
+        )
+        self.assertEqual(
+            report["gate_evidence_authentication"]["g0_classification"],
+            "SUPPLIED_PASS_CLAIM_NOT_AUTHENTICATED",
+        )
+        result = verify_research_audit_report(report)
+        self.assertEqual(result["status"], "PASS_STRUCTURAL_INTEGRITY")
+
+    def test_verifier_rejects_report_claiming_gate_evidence_authenticated(self):
+        report = self.blocked_report()
+        report["gate_evidence_authentication"]["status"] = "AUTHENTICATED"
+        unsigned = dict(report)
+        unsigned.pop("report_sha256")
+        report["report_sha256"] = hashlib.sha256(json.dumps(
+            unsigned, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+            allow_nan=False,
+        ).encode("utf-8")).hexdigest()
+        with self.assertRaisesRegex(
+            ResearchReportVerificationError, "must remain explicitly NOT_AUTHENTICATED"
+        ):
+            verify_research_audit_report(report)
+
     def test_repository_head_or_run_id_mismatch_is_detected(self):
         report = self.blocked_report()
         with self.assertRaisesRegex(ResearchReportVerificationError, "head binding mismatch"):
