@@ -1234,8 +1234,13 @@ jobs:
           allowed={"PASS_ALL_110_OFFICIAL_CHECKSUMS_MATCH","REVIEW_REQUIRED_4H_ARCHIVE_PROVENANCE_INCOMPLETE","BLOCKED_4H_AUDIT_INPUT_INVALID"}
           if s.get("task")!="cp0165_4h_monthly_checksum_gap_audit" or s.get("status") not in allowed:
               raise SystemExit("Unexpected CP-0165 task/status; refusing publish")
-          if s.get("expected_months")!=110 or s.get("archive_inventory_rows")!=110:
+          if s.get("expected_months")!=110:
               raise SystemExit("CP-0165 must report the exact 110-month expected scope")
+          rows=s.get("archive_inventory_rows")
+          if not isinstance(rows,int) or isinstance(rows,bool) or rows<0:
+              raise SystemExit("CP-0165 archive inventory row count must be a non-negative integer")
+          if s.get("status")!="BLOCKED_4H_AUDIT_INPUT_INVALID" and rows!=110:
+              raise SystemExit("Non-blocked CP-0165 runs must report the exact 110-row archive inventory")
           if s.get("monthly_zip_downloads")!=0 or s.get("daily_archive_downloads")!=0 or s.get("market_data_rest_api_used") is not False:
               raise SystemExit("Archive acquisition boundary assertion failed")
           if s.get("canonical_source")!="NONE" or s.get("source_cases_closed")!=0 or s.get("g0")!="BLOCKED_GLOBAL":
