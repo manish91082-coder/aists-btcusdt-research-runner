@@ -111,3 +111,11 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Hashes prove identity/integrity only, not source truth, independent archive provenance, or feature correctness. Synthetic candles are software test fixtures only.
 - G0 remains `BLOCKED_GLOBAL`; no real historical run, strategy performance claim, candidate promotion, live signing, public broadcast, exchange orders, automatic SL/TP, or PR merge.
 - Next: verify exact final branch SHA, CI terminal result and PR state; then integrate persisted artifacts into a reproducible offline harness entry point that still refuses to run unless the independent G0/provenance gate is genuinely cleared.
+
+## CP-0138 — Stored feature artifacts integrated with offline harness (2026-10-17)
+- Added `run_manifest_driven_simulation_from_stored_features` to `aists_brain/research_harness.py`. It checks the provenance/G0 gate first, verifies the persisted artifact envelope and payload hashes against the exact loaded candle close times, checks the artifact's source CSV hash, and then delegates to the existing harness, which repeats the data and causal-lineage checks.
+- The harness result now records stored-artifact integrity status, payload SHA-256, file SHA-256 and store schema. The existing harness remains the final simulator/accounting boundary; the wrapper does not relax its checks.
+- Added three integration tests: stored-artifact round trip into the harness, G0-blocked refusal before artifact use, and tampered artifact rejection. All synthetic candles and PASS manifests in these tests are software fixtures only, not real provenance adjudication.
+- This verifies software wiring only. A manifest PASS claim remains unauthenticated, and real project G0 remains `BLOCKED_GLOBAL`; no real historical run or performance evidence is produced.
+- Live signing, public broadcast, exchange orders, automatic SL/TP, candidate promotion and PR merge remain prohibited.
+- Next: verify exact final branch SHA, terminal CI result and PR state. If green, build a fail-closed runner/report entry point that records the persisted artifact and audit hashes without inventing a G0 clearance.
