@@ -29,6 +29,32 @@ class TestCP0199ExactKeyConflictProbe(unittest.TestCase):
             "BOTH_PRESENT_ROW_TOKENS_MATCH"
         )
 
+    def test_degenerate_zero_trade_row_is_not_treated_as_normal_candle(self):
+        placeholder = [
+            "1504713600000", "4619.43000000", "4619.43000000", "4619.43000000",
+            "4619.43000000", "0.00000000", "1504713600000", "0.00000000",
+            "0", "0.00000000", "0.00000000", "0"
+        ]
+        quality = PROBE.daily_row_quality(placeholder)
+        self.assertEqual(quality["quality_status"], "ZERO_TRADE_PLACEHOLDER")
+        self.assertTrue(quality["zero_trade_placeholder"])
+        self.assertEqual(quality["close_time_span_status"], "FAIL")
+        self.assertEqual(
+            PROBE.classify_presence(False, True, None, placeholder),
+            "DAILY_PRESENT_MONTHLY_MISSING_SOURCE_CONFLICT_ZERO_TRADE_PLACEHOLDER"
+        )
+
+    def test_valid_traded_row_still_requires_adjudication(self):
+        row = [
+            "1504713600000", "4619.43000000", "4620.00000000", "4618.00000000",
+            "4619.80000000", "12.00000000", "1504727999999", "50000.00",
+            "14", "5.00000000", "20000.00", "0"
+        ]
+        quality = PROBE.daily_row_quality(row)
+        self.assertFalse(quality["zero_trade_placeholder"])
+        self.assertEqual(quality["close_time_span_status"], "PASS")
+        self.assertEqual(quality["quality_status"], "ROW_PRESENT_REQUIRES_SEMANTIC_REVIEW")
+
     def test_archive_rows_preserve_raw_tokens_and_exact_open_key(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "BTCUSDT-4h-2017-09-06.zip"
