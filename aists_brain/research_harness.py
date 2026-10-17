@@ -1,0 +1,123 @@
+"""Manifest-driven, fail-closed integration harness for offline research simulation.
+
+This is an integration boundary, not an adjudicator or signal generator.
+It requires provenance_input's explicit external PASS claim, verifies decision
+artifact binding, and runs only the existing offline simulator. No networking,
+exchange interaction, data repair, or live orders.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+from pathlib import Path
+from typing import Any
+
+from aists_brain.cost_aware_simulator import simulate_next_open
+from aists_brain.provenance_input import (
+    ProvenanceGateError,
+    load_provenance_cleared_candles,
+)
+
+DECISION_SCHEMA = "aists.research_decisions.v1"
+
+
+class ResearchHarnessError(ValueError):
+    """Raised when inputs are incomplete, unbound, or fail closed."""
+
+
+def _sha256(path: str | Path) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def run_manifest_driven_simulation(
+    csv_path: str | Path,
+    manifest_path: str | Path,
+    decisions_path: str | Path,
+    *,
+    expected_interval: str,
+    initial_cash_usdt: float,
+    allocation_fraction: float = 0.25,
+    fee_bps_per_side: float = 10.0,
+    slippage_bps_per_side: float = 5.0,
+) -> dict[str, Any]:
+    """Run offline simulation only when both data and decision contracts pass.
+
+    Decision JSON contract:
+      schema_version='aists.research_decisions.v1',
+      status='PASS', source_csv_sha256=<exact manifest CSV hash>,
+      brain_version=<nonempty version identifier>,
+      decisions=[{decision_id, as_of_ms, action}, ...].
+    A PASS is an external assertion, not proof of the decision producer's quality.
+    """
+    try:
+        loaded = load_provenance_cleared_candles(
+            csv_path, manifest_path, expected_interval=expected_interval
+        )
+    except (ProvenanceGateError, OSError, ValueError) as exc:
+        raise ResearchHarnessError(f"historical data gate rejected input: {exc}") from exc
+
+    try:
+        decision_artifact = json.loads(Path(decisions_path).read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ResearchHarnessError(f"cannot read decision artifact: {exc}") from exc
+    if not isinstance(decision_artifact, dict):
+        raise ResearchHarnessError("decision artifact must be a JSON object")
+    if decision_artifact.get("schema_version") != DECISION_SCHEMA:
+        raise ResearchHarnessError("unsupported decision artifact schema")
+    if decision_artifact.get("status") != "PASS":
+        raise ResearchHarnessError("decision artifact status is not PASS")
+    if decision_artifact.get("source_csv_sha256") != loaded["csv_sha256"]:
+        raise ResearchHarnessError("decision artifact is not bound to this exact candle CSV")
+    brain_version = decision_artifact.get("brain_version")
+    if not isinstance(brain_version, str) or not brain_version.strip():
+        raise ResearchHarnessError("brain_version must be a non-empty string")
+    decisions = decision_artifact.get("decisions")
+    if not isinstance(decisions, list):
+        raise ResearchHarnessError("decisions must be a JSON list")
+
+    try:
+        simulation = simulate_next_open(
+            loaded["candles"], decisions,
+            interval_ms=loaded["interval_ms"],
+            initial_cash_usdt=initial_cash_usdt,
+            allocation_fraction=allocation_fraction,
+            fee_bps_per_side=fee_bps_per_side,
+            slippage_bps_per_side=slippage_bps_per_side,
+        )
+    except (TypeError, ValueError, KeyError) as exc:
+        raise ResearchHarnessError(f"decision/simulation contract rejected input: {exc}") from exc
+
+    return {
+        "schema_version": "aists.manifest_research_harness.v1",
+        "status": "SIMULATED_NOT_VALIDATED",
+        "mode": "OFFLINE_RESEARCH_ONLY",
+        "data_input": {
+            "symbol": loaded["symbol"],
+            "market": loaded["market"],
+            "interval": loaded["interval"],
+            "csv_sha256": loaded["csv_sha256"],
+            "manifest_sha256": _sha256(manifest_path),
+            "row_count": loaded["row_count"],
+            "external_adjudication_claim": "PASS",
+            "global_g0_claim": "PASS",
+        },
+        "decision_input": {
+            "artifact_sha256": _sha256(decisions_path),
+            "brain_version": brain_version,
+            "decision_count": len(decisions),
+            "external_status_claim": "PASS",
+        },
+        "simulation": simulation,
+        "limitations": [
+            "PASS statuses are externally asserted and are not independently authenticated by this harness",
+            "decision generation, causal feature lineage and strategy acceptance are not implemented here",
+            "fees and slippage are assumptions supplied to the simulator",
+            "this result is not a validated historical performance claim or paper acceptance",
+            "no automatic stop-loss/take-profit and no live exchange action",
+        ],
+    }
