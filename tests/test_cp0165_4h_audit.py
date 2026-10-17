@@ -127,6 +127,19 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         self.assertIn('rows<0', workflow)
         self.assertIn('s.get("monthly_zip_downloads")!=0', workflow)
 
+    def test_read_only_execution_workflow_is_bounded(self):
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / ".github" / "workflows" / "cp0165-4h-audit-execution.yml").read_text(encoding="utf-8")
+        self.assertIn("branches: [cp-0165-4h-archive-audit]", workflow)
+        self.assertIn("contents: read", workflow)
+        self.assertIn("actions: read", workflow)
+        self.assertIn("actions/cache/restore@v4", workflow)
+        self.assertIn("scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py", workflow)
+        self.assertIn("actions/upload-artifact@v4", workflow)
+        self.assertNotIn("contents: write", workflow)
+        self.assertNotIn("git push", workflow)
+        self.assertNotIn("curl ", workflow)
+
     def test_missing_inventory_writes_blocked_evidence_without_failing_runner(self):
         import tempfile
         from unittest.mock import patch
