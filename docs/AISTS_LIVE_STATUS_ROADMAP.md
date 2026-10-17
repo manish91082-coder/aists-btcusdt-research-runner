@@ -1,6 +1,6 @@
 # AISTS Live Status & Mission Roadmap
 
-Last verified checkpoint: **CP-0203 (pinned fail-closed gap-policy gate; static CI PASS)**  
+Last verified checkpoint: **CP-0204 (baseline backtest blocked by unresolved G0 gap policy; static CI PASS)**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
@@ -8,9 +8,9 @@ Current global gate: **G0 = BLOCKED_GLOBAL**
 ## Latest verified GitHub runs
 
 - Read-only execution pipeline through CP-0201: [run 39062577687](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062577687), completed successfully.
-- CP-0203 static CI including the new gap-policy gate tests: [run 39063641701](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063641701), terminal `success` on tested SHA `c996807b8bffc247b991d9d82b45d20d02d425be`.
+- CP-0204 static CI covering CP-0026 builder gate, CP-0027 backtest gate, and CP-0203/0204 tests: [run 39063794245](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063794245), terminal `success` on tested SHA `77f68d0548d60c847a37fba140fe3f5c5aabdb86`.
 - Latest execution evidence through CP-0201: [run 39062577687](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062577687), completed successfully; execution commit `b6b16ab2da9111e4a44a67c5c6d091b46729b8d3`.
-- CP-0203 CI compiles CP-0026 and CP-0203 and runs seven CP-0203 gate tests; the separate CP-0040 gate test suite is still not wired into this workflow.
+- CP-0204 CI compiles CP-0026, CP-0027, and CP-0203; CP-0203's seven tests and CP-0204's four tests pass. The separate CP-0040 gate test suite is still not wired into this workflow.
 - The PR remains open and unmerged; `main` remains at `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`.
 
 ## Verified findings
@@ -97,5 +97,17 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - CI: [run 39063641701](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063641701) terminal `success`; compile step, all prior test steps, and CP-0203 fail-closed gate tests passed on tested SHA `c996807b8bffc247b991d9d82b45d20d02d425be`.
 - Scope boundary: gate tests use synthetic deterministic fixtures plus pinned constants; no candidate build/backtest was run and no source was promoted. The gate intentionally remains blocking even after evidence validation because the current frozen policy is only recommended, not applied.
 - CP-0203 gate integration commit: `c996807b8bffc247b991d9d82b45d20d02d425be`; CI run `39063641701` passed on that SHA. A separate Actions run for the later documentation-only roadmap commit was not present in the latest run list at verification time.
-- Next bounded action: inspect terminal CI for the roadmap update, then perform a source-only audit of whether an explicit, reviewable gap-window quarantine policy can be defined without inventing bars or choosing a canonical source. Keep G0 blocked until that policy is evidence-backed.
+- CP-0204 supersedes this next-action note: the CP-0027 baseline backtest is now gated before manifest read, output-directory creation, or performance computation.
 - Safety: canonical source `NONE`; source cases closed: 0; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
+
+
+## CP-0204: Baseline backtest G0 gate and gap-impact source audit
+
+- Source inspection of `scripts/AISTS_CP0027_MultiTimeframe_Baseline_Backtest.py` found the declared gap policy resets indicators and skips fills across missing intervals, but carries existing spot exposure through a gap and marks equity at the next observed close. Missing intragap prices mean the path and drawdown inside the gap are not observable from the two endpoint candles alone.
+- The CP-0040 rulebook requires unresolved signal/position/valuation inputs to be adjudicated or explicitly quarantined, with metrics based on the frozen policy. The current CP-0200/0201 recommendation is still unapplied, so a performance run on this policy is not eligible.
+- Integrated `load_gap_policy_gate` into CP-0027 before reading the candidate manifest, creating output directories, loading candidate data, or computing performance. It blocks when the frozen evidence is absent, hash-mismatched, or unresolved. No existing results were deleted or changed.
+- Added `tests/test_cp0204_backtest_gap_gate.py`; CI now compiles CP-0027 and executes four source-level regression checks in addition to CP-0203's seven deterministic gate tests.
+- First CP-0204 CI attempt [run 39063759857](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063759857) failed because one source-text assertion was case-sensitive. The assertion was corrected, not the production gate behavior; rerun [39063794245](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063794245) completed with terminal `success`.
+- Tested code/test SHA: `77f68d0548d60c847a37fba140fe3f5c5aabdb86`. No candidate build, backtest, market-data download, source promotion, or live action occurred.
+- Safety and gate state remain: G0 `BLOCKED_GLOBAL`; canonical source `NONE`; source cases closed: 0; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
+- Next bounded action CP-0205: design and document the conservative gap-window sensitivity contract at source level: define which signal/position/valuation episodes are considered gap-affected, what is excluded from scored metrics, how excluded P&L is reported, and how to avoid fabricating a fill or claiming a drawdown bound that the data cannot support. Do not implement the performance policy or run a backtest until the contract is internally consistent with the frozen rulebook.
