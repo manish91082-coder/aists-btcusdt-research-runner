@@ -119,3 +119,13 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - This verifies software wiring only. A manifest PASS claim remains unauthenticated, and real project G0 remains `BLOCKED_GLOBAL`; no real historical run or performance evidence is produced.
 - Live signing, public broadcast, exchange orders, automatic SL/TP, candidate promotion and PR merge remain prohibited.
 - Next: verify exact final branch SHA, terminal CI result and PR state. If green, build a fail-closed runner/report entry point that records the persisted artifact and audit hashes without inventing a G0 clearance.
+
+
+## CP-0139 — Fail-closed research runner and audit report entry point (2026-10-17)
+- Added `aists_brain/research_run_entrypoint.py` to orchestrate the existing stored-feature harness and deterministic audit report. Gate states are required explicitly; this component does not authenticate external gate claims.
+- If G0 is not exactly `PASS`, the entry point does not open or hash data/manifest/feature paths, does not invoke the simulator, and emits a `BLOCKED_GATE` report with no input hashes or simulation payload. The blocked reason is explicit.
+- If the supplied snapshot claims G0 `PASS`, the existing provenance loader, artifact integrity checks, causal lineage validator, simulator, accounting reconciliation and paper-ledger verifier remain mandatory. Failures are recorded as blocked input execution, not success. A successful harness result stays `SIMULATED_NOT_VALIDATED`.
+- Optional report publication is create-only using a same-directory temporary file, fsync and atomic hard-link; an existing destination is refused. The report SHA-256 is computed over the canonical report body; it does not authenticate gate evidence.
+- Added tests for blocked-G0 no-input-access behavior, deterministic report hashes, create-only publication/no-overwrite, and incomplete gate snapshots. CI compilation includes the new runner.
+- No real BTCUSDT historical run was performed. G0 remains `BLOCKED_GLOBAL`; all 23 current strategy candidates remain G2 FAIL. Live signing, public broadcast, exchange orders, automatic SL/TP, candidate promotion and PR merge remain prohibited.
+- Next: inspect exact branch HEAD, wait for CI terminal result, verify test count and PR state. Do not claim historical performance or treat synthetic fixtures as market evidence.
