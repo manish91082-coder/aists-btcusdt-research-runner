@@ -67,6 +67,8 @@ def reconcile_simulation_with_ledger(
     fees = 0.0
     buys = sells = 0
     checks: list[dict[str, Any]] = []
+    expected_round_trips: list[dict[str, Any]] = []
+    open_entry: dict[str, Any] | None = None
 
     for index, (event, ledger_event) in enumerate(zip(sim_events, ledger_events), start=1):
         if not isinstance(event, Mapping) or not isinstance(ledger_event, Mapping):
@@ -107,17 +109,46 @@ def reconcile_simulation_with_ledger(
             raise ReconciliationError(f"fee arithmetic mismatch with declared fee rate at event {index}")
 
         if side == "BUY":
+            if open_entry is not None or btc > tolerance_btc:
+                raise ReconciliationError(f"simulator opened a second position before closing the first at event {index}")
+            open_entry = {"decision_id": event["decision_id"], "quantity_btc": quantity,
+                          "entry_cost_usdt": notional + fee}
             cash -= notional + fee
             btc += quantity
             buys += 1
         else:
+            if open_entry is None:
+                raise ReconciliationError(f"sell event has no matching open entry at event {index}")
+            if abs(quantity - open_entry["quantity_btc"]) > tolerance_btc:
+                raise ReconciliationError(f"sell event does not close the full position at event {index}")
             if quantity > btc + tolerance_btc:
                 raise ReconciliationError(f"recomputed inventory would go short at event {index}")
             cash += notional - fee
             btc -= quantity
             sells += 1
+            expected_realized = (notional - fee) - open_entry["entry_cost_usdt"]
+            reported_realized = _num(f"event_{index}_realized_net_pnl_usdt", event.get("realized_net_pnl_usdt"))
+            if abs(expected_realized - reported_realized) > tolerance_usdt:
+                raise ReconciliationError(f"sell event realized PnL mismatch at event {index}")
+            expected_round_trips.append({"entry_decision_id": open_entry["decision_id"],
+                                         "exit_decision_id": event["decision_id"],
+                                         "net_pnl_usdt": expected_realized})
+            open_entry = None
         fees += fee
         checks.append({"event_index": index, "decision_id": event["decision_id"], "status": "PASS"})
+
+    if len(expected_round_trips) != len(round_trips):
+        raise ReconciliationError("closed round-trip records do not match reconciled fills")
+    for index, (expected, reported) in enumerate(zip(expected_round_trips, round_trips), start=1):
+        if not isinstance(reported, Mapping):
+            raise ReconciliationError(f"closed round-trip record {index} is not an object")
+        if reported.get("entry_decision_id") != expected["entry_decision_id"] or reported.get("exit_decision_id") != expected["exit_decision_id"]:
+            raise ReconciliationError(f"closed round-trip decision IDs mismatch at record {index}")
+        reported_pnl = _num(f"round_trip_{index}_net_pnl_usdt", reported.get("net_pnl_usdt"))
+        if abs(reported_pnl - expected["net_pnl_usdt"]) > tolerance_usdt:
+            raise ReconciliationError(f"closed round-trip net PnL mismatch at record {index}")
+    if open_entry is not None and abs(btc - open_entry["quantity_btc"]) > tolerance_btc:
+        raise ReconciliationError("open-position quantity does not match reconciled inventory")
 
     sim_cash = _num("simulator_cash_usdt", simulation.get("cash_usdt"))
     sim_btc = _num("simulator_btc_quantity", simulation.get("btc_quantity"))
