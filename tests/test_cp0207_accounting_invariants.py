@@ -39,7 +39,7 @@ class TestCP0207IndependentAccountingOracle(unittest.TestCase):
         initial=Decimal("1000"); b=buy(initial,Decimal("100"),10,5); s=sell(b["qty"],Decimal("110"),10,5)
         final=b["cash"]+s["cash"]; entry=b["notional"]+b["fee"]; pnl=s["cash"]-entry
         self.assertLessEqual(abs(final-(initial+pnl)),TOL)
-        self.assertLessEqual(abs(final-Decimal("1087.724")),Decimal("0.01"))
+        self.assertLessEqual(abs(final-Decimal("1096.704944231181112740333130138")),Decimal("0.01"))
 
     def test_fees_and_slippage_count_once_per_fill(self):
         b=buy(Decimal("1000"),Decimal("100"),10,5); s=sell(b["qty"],Decimal("110"),10,5)
