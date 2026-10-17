@@ -1,7 +1,7 @@
 # AISTS Project Live Status for ChatGPT
 
 Last updated: 2026-10-17
-Status checkpoint: CP-0142 implementation CI verified; documentation continuity update follows. Re-fetch live GitHub state on every new session.
+Status checkpoint: CP-0143 official-source provenance recheck recorded; exact-head CI verified. Re-fetch live GitHub state on every new session.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2 (must remain OPEN; do not merge)
@@ -17,11 +17,11 @@ Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 - Never merge PR #2. Keep updates append-only except narrowly necessary corrections to status metadata.
 
 ## Latest verified GitHub state
-- Latest verified implementation checkpoint: CP-0142, causal strategy decision artifact producer.
-- CP-0142 implementation-code SHA: `9eb6fd94a210bc7976dd1dbafb0952e129c99f4a`; its exact-head CI passed. The continuity documentation commit below will trigger a separate CI run.
-- CP-0142 exact-head CI run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39021877488
-- CP-0142 CI terminal success on exact implementation SHA `9eb6fd94a210bc7976dd1dbafb0952e129c99f4a`: compile step success; test step success; exact output `Ran 148 tests in 0.180s` and `OK`. Job ID `117365150499`; run URL above.
-- PR #2 state at this checkpoint: OPEN, merged_at=null; branch head matched PR head. The live branch must be re-fetched after this status-file commit because the docs update itself creates a new head and triggers CI.
+- Latest verified checkpoint: CP-0143, official Binance Spot archive-provenance recheck (evidence documentation; no G0 clearance).
+- CP-0143 evidence/docs head: `6eb292e88c0b5d7bb8d8430674ad9f937291b607`; exact-head CI passed in run [39022076178](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39022076178).
+- CP-0142 implementation CI remains recorded below; CP-0143 exact-head CI is the latest verified workflow run.
+- CP-0143 exact-head CI terminal success on `6eb292e88c0b5d7bb8d8430674ad9f937291b607`: compile step and test step success; exact output `Ran 148 tests in 0.352s` and `OK`; run [39022076178](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39022076178), job ID `117365720597`.
+- PR #2 remains OPEN and unmerged; the live branch must be re-fetched after this metadata correction because it creates a new head and triggers CI.
 - Important metadata issue discovered 2026-10-17: before this file was created, PROJECT_LIVE_STATUS_CHATGPT.md did not exist on the implementation branch. The roadmap header still said CP-0130 even though CP-0140 was appended. This continuity gap is being corrected now; do not assume prior status metadata was continuously current.
 
 ## Research gates (must not be inferred from code/test progress)
@@ -83,3 +83,11 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - Detailed append-only evidence note: `evidence/source_adjudication/CP0143_Official_Binance_Spot_Archive_Provenance_Recheck_HI.md`.
 - Gate impact: G0 remains BLOCKED_GLOBAL; no archive precedence, source repair, PASS manifest, real-market run, or candidate promotion is authorized. Smallest actionable request remains a maintainer response in #504 with official answers and explicit handling/correction guidance for #475/#505.
 - Goal-direction: this adds concrete source-tracker evidence and narrows the unresolved request; it does not clear G0. Do not repeat the same search absent a new official response/artifact. At the time of this checkpoint commit, its own exact-head CI is pending and must be re-fetched before claiming verification.
+
+
+## CP-0143 exact-head verification and issue recheck
+- Branch/PR head at evidence checkpoint: `6eb292e88c0b5d7bb8d8430674ad9f937291b607`; PR #2 OPEN, merged=false, merged_at=null.
+- Exact-head CI run [39022076178](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39022076178): terminal success; compile and test steps succeeded; log says `Ran 148 tests in 0.352s` and `OK`.
+- Rechecked official tracker metadata/comments after the CP-0143 report: #504 OPEN, updated 2026-09-27, 0 comments; #475 OPEN, updated 2026-07-10, 1 contributor comment; #505 OPEN, updated 2026-09-27, 0 comments. No new maintainer response or official version/correction record observed.
+- The status header above was corrected to reflect CP-0143; this documentation-only commit triggers its own CI and must be verified on the resulting exact head.
+- Goal-direction decision: there is no newly arrived official evidence to justify another provenance search or a gate change. Do not add infrastructure-only modules. Wait for a new official response/artifact or a separately admissible evidence path. G0/G2/G3/G4/G6/G7 remain unchanged.

@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest checkpoint: CP-0142 implemented; exact-head CI passed on `9eb6fd94a210bc7976dd1dbafb0952e129c99f4a` (148 tests PASS; docs update triggers its own CI)
+Latest checkpoint: CP-0143 provenance evidence recheck recorded; exact-head CI passed on `6eb292e88c0b5d7bb8d8430674ad9f937291b607` (148 tests PASS; next docs metadata correction triggers CI)
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -181,3 +181,10 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Evidence report: `evidence/source_adjudication/CP0143_Official_Binance_Spot_Archive_Provenance_Recheck_HI.md`.
 - This is useful new provenance-tracker evidence, not a G0 clearance. Keep all research gates unchanged; no silent daily/monthly precedence, source repair, fake PASS manifest, real-market backtest or candidate promotion. Wait for a new official response or version record instead of repeating the same search or adding infrastructure-only modules.
 - The checkpoint commit's CI must be checked on its exact final head before claiming the repository state verified.
+
+
+### CP-0143 exact-head verification
+- Exact evidence/docs head `6eb292e88c0b5d7bb8d8430674ad9f937291b607` passed CI run [39022076178](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39022076178), terminal success, `Ran 148 tests in 0.352s`, `OK`.
+- Recheck of official issue tracker after writing the CP-0143 report found no new maintainer response or official version/correction record: #504 OPEN/0 comments, #475 OPEN/1 contributor comment, #505 OPEN/0 comments.
+- Therefore G0 remains BLOCKED_GLOBAL. No candidate promotion, real-market performance run, source mutation, silent daily/monthly precedence or live trading. Do not repeat this same provenance check or add infrastructure-only code absent a new evidence signal.
+- Status-file top metadata corrected to CP-0143; this correction creates a new commit and requires exact-head CI verification.
