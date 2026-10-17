@@ -1,7 +1,8 @@
-"""Append-only, local-only paper portfolio ledger.
+"""Append-only paper portfolio ledger with durable JSONL audit persistence.
 
-This module accounts for caller-supplied simulated fills. It does not create
-signals, obtain market prices, submit orders, or claim real execution.
+This module accounts only for caller-supplied hypothetical fills and decisions.
+It never fetches market prices, submits orders, or claims real execution.
+JSONL persistence is single-writer and append-only; protect the file and backups.
 """
 from __future__ import annotations
 
@@ -9,9 +10,13 @@ from copy import deepcopy
 from hashlib import sha256
 import json
 import math
+import os
+from pathlib import Path
+import re
 from typing import Any, Mapping
 
 LEDGER_SCHEMA = "aists.paper_portfolio_ledger.v1"
+JSONL_SCHEMA = "aists.paper_portfolio_jsonl.v1"
 GENESIS_HASH = "0" * 64
 
 
@@ -59,15 +64,50 @@ def create_ledger(*, initial_cash_usdt: float, provenance_status: str = "UNVERIF
     }
 
 
+def build_decision_context(decision: Mapping[str, Any], *, brain_version: str,
+                           snapshot_sha256: str, as_of_ms: int) -> dict[str, Any]:
+    """Bind a paper fill to a frozen research-candidate decision and snapshot hash."""
+    if not isinstance(decision, Mapping):
+        raise ValueError("decision must be an object")
+    if decision.get("status") != "RESEARCH_CANDIDATE_ONLY" or decision.get("selected_action") != "LONG_CANDIDATE":
+        raise ValueError("paper fill requires a RESEARCH_CANDIDATE_ONLY LONG_CANDIDATE decision")
+    if decision.get("is_order_instruction", False):
+        raise ValueError("decision must not be an order instruction")
+    if not isinstance(brain_version, str) or not brain_version.strip():
+        raise ValueError("brain_version must be non-empty")
+    if not isinstance(snapshot_sha256, str) or not re.fullmatch(r"[0-9a-fA-F]{64}", snapshot_sha256):
+        raise ValueError("snapshot_sha256 must be a 64-character SHA-256")
+    if isinstance(as_of_ms, bool) or not isinstance(as_of_ms, int) or as_of_ms < 0:
+        raise ValueError("as_of_ms must be a non-negative integer")
+    timeframes = decision.get("confirming_timeframes", [])
+    if not isinstance(timeframes, list) or any(not isinstance(tf, str) for tf in timeframes):
+        raise ValueError("confirming_timeframes must be a list of strings")
+    strategy = decision.get("selected_strategy")
+    if not isinstance(strategy, str) or not strategy.strip():
+        raise ValueError("selected_strategy must be non-empty")
+    context = {
+        "brain_version": brain_version,
+        "snapshot_sha256": snapshot_sha256.lower(),
+        "as_of_ms": as_of_ms,
+        "decision_status": decision["status"],
+        "selected_action": decision["selected_action"],
+        "selected_strategy": strategy,
+        "confirming_timeframes": list(timeframes),
+        "is_order_instruction": False,
+    }
+    _canonical(context)
+    return context
+
+
 def append_paper_fill(ledger: Mapping[str, Any], *, timestamp_ms: int, side: str,
                       quantity_btc: float, price_usdt: float, fee_usdt: float,
-                      decision_id: str, reason: str) -> dict[str, Any]:
+                      decision_id: str, reason: str,
+                      decision_context: Mapping[str, Any] | None = None) -> dict[str, Any]:
     """Return a new ledger with one caller-supplied hypothetical fill appended.
 
-    Input ledger is never mutated. BUY consumes cash plus fee; SELL reduces BTC,
-    credits proceeds less fee, and realizes proceeds minus allocated average cost.
-    The function refuses shorting, overspending, malformed history and duplicate
-    event IDs. It intentionally has no exchange/order API.
+    BUY consumes cash plus fee; SELL reduces BTC and realizes average-cost P&L.
+    decision_context, when present, must be a frozen research-candidate binding.
+    The function refuses shorting, overspending, malformed history and duplicate IDs.
     """
     state = deepcopy(dict(ledger))
     if state.get("schema_version") != LEDGER_SCHEMA or state.get("mode") != "PAPER_ONLY":
@@ -91,6 +131,22 @@ def append_paper_fill(ledger: Mapping[str, Any], *, timestamp_ms: int, side: str
         raise ValueError("reason must be non-empty")
     if events and timestamp_ms < events[-1]["timestamp_ms"]:
         raise ValueError("paper fill timestamps must be non-decreasing")
+    if decision_context is not None:
+        if not isinstance(decision_context, Mapping):
+            raise ValueError("decision_context must be an object")
+        required = {"brain_version", "snapshot_sha256", "as_of_ms", "decision_status",
+                    "selected_action", "selected_strategy", "confirming_timeframes", "is_order_instruction"}
+        if not required.issubset(decision_context):
+            raise ValueError("decision_context is missing required fields")
+        if decision_context.get("decision_status") != "RESEARCH_CANDIDATE_ONLY" or decision_context.get("selected_action") != "LONG_CANDIDATE":
+            raise ValueError("paper fill decision context must be an eligible research candidate")
+        if decision_context.get("is_order_instruction") is not False:
+            raise ValueError("decision_context cannot be an order instruction")
+        if not isinstance(decision_context.get("snapshot_sha256"), str) or not re.fullmatch(r"[0-9a-fA-F]{64}", decision_context["snapshot_sha256"]):
+            raise ValueError("decision_context snapshot_sha256 must be a 64-character SHA-256")
+        if isinstance(decision_context.get("as_of_ms"), bool) or not isinstance(decision_context.get("as_of_ms"), int) or decision_context["as_of_ms"] > timestamp_ms:
+            raise ValueError("decision context cannot be timestamped after the paper fill")
+        _canonical(decision_context)
 
     notional = qty * price
     cash = float(state["cash_usdt"])
@@ -131,6 +187,8 @@ def append_paper_fill(ledger: Mapping[str, Any], *, timestamp_ms: int, side: str
         "reason": reason,
         "previous_hash": state["last_event_hash"],
     }
+    if decision_context is not None:
+        event["decision_context"] = deepcopy(dict(decision_context))
     event["event_hash"] = sha256(_canonical(event)).hexdigest()
     state["events"].append(event)
     state["cash_usdt"] = cash
@@ -197,3 +255,111 @@ def _verify_ledger(ledger: Mapping[str, Any]) -> None:
         raise ValueError("ledger head does not match event chain")
     for field in ("initial_cash_usdt", "cash_usdt", "btc_quantity", "realized_pnl_usdt", "cumulative_fees_usdt"):
         _finite_number(field, ledger.get(field))
+
+
+def _header_for_ledger(ledger: Mapping[str, Any]) -> dict[str, Any]:
+    metadata = ledger.get("metadata", {})
+    return {
+        "record_type": "header",
+        "schema_version": JSONL_SCHEMA,
+        "ledger_schema_version": LEDGER_SCHEMA,
+        "mode": "PAPER_ONLY",
+        "initial_cash_usdt": ledger["initial_cash_usdt"],
+        "provenance_status": metadata.get("provenance_status", "UNVERIFIED"),
+        "fee_assumption_note": metadata.get("fee_assumption_note", "UNVERIFIED"),
+    }
+
+
+def load_ledger_jsonl(path: str | os.PathLike[str]) -> dict[str, Any]:
+    """Load and reconstruct a persisted JSONL ledger, verifying every event hash."""
+    target = Path(path)
+    with target.open("r", encoding="utf-8") as stream:
+        lines = stream.readlines()
+    if not lines:
+        raise ValueError("JSONL audit file is empty")
+    try:
+        header = json.loads(lines[0])
+    except json.JSONDecodeError as exc:
+        raise ValueError("invalid JSONL header") from exc
+    if header.get("record_type") != "header" or header.get("schema_version") != JSONL_SCHEMA or header.get("mode") != "PAPER_ONLY":
+        raise ValueError("unsupported JSONL header or non-paper mode")
+    ledger = create_ledger(
+        initial_cash_usdt=header.get("initial_cash_usdt"),
+        provenance_status=header.get("provenance_status", "UNVERIFIED"),
+        fee_assumption_note=header.get("fee_assumption_note", "UNVERIFIED"),
+    )
+    for line_number, line in enumerate(lines[1:], start=2):
+        if not line.endswith("\n"):
+            raise ValueError(f"truncated JSONL record at line {line_number}")
+        try:
+            stored = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"invalid JSONL record at line {line_number}") from exc
+        if stored.get("record_type") != "event" or not isinstance(stored.get("event"), dict):
+            raise ValueError(f"invalid event envelope at line {line_number}")
+        event = stored["event"]
+        context = event.get("decision_context")
+        ledger = append_paper_fill(
+            ledger,
+            timestamp_ms=event.get("timestamp_ms"),
+            side=event.get("side"),
+            quantity_btc=event.get("quantity_btc"),
+            price_usdt=event.get("price_usdt"),
+            fee_usdt=event.get("fee_usdt"),
+            decision_id=event.get("decision_id"),
+            reason=event.get("reason"),
+            decision_context=context,
+        )
+        if _canonical(ledger["events"][-1]) != _canonical(event):
+            raise ValueError(f"persisted event does not reconcile at line {line_number}")
+    verify_ledger(ledger)
+    return ledger
+
+
+def append_ledger_jsonl(path: str | os.PathLike[str], ledger: Mapping[str, Any]) -> dict[str, Any]:
+    """Persist only missing ledger events to a single-writer append-only JSONL file.
+
+    Existing file history must be an exact prefix of the supplied ledger. This
+    function does not claim cross-process locking or tamper-proof external storage.
+    """
+    _verify_ledger(ledger)
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    expected_header = _header_for_ledger(ledger)
+    if not target.exists():
+        with target.open("x", encoding="utf-8", newline="\n") as stream:
+            stream.write(json.dumps(expected_header, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False) + "\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        existing = create_ledger(
+            initial_cash_usdt=ledger["initial_cash_usdt"],
+            provenance_status=expected_header["provenance_status"],
+            fee_assumption_note=expected_header["fee_assumption_note"],
+        )
+    else:
+        existing = load_ledger_jsonl(target)
+        if _canonical(_header_for_ledger(existing)) != _canonical(expected_header):
+            raise ValueError("existing JSONL header does not match supplied ledger metadata")
+    if len(existing["events"]) > len(ledger["events"]):
+        raise ValueError("refusing ledger rollback: JSONL file contains newer events")
+    for index, old_event in enumerate(existing["events"]):
+        if _canonical(old_event) != _canonical(ledger["events"][index]):
+            raise ValueError("existing JSONL history is not an exact prefix of supplied ledger")
+    appended = 0
+    with target.open("a", encoding="utf-8", newline="\n") as stream:
+        for event in ledger["events"][len(existing["events"]):]:
+            record = {"record_type": "event", "event": event}
+            stream.write(json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False) + "\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+            appended += 1
+    verified = load_ledger_jsonl(target)
+    return {
+        "status": "PASS_DURABLE_JSONL_HASH_CHAIN",
+        "path": str(target),
+        "event_count": len(verified["events"]),
+        "new_events_appended": appended,
+        "last_event_hash": verified["last_event_hash"],
+        "single_writer_only": True,
+        "mode": "PAPER_ONLY",
+    }
