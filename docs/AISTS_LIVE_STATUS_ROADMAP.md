@@ -8,9 +8,9 @@ Current global gate: **G0 = BLOCKED_GLOBAL**
 ## Latest verified GitHub runs
 
 - Read-only execution pipeline through CP-0201: [run 39062577687](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062577687), completed successfully.
-- CP-0204 static CI covering CP-0026 builder gate, CP-0027 backtest gate, and CP-0203/0204 tests: [run 39063794245](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063794245), terminal `success` on tested SHA `77f68d0548d60c847a37fba140fe3f5c5aabdb86`.
+- Latest CP-0204 static CI covering CP-0026 builder gate, CP-0027 backtest gate, and CP-0203/0204 tests: [run 39063868131](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063868131), terminal `success` on tested SHA `65739d99d1c7599aaa9667688aff8e1a6412b49e`.
 - Latest execution evidence through CP-0201: [run 39062577687](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062577687), completed successfully; execution commit `b6b16ab2da9111e4a44a67c5c6d091b46729b8d3`.
-- CP-0204 CI compiles CP-0026, CP-0027, and CP-0203; CP-0203's seven tests and CP-0204's four tests pass. The separate CP-0040 gate test suite is still not wired into this workflow.
+- CP-0204 CI compiles CP-0026, CP-0027, and CP-0203; CP-0203's seven tests and CP-0204's four tests pass. CP-0027 now requires both the pinned gap-policy gate and the existing row-level/non-row G0 gate before any backtest output. The separate CP-0040 gate test suite is still not wired into this workflow.
 - The PR remains open and unmerged; `main` remains at `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`.
 
 ## Verified findings
@@ -108,6 +108,6 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - Integrated `load_gap_policy_gate` into CP-0027 before reading the candidate manifest, creating output directories, loading candidate data, or computing performance. It blocks when the frozen evidence is absent, hash-mismatched, or unresolved. No existing results were deleted or changed.
 - Added `tests/test_cp0204_backtest_gap_gate.py`; CI now compiles CP-0027 and executes four source-level regression checks in addition to CP-0203's seven deterministic gate tests.
 - First CP-0204 CI attempt [run 39063759857](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063759857) failed because one source-text assertion was case-sensitive. The assertion was corrected, not the production gate behavior; rerun [39063794245](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063794245) completed with terminal `success`.
-- Tested code/test SHA: `77f68d0548d60c847a37fba140fe3f5c5aabdb86`. No candidate build, backtest, market-data download, source promotion, or live action occurred.
+- Latest tested code/test SHA: `65739d99d1c7599aaa9667688aff8e1a6412b49e`; terminal CI run `39063868131` passed. The earlier CP-0204 assertion-only test failure was corrected and rerun successfully. No candidate build, backtest, market-data download, source promotion, or live action occurred.
 - Safety and gate state remain: G0 `BLOCKED_GLOBAL`; canonical source `NONE`; source cases closed: 0; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
 - Next bounded action CP-0205: design and document the conservative gap-window sensitivity contract at source level: define which signal/position/valuation episodes are considered gap-affected, what is excluded from scored metrics, how excluded P&L is reported, and how to avoid fabricating a fill or claiming a drawdown bound that the data cannot support. Do not implement the performance policy or run a backtest until the contract is internally consistent with the frozen rulebook.
