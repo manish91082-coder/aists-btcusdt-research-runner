@@ -24,7 +24,7 @@ CLOSES = [100.0, 102.0, 111.0, 108.0]
 
 
 def reference_ledger():
-    cash = D("1000"); qty = D("0"); fees = D("0"); slippage = D("0"); realized = D("0")
+    cash = D("10000"); qty = D("0"); fees = D("0"); slippage = D("0"); realized = D("0")
     fee_rate = D("10") / D("10000"); slip_rate = D("5") / D("10000")
     events = []
 
