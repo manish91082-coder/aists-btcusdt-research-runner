@@ -47,6 +47,46 @@ class ResearchReportVerifierTests(unittest.TestCase):
         with self.assertRaisesRegex(ResearchReportVerificationError, "SHA-256 mismatch"):
             verify_research_audit_report(report)
 
+    def test_blocked_input_requires_matching_entrypoint_and_reason(self):
+        report = build_research_audit_report(
+            gate_snapshot={**GATES_BLOCKED, "G0": "PASS"},
+            run_id="cp0178-missing-entrypoint",
+            repository_head_sha=HEAD,
+        )
+        report["status"] = "BLOCKED_INPUT"
+        unsigned = dict(report)
+        unsigned.pop("report_sha256")
+        report["report_sha256"] = hashlib.sha256(json.dumps(
+            unsigned, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+            allow_nan=False,
+        ).encode("utf-8")).hexdigest()
+        with self.assertRaisesRegex(
+            ResearchReportVerificationError, "requires an entrypoint section"
+        ):
+            verify_research_audit_report(report)
+
+    def test_blocked_input_rejects_empty_blocked_reason(self):
+        report = self.blocked_report()
+        report["gate_snapshot"]["G0"] = "PASS"
+        report["gate_evidence_authentication"]["g0_classification"] = "SUPPLIED_PASS_CLAIM_NOT_AUTHENTICATED"
+        report["status"] = "BLOCKED_INPUT"
+        report["entrypoint"] = {
+            "status": "BLOCKED_INPUT",
+            "blocked_reason": "",
+            "simulation_attempted": False,
+            "input_artifacts_inspected": False,
+        }
+        unsigned = dict(report)
+        unsigned.pop("report_sha256")
+        report["report_sha256"] = hashlib.sha256(json.dumps(
+            unsigned, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+            allow_nan=False,
+        ).encode("utf-8")).hexdigest()
+        with self.assertRaisesRegex(
+            ResearchReportVerificationError, "requires a blocked reason"
+        ):
+            verify_research_audit_report(report)
+
     def test_supplied_g0_pass_is_machine_labeled_unauthenticated(self):
         report = build_research_audit_report(
             gate_snapshot={**GATES_BLOCKED, "G0": "PASS"},
