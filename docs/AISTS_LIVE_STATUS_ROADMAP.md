@@ -165,3 +165,13 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - This is contract-level oracle evidence only, not a production scorer. CP-0027 still carries positions through gaps; Policy B has not been applied. No market data, candidate build, market backtest, source adjudication, case closure, or counterfactual boundary fill occurred.
 - Next: CP-0211 independent review of this contract against CP-0040/CP-0206. Only after a separate approval decision may a Policy B sensitivity-only scorer be considered.
 - Current state: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain FAIL; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
+
+
+## CP-0211: Independent review of segment/censor accounting contract
+
+- Review report: [CP-0211 Independent Review](CP0211_Independent_Review_Segment_Censor_Contract.md).
+- Compared CP-0210 against the frozen CP-0040 G0/G1/G3 rules and CP-0206 Policy B. Review outcome: `CONTRACT_REVIEW_PASS_WITH_BLOCKERS`; the accounting semantics are directionally aligned, but CP-0210's Decimal fixture is not an end-to-end production censor-ledger reconciliation and the segment/warm-up semantics are not yet exercised by an implemented Policy B scorer.
+- CP-0206 explicitly requires independent review and evidence application before a sensitivity runner. CP-0211 is a source-only review and does not constitute independent authorization or policy application.
+- No production code change, candidate build, market-data backtest, policy application, source adjudication, case closure, or counterfactual closeout was performed.
+- Next bounded action CP-0212: prepare an approval/application-readiness checklist and independent-review sign-off record. Do not implement/run the sensitivity scorer before the separate approval/application record exists.
+- Current state: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain FAIL; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
