@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 TASK = "cp0165_4h_monthly_checksum_gap_audit"
-INTERVAL_MS = 4 * 60 * 60 * 1000
+INTERVAL_US = 4 * 60 * 60 * 1000000
 EXPECTED_MONTHS = 110
 FIRST_MONTH = (2017, 8)
 LAST_MONTH = (2026, 9)
@@ -98,10 +98,19 @@ def fetch_sidecar(url, filename):
         return {"fetch_status":"SIDECAR_UNAVAILABLE","error":f"{type(exc).__name__}: {exc}"}
     except (urllib.error.URLError,TimeoutError,UnicodeError,ValueError) as exc:
         return {"fetch_status":"SIDECAR_UNAVAILABLE","error":f"{type(exc).__name__}: {exc}"}
-def timestamp_to_iso(ms):
-    return datetime.fromtimestamp(ms/1000,timezone.utc).isoformat()
+def normalize_timestamp_to_us(value):
+    """Normalize Binance Spot archive open_time to microseconds without losing precision."""
+    if 1000000000000 <= value < 100000000000000:
+        return value * 1000, "milliseconds"
+    if 1000000000000000 <= value < 100000000000000000:
+        return value, "microseconds"
+    raise ValueError("open_time magnitude outside supported Binance Spot epoch units: %s" % value)
+def timestamp_to_iso(timestamp_us):
+    seconds, micros = divmod(timestamp_us, 1000000)
+    return datetime.fromtimestamp(seconds,timezone.utc).replace(microsecond=micros).isoformat()
 def read_open_times(zip_path):
     values=[]
+    unit_counts={"milliseconds":0,"microseconds":0}
     with zipfile.ZipFile(zip_path,"r") as zf:
         bad=zf.testzip()
         if bad is not None:
@@ -118,8 +127,10 @@ def read_open_times(zip_path):
                 except (ValueError,IndexError):
                     if line_no==1: continue
                     raise ValueError(f"non-integer open_time at line {line_no}")
-                values.append(value)
-    return values
+                normalized, unit = normalize_timestamp_to_us(value)
+                values.append(normalized)
+                unit_counts[unit] += 1
+    return values, {unit:count for unit,count in unit_counts.items() if count}
 def compare_frozen_inventory(row, local_sha256, local_bytes):
     expected_sha = str(row.get("sha256_local", "")).strip().lower()
     expected_bytes = str(row.get("bytes", "")).strip()
@@ -143,8 +154,8 @@ def blocked_outputs(out, started, reason, inventory_rows=0):
     out.mkdir(parents=True,exist_ok=True)
     (out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Summary.json").write_text(json.dumps(summary,indent=2,sort_keys=True)+"\n",encoding="utf-8")
     (out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Report_HI.md").write_text("# CP-0165: 4h archive checksum/gap audit\n\n- Status: BLOCKED_4H_AUDIT_INPUT_INVALID\n- Reason: "+reason+"\n- No archive downloads, candidate build, backtest, source-authority change, or live action was performed.\n",encoding="utf-8")
-    write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv",[],["period","filename","cache_path","cache_match_count","cache_status","local_sha256","inventory_sha256","inventory_bytes","baseline_sha256_status","baseline_bytes_status","zip_crc","sidecar_status","sidecar_sha256","sidecar_hashes","sidecar_filename_match","checksum_status","error"])
-    write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv",[],["previous_open_time_utc","next_open_time_utc","delta_ms","missing_intervals_estimate","gap_class"])
+    write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv",[],["period","filename","cache_path","cache_match_count","cache_status","local_sha256","inventory_sha256","inventory_bytes","baseline_sha256_status","baseline_bytes_status","zip_crc","timestamp_unit","timestamp_unit_counts","timestamp_unit_status","sidecar_status","sidecar_sha256","sidecar_hashes","sidecar_filename_match","checksum_status","error"])
+    write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv",[],["previous_open_time_utc","next_open_time_utc","delta_us","missing_intervals_estimate","gap_class"])
     return summary
 def main():
     ap=argparse.ArgumentParser()
@@ -178,6 +189,7 @@ def main():
         matches=[p for p in cache.rglob(filename) if p.is_file()]
         rec={"period":period,"filename":filename,"cache_status":"","local_sha256":"","zip_crc":"",
              "inventory_sha256":"","inventory_bytes":"","baseline_sha256_status":"UNAVAILABLE","baseline_bytes_status":"UNAVAILABLE",
+             "timestamp_unit":"","timestamp_unit_counts":"{}","timestamp_unit_status":"NOT_CHECKED",
              "sidecar_status":"","sidecar_sha256":"","sidecar_hashes":"","sidecar_filename_match":False,
              "checksum_status":"","error":"","cache_match_count":len(matches)}
         if len(matches)!=1:
@@ -196,7 +208,12 @@ def main():
                 bad=zf.testzip()
             rec["zip_crc"]="PASS" if bad is None else "FAIL"
             if bad is not None: raise ValueError(f"ZIP CRC failure at member {bad}")
-            times=read_open_times(path)
+            times, unit_counts = read_open_times(path)
+            rec["timestamp_unit_counts"]=json.dumps(unit_counts,sort_keys=True,separators=(",",":"))
+            observed_units=sorted(unit_counts)
+            rec["timestamp_unit"]="EMPTY" if not observed_units else observed_units[0] if len(observed_units)==1 else "MIXED"
+            expected_unit="microseconds" if period >= "2025-01" else "milliseconds"
+            rec["timestamp_unit_status"]="PASS" if observed_units==[expected_unit] else "FAIL"
         except Exception as exc:
             rec.update({"cache_status":"INVALID","checksum_status":"NOT_CHECKED","sidecar_status":"NOT_REQUESTED",
                         "error":f"{type(exc).__name__}: {exc}"})
@@ -232,15 +249,15 @@ def main():
     duplicates=0
     off_grid=0
     for i,t in enumerate(all_times):
-        if t % INTERVAL_MS: off_grid += 1
+        if t % INTERVAL_US: off_grid += 1
         if i and t==all_times[i-1]: duplicates += 1
         if i and t>all_times[i-1]:
             delta=t-all_times[i-1]
-            if delta>INTERVAL_MS:
+            if delta>INTERVAL_US:
                 gaps.append({"previous_open_time_utc":timestamp_to_iso(all_times[i-1]),
-                             "next_open_time_utc":timestamp_to_iso(t),"delta_ms":delta,
-                             "missing_intervals_estimate":max(0,delta//INTERVAL_MS-1),
-                             "gap_class":"MULTIPLE_OF_4H" if delta%INTERVAL_MS==0 else "IRREGULAR_DELTA"})
+                             "next_open_time_utc":timestamp_to_iso(t),"delta_us":delta,
+                             "missing_intervals_estimate":max(0,delta//INTERVAL_US-1),
+                             "gap_class":"MULTIPLE_OF_4H" if delta%INTERVAL_US==0 else "IRREGULAR_DELTA"})
     matches=sum(r["checksum_status"]=="MATCH" for r in details)
     unavailable=sum(r["checksum_status"]!="MATCH" for r in details)
     checks=[
@@ -249,12 +266,13 @@ def main():
         {"check_id":"cached_archives_match_frozen_inventory_sha256","status":"PASS" if sum(r["baseline_sha256_status"]=="MATCH" for r in details)==110 else "FAIL","detail":f"matches={sum(r['baseline_sha256_status']=='MATCH' for r in details)}/110; mismatches={sum(r['baseline_sha256_status']=='MISMATCH' for r in details)}; unavailable={sum(r['baseline_sha256_status']=='UNAVAILABLE' for r in details)}"},
         {"check_id":"cached_archives_match_frozen_inventory_bytes","status":"PASS" if sum(r["baseline_bytes_status"]=="MATCH" for r in details)==110 else "FAIL","detail":f"matches={sum(r['baseline_bytes_status']=='MATCH' for r in details)}/110; mismatches={sum(r['baseline_bytes_status']=='MISMATCH' for r in details)}; unavailable={sum(r['baseline_bytes_status']=='UNAVAILABLE' for r in details)}"},
         {"check_id":"all_110_official_sidecar_hashes_match","status":"PASS" if matches==110 else "FAIL","detail":f"matches={matches}; unavailable_or_mismatched={unavailable}"},
+        {"check_id":"expected_spot_timestamp_units_by_archive_month","status":"PASS" if len(details)==110 and all(r["timestamp_unit_status"]=="PASS" for r in details if r["cache_status"]=="PRESENT" and r["zip_crc"]=="PASS") and all(r["cache_status"]=="PRESENT" and r["zip_crc"]=="PASS" for r in details) else "FAIL","detail":"milliseconds expected before 2025-01; microseconds expected from 2025-01"},
         {"check_id":"raw_candle_timestamps_audited","status":"PASS" if bool(all_times) else "FAIL","detail":f"rows={len(all_times)} duplicates={duplicates} off_grid={off_grid} gap_events={len(gaps)}"},
     ]
     status="PASS_ALL_110_OFFICIAL_CHECKSUMS_MATCH" if all(c["status"]=="PASS" for c in checks) and matches==110 else "REVIEW_REQUIRED_4H_ARCHIVE_PROVENANCE_INCOMPLETE"
     out.mkdir(parents=True,exist_ok=True)
     write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv",details,
-              ["period","filename","cache_path","cache_match_count","cache_status","local_sha256","inventory_sha256","inventory_bytes","baseline_sha256_status","baseline_bytes_status","zip_crc","sidecar_status","sidecar_sha256","sidecar_hashes","sidecar_filename_match","checksum_status","error"])
+              ["period","filename","cache_path","cache_match_count","cache_status","local_sha256","inventory_sha256","inventory_bytes","baseline_sha256_status","baseline_bytes_status","zip_crc","timestamp_unit","timestamp_unit_counts","timestamp_unit_status","sidecar_status","sidecar_sha256","sidecar_hashes","sidecar_filename_match","checksum_status","error"])
     write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv",gaps,
               ["previous_open_time_utc","next_open_time_utc","delta_ms","missing_intervals_estimate","gap_class"])
     summary={"schema_version":1,"checkpoint":"CP-0165","task":TASK,"status":status,"started_at_utc":started,"finished_at_utc":utc_now(),
@@ -265,6 +283,10 @@ def main():
              "source_cases_closed":0,"g0":"BLOCKED_GLOBAL","backtest_run":False,"candidate_build":False,"strategy_promoted":False,
              "live_signing_broadcast_orders":"BLOCKED","raw_4h_rows_audited":len(all_times),"duplicate_open_times":duplicates,
              "off_grid_open_times":off_grid,"gap_events":len(gaps),"estimated_missing_intervals":sum(g["missing_intervals_estimate"] for g in gaps),
+             "timestamp_unit_archives_milliseconds":sum(r["timestamp_unit"]=="milliseconds" for r in details),
+             "timestamp_unit_archives_microseconds":sum(r["timestamp_unit"]=="microseconds" for r in details),
+             "timestamp_unit_archives_mixed":sum(r["timestamp_unit"]=="MIXED" for r in details),
+             "timestamp_unit_archive_mismatches":sum(r["timestamp_unit_status"]=="FAIL" for r in details),
              "checks_passed":sum(c["status"]=="PASS" for c in checks),"checks_total":len(checks),"checks":checks}
     (out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Summary.json").write_text(json.dumps(summary,indent=2,sort_keys=True)+"\n",encoding="utf-8")
     report=["# CP-0165: 4h monthly archive checksum and exact gap audit","",f"- Status: {status}",
