@@ -38,6 +38,7 @@ from pathlib import Path
 
 # CP-0204: mandatory G0 gap-policy gate; unresolved gaps block all backtest execution.
 from AISTS_CP0203_GapPolicy_Gate import load_gap_policy_gate
+from AISTS_CP0026_Research_Candidate_Builder import load_candidate_gate
 
 import numpy as np
 import pandas as pd
@@ -393,6 +394,12 @@ def main():
         report_dir/"CP0200_Summary.json",
         report_dir/"CP0201_Gap_Quarantine_Overlap_Crosswalk.csv",
         report_dir/"CP0201_Summary.json",
+    )
+    # Also enforce the row-level manifest and non-row blocker gate; old candidate files cannot bypass G0.
+    load_candidate_gate(
+        report_dir/"CP0040_ExactKey_Quarantine_Manifest.csv",
+        report_dir/"CP0040_NonRow_Blockers.csv",
+        report_dir/"CP0040_ExactKey_Quarantine_Manifest_Summary.json",
     )
     manifest_path=report_dir/"cp0026_research_candidate_manifest.json"
     if not manifest_path.exists():
