@@ -197,3 +197,13 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Next path: consider a formally frozen conservative quarantine policy only if candidate-specific final metrics can be generated without bypassing the current G0 fail-closed guard. Do not turn that policy into global canonical-source authority or G0 PASS.
 - All gates unchanged: G0 BLOCKED_GLOBAL; G2 all 23 candidates FAIL; G3 blocked; G4 insufficient evidence; G6 not built; G7 live blocked. No source mutation, fake PASS manifest, strategy promotion, live signing, public broadcast, Binance orders, automatic SL or TP.
 - Goal-direction: prevents redundant searching and unrelated work; it does not remove the provenance blocker. Require genuinely new official evidence or a valid rulebook-compatible candidate-specific evidence path before implementation.
+
+
+
+### CP-0146 — Quarantine diagnostic reuse and capital-basis guard (2026-10-17)
+- Re-verified the baseline branch/PR head and exact-head CI before the checkpoint: `d0b4ab3cc352a4584b1b48686d2795cc6a17d83e`, PR #2 OPEN/unmerged, run [39023546490](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39023546490) terminal success.
+- Existing CP-0040 quarantine sensitivity already supplies the bounded diagnostic. Exact-key omissions removed 6 4h rows and 3 daily rows without replacements; TRAIN net-return delta was -15.891740828 percentage points. Do not rerun this same diagnostic or treat it as fresh evidence; the consumed OOS diagnostic remains negative.
+- The frozen metric anchors use `initial_capital_usdt: 10000`, not ₹10,000 INR converted to USDT. These historical returns, P&L and equity values are not valid user-capital results and must not be scaled or relabelled without reproducible simulation and verified assumptions.
+- Decision: no new code, no new backtest, no strategy tuning/promotion, no production-builder bypass. The next candidate-specific run, if admissible, must use the actual INR-to-USDT capital basis and evidenced FX, fee, slippage and lot-size assumptions, frozen strategy rules, exact quarantine inputs, and full acceptance gates. If an input cannot be verified, mark the affected metric `NOT_COMPUTABLE`.
+- Gates unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. PR #2 remains OPEN and must not be merged.
+- This checkpoint is a decision/control record, not a profitability claim or a gate PASS. Verify the resulting final head, PR state and exact-head CI after this append.
