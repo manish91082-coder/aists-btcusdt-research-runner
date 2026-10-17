@@ -270,3 +270,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Re-read G0 eligibility summary and builder: status remains `BLOCKED_EXISTING_CP0026_BUILDER_LACKS_ROW_LEVEL_CP0107_QUARANTINE`; 909 unmatched exact-open key rows, 52 shared economic conflicts and 11 non-row blockers remain unresolved. Existing builder has no row-level CP0107 exclusion lookup and fails closed unless all non-row blockers are resolved.
 - Decision: CI validates documentation/code compilation/unit tests only; it does not validate market data, candidate performance, or G0. No candidate build/backtest and no gate change.
 - Next admissible action: obtain explicit approval of the exact CP-0152 proposal and separately satisfy all frozen rulebook prerequisites. Approval alone cannot override G0 or the builder guard.
+
+
+## CP-0154 — CP-0152 preflight readiness review (2026-10-17)
+- Performed a read-only check of CP-0040 G0 review summary, frozen exact-key manifest and its summary, non-row blocker ledger, CP-0119 archive-version provenance status, CP-0117 rulebook-bound blocker disposition and the existing CP-0026 builder.
+- Created `evidence/research_scopes/CP0154_CP0152_Preflight_Readiness_HI.md` as an evidence-linked readiness matrix. The existing 1,411-key manifest and 35 aggregation keys are not proof of production-path row exclusion. The current builder review says the required row-level CP0107 exclusion lookup is absent.
+- Approval of CP-0152 remains pending; a generic “next” is not explicit approval of exact candidate rules. No candidate build or backtest was run.
+- Capital basis (₹10,000 INR to USDT), applicable fee source, BTCUSDT lot-size/minimum notional, frozen allocation and cash reserve remain unverified/unfrozen for this proposed evaluation.
+- Gate state unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. No profitability established.
+- Next: wait for explicit approval of the exact CP-0152 proposal, then re-check prerequisites. Approval alone cannot override G0 or builder safeguards.
