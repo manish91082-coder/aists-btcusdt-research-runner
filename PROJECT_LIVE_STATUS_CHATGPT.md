@@ -1,7 +1,7 @@
 # AISTS Project Live Status for ChatGPT
 
 Last updated: 2026-10-17
-Research checkpoint: CP-0151 candidate-run admissibility audit. Subsequent commits are documentation-metadata reconciliation only; always re-fetch current branch/PR and exact-HEAD CI before relying on state.
+Latest checkpoint: CP-0152 candidate scope proposal (not approved; no run). Latest empirical admissibility audit remains CP-0151. Always re-fetch current branch/PR and exact-HEAD CI before relying on state.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2 (must remain OPEN; do not merge)
@@ -163,3 +163,12 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - Admissibility decision: do not repeat the failed comparator or relabel/scale its metrics. A new candidate-specific run is not currently actionable because it would repeat a failed comparator and lacks a verified user-capital/cost basis; production builder also lacks the necessary row-level quarantine integration and must remain fail-closed. No code, candidate build, data mutation or backtest authorized by this audit.
 - Smallest genuine unblock: (1) a new official archive-version/publication record adjudicating affected exact-key aggregation relationships, OR (2) separately approved frozen evaluation scope for a genuinely new candidate with exact quarantine lineage, verified INR→USDT conversion, fees, slippage and lot-size assumptions, while not bypassing G0 or builder safeguards. Do not repeat old provenance searches without a new official signal.
 - Gates unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. No profitability claim, candidate promotion, live signing/broadcast/orders or automatic SL/TP. This audit clears no empirical gate.
+
+
+## CP-0152 — New 4h candidate scope proposal (2026-10-17)
+- Pre-change live state verified: branch and PR #2 head matched `9883051893f0b6675a060bee21eede299bf80f21`; PR #2 OPEN/unmerged; exact-head Actions run [39035163301](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39035163301) completed SUCCESS.
+- Added proposal `evidence/research_scopes/CP0152_4H_EMA20_50_CAUSAL_ATR_SCOPE_PROPOSAL_HI.md`. Candidate proposal: 4h EMA20/EMA50 crossover plus causal ATR% percentile filter over the prior 252 completed 4h observations, eligible percentile band 20–90, long-only and next-contiguous-open hypothetical fills. No automatic SL/TP, signing, broadcast or exchange orders.
+- This is explicitly `PROPOSAL ONLY`; approval is `PENDING_EXPLICIT_APPROVAL`; execution is `NOT_AUTHORIZED`; candidate build/backtest `NOT_RUN`. No real-market data was built or evaluated.
+- Scope does not relax frozen CP-0040 thresholds or G0. Before any run, require exact-key quarantine lineage and actual row-exclusion proof, verified INR→USDT basis, fees/slippage, BTCUSDT lot-size/min-notional constraints, and frozen allocation/cash reserve. Unverifiable capital/quantity results are `NOT_COMPUTABLE`.
+- Gate status unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`. Eleven non-row aggregation blockers remain open; no profitability is established.
+- Goal-direction decision: this prepares a concrete reviewable scope rather than repeating failed work or adding a code-only module. It clears no empirical gate. Do not execute the proposed candidate until the scope is explicitly approved and all applicable frozen rulebook prerequisites are satisfied.
