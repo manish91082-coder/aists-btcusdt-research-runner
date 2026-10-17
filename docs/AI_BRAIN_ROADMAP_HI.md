@@ -188,3 +188,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Recheck of official issue tracker after writing the CP-0143 report found no new maintainer response or official version/correction record: #504 OPEN/0 comments, #475 OPEN/1 contributor comment, #505 OPEN/0 comments.
 - Therefore G0 remains BLOCKED_GLOBAL. No candidate promotion, real-market performance run, source mutation, silent daily/monthly precedence or live trading. Do not repeat this same provenance check or add infrastructure-only code absent a new evidence signal.
 - Status-file top metadata corrected to CP-0143; this correction creates a new commit and requires exact-head CI verification.
+
+
+### CP-0145 — Continuity decision (2026-10-17)
+- Rechecked branch/PR/CI at the start of this checkpoint: head `db835227eda2b631426885a0e80ce476f7f59244`, PR #2 OPEN/unmerged, latest run `39022396465` successful on that exact head. The status-only CP-0145 commit now updates the branch, so the final head and its CI must be verified after the roadmap update too.
+- Binance Public Data issues #504/#475/#505 show no new maintainer resolution. Latest repository merge PR #441 is an unrelated utility URL-encoding change, not archive provenance evidence.
+- No new code or backtest. Existing CP-0117/CP-0119 evidence still leaves 11 exact aggregation relationship blockers open; daily-value corroboration applies only to the 35 exact rows, and monthly data diverges on 14 keys/97 fields. Historical version provenance remains unestablished.
+- Next path: consider a formally frozen conservative quarantine policy only if candidate-specific final metrics can be generated without bypassing the current G0 fail-closed guard. Do not turn that policy into global canonical-source authority or G0 PASS.
+- All gates unchanged: G0 BLOCKED_GLOBAL; G2 all 23 candidates FAIL; G3 blocked; G4 insufficient evidence; G6 not built; G7 live blocked. No source mutation, fake PASS manifest, strategy promotion, live signing, public broadcast, Binance orders, automatic SL or TP.
+- Goal-direction: prevents redundant searching and unrelated work; it does not remove the provenance blocker. Require genuinely new official evidence or a valid rulebook-compatible candidate-specific evidence path before implementation.
