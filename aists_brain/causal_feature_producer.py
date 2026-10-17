@@ -9,10 +9,12 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from aists_brain.decision_lineage import DECISION_SCHEMA, canonical_sha256
 from aists_brain.market_context import TIMEFRAMES, analyze_market_context
+from aists_brain.provenance_input import ProvenanceGateError, load_provenance_cleared_candles
 
 
 _INTERVAL_MS = {
@@ -149,3 +151,32 @@ def produce_causal_feature_snapshots(
             "feature source hashes identify prefix bytes in canonical JSON, not an external archive",
         ],
     }
+
+
+def produce_from_provenance_cleared_csv(
+    csv_path: str | Path,
+    manifest_path: str | Path,
+    *,
+    expected_interval: str,
+    brain_version: str,
+    strategy_version: str,
+) -> dict[str, Any]:
+    """Load only through the fail-closed provenance gate, then produce snapshots.
+
+    This function never bypasses G0. Manifest PASS remains an external claim
+    that this loader cannot authenticate; unresolved project provenance must stay
+    blocked and should not be relabelled PASS to run this function.
+    """
+    try:
+        loaded = load_provenance_cleared_candles(
+            csv_path, manifest_path, expected_interval=expected_interval
+        )
+    except (ProvenanceGateError, OSError, ValueError) as exc:
+        raise FeatureProducerError(f"provenance gate rejected feature input: {exc}") from exc
+    return produce_causal_feature_snapshots(
+        loaded["candles"],
+        timeframe=loaded["interval"],
+        candle_csv_sha256=loaded["csv_sha256"],
+        brain_version=brain_version,
+        strategy_version=strategy_version,
+    )
