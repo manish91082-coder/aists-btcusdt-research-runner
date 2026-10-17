@@ -8,6 +8,8 @@ on:
       - 'scripts/AISTS_CP0027_MultiTimeframe_Baseline_Backtest.py'
       - 'tests/test_cp0204_backtest_gap_gate.py'
       - 'tests/test_cp0206_frozen_gap_policy.py'
+      - 'tests/test_cp0207_accounting_invariants.py'
+      - 'docs/CP0207_Independent_Accounting_Reconciliation_Preflight.md'
       - 'evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy.json'
       - 'evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy_SHA256.json'
       - 'scripts/AISTS_CP0203_GapPolicy_Gate.py'
@@ -92,3 +94,5 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_cp0204_backtest_gap_gate.py' -v
       - name: Test CP-0206 frozen policy and hash receipt
         run: python -m unittest discover -s tests -p 'test_cp0206_frozen_gap_policy.py' -v
+      - name: Test CP-0207 independent accounting oracle
+        run: python -m unittest discover -s tests -p 'test_cp0207_accounting_invariants.py' -v

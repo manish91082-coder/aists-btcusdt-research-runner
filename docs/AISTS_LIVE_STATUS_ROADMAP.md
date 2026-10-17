@@ -1,6 +1,6 @@
 # AISTS Live Status & Mission Roadmap
 
-Last verified checkpoint: **CP-0206 (gap-window policy frozen for sensitivity-only; G0 remains blocked)**  
+Last verified checkpoint: **CP-0207 (independent accounting-oracle preflight added; production accounting not end-to-end validated; G0 remains blocked pending CI terminal verification)**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
@@ -69,6 +69,14 @@ The source-code-only eligibility matrix is preserved in [docs/CP0202_Candidate_B
 - Exact population: 17 missing 4h keys; one linked existing row-case overlap plus 16 gap-window-only items. No duplicate row case.
 - Independent non-tautological accounting reconciliation at `<= 1e-8 USDT` and explicit cash/quantity/fees/equity/segment-P&L tests are prerequisites before any sensitivity runner. No sensitivity runner, candidate build, or backtest is authorized by CP-0206.
 - CP-0040 G0/G1/G3 remains controlling. Canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability `NOT ESTABLISHED`.
+
+## CP-0207: Independent accounting reconciliation preflight
+
+- Contract: [CP0207_Independent_Accounting_Reconciliation_Preflight.md](CP0207_Independent_Accounting_Reconciliation_Preflight.md).
+- Added `tests/test_cp0207_accounting_invariants.py`: Decimal-based independent fixtures for buy/sell cash, quantity, fees, slippage, mark-to-market equity, flat-account and segment-P&L identities; static guards confirm production backtest remains gated and indicator warm-up is segment-specific.
+- This is an accounting-oracle preflight, not end-to-end production ledger validation. No market-data run, candidate build, or backtest executed. CP-0027 still carries positions through gaps in source, but the frozen unresolved policy blocks performance scoring.
+- Required tolerance: `<= 1e-8 USDT` per matched accounting comparison. Next step after terminal CI verification: add an independent event-by-event reconciliation harness using a deterministic synthetic event tape; keep it separate from market data.
+- G0 `BLOCKED_GLOBAL`; canonical source `NONE`; source cases closed `0`; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability `NOT ESTABLISHED`.
 
 ## Goal distance / gate status
 
