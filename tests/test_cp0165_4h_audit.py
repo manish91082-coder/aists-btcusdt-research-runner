@@ -29,10 +29,31 @@ class TestCP0165AuditHelpers(unittest.TestCase):
 
     def test_checksum_parser_does_not_pair_hash_from_another_line(self):
         digest = "a" * 64
-        text = f"{digest}  BTCUSDT-4h-2017-07.zip\\nBTCUSDT-4h-2017-08.zip"
+        text = f"{digest}  BTCUSDT-4h-2017-07.zip\nBTCUSDT-4h-2017-08.zip"
         hashes, named = AUDIT.parse_checksum(text, "BTCUSDT-4h-2017-08.zip")
         self.assertEqual(hashes, [])
         self.assertTrue(named)
+
+    def test_redirect_handler_blocks_untrusted_target_before_following(self):
+        from unittest.mock import Mock
+        handler = AUDIT.OfficialChecksumRedirectHandler()
+        req = Mock()
+        req.full_url = "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/4h/BTCUSDT-4h-2017-08.zip.CHECKSUM"
+        with self.assertRaises(AUDIT.urllib.error.HTTPError):
+            handler.redirect_request(
+                req, None, 302, "Found", {}, "https://example.invalid/steal"
+            )
+
+    def test_redirect_handler_allows_only_official_https_object_path(self):
+        from unittest.mock import Mock
+        handler = AUDIT.OfficialChecksumRedirectHandler()
+        req = Mock()
+        req.full_url = "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/4h/BTCUSDT-4h-2017-08.zip.CHECKSUM"
+        result = handler.redirect_request(
+            req, None, 302, "Found", {},
+            "https://s3.amazonaws.com" + req.full_url.removeprefix("https://data.binance.vision")
+        )
+        self.assertIsNotNone(result)
 
     def test_checksum_parser_rejects_hash_for_different_archive(self):
         digest = "b" * 64
@@ -83,7 +104,7 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             inventory = root / "inventory.csv"
-            inventory.write_text("source,interval,filename\\nmonthly_cache,4h,BTCUSDT-4h-2017-08.zip\\n")
+            inventory.write_text("source,interval,filename\nmonthly_cache,4h,BTCUSDT-4h-2017-08.zip\n")
             with patch.object(AUDIT, "ROOT", root), patch("sys.argv", [
                 "audit", "--archive-inventory", "inventory.csv",
                 "--monthly-cache", "cache", "--output-dir", "out"
