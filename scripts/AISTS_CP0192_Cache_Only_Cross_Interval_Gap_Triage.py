@@ -229,6 +229,16 @@ def main():
     slots_with_any_child_open = sum(
         any(r[f"{interval}_found_opens"] not in ("", 0) for interval in ("5m", "1h"))
         for r in detail_rows)
+    slots_with_both_archives_valid = sum(
+        r["5m_archive_status"] == "VALID" and r["1h_archive_status"] == "VALID"
+        for r in detail_rows)
+    slots_with_zero_child_opens_valid = sum(
+        r["5m_archive_status"] == "VALID" and r["1h_archive_status"] == "VALID"
+        and r["5m_found_opens"] == 0 and r["1h_found_opens"] == 0
+        for r in detail_rows)
+    slots_with_unavailable_child_data = sum(
+        r["5m_archive_status"] != "VALID" or r["1h_archive_status"] != "VALID"
+        for r in detail_rows)
     if len(detail_rows) != len(slots) or missing or invalid:
         status = "REVIEW_REQUIRED_CACHE_COVERAGE_INCOMPLETE"
     elif slots_with_any_child_open == 0:
@@ -251,7 +261,9 @@ def main():
         "slots_with_complete_5m_coverage": complete_5m, "slots_with_complete_1h_coverage": complete_1h,
         "slots_with_complete_5m_and_1h_coverage": complete_any,
         "slots_with_any_child_open_inside_missing_4h_windows": slots_with_any_child_open,
-        "slots_with_no_child_opens_inside_missing_4h_windows": len(detail_rows) - slots_with_any_child_open,
+        "slots_with_both_child_archives_grid_valid": slots_with_both_archives_valid,
+        "slots_with_zero_child_opens_in_valid_archives": slots_with_zero_child_opens_valid,
+        "slots_with_unavailable_or_invalid_child_archives": slots_with_unavailable_child_data,
         "network_used": False, "archive_downloads": 0, "official_sidecar_requests": 0, "market_data_rest_api_used": False,
         "cached_source_archives_modified": False, "candles_created_or_repaired": False, "timestamp_shift_or_interpolation": False,
         "canonical_source": "NONE", "source_cases_closed": 0, "g0": "BLOCKED_GLOBAL",
@@ -284,13 +296,14 @@ def main():
         f"- Slots with complete 1h coverage: {complete_1h}/{len(slots)}.",
         f"- Slots with complete 5m and 1h coverage: {complete_any}/{len(slots)}.",
         f"- Slots with any 5m or 1h open inside the missing 4h windows: {slots_with_any_child_open}/{len(slots)}.",
+        f"- Slots with both child archives grid-valid: {slots_with_both_archives_valid}/{len(slots)}; zero child opens in valid archives: {slots_with_zero_child_opens_valid}; unavailable/invalid child data: {slots_with_unavailable_child_data}.",
         f"- Child archives with off-grid/duplicate open times: {summary['child_archives_with_off_grid_or_duplicate_timestamps']}; off-grid rows: {summary['child_archive_off_grid_rows']}; duplicate opens: {summary['child_archive_duplicate_open_times']}.",
         "- Boundary timestamps and estimated child-interval gaps are recorded for each missing 4h window.",
         "- This is presence/coverage triage only. It does not reconstruct candles, establish source authority, or close any source case.",
         "- Network access, downloads, Binance REST, cache mutation, interpolation, backtests, candidate builds, and live actions are prohibited by this task."
     ]
     (out / "CP0192_Report_HI.md").write_text("\n".join(report) + "\n", encoding="utf-8")
-    print(json.dumps({k: summary[k] for k in ("status", "expected_4h_missing_slots", "expected_child_archives", "cache_archives_missing", "cache_archives_invalid_wrong_unit_or_off_grid", "child_archives_with_off_grid_or_duplicate_timestamps", "child_archive_off_grid_rows", "child_archive_duplicate_open_times", "slots_with_complete_5m_coverage", "slots_with_complete_1h_coverage", "slots_with_complete_5m_and_1h_coverage", "slots_with_any_child_open_inside_missing_4h_windows", "network_used", "archive_downloads", "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
+    print(json.dumps({k: summary[k] for k in ("status", "expected_4h_missing_slots", "expected_child_archives", "cache_archives_missing", "cache_archives_invalid_wrong_unit_or_off_grid", "child_archives_with_off_grid_or_duplicate_timestamps", "child_archive_off_grid_rows", "child_archive_duplicate_open_times", "slots_with_complete_5m_coverage", "slots_with_complete_1h_coverage", "slots_with_complete_5m_and_1h_coverage", "slots_with_any_child_open_inside_missing_4h_windows", "slots_with_both_child_archives_grid_valid", "slots_with_zero_child_opens_in_valid_archives", "slots_with_unavailable_or_invalid_child_archives", "network_used", "archive_downloads", "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
     return 0
 
 if __name__ == "__main__":
