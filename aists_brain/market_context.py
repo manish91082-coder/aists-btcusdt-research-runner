@@ -28,6 +28,8 @@ def _validate(candles: Sequence[Mapping[str, Any]]) -> list[dict[str, float]]:
     previous_time: int | None = None
     for index, candle in enumerate(candles):
         row = {key: _number(candle, key) for key in ("open", "high", "low", "close", "volume")}
+        if any(row[field] <= 0 for field in ("open", "high", "low", "close")):
+            raise ValueError(f"OHLC prices must be strictly positive at candle index {index}")
         if row["low"] > min(row["open"], row["close"]) or row["high"] < max(row["open"], row["close"]):
             raise ValueError(f"invalid OHLC range at candle index {index}")
         if row["low"] > row["high"] or row["volume"] < 0:
