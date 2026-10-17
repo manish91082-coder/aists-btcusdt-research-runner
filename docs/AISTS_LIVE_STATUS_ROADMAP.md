@@ -1,59 +1,67 @@
 # AISTS Live Status & Mission Roadmap
 
-Last verified checkpoint: **CP-0196**  
+Last verified checkpoint: **CP-0200**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
 
-## Latest verified execution
+## Latest verified GitHub runs
 
-- CP-0165 read-only 4h archive audit: [GitHub Actions run 39061829550](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39061829550)
-- CP-0192 cache-only cross-interval triage is included in the same run and uploaded artifact.
-- Latest static CI before this status update: [run 39061840931](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39061840931), successful.
-- Execution commit: `56413adb693d62f2a2bfca13fc7180f2ef12b4dc`.
-- Static-test commit: `7813d8141cdda3eeb3a3853391fac4e62b4a23ce`.
+- Read-only execution pipeline (CP-0165 through CP-0200): [run 39062441786](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062441786), completed successfully.
+- Latest static CI including CP-0200 G0 disposition tests: [run 39062447823](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062447823), completed successfully.
+- Execution commit: `856361aa3603a1ef4b5402cf71b4c641c26b0152`.
+- Static workflow commit: `b88f588eade414aa263bf5a442e88a64e6ff9071`.
+- The PR remains open and unmerged; `main` remains at `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`.
 
 ## Verified findings
 
-### 4h archive audit
+### CP-0165: 4h monthly archive integrity
 
-- 110/110 monthly 4h archives matched the recorded official SHA-256 checksum sidecars in the CP-0165 execution.
-- ZIP CRC validation: 110/110.
+- 110/110 monthly 4h archives matched recorded official SHA-256 checksum sidecars; ZIP CRC validation: 110/110.
 - 19,974 raw 4h candle rows inspected.
-- 9 gap events contain 17 estimated missing 4h open-time slots.
+- 9 gap events contain 17 missing 4h open-time slots.
 - Duplicate 4h open timestamps: 0; off-grid 4h open timestamps: 0.
 
-### Cache-only 5m/1h cross-interval triage
+### CP-0192/0194/0196: cache-only 5m/1h triage
 
-- Inspected 18 existing child archives: 5m and 1h monthly archives across 9 relevant months.
-- No child archive was missing; ZIP CRC checks passed and observed timestamp units matched the expected archive-month unit.
-- 10 of the 17 missing 4h slots had both child archives pass the open-time grid check, but neither the 5m nor 1h archive contained any open timestamp inside those windows.
-- The other 7 slots fall in February 2018. The cached `BTCUSDT-5m-2018-02.zip` contains 241 off-grid open timestamps; `BTCUSDT-1h-2018-02.zip` contains 43. Neither has duplicate open timestamps. These two archives are excluded from child-coverage claims.
-- Triage result: `REVIEW_REQUIRED_CACHE_COVERAGE_INCOMPLETE`.
-- No ZIP downloads, no network calls in CP-0192, no Binance market-data REST API, no cache mutation, no candle interpolation/reconstruction, no candidate build or backtest.
+- Inspected 18 existing child archives: 5m and 1h monthly archives across 9 months. No archive was missing; ZIP CRC and timestamp-unit checks passed.
+- 10 slots had both child archives grid-valid, but neither interval had an open timestamp inside the missing 4h window.
+- The other 7 slots fall in February 2018. The cached `BTCUSDT-5m-2018-02.zip` has 241 off-grid open timestamps and `BTCUSDT-1h-2018-02.zip` has 43; duplicates: 0. Both archives are excluded from coverage claims.
+- Result: `REVIEW_REQUIRED_CACHE_COVERAGE_INCOMPLETE`. This is an archive/data finding, not a profitability result.
 
-### Link to prior February 2018 evidence
+### CP-0197: prior February 2018 evidence linkage
 
-Existing CP-0107 evidence at `evidence/source_adjudication/CP0107_Run_38777979719/` independently records:
-- 450 monthly off-grid rows across 5m/15m/30m/1h for 2018-02-09 through 2018-02-11.
-- Zero exact open-key matches for those off-grid rows in the daily reference rows.
-- Daily-reference raw rows were preserved without timestamp shifting or rounding.
-- The monthly SHA-256 values in that evidence were a recorded CP-0106 manifest reference, not a fresh official monthly sidecar validation; canonical source remains `NONE`.
-- The committed daily-coverage CSV has records beginning at 2018-02-09 10:00 UTC for the 5m rows, so it does not supply rows for the missing 2018-02-09 00:00 and 04:00 windows. No matching 2018-02-08 daily reference ZIP is present in the repository tree.
+- The committed CP-0107 daily-coverage and off-grid CSV files were independently hash/byte checked against their CP-0107 extraction summary: 2/2 PASS.
+- 5 missing slots on 2018-02-08 have no daily-reference evidence in CP-0107's scope.
+- The 2018-02-09 00:00 and 04:00 UTC windows are not covered by the existing daily-reference rows; the first 5m and 1h rows in that evidence begin at 10:00 UTC.
+- The prior CP-0107 package records 450 monthly off-grid rows across 5m/15m/30m/1h. Its monthly hashes were a recorded CP-0106 manifest reference, not a fresh official monthly sidecar validation.
 
-These findings overlap with known CP-0107 evidence and do **not** close source cases or establish which archive should be treated as canonical.
+### CP-0198/0199: frozen daily-reference exact-key comparison
 
-## Next bounded action: CP-0197
+- 10/10 daily 4h reference archives were present and passed frozen-inventory SHA/bytes, ZIP CRC, timestamp-unit and grid checks.
+- Of the 17 missing 4h keys, **1 exact key is present** in a verified daily-reference archive and **16 are absent** from both the monthly and daily cached archives.
+- The sole exact-key discrepancy is `2017-09-06T16:00:00Z`: monthly 4h archive is missing that key; daily reference contains a row with OHLC all equal to 4619.43, zero base/quote volume, zero trades, and close time equal to open time. The row is classified `ZERO_TRADE_PLACEHOLDER` with an invalid 4h close-time span.
+- Monthly 4h neighbors are 12:00 and 20:00 UTC. The daily placeholder is evidence of a source-key discrepancy, **not** an accepted market candle or a canonical-source decision.
+- CP-0199 result: `REVIEW_REQUIRED_EXACT_KEY_SOURCE_CONFLICTS`.
 
-1. Reconcile the seven February 2018 slots against the existing CP-0107 daily-reference evidence by exact open-time key only.
-2. Classify the two 2018-02-09 slots (00:00 and 04:00 UTC) as “no rows in the currently committed daily-reference evidence window”; do not generalize that absence to source-authority conclusions.
-3. Keep the five 2018-02-08 slots unresolved because the repository contains no corresponding daily reference ZIP in the inspected evidence tree.
-4. Carry forward the ten grid-valid slots with zero child opens as unresolved historical gaps.
-5. Do not download archives, fetch new sidecars, modify raw source data, synthesize/shift candles, close source cases, change strategies, or run a backtest in this checkpoint.
+### CP-0200: frozen G0 rulebook disposition
+
+- The CP-0040 rulebook hash and byte count matched its frozen verification receipt: SHA-256 `5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0`, 10,630 bytes.
+- 17 missing slots dispositioned: 16 `UNRESOLVED_MISSING_KEY_BOTH_SOURCES`; 1 `UNRESOLVED_DAILY_PLACEHOLDER_CONFLICT`.
+- A gap-quarantine recommendation manifest was generated, but it has **not** been applied to the existing candidate builder.
+- CP-0200 result: `BLOCKED_G0_UNRESOLVED_GAP_AND_SOURCE_ITEMS`.
+
+## Next bounded action: CP-0201
+
+1. Crosswalk the 17 gap dispositions against the frozen CP-0041 worklist and CP-0107 row-level disposition ledger using exact interval + raw open-time key.
+2. Detect overlaps before counting exclusions; the existing 450 February-2018 off-grid rows are already a subset of the 909 unmatched-key rows and must not be double-counted.
+3. Preserve the 16 absent keys as missing-bar/gap-window dispositions and the 2017-09-06 16:00 daily placeholder as a distinct unresolved source conflict.
+4. Produce an append-only unified quarantine crosswalk and verify that every recommendation is linked to frozen evidence. Do not patch/build the candidate dataset until the crosswalk is reviewed and the builder can fail closed on every unresolved signal-influencing item.
+5. No downloads, no new sidecar requests, no raw-data mutation, no timestamp shift, no synthetic candles, no backtest, no strategy promotion, and no live action.
 
 ## Goal distance / gate status
 
-- G0: `BLOCKED_GLOBAL`; canonical source: `NONE`.
+- G0: `BLOCKED_GLOBAL`; canonical source: `NONE`; source cases closed: 0.
 - G2: all 23 current strategy candidates remain historical-screen FAIL; no strategy approved.
 - G3: quarantine sensitivity/source adjudication unresolved.
 - G4: insufficient forward/out-of-sample evidence.
@@ -61,4 +69,4 @@ These findings overlap with known CP-0107 evidence and do **not** close source c
 - G7: live signing, broadcast, and orders remain `BLOCKED`.
 - Profitability: **NOT ESTABLISHED**.
 
-A green GitHub Actions run means the bounded audit program executed successfully; it does not mean historical provenance is complete or a strategy is profitable.
+A green GitHub Actions run confirms bounded tooling/tests executed successfully. It does not establish source authority, clear G0, or prove profitability.
