@@ -61,12 +61,34 @@ def expected_archive_path(cache_root, interval, period):
     filename = f"BTCUSDT-{interval}-{period}.zip"
     return cache_root / interval / period / filename
 
+def boundary_evidence(opens, start_us, interval_us, window_us):
+    before = max((value for value in opens if value < start_us), default=None)
+    after = min((value for value in opens if value >= start_us + window_us), default=None)
+    result = {
+        "previous_open_time_utc": timestamp_to_iso(before) if before is not None else "",
+        "next_open_time_utc": timestamp_to_iso(after) if after is not None else "",
+        "delta_between_boundaries_us": "",
+        "missing_intervals_between_boundaries": "",
+        "boundary_gap_class": "BOUNDARY_UNAVAILABLE",
+    }
+    if before is not None and after is not None:
+        delta = after - before
+        result["delta_between_boundaries_us"] = delta
+        if delta > interval_us:
+            result["missing_intervals_between_boundaries"] = max(0, delta // interval_us - 1)
+            result["boundary_gap_class"] = "MULTIPLE_OF_INTERVAL" if delta % interval_us == 0 else "IRREGULAR_DELTA"
+        else:
+            result["missing_intervals_between_boundaries"] = 0
+            result["boundary_gap_class"] = "NO_GAP_AT_BOUNDARIES"
+    return result
+
 def inspect_cached_archive(path, interval, period):
     rec = {"interval": interval, "period": period, "filename": path.name,
            "cache_path": str(path), "cache_status": "MISSING",
            "sha256": "", "bytes": "", "zip_crc": "NOT_CHECKED",
            "csv_member": "", "rows": 0, "timestamp_unit": "",
-           "timestamp_unit_status": "NOT_CHECKED", "error": ""}
+           "timestamp_unit_status": "NOT_CHECKED", "first_open_time_utc": "",
+           "last_open_time_utc": "", "error": ""}
     if not path.is_file():
         return rec, set()
     rec["cache_status"] = "PRESENT"
@@ -104,6 +126,9 @@ def inspect_cached_archive(path, interval, period):
         rec["timestamp_unit"] = "EMPTY" if not observed else observed[0] if len(observed) == 1 else "MIXED"
         expected = "microseconds" if period >= "2025-01" else "milliseconds"
         rec["timestamp_unit_status"] = "PASS" if observed == [expected] else "FAIL"
+        if opens:
+            rec["first_open_time_utc"] = timestamp_to_iso(min(opens))
+            rec["last_open_time_utc"] = timestamp_to_iso(max(opens))
         if rec["timestamp_unit_status"] != "PASS":
             rec["error"] = f"expected {expected}, observed {rec['timestamp_unit']}"
     except Exception as exc:
@@ -164,6 +189,15 @@ def main():
             row[f"{interval}_expected_opens"] = expected_count
             row[f"{interval}_found_opens"] = found
             row[f"{interval}_coverage_status"] = "UNAVAILABLE_OR_INVALID" if opens is None else "COMPLETE" if found == expected_count else "PARTIAL" if found else "NONE"
+            boundary = boundary_evidence(opens, t, INTERVAL_US[interval], INTERVAL_US["4h"]) if opens is not None else {
+                "previous_open_time_utc": "", "next_open_time_utc": "",
+                "delta_between_boundaries_us": "", "missing_intervals_between_boundaries": "",
+                "boundary_gap_class": "ARCHIVE_UNAVAILABLE_OR_INVALID"}
+            row[f"{interval}_previous_open_time_utc"] = boundary["previous_open_time_utc"]
+            row[f"{interval}_next_open_time_utc"] = boundary["next_open_time_utc"]
+            row[f"{interval}_delta_between_boundaries_us"] = boundary["delta_between_boundaries_us"]
+            row[f"{interval}_missing_intervals_between_boundaries"] = boundary["missing_intervals_between_boundaries"]
+            row[f"{interval}_boundary_gap_class"] = boundary["boundary_gap_class"]
             if opens is not None:
                 any_interval_available = True
                 if found != expected_count:
@@ -179,9 +213,20 @@ def main():
     complete_5m = sum(r["5m_coverage_status"] == "COMPLETE" for r in detail_rows)
     complete_1h = sum(r["1h_coverage_status"] == "COMPLETE" for r in detail_rows)
     complete_any = sum(r["triage_status"] == "COMPLETE_FINER_INTERVAL_COVERAGE" for r in detail_rows)
+    slots_with_any_child_open = sum(
+        any(r[f"{interval}_found_opens"] not in ("", 0) for interval in ("5m", "1h"))
+        for r in detail_rows)
+    if len(detail_rows) != len(slots) or missing or invalid:
+        status = "REVIEW_REQUIRED_CACHE_COVERAGE_INCOMPLETE"
+    elif slots_with_any_child_open == 0:
+        status = "REVIEW_REQUIRED_NO_CHILD_CANDLES_IN_MISSING_4H_WINDOWS"
+    elif complete_any != len(slots):
+        status = "REVIEW_REQUIRED_PARTIAL_FINER_INTERVAL_COVERAGE"
+    else:
+        status = "PASS_CACHE_ONLY_TRIAGE_COMPLETED"
     summary = {
         "schema_version": 1, "checkpoint": "CP-0192", "task": "cache_only_cross_interval_gap_triage",
-        "status": "PASS_CACHE_ONLY_TRIAGE_COMPLETED" if len(detail_rows) == len(slots) and missing == 0 and invalid == 0 else "REVIEW_REQUIRED_CACHE_COVERAGE_INCOMPLETE",
+        "status": status,
         "started_at_utc": started, "finished_at_utc": datetime.now(timezone.utc).isoformat(),
         "source_gap_csv": str(gaps_path.relative_to(root)), "source_gap_csv_sha256": source_hash,
         "expected_4h_missing_slots": len(slots), "source_gap_events": len({(r["source_gap_previous_open_time_utc"], r["source_gap_next_open_time_utc"]) for r in slots}),
@@ -189,6 +234,8 @@ def main():
         "expected_child_archives": len(periods) * 2, "cache_archives_missing": missing, "cache_archives_invalid_or_wrong_unit": invalid,
         "slots_with_complete_5m_coverage": complete_5m, "slots_with_complete_1h_coverage": complete_1h,
         "slots_with_complete_5m_and_1h_coverage": complete_any,
+        "slots_with_any_child_open_inside_missing_4h_windows": slots_with_any_child_open,
+        "slots_with_no_child_opens_inside_missing_4h_windows": len(detail_rows) - slots_with_any_child_open,
         "network_used": False, "archive_downloads": 0, "official_sidecar_requests": 0, "market_data_rest_api_used": False,
         "cached_source_archives_modified": False, "candles_created_or_repaired": False, "timestamp_shift_or_interpolation": False,
         "canonical_source": "NONE", "source_cases_closed": 0, "g0": "BLOCKED_GLOBAL",
@@ -198,11 +245,16 @@ def main():
     write_csv(out / "CP0192_Cross_Interval_Gap_Triage.csv", detail_rows, [
         "expected_open_time_utc", "period", "source_gap_previous_open_time_utc", "source_gap_next_open_time_utc",
         "5m_archive_status", "5m_expected_opens", "5m_found_opens", "5m_coverage_status",
+        "5m_previous_open_time_utc", "5m_next_open_time_utc", "5m_delta_between_boundaries_us",
+        "5m_missing_intervals_between_boundaries", "5m_boundary_gap_class",
         "1h_archive_status", "1h_expected_opens", "1h_found_opens", "1h_coverage_status",
+        "1h_previous_open_time_utc", "1h_next_open_time_utc", "1h_delta_between_boundaries_us",
+        "1h_missing_intervals_between_boundaries", "1h_boundary_gap_class",
         "triage_status", "interpretation"])
     write_csv(out / "CP0192_Cache_Archive_Manifest.csv", archive_rows, [
         "interval", "period", "filename", "cache_path", "cache_status", "sha256", "bytes",
-        "zip_crc", "csv_member", "rows", "timestamp_unit", "timestamp_unit_status", "error"])
+        "zip_crc", "csv_member", "rows", "timestamp_unit", "timestamp_unit_status",
+        "first_open_time_utc", "last_open_time_utc", "error"])
     (out / "CP0192_Summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     report = [
         "# CP-0192: Cache-only cross-interval gap triage", "",
@@ -213,11 +265,13 @@ def main():
         f"- Slots with complete 5m coverage: {complete_5m}/{len(slots)}.",
         f"- Slots with complete 1h coverage: {complete_1h}/{len(slots)}.",
         f"- Slots with complete 5m and 1h coverage: {complete_any}/{len(slots)}.",
+        f"- Slots with any 5m or 1h open inside the missing 4h windows: {slots_with_any_child_open}/{len(slots)}.",
+        "- Boundary timestamps and estimated child-interval gaps are recorded for each missing 4h window.",
         "- This is presence/coverage triage only. It does not reconstruct candles, establish source authority, or close any source case.",
         "- Network access, downloads, Binance REST, cache mutation, interpolation, backtests, candidate builds, and live actions are prohibited by this task."
     ]
     (out / "CP0192_Report_HI.md").write_text("\n".join(report) + "\n", encoding="utf-8")
-    print(json.dumps({k: summary[k] for k in ("status", "expected_4h_missing_slots", "expected_child_archives", "cache_archives_missing", "cache_archives_invalid_or_wrong_unit", "slots_with_complete_5m_coverage", "slots_with_complete_1h_coverage", "slots_with_complete_5m_and_1h_coverage", "network_used", "archive_downloads", "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
+    print(json.dumps({k: summary[k] for k in ("status", "expected_4h_missing_slots", "expected_child_archives", "cache_archives_missing", "cache_archives_invalid_or_wrong_unit", "slots_with_complete_5m_coverage", "slots_with_complete_1h_coverage", "slots_with_complete_5m_and_1h_coverage", "slots_with_any_child_open_inside_missing_4h_windows", "network_used", "archive_downloads", "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
     return 0
 
 if __name__ == "__main__":
