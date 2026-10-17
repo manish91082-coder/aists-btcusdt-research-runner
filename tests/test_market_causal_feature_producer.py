@@ -1,8 +1,14 @@
 """Tests for the causal feature producer; synthetic rows are software fixtures only."""
 import unittest
+import csv
+import hashlib
+import json
+import tempfile
+from pathlib import Path
 
 from aists_brain.causal_feature_producer import (
     FeatureProducerError, produce_causal_feature_snapshots,
+    produce_from_provenance_cleared_csv,
 )
 from aists_brain.decision_lineage import validate_causal_decision_artifact
 
@@ -84,6 +90,36 @@ class CausalFeatureProducerTests(unittest.TestCase):
         rows[0]["close_time_ms"] -= 1
         with self.assertRaisesRegex(FeatureProducerError, "close_time_ms invalid"):
             produce(rows)
+
+    def test_provenance_cleared_entry_point_refuses_blocked_g0(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            csv_path = root / "candles.csv"
+            manifest_path = root / "manifest.json"
+            rows = candles()[:1]
+            with csv_path.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(handle, fieldnames=[
+                    "open_time_ms", "close_time_ms", "open", "high", "low", "close", "volume"
+                ])
+                writer.writeheader()
+                writer.writerows(rows)
+            manifest = {
+                "schema_version": "aists.provenance_cleared_candles.v1",
+                "adjudication_status": "PASS", "global_g0_status": "BLOCKED_GLOBAL",
+                "symbol": "BTCUSDT", "market": "spot", "interval": "5m",
+                "csv_sha256": hashlib.sha256(csv_path.read_bytes()).hexdigest(),
+                "source_manifest_sha256": "b" * 64, "adjudication_report_sha256": "c" * 64,
+                "source_archive_sha256": ["d" * 64], "expected_row_count": 1,
+                "first_open_time_ms": 0, "last_open_time_ms": 0, "coverage_pct": 100.0,
+                "all_missing_intervals_accounted": True, "all_gap_events_accounted": True,
+                "completed_candles_only": True,
+            }
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            with self.assertRaisesRegex(FeatureProducerError, "global G0 is not PASS"):
+                produce_from_provenance_cleared_csv(
+                    csv_path, manifest_path, expected_interval="5m",
+                    brain_version="v1", strategy_version="s1",
+                )
 
 
 if __name__ == "__main__":
