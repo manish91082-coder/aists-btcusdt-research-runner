@@ -136,6 +136,18 @@ class AccountingReconciliationTests(unittest.TestCase):
         with self.assertRaisesRegex(ReconciliationError, "closed round-trip summary mismatch"):
             reconcile_simulation_with_ledger(altered, self.ledger)
 
+    def test_closed_round_trip_pnl_mismatch_is_detected(self):
+        altered = copy.deepcopy(self.sim)
+        altered["closed_round_trips"][0]["net_pnl_usdt"] += 1.0
+        with self.assertRaisesRegex(ReconciliationError, "closed round-trip net PnL mismatch"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
+    def test_closed_round_trip_decision_id_mismatch_is_detected(self):
+        altered = copy.deepcopy(self.sim)
+        altered["closed_round_trips"][0]["entry_decision_id"] = "wrong-entry"
+        with self.assertRaisesRegex(ReconciliationError, "decision IDs mismatch"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
 
 if __name__ == "__main__":
     unittest.main()
