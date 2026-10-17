@@ -9,6 +9,8 @@ on:
       - '.github/workflows/cp0165-4h-audit-tests.yml'
       - '.github/workflows/cp0165-4h-audit-execution.yml'
       - 'tests/test_cp0165_4h_audit.py'
+      - 'scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py'
+      - 'tests/test_cp0192_gap_triage.py'
   push:
     branches: [main]
     paths:
@@ -18,6 +20,8 @@ on:
       - '.github/workflows/cp0165-4h-audit-tests.yml'
       - '.github/workflows/cp0165-4h-audit-execution.yml'
       - 'tests/test_cp0165_4h_audit.py'
+      - 'scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py'
+      - 'tests/test_cp0192_gap_triage.py'
 
 permissions:
   contents: read
@@ -34,6 +38,8 @@ jobs:
         with:
           python-version: '3.11'
       - name: Compile audit and runner
-        run: python -m py_compile scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py scripts/aists_runner.py
+        run: python -m py_compile scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py scripts/aists_runner.py
       - name: Test bounded audit helpers
         run: python -m unittest discover -s tests -p 'test_cp0165_4h_audit.py' -v
+      - name: Test cache-only gap triage
+        run: python -m unittest discover -s tests -p 'test_cp0192_gap_triage.py' -v
