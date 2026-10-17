@@ -78,3 +78,13 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - This is accounting consistency only. It does not authenticate source provenance, verify Binance fee terms, validate decisions, establish profitability, or make hypothetical fills real.
 - Integrated the reconciler into `aists_brain/research_harness.py`: every successful harness simulation now builds a hypothetical paper ledger from the simulator fills, runs independent accounting reconciliation, and verifies the ledger hash chain. The harness returns both results; its integration test asserts both PASS statuses. This is not a real exchange ledger or a profitability gate.
 - Next: verify CI on the exact final HEAD. Preserve all current blocked research gates.
+
+## CP-0134 — End-to-end research audit report (2026-10-17)
+- Added `aists_brain/research_audit_report.py`: deterministic JSON audit report with report SHA-256, repository HEAD, explicit G0/G2/G3/G4/G6/G7 snapshot, input artifact hashes, run metadata, simulator events and skipped decisions, accounting reconciliation, paper-ledger integrity, limitations, and safety controls.
+- The report fails closed: if G0 is not PASS, a simulation result cannot be attached. It refuses any run result labelled as accepted/validated and requires accounting reconciliation and paper-ledger hash-chain checks to PASS before embedding a simulated run.
+- Added seven tests covering blocked reporting, input hash/event/skipped-decision retention, G0 enforcement, forbidden status promotion, accounting failures, report tampering, missing gates and invalid commit SHA.
+- CI compilation list now includes the audit report module. Test fixtures are synthetic software fixtures only; they are not BTCUSDT historical data and do not produce performance evidence.
+- **No real historical run was performed.** Current G0 remains `BLOCKED_GLOBAL`; the appropriate report today is a gate-blocked report with no simulation payload. The report hashes its own canonical content for tamper detection but does not authenticate gate claims, external adjudicators or historical archive provenance.
+- Live signing, public broadcast, exchange orders, automatic stop-loss and automatic take-profit remain blocked/not implemented. PR remains open and must not be merged.
+- Next: inspect exact final branch SHA and CI terminal result, correct any failures, then proceed to the next bounded research-engine component without weakening gates.
+
