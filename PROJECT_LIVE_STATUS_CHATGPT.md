@@ -1,7 +1,7 @@
 # AISTS Project Live Status for ChatGPT
 
 Last updated: 2026-10-17
-Status checkpoint: CP-0149 continuity metadata reconciliation recorded; exact-head CI verification required after this append. Re-fetch live GitHub state on every new session.
+Status checkpoint: CP-0150 Binance issue-state recheck recorded; exact-head CI verification required after this append. Re-fetch live GitHub state on every new session.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2 (must remain OPEN; do not merge)
@@ -148,3 +148,10 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - Goal-directed decision: do not repeat the already-exhausted official provenance search, rerun the consumed quarantine sensitivity, tune the failed `MTF_BREAKOUT_4H_D1` comparator, or add infrastructure-only code. Current repository evidence does not authorize a new real-market evaluation: G0 is still globally blocked, and no fresh official archive-version record has been established.
 - Next admissible work is event-driven: act only on genuinely new official archive-version/publication evidence that can adjudicate the 11 unresolved aggregation relationships, or obtain explicit authorization for a frozen candidate-specific quarantine evaluation with exact lineage and evidenced INR→USDT, fee, slippage and lot-size assumptions. Keep production builder fail-closed. No synthetic market candles, no fake G0 PASS, no candidate promotion, no live signing/broadcast/orders, and no automatic SL/TP.
 - Gates remain unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. Profitability is NOT ESTABLISHED. This checkpoint clears no empirical gate.
+
+
+## CP-0150 — Binance issue-state recheck (2026-10-17)
+- Verified pre-change branch/PR head `839c3124b115a0066f4b8fcac379fdc78d33ccf7`; PR #2 OPEN/unmerged; exact-head CI runs [39027548596](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39027548596) and [39027545713](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39027545713) both terminal SUCCESS.
+- Rechecked official Binance Public Data issue metadata and comments: [#504](https://github.com/binance/binance-public-data/issues/504) OPEN/0 comments (last updated 2026-09-27); [#475](https://github.com/binance/binance-public-data/issues/475) OPEN/1 contributor comment (last updated 2026-07-10); [#505](https://github.com/binance/binance-public-data/issues/505) OPEN/0 comments (last updated 2026-09-27). No new maintainer resolution or official archive-version record was found. The single #475 comment is contributor evidence, not a maintainer-confirmed adjudication.
+- Decision: this check does not justify another duplicate provenance search, replay of the consumed quarantine sensitivity, tuning of failed `MTF_BREAKOUT_4H_D1`, or an infrastructure-only module. No new real-market run is authorized by current evidence. Wait for genuinely new official archive-version/publication evidence or explicit authorization of a frozen candidate-specific quarantine evaluation with exact lineage and evidenced INR→USDT, fees, slippage and lot-size assumptions; production builder remains fail-closed.
+- Gates unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. No profitability established; no candidate promotion; no live signing, public broadcast, exchange orders or automatic SL/TP. This checkpoint clears no empirical gate.
