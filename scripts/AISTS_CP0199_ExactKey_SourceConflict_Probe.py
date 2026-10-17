@@ -69,10 +69,42 @@ def read_archive_rows(path):
         "zip_crc": "PASS", "unique_open_count": len(counts),
     }
 
+def daily_row_quality(tokens):
+    if not tokens or len(tokens) < 9:
+        return {"quality_status": "NOT_PRESENT", "zero_trade_placeholder": False,
+                "close_time_span_status": "NOT_CHECKED"}
+    try:
+        open_time = int(tokens[0])
+        open_price, high, low, close = (float(tokens[i]) for i in (1, 2, 3, 4))
+        volume = float(tokens[5])
+        close_time = int(tokens[6])
+        quote_volume = float(tokens[7])
+        trades = int(tokens[8])
+        _, unit = normalize_timestamp_to_us(open_time)
+    except (ValueError, IndexError):
+        return {"quality_status": "RAW_ROW_PARSE_FAILED", "zero_trade_placeholder": False,
+                "close_time_span_status": "FAIL"}
+    step = 14_400_000 if unit == "milliseconds" else 14_400_000_000
+    valid_close_span = close_time in (open_time + step - 1, open_time + step)
+    zero_trade = open_price == high == low == close and volume == 0 and quote_volume == 0 and trades == 0
+    if zero_trade:
+        quality = "ZERO_TRADE_PLACEHOLDER"
+    elif not valid_close_span:
+        quality = "CLOSE_TIME_SPAN_INVALID"
+    else:
+        quality = "ROW_PRESENT_REQUIRES_SEMANTIC_REVIEW"
+    return {"quality_status": quality, "zero_trade_placeholder": zero_trade,
+            "close_time_span_status": "PASS" if valid_close_span else "FAIL"}
+
 def classify_presence(monthly_present, daily_present, monthly_tokens=None, daily_tokens=None):
     if monthly_present and daily_present:
         return "BOTH_PRESENT_ROW_TOKENS_MATCH" if monthly_tokens == daily_tokens else "BOTH_PRESENT_ROW_TOKEN_CONFLICT"
     if daily_present:
+        quality = daily_row_quality(daily_tokens)
+        if quality["zero_trade_placeholder"]:
+            return "DAILY_PRESENT_MONTHLY_MISSING_SOURCE_CONFLICT_ZERO_TRADE_PLACEHOLDER"
+        if quality["close_time_span_status"] == "FAIL":
+            return "DAILY_PRESENT_MONTHLY_MISSING_SOURCE_CONFLICT_CLOSE_TIME_ANOMALY"
         return "DAILY_PRESENT_MONTHLY_MISSING_SOURCE_CONFLICT"
     if monthly_present:
         return "MONTHLY_PRESENT_DAILY_MISSING_SOURCE_CONFLICT"
@@ -182,7 +214,9 @@ def main():
         exact_d = target_us in daily_by_key
         prev = max((k for k in monthly_by_key if k < target_us), default=None)
         nxt = min((k for k in monthly_by_key if k > target_us), default=None)
-        disposition = "UNRESOLVED_ARCHIVE_UNAVAILABLE_OR_INVALID" if monthly is None or daily is None else classify_presence(exact_m, exact_d, monthly_by_key.get(target_us), daily_by_key.get(target_us))
+        daily_tokens = daily_by_key.get(target_us)
+        quality = daily_row_quality(daily_tokens)
+        disposition = "UNRESOLVED_ARCHIVE_UNAVAILABLE_OR_INVALID" if monthly is None or daily is None else classify_presence(exact_m, exact_d, monthly_by_key.get(target_us), daily_tokens)
         detail.append({
             "expected_open_time_utc": slot["expected_open_time_utc"], "date_utc": date,
             "monthly_archive_status": "VALID" if monthly else "UNAVAILABLE_OR_INVALID",
@@ -191,7 +225,10 @@ def main():
             "daily_exact_open_key_present": "YES" if exact_d else "NO" if daily else "UNKNOWN",
             "monthly_previous_open_time_utc": timestamp_to_iso(prev) if prev is not None else "",
             "monthly_next_open_time_utc": timestamp_to_iso(nxt) if nxt is not None else "",
-            "daily_exact_row_raw_tokens_json": json.dumps(daily_by_key.get(target_us), separators=(",", ":")) if exact_d else "",
+            "daily_exact_row_raw_tokens_json": json.dumps(daily_tokens, separators=(",", ":")) if exact_d else "",
+            "daily_exact_row_quality_status": quality["quality_status"],
+            "daily_exact_row_zero_trade_placeholder": quality["zero_trade_placeholder"] if exact_d else "",
+            "daily_exact_row_close_time_span_status": quality["close_time_span_status"],
             "monthly_exact_row_raw_tokens_json": json.dumps(monthly_by_key.get(target_us), separators=(",", ":")) if exact_m else "",
             "monthly_previous_row_raw_tokens_json": json.dumps(monthly_by_key.get(prev), separators=(",", ":")) if prev is not None else "",
             "monthly_next_row_raw_tokens_json": json.dumps(monthly_by_key.get(nxt), separators=(",", ":")) if nxt is not None else "",
@@ -205,6 +242,8 @@ def main():
         "status": status, "started_at_utc": started, "finished_at_utc": datetime.now(timezone.utc).isoformat(),
         "exact_key_rows_compared": len(detail), "source_conflict_rows": conflicts, "unresolved_rows": unknown,
         "daily_exact_keys_present": sum(r["daily_exact_open_key_present"] == "YES" for r in detail),
+        "daily_exact_keys_zero_trade_placeholders": sum(r["daily_exact_row_zero_trade_placeholder"] is True for r in detail),
+        "daily_exact_keys_with_close_time_anomaly": sum(r["daily_exact_row_close_time_span_status"] == "FAIL" for r in detail),
         "monthly_exact_keys_present": sum(r["monthly_exact_open_key_present"] == "YES" for r in detail),
         "monthly_archives_valid": sum(r["status"] == "VALID" for r in archive_manifest if r["archive_type"] == "monthly"),
         "daily_reference_archives_valid": sum(r["status"] == "VALID" for r in archive_manifest if r["archive_type"] == "daily_reference"),
@@ -218,8 +257,9 @@ def main():
         "expected_open_time_utc", "date_utc", "monthly_archive_status", "daily_reference_archive_status",
         "monthly_exact_open_key_present", "daily_exact_open_key_present",
         "monthly_previous_open_time_utc", "monthly_next_open_time_utc",
-        "daily_exact_row_raw_tokens_json", "monthly_exact_row_raw_tokens_json",
-        "monthly_previous_row_raw_tokens_json", "monthly_next_row_raw_tokens_json",
+        "daily_exact_row_raw_tokens_json", "daily_exact_row_quality_status",
+        "daily_exact_row_zero_trade_placeholder", "daily_exact_row_close_time_span_status",
+        "monthly_exact_row_raw_tokens_json", "monthly_previous_row_raw_tokens_json", "monthly_next_row_raw_tokens_json",
         "disposition", "canonical_source", "source_case_closed"])
     write_csv(out / "CP0199_Archive_Integrity_Manifest.csv", archive_manifest, [
         "archive_type", "date_utc", "filename", "cache_path", "status", "sha256", "bytes",
@@ -231,6 +271,7 @@ def main():
         f"- Status: {status}",
         f"- Exact 4h keys compared: {len(detail)}; source-conflict rows: {conflicts}; unresolved rows: {unknown}.",
         f"- Valid monthly archives: {summary['monthly_archives_valid']}; valid daily-reference archives: {summary['daily_reference_archives_valid']}.",
+        f"- Daily exact-key rows classified as zero-trade placeholders: {summary['daily_exact_keys_zero_trade_placeholders']}; close-time span anomalies: {summary['daily_exact_keys_with_close_time_anomaly']}.",
         "- Raw row tokens and immediate monthly neighbors are preserved for every target key.",
         "- A daily/monthly exact-key conflict is evidence for adjudication, not a decision that either source is canonical.",
         "- No network, downloads, sidecar requests, cache mutation, candle reconstruction, backtest, candidate build, or live action occurred."
@@ -238,7 +279,7 @@ def main():
     (out / "CP0199_Report_HI.md").write_text("\n".join(report) + "\n", encoding="utf-8")
     print(json.dumps({k: summary[k] for k in (
         "status", "exact_key_rows_compared", "source_conflict_rows", "unresolved_rows",
-        "daily_exact_keys_present", "monthly_exact_keys_present", "monthly_archives_valid",
+        "daily_exact_keys_present", "daily_exact_keys_zero_trade_placeholders", "daily_exact_keys_with_close_time_anomaly", "monthly_exact_keys_present",
         "daily_reference_archives_valid", "network_used", "archive_downloads",
         "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
     return 0
