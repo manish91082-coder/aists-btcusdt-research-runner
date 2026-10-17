@@ -83,7 +83,7 @@ class TestCP0210SegmentCensorContract(unittest.TestCase):
 
     def test_scoring_contract_explicitly_separates_diagnostic_and_scored_pnl(self):
         contract = CONTRACT.read_text(encoding="utf-8").lower()
-        for token in ("excluded diagnostic pnl", "eligible fully closed episodes",
+        for token in ("excluded diagnostic p&l separately", "eligible fully closed episodes",
                       "do not sum segment equity curves across gaps",
                       "post-gap sensitivity segments are replayed independently from flat cash",
                       "indicator warm-up", "source cases closed"):
