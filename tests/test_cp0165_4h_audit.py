@@ -55,6 +55,29 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         )
         self.assertIsNotNone(result)
 
+    def test_redirect_handler_allows_signed_query_only_on_official_s3(self):
+        handler = AUDIT.OfficialChecksumRedirectHandler()
+        req = AUDIT.urllib.request.Request(
+            "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/4h/BTCUSDT-4h-2017-08.zip.CHECKSUM"
+        )
+        result = handler.redirect_request(
+            req, None, 302, "Found", {},
+            "https://s3.amazonaws.com" + req.full_url.removeprefix("https://data.binance.vision")
+            + "?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Signature=example"
+        )
+        self.assertIsNotNone(result)
+
+    def test_redirect_handler_blocks_query_on_binance_host(self):
+        handler = AUDIT.OfficialChecksumRedirectHandler()
+        req = AUDIT.urllib.request.Request(
+            "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/4h/BTCUSDT-4h-2017-08.zip.CHECKSUM"
+        )
+        with self.assertRaises(AUDIT.urllib.error.HTTPError):
+            handler.redirect_request(
+                req, None, 302, "Found", {},
+                req.full_url + "?unexpected=1"
+            )
+
     def test_checksum_parser_rejects_hash_for_different_archive(self):
         digest = "b" * 64
         hashes, named = AUDIT.parse_checksum(
