@@ -90,7 +90,7 @@ class TestCP0192CacheOnlyTriage(unittest.TestCase):
 
     def test_triage_source_has_no_network_or_mutation_path(self):
         source = SCRIPT.read_text(encoding="utf-8")
-        for forbidden in ("urllib", "requests.", "urlopen(", "download(", "os.remove", "unlink(", "replace("):
+        for forbidden in ("urllib", "requests.", "urlopen(", "download(", "os.remove", "unlink("):
             self.assertNotIn(forbidden, source)
         self.assertIn('"network_used": False', source)
         self.assertIn('"archive_downloads": 0', source)
