@@ -1,0 +1,57 @@
+name: CP-0165 Read-only 4h Archive Audit Execution
+
+on:
+  push:
+    branches: [cp-0165-4h-archive-audit]
+    paths:
+      - '.github/workflows/cp0165-4h-audit-execution.yml'
+      - 'scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py'
+      - 'evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: cp0165-read-only-4h-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout exact branch commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore existing monthly archive cache only
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/aists/binance-monthly-archives
+          key: aists-btcusdt-source-cache-v3-7intervals-2017-08-2026-09
+          restore-keys: |
+            aists-btcusdt-source-cache-v2-
+            aists-btcusdt-monthly-spot-v2-7intervals-2017-08-2026-09
+            aists-btcusdt-monthly-spot-v1-2017-08-2026-09
+      - name: Run bounded CP-0165 audit
+        run: |
+          python scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py \
+            --archive-inventory evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv \
+            --monthly-cache .cache/aists/binance-monthly-archives \
+            --output-dir results/cp0165_4h_archive_audit
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp0165-read-only-audit-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: results/cp0165_4h_archive_audit/
+          if-no-files-found: error
+          retention-days: 30
