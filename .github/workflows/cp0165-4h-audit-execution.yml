@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/cp0165-4h-audit-execution.yml'
       - 'scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py'
+      - 'scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py'
       - 'evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv'
 
 permissions:
@@ -47,6 +48,10 @@ jobs:
             --archive-inventory evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv \
             --monthly-cache .cache/aists/binance-monthly-archives \
             --output-dir results/cp0165_4h_archive_audit
+          python scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py \
+            --monthly-cache .cache/aists/binance-monthly-archives \
+            --gaps-csv results/cp0165_4h_archive_audit/CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv \
+            --output-dir results/cp0192_cross_interval_gap_triage
       - name: Upload audit evidence
         if: always()
         uses: actions/upload-artifact@v4
