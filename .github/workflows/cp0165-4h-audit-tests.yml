@@ -11,6 +11,7 @@ on:
       - 'tests/test_cp0165_4h_audit.py'
       - 'scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py'
       - 'tests/test_cp0192_gap_triage.py'
+      - 'docs/AISTS_LIVE_STATUS_ROADMAP.md'
   push:
     branches: [main]
     paths:
@@ -22,6 +23,7 @@ on:
       - 'tests/test_cp0165_4h_audit.py'
       - 'scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py'
       - 'tests/test_cp0192_gap_triage.py'
+      - 'docs/AISTS_LIVE_STATUS_ROADMAP.md'
 
 permissions:
   contents: read
