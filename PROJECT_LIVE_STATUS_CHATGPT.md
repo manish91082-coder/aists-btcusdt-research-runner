@@ -1,7 +1,7 @@
 # AISTS Project Live Status for ChatGPT
 
 Last updated: 2026-10-17
-Status checkpoint: CP-0143 official-source provenance recheck recorded; exact-head CI verified. Re-fetch live GitHub state on every new session.
+Status checkpoint: CP-0149 continuity metadata reconciliation recorded; exact-head CI verification required after this append. Re-fetch live GitHub state on every new session.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2 (must remain OPEN; do not merge)
@@ -140,3 +140,11 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - Decision: retire this already-failed comparator from further tuning/replay; do not spend another run on it. Do not use it as proof of profitability or as a fresh strategy candidate. The only admissible continuation is (a) genuinely new official archive-version evidence that changes the G0 decision, or (b) a separately approved rulebook-compatible candidate-specific run with exact frozen inputs, quarantine lineage, evidenced INR/USDT conversion and cost/lot-size assumptions, while the production builder remains fail-closed. No such fresh run is started in this checkpoint because current artifacts do not provide a verified user-capital basis or fresh OOS.
 - No code, candidate build, backtest, market-data download or source mutation in this checkpoint. Gates remain G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. Live signing/broadcast/orders and automatic SL/TP remain disabled.
 - Mission navigation update: candidate-specific next action is now narrowed; this is a decision-quality improvement, not an empirical gate clearance. Do not report a completion percentage.
+
+
+## CP-0149 — Continuity metadata reconciliation and next admissible action (2026-10-17)
+- Start-of-checkpoint live verification: branch head and PR #2 head matched at `0e70898dc53132459c4ac606c579955d897fca33`; PR #2 OPEN/unmerged. Exact-head CI run [39027219413](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39027219413) completed SUCCESS. A second exact-head run [39027216920](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39027216920) also completed SUCCESS.
+- Found a continuity defect: this status file's top checkpoint label remained CP-0143 even though CP-0148 was present in the body and the roadmap. Corrected the top label and recorded this reconciliation; this is metadata hygiene, not research progress.
+- Goal-directed decision: do not repeat the already-exhausted official provenance search, rerun the consumed quarantine sensitivity, tune the failed `MTF_BREAKOUT_4H_D1` comparator, or add infrastructure-only code. Current repository evidence does not authorize a new real-market evaluation: G0 is still globally blocked, and no fresh official archive-version record has been established.
+- Next admissible work is event-driven: act only on genuinely new official archive-version/publication evidence that can adjudicate the 11 unresolved aggregation relationships, or obtain explicit authorization for a frozen candidate-specific quarantine evaluation with exact lineage and evidenced INR→USDT, fee, slippage and lot-size assumptions. Keep production builder fail-closed. No synthetic market candles, no fake G0 PASS, no candidate promotion, no live signing/broadcast/orders, and no automatic SL/TP.
+- Gates remain unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. Profitability is NOT ESTABLISHED. This checkpoint clears no empirical gate.
