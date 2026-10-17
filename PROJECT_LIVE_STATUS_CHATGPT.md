@@ -18,10 +18,10 @@ Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 
 ## Latest verified GitHub state
 - Latest verified implementation checkpoint: CP-0140, independent structural audit-report verifier.
-- Exact branch/PR head SHA: 29bf1f101d81b478b040a8ae3182779bbf81bd5c.
+- Last verified implementation-code SHA before continuity-doc correction: 29bf1f101d81b478b040a8ae3182779bbf81bd5c. Latest docs-only branch/PR head: 7d53d0fa8fd29985346115a2eac45fe9e4558351.
 - CI run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39020923719
-- CI terminal conclusion: success; recorded terminal output: 132 tests passed (Ran 132 tests ... OK).
-- PR #2 state: OPEN, merged_at=null; branch head matches PR head at this checkpoint.
+- CI run 39021336643 on docs-only head 7d53d0fa8fd29985346115a2eac45fe9e4558351: terminal success; exact output `Ran 132 tests in 0.067s` and `OK`. Run URL: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39021336643.
+- PR #2 state at this checkpoint: OPEN, merged_at=null; branch head matched PR head. The live branch must be re-fetched after this status-file commit because the docs update itself creates a new head and triggers CI.
 - Important metadata issue discovered 2026-10-17: before this file was created, PROJECT_LIVE_STATUS_CHATGPT.md did not exist on the implementation branch. The roadmap header still said CP-0130 even though CP-0140 was appended. This continuity gap is being corrected now; do not assume prior status metadata was continuously current.
 
 ## Research gates (must not be inferred from code/test progress)
