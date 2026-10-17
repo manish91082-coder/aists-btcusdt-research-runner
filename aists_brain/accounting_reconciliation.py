@@ -70,6 +70,9 @@ def reconcile_simulation_with_ledger(
             raise ReconciliationError(f"simulator action/side mismatch at event {index}")
         if event.get("is_order_instruction") is not False:
             raise ReconciliationError(f"simulator event must not be an order instruction at event {index}")
+        event_slippage_bps = _num(f"event_{index}_slippage_bps_per_side", event.get("slippage_bps_per_side"))
+        if abs(event_slippage_bps - slip_bps) > 1e-12:
+            raise ReconciliationError(f"event slippage assumption mismatch at event {index}")
         if event.get("decision_id") != ledger_event.get("decision_id"):
             raise ReconciliationError(f"decision ID mismatch at event {index}")
         if event.get("fill_open_time_ms") != ledger_event.get("timestamp_ms"):
