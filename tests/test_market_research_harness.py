@@ -10,6 +10,7 @@ from aists_brain.research_harness import (
     DECISION_SCHEMA, ResearchHarnessError, run_manifest_driven_simulation,
 )
 from aists_brain.provenance_input import SCHEMA_VERSION
+from aists_brain.decision_lineage import canonical_sha256
 
 
 class ResearchHarnessTests(unittest.TestCase):
@@ -66,14 +67,38 @@ class ResearchHarnessTests(unittest.TestCase):
         self.manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
 
     def write_decisions(self, **overrides):
+        source_hash = hashlib.sha256(self.csv_path.read_bytes()).hexdigest()
+        brain_version = "test-brain-v1"
+        strategy_version = "test-strategy-v1"
+        def decision(decision_id, as_of_ms, action):
+            snapshot = {
+                "as_of_ms": as_of_ms,
+                "brain_version": brain_version,
+                "strategy_version": strategy_version,
+                "feature_observations": [{
+                    "feature_name": "test_close",
+                    "timeframe": "5m",
+                    "observed_close_time_ms": as_of_ms,
+                    "source_sha256": "d" * 64,
+                    "value": 102.0,
+                }],
+            }
+            return {
+                "decision_id": decision_id,
+                "as_of_ms": as_of_ms,
+                "action": action,
+                "snapshot": snapshot,
+                "snapshot_sha256": canonical_sha256(snapshot),
+            }
         artifact = {
             "schema_version": DECISION_SCHEMA,
             "status": "PASS",
-            "source_csv_sha256": hashlib.sha256(self.csv_path.read_bytes()).hexdigest(),
-            "brain_version": "test-brain-v1",
+            "source_csv_sha256": source_hash,
+            "brain_version": brain_version,
+            "strategy_version": strategy_version,
             "decisions": [
-                {"decision_id": "d1", "as_of_ms": 299999, "action": "BUY_CANDIDATE"},
-                {"decision_id": "d2", "as_of_ms": 599999, "action": "SELL_CANDIDATE"},
+                decision("d1", 299999, "BUY_CANDIDATE"),
+                decision("d2", 599999, "SELL_CANDIDATE"),
             ],
         }
         artifact.update(overrides)
@@ -91,6 +116,7 @@ class ResearchHarnessTests(unittest.TestCase):
         self.assertEqual(result["status"], "SIMULATED_NOT_VALIDATED")
         self.assertEqual(result["data_input"]["row_count"], 3)
         self.assertEqual(result["decision_input"]["brain_version"], "test-brain-v1")
+        self.assertEqual(result["decision_input"]["causal_lineage_status"], "PASS_CAUSAL_CONTRACT")
         self.assertEqual(result["simulation"]["closed_round_trip_count"], 1)
         self.assertEqual(result["accounting_reconciliation"]["status"], "PASS_ACCOUNTING_RECONCILIATION")
         self.assertEqual(result["paper_ledger_integrity"]["status"], "PASS_HASH_CHAIN")
