@@ -1,6 +1,6 @@
 # AISTS Live Status & Mission Roadmap
 
-Last verified checkpoint: **CP-0205 (conservative gap-window quarantine sensitivity contract drafted; G0 remains blocked)**  
+Last verified checkpoint: **CP-0206 (gap-window policy frozen for sensitivity-only; G0 remains blocked)**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
@@ -60,6 +60,15 @@ Current global gate: **G0 = BLOCKED_GLOBAL**
 ## Historical checkpoint: CP-0202
 
 The source-code-only eligibility matrix is preserved in [docs/CP0202_Candidate_Builder_Eligibility_Matrix.md](CP0202_Candidate_Builder_Eligibility_Matrix.md). Its findings directly motivated CP-0203. No candidate build or backtest was run.
+
+## CP-0206: Frozen sensitivity-only gap policy
+
+- Policy: [CP0206_Gap_Window_Quarantine_Policy.json](../evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy.json); SHA-256 receipt: [CP0206_Gap_Window_Quarantine_Policy_SHA256.json](../evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy_SHA256.json).
+- Policy SHA-256: `f8bdc5b034a65e6a9e906c3b80443e9cc149e3d922f6f6f763692cb38cfa8641`; frozen CP-0040 rulebook SHA-256: `5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0`.
+- Status: `FROZEN_FOR_SENSITIVITY_ONLY_NOT_G0_CLEARANCE`. Policy B censors gap-exposed position episodes unless separately approved accounting treatment makes them scorable. No synthetic candle or exit fill.
+- Exact population: 17 missing 4h keys; one linked existing row-case overlap plus 16 gap-window-only items. No duplicate row case.
+- Independent non-tautological accounting reconciliation at `<= 1e-8 USDT` and explicit cash/quantity/fees/equity/segment-P&L tests are prerequisites before any sensitivity runner. No sensitivity runner, candidate build, or backtest is authorized by CP-0206.
+- CP-0040 G0/G1/G3 remains controlling. Canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability `NOT ESTABLISHED`.
 
 ## Goal distance / gate status
 

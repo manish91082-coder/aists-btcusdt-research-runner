@@ -7,6 +7,9 @@ on:
       - 'scripts/AISTS_CP0026_Research_Candidate_Builder.py'
       - 'scripts/AISTS_CP0027_MultiTimeframe_Baseline_Backtest.py'
       - 'tests/test_cp0204_backtest_gap_gate.py'
+      - 'tests/test_cp0206_frozen_gap_policy.py'
+      - 'evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy.json'
+      - 'evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy_SHA256.json'
       - 'scripts/AISTS_CP0203_GapPolicy_Gate.py'
       - 'tests/test_cp0203_gap_policy_gate.py'
       - 'scripts/aists_runner.py'
@@ -87,3 +90,5 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_cp0203_gap_policy_gate.py' -v
       - name: Test CP-0204 backtest G0 gap gate
         run: python -m unittest discover -s tests -p 'test_cp0204_backtest_gap_gate.py' -v
+      - name: Test CP-0206 frozen policy and hash receipt
+        run: python -m unittest discover -s tests -p 'test_cp0206_frozen_gap_policy.py' -v
