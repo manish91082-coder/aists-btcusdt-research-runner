@@ -143,7 +143,7 @@ def blocked_outputs(out, started, reason, inventory_rows=0):
     out.mkdir(parents=True,exist_ok=True)
     (out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Summary.json").write_text(json.dumps(summary,indent=2,sort_keys=True)+"\n",encoding="utf-8")
     (out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Report_HI.md").write_text("# CP-0165: 4h archive checksum/gap audit\n\n- Status: BLOCKED_4H_AUDIT_INPUT_INVALID\n- Reason: "+reason+"\n- No archive downloads, candidate build, backtest, source-authority change, or live action was performed.\n",encoding="utf-8")
-    write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv",[],["period","filename","cache_status","local_sha256","zip_crc","sidecar_status","sidecar_sha256","sidecar_hashes","sidecar_filename_match","checksum_status","error"])
+    write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv",[],["period","filename","cache_path","cache_match_count","cache_status","local_sha256","inventory_sha256","inventory_bytes","baseline_sha256_status","baseline_bytes_status","zip_crc","sidecar_status","sidecar_sha256","sidecar_hashes","sidecar_filename_match","checksum_status","error"])
     write_csv(out/"CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv",[],["previous_open_time_utc","next_open_time_utc","delta_ms","missing_intervals_estimate","gap_class"])
     return summary
 def main():
