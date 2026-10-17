@@ -27,5 +27,19 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         self.assertEqual(hashes, [])
         self.assertTrue(named)
 
+
+    def test_runner_and_workflow_wiring_are_bounded(self):
+        root = Path(__file__).resolve().parents[1]
+        runner = (root / "scripts" / "aists_runner.py").read_text(encoding="utf-8")
+        workflow = (root / ".github" / "workflows" / "python-runner.yml").read_text(encoding="utf-8")
+        self.assertIn('"cp0165_4h_monthly_checksum_gap_audit"', runner)
+        self.assertIn('elif task=="cp0165_4h_monthly_checksum_gap_audit":', runner)
+        self.assertIn("workflow_dispatch:", workflow)
+        self.assertIn("- cp0165_4h_monthly_checksum_gap_audit", workflow)
+        self.assertIn("publish_cp0165_4h_monthly_checksum_gap_audit:", workflow)
+        self.assertIn('s.get("canonical_source")!="NONE"', workflow)
+        self.assertIn('s.get("g0")!="BLOCKED_GLOBAL"', workflow)
+        self.assertIn('s.get("monthly_zip_downloads")!=0', workflow)
+
 if __name__ == "__main__":
     unittest.main()
