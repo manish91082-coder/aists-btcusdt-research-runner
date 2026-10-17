@@ -60,3 +60,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Added 10 unit tests for accepted contract, blocked global gate, tampering, interval mismatch, coverage, gap accounting, OHLC, row count and source hashes. CI compiles the new module and discovers the test file.
 - **No historical performance run was performed.** Current global G0 remains `BLOCKED_GLOBAL`, so real project data must continue to fail closed until the existing evidence gap is independently resolved. No source data, frozen acceptance rulebook, strategy gate, or live-trading control was changed.
 - Next: verify the complete test suite on the exact final branch HEAD and inspect CI logs; if green, move to a manifest-driven integration harness that refuses to run when G0 is blocked.
+
+
+## CP-0132 — Manifest-driven research integration harness (2026-10-17)
+- Added `aists_brain/research_harness.py` to join the provenance-bound candle loader with the offline next-open simulator. It requires the data manifest's explicit adjudication and global G0 PASS claims, and a separate decision artifact bound to the exact candle CSV SHA-256 with a non-empty brain version.
+- The harness rejects blocked/mismatched data, wrong timeframe, non-PASS decision artifacts, missing brain version and decisions that do not reference a supplied candle close. It emits a combined result with data, manifest and decision artifact hashes plus the simulator result.
+- Added seven integration tests covering successful wiring and fail-closed cases. CI compilation now includes the harness.
+- **Trust boundary remains explicit:** PASS labels and source report hashes are not authenticated by this harness. It does not generate decisions, validate the decision producer's causal lineage, resolve historical archive-version provenance, or establish strategy profitability. Current project G0 remains BLOCKED_GLOBAL; therefore the real unresolved data must not be relabelled PASS merely to run this harness.
+- No real-market performance run, source-data mutation, gate relaxation, SL/TP addition or live exchange action occurred.
+- Next: verify the complete CI suite on exact final HEAD; then build independent accounting reconciliation for simulator events versus paper portfolio ledger before any accepted paper run.
