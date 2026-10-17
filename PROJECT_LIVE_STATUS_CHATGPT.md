@@ -1,7 +1,7 @@
 # AISTS Project Live Status for ChatGPT
 
 Last updated: 2026-10-17
-Status checkpoint: CP-0151 candidate-run admissibility audit recorded; exact-head CI verification required after this append. Re-fetch live GitHub state on every new session.
+Status checkpoint: CP-0151 candidate-run admissibility audit recorded; exact-head CI independently reverified on 2026-10-17. Re-fetch live GitHub state on every new session.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2 (must remain OPEN; do not merge)
@@ -17,12 +17,12 @@ Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 - Never merge PR #2. Keep updates append-only except narrowly necessary corrections to status metadata.
 
 ## Latest verified GitHub state
-- Latest verified checkpoint: CP-0143, official Binance Spot archive-provenance recheck (evidence documentation; no G0 clearance).
-- CP-0143 evidence/docs head: `6eb292e88c0b5d7bb8d8430674ad9f937291b607`; exact-head CI passed in run [39022076178](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39022076178).
-- CP-0142 implementation CI remains recorded below; CP-0143 exact-head CI is the latest verified workflow run.
-- CP-0143 exact-head CI terminal success on `6eb292e88c0b5d7bb8d8430674ad9f937291b607`: compile step and test step success; exact output `Ran 148 tests in 0.352s` and `OK`; run [39022076178](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39022076178), job ID `117365720597`.
-- PR #2 remains OPEN and unmerged; the live branch must be re-fetched after this metadata correction because it creates a new head and triggers CI.
-- Important metadata issue discovered 2026-10-17: before this file was created, PROJECT_LIVE_STATUS_CHATGPT.md did not exist on the implementation branch. The roadmap header still said CP-0130 even though CP-0140 was appended. This continuity gap is being corrected now; do not assume prior status metadata was continuously current.
+- Latest verified checkpoint: CP-0151 candidate-run admissibility audit; no empirical gate cleared.
+- Working branch HEAD and PR #2 HEAD both `9572c1c6d5285c0d23525209ad790bffa7041e6e`.
+- PR #2 is OPEN and unmerged; never merge it.
+- Exact-HEAD GitHub Actions run [39030054762](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39030054762) completed SUCCESS on the exact current HEAD; job `brain-unit-tests`, compile and unit-test steps both SUCCESS. The matching pull-request run [39030057875](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39030057875) also completed SUCCESS on the same SHA.
+- Current status-file blob SHA before this metadata reconciliation: `0483b8491f2eef7bf95820207f9ad4c2a02f924c`. This entry is metadata reconciliation only and does not change any research gate.
+- Historical CP-0143 and earlier checkpoint records remain in the append-only history below; they are not the current verified state.
 
 ## Research gates (must not be inferred from code/test progress)
 - G0: BLOCKED_GLOBAL.
