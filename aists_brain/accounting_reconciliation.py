@@ -46,6 +46,12 @@ def reconcile_simulation_with_ledger(
     if len(sim_events) != len(ledger_events):
         raise ReconciliationError("event count mismatch between simulator and paper ledger")
 
+    fee_bps = _num("fee_bps_per_side", simulation.get("fee_bps_per_side"))
+    slip_bps = _num("slippage_bps_per_side", simulation.get("slippage_bps_per_side"))
+    if fee_bps < 0 or slip_bps < 0 or fee_bps >= 10000 or slip_bps >= 10000:
+        raise ReconciliationError("simulator fee/slippage assumptions are outside valid bounds")
+    fee_rate = fee_bps / 10000.0
+
     initial_cash = _num("initial_cash_usdt", simulation.get("initial_cash_usdt"))
     cash = initial_cash
     btc = 0.0
@@ -79,6 +85,9 @@ def reconcile_simulation_with_ledger(
             raise ReconciliationError(f"fee mismatch at event {index}")
         if abs(notional - quantity * price) > max(tolerance_usdt, abs(notional) * 1e-12):
             raise ReconciliationError(f"notional arithmetic mismatch at event {index}")
+        expected_fee = notional * fee_rate
+        if abs(fee - expected_fee) > max(tolerance_usdt, abs(expected_fee) * 1e-12):
+            raise ReconciliationError(f"fee arithmetic mismatch with declared fee rate at event {index}")
 
         if side == "BUY":
             cash -= notional + fee
@@ -110,8 +119,7 @@ def reconcile_simulation_with_ledger(
         raise ReconciliationError("independent cumulative fees do not match paper ledger")
 
     last_close = _num("last_close_price_assumption_usdt", simulation.get("last_close_price_assumption_usdt"))
-    fee_rate = _num("fee_bps_per_side", simulation.get("fee_bps_per_side")) / 10000.0
-    slip_rate = _num("slippage_bps_per_side", simulation.get("slippage_bps_per_side")) / 10000.0
+    slip_rate = slip_bps / 10000.0
     independently_marked_equity = cash + btc * last_close * (1.0 - slip_rate) * (1.0 - fee_rate)
     reported_equity = _num("equity_usdt_after_estimated_exit_costs",
                            simulation.get("equity_usdt_after_estimated_exit_costs"))
