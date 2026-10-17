@@ -1,6 +1,6 @@
 # AISTS Live Status & Mission Roadmap
 
-Last verified checkpoint: **CP-0207 (independent accounting-oracle preflight added; production accounting not end-to-end validated; G0 remains blocked pending CI terminal verification)**  
+Last verified checkpoint: **CP-0208 (opt-in simulator ledger trace and synthetic event-tape reconciliation; G0 remains blocked pending CI terminal verification)**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
@@ -77,6 +77,13 @@ The source-code-only eligibility matrix is preserved in [docs/CP0202_Candidate_B
 - This is an accounting-oracle preflight, not end-to-end production ledger validation. No market-data run, candidate build, or backtest executed. CP-0027 still carries positions through gaps in source, but the frozen unresolved policy blocks performance scoring.
 - Required tolerance: `<= 1e-8 USDT` per matched accounting comparison. Next step after terminal CI verification: add an independent event-by-event reconciliation harness using a deterministic synthetic event tape; keep it separate from market data.
 - G0 `BLOCKED_GLOBAL`; canonical source `NONE`; source cases closed `0`; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability `NOT ESTABLISHED`.
+
+## CP-0208: Synthetic event-tape ledger reconciliation
+
+- Added opt-in `ledger_log=True` tracing to `simulate_strategy`; default callers receive an empty trace and existing result semantics remain unchanged. Trace captures fill events, each bar-close mark, cumulative fees/slippage, cash, quantity, equity and realized P&L.
+- Added `tests/test_cp0208_synthetic_ledger_reconciliation.py`, which invokes only `simulate_strategy` against four in-memory 4h candles. An independent Decimal reference ledger compares each event and aggregate result at `<= 1e-8 USDT` tolerance. It does not call `main()`, load market archives, build candidates or execute a market backtest.
+- CI installs NumPy/Pandas for this bounded synthetic test only. CP-0027 `main()` still executes CP-0203 gap gate and CP-0026 row/non-row G0 gate before manifest, outputs or performance work.
+- This validates one deterministic contiguous event tape, not all accounting scenarios or gap-exposed position treatment. The existing carry-through-gap behavior remains blocked from scoring under Policy B. G0 `BLOCKED_GLOBAL`; canonical source `NONE`; no strategy promotion; live actions `BLOCKED`; profitability `NOT ESTABLISHED`.
 
 ## Goal distance / gate status
 
