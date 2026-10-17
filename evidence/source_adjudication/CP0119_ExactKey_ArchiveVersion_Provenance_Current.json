@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0119",
+  "status": "BLOCKED_INPUTS_NOT_REPRODUCIBLE",
+  "reviewed_at_utc": "2026-10-17",
+  "repository": "manish91082-coder/aists-btcusdt-research-runner",
+  "branch": "main",
+  "review_mode": "READ_ONLY_CONNECTOR_SIDE_OFFICIAL_METADATA_REVIEW",
+  "baseline": {
+    "main_head_before_checkpoint": "bbbed4bb0aba3ca0e1a1545103d20bc0d430fa31",
+    "cp0118_pointer_blob_sha1": "05bab9942c87aeb28fab4bbc2d1125db5f0de4d0",
+    "cp0118_report_blob_sha1": "336762296a9ac0bad06b6cc620722e16e1404c05",
+    "cp0118_matrix_blob_sha1": "d4680d70eb0cd71d3f6d14df1ba5ebcd1bf9c8b3",
+    "cp0118_details_blob_sha1": "935edba0dee13450ef43ee67254b615cb329e728",
+    "row_evidence_blob_sha1": "5ccb7fc91b829b4599de73f3b63683fbf1d5ebb9",
+    "bucket_snapshot_blob_sha1": "6e32188472ab45b43e1b90fe138399818c937277",
+    "daily_manifest_blob_sha1": "1a1a264923b12bd8d8f38c362a4fe7f32b871356",
+    "monthly_manifest_subset_blob_sha1": "c9baaaa65bf6d4be45aab2effba9fc31a4383910",
+    "cp0097_pointer_blob_sha1": "e0d19fcbdfd288148a3a45e8a4e4feb0da06dddd",
+    "cp0117_issue_snapshot_blob_sha1": "75010522badfb8b762b4fc25b804234e6e02585e"
+  },
+  "external_metadata": {
+    "binance_public_data_readme_url": "https://github.com/binance/binance-public-data",
+    "documented_spot_kline_update": "2022-08-08_kline_updates.zip",
+    "documented_aggregate_trade_update": "2022-04-21_aggregate_trade_updates.zip",
+    "issue_504_url": "https://github.com/binance/binance-public-data/issues/504",
+    "issue_504_state": "open",
+    "issue_504_comments": 0,
+    "issue_504_maintainer_answer_observed": false,
+    "issue_475_url": "https://github.com/binance/binance-public-data/issues/475",
+    "issue_475_state": "open",
+    "issue_475_relevance": "different dates; context only"
+  },
+  "counts": {
+    "exact_aggregation_cases": 11,
+    "current_daily_monthly_archive_identity_pairs_recorded": 11,
+    "historical_version_timeline_links_established": 0,
+    "source_cases_closed": 0,
+    "unresolved_aggregation_blockers": 11
+  },
+  "outputs": {
+    "report": {
+      "path": "evidence/source_adjudication/CP0119_ExactKey_ArchiveVersion_Provenance_Report_HI.md",
+      "git_blob_sha1": "bf5f064572d8bb6d8bfd1373eb8993f58b24e074",
+      "bytes": 3883
+    },
+    "matrix": {
+      "path": "evidence/source_adjudication/CP0119_ExactKey_ArchiveVersion_Provenance_Matrix.csv",
+      "git_blob_sha1": "82ade0d779b22ffbe2de110b57c7b0d091e2691c",
+      "rows": 11,
+      "bytes": 7617
+    }
+  },
+  "decision": {
+    "historical_archive_version_provenance": "BLOCKED_INPUTS_NOT_REPRODUCIBLE",
+    "relationship_root_cause": "OPEN_NOT_ESTABLISHED",
+    "canonical_source_selected": false,
+    "source_cases_closed": 0,
+    "unresolved_aggregation_blockers": 11,
+    "g0": "BLOCKED_GLOBAL",
+    "g2": "FAIL_CURRENT_23_CANDIDATES",
+    "g3": "BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT",
+    "g7": "LIVE_BLOCKED"
+  },
+  "non_actions": {
+    "new_market_data_archive_downloads": 0,
+    "repeated_cp0095_cp0096_correction_bundle_hash_search": false,
+    "raw_source_archives_modified": false,
+    "timestamps_shifted_or_rounded": false,
+    "synthetic_candles_created": false,
+    "production_candidate_build_performed": false,
+    "backtest_performed": false,
+    "strategy_promoted": false,
+    "live_signing_enabled": false,
+    "public_broadcast_enabled": false,
+    "binance_orders_placed": false,
+    "github_actions_run_triggered": false
+  },
+  "next_bounded_step": "Keep all 11 blockers open. Do not repeat the exhausted official correction route absent new evidence. Consider only a formally frozen, rulebook-compatible conservative quarantine policy with actual candidate-specific final metrics; preserve G0 fail-closed behavior."
+}
