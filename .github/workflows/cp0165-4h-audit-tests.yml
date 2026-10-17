@@ -11,6 +11,8 @@ on:
       - 'tests/test_cp0207_accounting_invariants.py'
       - 'tests/test_cp0208_synthetic_ledger_reconciliation.py'
       - 'tests/test_cp0209_gap_boundary_verification.py'
+      - 'tests/test_cp0210_segment_censor_contract.py'
+      - 'docs/CP0210_Segment_Censor_Accounting_Contract.md'
       - 'docs/CP0207_Independent_Accounting_Reconciliation_Preflight.md'
       - 'evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy.json'
       - 'evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy_SHA256.json'
