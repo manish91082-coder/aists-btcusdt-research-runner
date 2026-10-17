@@ -140,6 +140,16 @@ class TestCP0165AuditHelpers(unittest.TestCase):
             self.assertEqual(rc, 0)
             self.assertEqual(summary["status"], "BLOCKED_4H_AUDIT_INPUT_INVALID")
             self.assertFalse(summary["network_used"])
+            import csv
+            with (root / "out" / "CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv").open(encoding="utf-8", newline="") as f:
+                details_header = next(csv.reader(f))
+            self.assertEqual(details_header, [
+                "period", "filename", "cache_path", "cache_match_count", "cache_status",
+                "local_sha256", "inventory_sha256", "inventory_bytes",
+                "baseline_sha256_status", "baseline_bytes_status", "zip_crc",
+                "sidecar_status", "sidecar_sha256", "sidecar_hashes",
+                "sidecar_filename_match", "checksum_status", "error",
+            ])
 
     def test_invalid_inventory_writes_blocked_evidence_without_failing_runner(self):
         import tempfile
