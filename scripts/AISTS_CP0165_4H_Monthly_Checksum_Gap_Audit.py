@@ -45,9 +45,19 @@ def expected_periods():
         m += 1
         if m==13: y,m=y+1,1
 def parse_checksum(text, filename):
-    hashes=sorted(set(x.lower() for x in re.findall(r"(?i)\b[0-9a-f]{64}\b",text)))
-    name_match=filename in text
-    return hashes, name_match
+    # A digest is authoritative only when it shares a line with the exact target
+    # archive token. A hash elsewhere in the response must never be attributed to it.
+    hashes=[]
+    lines=text.splitlines()
+    name_match=any(filename in line for line in lines)
+    for line in lines:
+        match=re.match(r"^\s*([0-9a-fA-F]{64})\s+\*?(\S+)\s*$",line)
+        if not match:
+            continue
+        listed_name=match.group(2).rsplit("/",1)[-1]
+        if listed_name==filename:
+            hashes.append(match.group(1).lower())
+    return sorted(set(hashes)), name_match
 def fetch_sidecar(url, filename):
     original=urlparse(url)
     if original.scheme!="https" or original.hostname!="data.binance.vision" or not original.path.endswith(".zip.CHECKSUM") or original.query or original.fragment:
