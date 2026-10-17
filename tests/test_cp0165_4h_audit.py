@@ -16,6 +16,26 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         self.assertEqual(months[-1], "2026-09")
         self.assertEqual(len(set(months)), 110)
 
+    def test_frozen_inventory_comparison_detects_hash_and_size_drift(self):
+        digest = "a" * 64
+        row = {"sha256_local": digest, "bytes": "123"}
+        self.assertEqual(
+            AUDIT.compare_frozen_inventory(row, digest, 123),
+            (digest, "123", "MATCH", "MATCH"),
+        )
+        self.assertEqual(
+            AUDIT.compare_frozen_inventory(row, "b" * 64, 123),
+            (digest, "123", "MISMATCH", "MATCH"),
+        )
+        self.assertEqual(
+            AUDIT.compare_frozen_inventory(row, digest, 124),
+            (digest, "123", "MATCH", "MISMATCH"),
+        )
+        self.assertEqual(
+            AUDIT.compare_frozen_inventory({"sha256_local": "", "bytes": ""}, digest, 123),
+            ("", "", "UNAVAILABLE", "UNAVAILABLE"),
+        )
+
     def test_checksum_parser_requires_hash_and_archive_name(self):
         digest = "a" * 64
         hashes, named = AUDIT.parse_checksum(f"{digest}  BTCUSDT-4h-2017-08.zip", "BTCUSDT-4h-2017-08.zip")
