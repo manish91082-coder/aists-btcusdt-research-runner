@@ -148,6 +148,38 @@ class AccountingReconciliationTests(unittest.TestCase):
         with self.assertRaisesRegex(ReconciliationError, "decision IDs mismatch"):
             reconcile_simulation_with_ledger(altered, self.ledger)
 
+    def test_fill_must_be_immediately_after_signal_close(self):
+        altered = copy.deepcopy(self.sim)
+        altered["events"][0]["signal_as_of_ms"] -= 1
+        with self.assertRaisesRegex(ReconciliationError, "fill must occur at signal_as_of_ms"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
+    def test_open_position_equity_and_inventory_reconcile(self):
+        sim = simulate_next_open(
+            self.candles, self.decisions[:1], interval_ms=300000,
+            initial_cash_usdt=1000.0, allocation_fraction=0.25,
+            fee_bps_per_side=10.0, slippage_bps_per_side=5.0,
+        )
+        ledger = create_ledger(initial_cash_usdt=1000.0)
+        event = sim["events"][0]
+        ledger = append_paper_fill(
+            ledger, timestamp_ms=event["fill_open_time_ms"], side=event["side"],
+            quantity_btc=event["quantity_btc"], price_usdt=event["fill_price_usdt"],
+            fee_usdt=event["fee_usdt"], decision_id=event["decision_id"],
+            reason="open-position reconciliation test",
+        )
+        result = reconcile_simulation_with_ledger(sim, ledger)
+        self.assertEqual(result["status"], "PASS_ACCOUNTING_RECONCILIATION")
+        self.assertAlmostEqual(result["independently_recomputed_btc_quantity"], sim["btc_quantity"])
+        self.assertAlmostEqual(
+            result["independently_recomputed_equity_usdt"],
+            sim["equity_usdt_after_estimated_exit_costs"],
+        )
+        altered = copy.deepcopy(sim)
+        altered["equity_usdt_after_estimated_exit_costs"] += 1.0
+        with self.assertRaisesRegex(ReconciliationError, "mark-to-market"):
+            reconcile_simulation_with_ledger(altered, ledger)
+
 
 if __name__ == "__main__":
     unittest.main()
