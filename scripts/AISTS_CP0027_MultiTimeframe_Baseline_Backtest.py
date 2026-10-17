@@ -293,6 +293,11 @@ def simulate_strategy(df, interval, start_idx, end_idx, strategy, fee_bps, slipp
         if i+1>=end_idx or not contiguous[i+1]:
             pending=None
             continue
+        # A non-contiguous row is a segment boundary, not a valid signal origin.
+        # This prevents finite/stale boundary indicators from creating a next-bar fill.
+        if not contiguous[i]:
+            pending=None
+            continue
         # Decide at the current completed close, for the next open.
         in_position=qty>0
         if strategy=="EMA_12_26":

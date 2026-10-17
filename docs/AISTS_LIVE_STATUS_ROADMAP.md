@@ -146,3 +146,13 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - Latest code/test CI remains [run 39063868131](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063868131), terminal `success` on code/test SHA `65739d99d1c7599aaa9667688aff8e1a6412b49e`. This validates CP-0204 code/tests, not the CP-0205 documentation-only contract.
 - Current safety state: G0 `BLOCKED_GLOBAL`; canonical source `NONE`; source cases closed: 0; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
 - Next bounded action: internally review the contract against CP-0040 G0/G1/G3 requirements, then freeze an append-only, hash-pinned policy artifact and regression fixtures. Do not build a sensitivity runner or run candidate/backtest performance until the accounting implications are independently tested.
+
+
+## CP-0209: Synthetic gap-boundary verification
+
+- Hardened `simulate_strategy` so a row with `contiguous=False` cannot originate a pending strategy signal. This prevents finite or stale boundary indicators from generating a fill on the next observed row; signals remain next-open and require contiguity.
+- Added `tests/test_cp0209_gap_boundary_verification.py` with in-memory synthetic 4h fixtures: a bullish signal deliberately placed on a gap boundary must not fill after the gap; a pre-gap open position demonstrates the current simulator's carry-through-gap/window-end liquidation behavior.
+- The second fixture intentionally documents a limitation, not a pass for Policy B: production simulator still carries gap-exposed inventory and reports ordinary metrics. The frozen Policy B requires `CENSORED_GAP_EXPOSED` and exclusion from scored metrics, but the policy remains sensitivity-only and is not applied to production scoring. The G0 gates remain mandatory before any market performance work.
+- No market archives, candidate builder, market-data backtest, synthetic candle insertion, hypothetical boundary exit, source adjudication, or policy application was performed. CP-0209 is boundary-regression evidence only.
+- Next: independently design and test an explicit segment/censor accounting contract before implementing any Policy B sensitivity scorer. Do not claim Policy B scoring is implemented or G0 is clear.
+- Current gates: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain FAIL; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
