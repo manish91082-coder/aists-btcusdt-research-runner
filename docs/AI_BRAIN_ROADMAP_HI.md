@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest checkpoint: CP-0130
+Latest checkpoint: CP-0140 (CI verified; current research gates remain blocked)
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -138,3 +138,11 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - **Trust boundary:** `PASS_STRUCTURAL_INTEGRITY` means internal report structure and hashes are consistent only. It does not authenticate G0 or external adjudication, prove archive provenance, re-hash the original input files unless separately supplied, or demonstrate strategy profitability.
 - G0 remains `BLOCKED_GLOBAL`; G2 remains FAIL for all 23 current candidates. No real historical simulation or performance claim. Live signing, public broadcast, exchange orders, automatic SL/TP, candidate promotion and PR merge remain prohibited.
 - Next: inspect exact final branch/PR SHA and terminal CI logs; if green, continue with a bound run-manifest/evidence index that links the report, persisted feature artifact and exact inputs without relaxing G0.
+
+
+## Goal-direction and continuity correction (2026-10-17)
+- Goal-direction review: CP-0137–CP-0140 improved reproducibility/audit integrity, but did not unblock real historical strategy evaluation. Further infrastructure-only work without removing G0 is at risk of drift.
+- Current direction: prioritize an evidence-backed resolution of global G0 and historical archive-version provenance. If the repository does not contain admissible evidence, record the exact missing evidence and smallest actionable request; do not invent a PASS claim and do not run real-market performance research while G0 is blocked.
+- Durable continuity status: `PROJECT_LIVE_STATUS_CHATGPT.md` is now the session-resume source. At each material project response/checkpoint, update it and this roadmap, then verify the actual branch/PR head and CI terminal outcome.
+- Verified checkpoint at time of update: CP-0140; branch/PR head `29bf1f101d81b478b040a8ae3182779bbf81bd5c`; CI run [39020923719](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39020923719) succeeded with 132 tests; PR #2 remains OPEN and must not be merged.
+- Research gates unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED.
