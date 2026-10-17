@@ -288,3 +288,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Corrected preflight report: `evidence/research_scopes/CP0154_CP0152_Preflight_Readiness_HI.md` includes CP-0155 addendum.
 - Latest HEAD before this documentation correction: `af1da38f0aec95946211690940aed8d9c28002a4`; its exact-head CI run 39036029613 completed SUCCESS. This correction creates a new HEAD and requires its own exact-head CI verification.
 - CP-0152 approval remains pending; no build/backtest. G0 remains BLOCKED_GLOBAL; other release gates unchanged.
+
+
+## CP-0156 — CP-0152 candidate-specific 4h exposure audit (2026-10-17)
+- Exact-head CI for CP-0155 documentation correction: run `39036179330` on SHA `4de3fa6d8bdf03045bdd6a059c959cc69fc6230c`, terminal SUCCESS. PR #2 remains OPEN/unmerged at that SHA before CP-0156.
+- Read-only audit cross-checked CP-0152 scope, CP-0115 interval exposure crosswalk/current summary, CP-0117 blocker matrix, CP-0113 field-level corroboration, CP-0119 archive-version provenance and current builder guard.
+- Created `evidence/research_scopes/CP0156_CP0152_4H_Blocker_Exposure_Audit_HI.md`. Evidence shows 11 unresolved aggregation relationships only involve 5m→15m, 15m→30m and 30m→1h; CP-0115 shows 0 monthly-divergent keys in 4h. Therefore no direct interval overlap with the declared 4h-only signal inputs was identified.
+- This is not G0 PASS: CP-0152 actual input rows/hashes and production-path exclusion are not verified, provenance remains open, capital/cost/quantity assumptions remain unverified, and the global builder still fails closed. Historical candidate-scoped G0 results for existing 4h candidates do not automatically approve CP-0152.
+- CP-0152 explicit approval remains pending; no market data was read, no candidate built, no backtest run. All release gates unchanged.
+- Next: exact-head CI verification for CP-0156 docs, then wait for explicit CP-0152 approval; if approved, verify candidate-specific prerequisites before any build.
