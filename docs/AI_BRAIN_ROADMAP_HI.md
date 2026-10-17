@@ -173,3 +173,11 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Implementation commit `9eb6fd94a210bc7976dd1dbafb0952e129c99f4a` passed GitHub Actions run [39021877488](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39021877488): terminal success, compile and test steps success, `Ran 148 tests in 0.180s`, `OK`.
 - At verification, branch and PR #2 head matched the implementation SHA; PR #2 remained OPEN and unmerged. This continuity-doc update creates a new head and triggers a new CI run, which must be verified separately.
 - Goal-direction decision: pause additional software scaffolding until a genuinely new admissible official evidence path for G0/source provenance is identified. Existing evidence already records 0 historical version-timeline links across 11 cases and the saved Binance issue #504 snapshot has no maintainer response; do not repeat that same search without a new signal. Do not fabricate G0 PASS, run real-market performance analysis, promote a candidate, or enable live controls.
+
+
+## CP-0143 — Fresh official-source provenance recheck (2026-10-17)
+- Read the current official Binance Public Data README and checked current issue metadata/comments for #504, #475 and #505. README acknowledges later archive updates and lists two dated update bundles, but inspected text does not establish prior ZIP-version retrieval or exact publication/replacement timestamps.
+- #504 remained OPEN with 0 comments; #475 remained OPEN with 1 contributor comment; #505 remained OPEN with 0 comments at this recheck. Reports in #475/#505 are not maintainer-confirmed and were not independently reproduced in this checkpoint.
+- Evidence report: `evidence/source_adjudication/CP0143_Official_Binance_Spot_Archive_Provenance_Recheck_HI.md`.
+- This is useful new provenance-tracker evidence, not a G0 clearance. Keep all research gates unchanged; no silent daily/monthly precedence, source repair, fake PASS manifest, real-market backtest or candidate promotion. Wait for a new official response or version record instead of repeating the same search or adding infrastructure-only modules.
+- The checkpoint commit's CI must be checked on its exact final head before claiming the repository state verified.
