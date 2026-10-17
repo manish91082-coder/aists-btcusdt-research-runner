@@ -103,7 +103,7 @@ class ProvenanceInputTests(unittest.TestCase):
         bad[0]["high"] = 98
         self.write_rows(bad)
         self.write_manifest()
-        with self.assertRaisesRegex(ProvenanceGateError, "SHA-256"):
+        with self.assertRaisesRegex(ProvenanceGateError, "invalid OHLC"):
             load_provenance_cleared_candles(self.csv_path, self.manifest_path)
 
     def test_hash_correct_but_bad_ohlc_fails(self):
