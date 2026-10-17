@@ -128,6 +128,9 @@ def verify_research_audit_report(
             raise ResearchReportVerificationError("accounting event count does not match nested simulation")
         if not isinstance(run.get("paper_ledger_integrity"), Mapping) or run["paper_ledger_integrity"].get("status") != "PASS_HASH_CHAIN":
             raise ResearchReportVerificationError("paper ledger integrity is not PASS")
+    elif status == "BLOCKED_INPUT":
+        if run is not None or input_hashes != {}:
+            raise ResearchReportVerificationError("BLOCKED_INPUT report must not contain run/input hashes")
     elif status == "READY_NO_RUN":
         if run is not None or not isinstance(input_hashes, Mapping) or input_hashes:
             raise ResearchReportVerificationError("READY_NO_RUN report must not contain run/input hashes")
@@ -146,6 +149,10 @@ def verify_research_audit_report(
             raise ResearchReportVerificationError("entrypoint contradicts blocked-G0 fail-closed policy")
         if entrypoint.get("status") == "SIMULATED_NOT_VALIDATED" and status != "SIMULATED_NOT_VALIDATED":
             raise ResearchReportVerificationError("entrypoint/run status mismatch")
+        if entrypoint.get("status") == "BLOCKED_INPUT" and status != "BLOCKED_INPUT":
+            raise ResearchReportVerificationError("entrypoint/report blocked-input status mismatch")
+        if entrypoint.get("simulation_attempted") is True and entrypoint.get("input_artifacts_inspected") is not True:
+            raise ResearchReportVerificationError("simulation attempted without input-artifact inspection")
 
     return {
         "schema_version": "aists.research_audit_verification.v1",
