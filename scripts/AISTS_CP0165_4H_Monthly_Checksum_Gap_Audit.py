@@ -58,13 +58,25 @@ def parse_checksum(text, filename):
         if listed_name==filename:
             hashes.append(match.group(1).lower())
     return sorted(set(hashes)), name_match
+class OfficialChecksumRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Validate redirect targets before urllib sends a follow-up request."""
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        original=urlparse(req.full_url)
+        target=urlparse(newurl)
+        allowed_paths={original.path, "/data.binance.vision"+original.path}
+        if (target.scheme!="https" or target.hostname not in OFFICIAL_HOSTS
+                or target.path not in allowed_paths or target.query or target.fragment):
+            raise urllib.error.HTTPError(req.full_url, code, "Blocked non-allowlisted checksum redirect", headers, fp)
+        return super().redirect_request(req,fp,code,msg,headers,newurl)
+
 def fetch_sidecar(url, filename):
     original=urlparse(url)
     if original.scheme!="https" or original.hostname!="data.binance.vision" or not original.path.endswith(".zip.CHECKSUM") or original.query or original.fragment:
         return {"fetch_status":"BLOCKED_URL_VALIDATION","error":"URL did not pass official HTTPS sidecar allowlist"}
     req=urllib.request.Request(url,headers={"User-Agent":"AISTS-CP0165-4H-Checksum-Audit/1.0","Accept":"text/plain"})
     try:
-        with urllib.request.urlopen(req,timeout=25) as response:
+        opener=urllib.request.build_opener(OfficialChecksumRedirectHandler())
+        with opener.open(req,timeout=25) as response:
             final=urlparse(response.geturl())
             body=response.read(4097)
             status=getattr(response,"status",None)
@@ -76,6 +88,10 @@ def fetch_sidecar(url, filename):
         hashes,name_match=parse_checksum(text,filename)
         return {"fetch_status":"FETCHED","sidecar_sha256":sha256_bytes(body),"sidecar_hashes":";".join(hashes),
                 "sidecar_filename_match":name_match,"sidecar_bytes":len(body),"error":""}
+    except urllib.error.HTTPError as exc:
+        if "Blocked non-allowlisted checksum redirect" in str(exc.reason):
+            return {"fetch_status":"BLOCKED_REDIRECT_VALIDATION","error":str(exc.reason)}
+        return {"fetch_status":"SIDECAR_UNAVAILABLE","error":f"{type(exc).__name__}: {exc}"}
     except (urllib.error.URLError,TimeoutError,UnicodeError,ValueError) as exc:
         return {"fetch_status":"SIDECAR_UNAVAILABLE","error":f"{type(exc).__name__}: {exc}"}
 def timestamp_to_iso(ms):
