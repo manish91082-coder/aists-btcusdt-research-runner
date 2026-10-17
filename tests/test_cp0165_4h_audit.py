@@ -35,20 +35,20 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         self.assertTrue(named)
 
     def test_redirect_handler_blocks_untrusted_target_before_following(self):
-        from unittest.mock import Mock
         handler = AUDIT.OfficialChecksumRedirectHandler()
-        req = Mock()
-        req.full_url = "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/4h/BTCUSDT-4h-2017-08.zip.CHECKSUM"
+        req = AUDIT.urllib.request.Request(
+            "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/4h/BTCUSDT-4h-2017-08.zip.CHECKSUM"
+        )
         with self.assertRaises(AUDIT.urllib.error.HTTPError):
             handler.redirect_request(
                 req, None, 302, "Found", {}, "https://example.invalid/steal"
             )
 
     def test_redirect_handler_allows_only_official_https_object_path(self):
-        from unittest.mock import Mock
         handler = AUDIT.OfficialChecksumRedirectHandler()
-        req = Mock()
-        req.full_url = "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/4h/BTCUSDT-4h-2017-08.zip.CHECKSUM"
+        req = AUDIT.urllib.request.Request(
+            "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/4h/BTCUSDT-4h-2017-08.zip.CHECKSUM"
+        )
         result = handler.redirect_request(
             req, None, 302, "Found", {},
             "https://s3.amazonaws.com" + req.full_url.removeprefix("https://data.binance.vision")
