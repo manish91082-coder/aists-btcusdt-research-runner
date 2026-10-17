@@ -152,5 +152,5 @@ def run_research_entrypoint(
         # Re-hash after changing the persistence status, then serialize again.
         _hash_report(report)
         serialized = serialize_research_audit_report(report)
-        report["report_file_sha256"] = _persist_create_only(serialized, report_path)
+        _persist_create_only(serialized, report_path)
     return report
