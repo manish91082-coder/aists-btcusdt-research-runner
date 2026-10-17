@@ -104,3 +104,5 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_cp0208_synthetic_ledger_reconciliation.py' -v
       - name: Test CP-0209 synthetic gap-boundary verification
         run: python -m unittest discover -s tests -p 'test_cp0209_gap_boundary_verification.py' -v
+      - name: Test CP-0210 segment/censor contract oracle
+        run: python -m unittest discover -s tests -p 'test_cp0210_segment_censor_contract.py' -v

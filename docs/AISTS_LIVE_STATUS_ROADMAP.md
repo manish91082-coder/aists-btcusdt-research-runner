@@ -156,3 +156,12 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - No market archives, candidate builder, market-data backtest, synthetic candle insertion, hypothetical boundary exit, source adjudication, or policy application was performed. CP-0209 is boundary-regression evidence only.
 - Next: independently design and test an explicit segment/censor accounting contract before implementing any Policy B sensitivity scorer. Do not claim Policy B scoring is implemented or G0 is clear.
 - Current gates: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain FAIL; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
+
+
+## CP-0210: Segment/censor accounting contract and Decimal oracle
+
+- Added [CP-0210 Segment/Censor Accounting Contract](CP0210_Segment_Censor_Accounting_Contract.md). It defines gap-exposed episode censoring, isolated post-gap segment replay, scored versus diagnostic P&L, and the mandatory `BLOCKED_GAP_VALUATION_UNSCORABLE` result when full-window risk depends on an unobserved path.
+- Added `tests/test_cp0210_segment_censor_contract.py`: independent in-memory Decimal fixtures verify flat-to-flat segment P&L, separate excluded diagnostic P&L, exact CP-0206 population identity (17 unique keys: one row-case overlap and 16 gap-only), and guards that production policy application/G0 clearance remain blocked.
+- This is contract-level oracle evidence only, not a production scorer. CP-0027 still carries positions through gaps; Policy B has not been applied. No market data, candidate build, market backtest, source adjudication, case closure, or counterfactual boundary fill occurred.
+- Next: CP-0211 independent review of this contract against CP-0040/CP-0206. Only after a separate approval decision may a Policy B sensitivity-only scorer be considered.
+- Current state: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain FAIL; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
