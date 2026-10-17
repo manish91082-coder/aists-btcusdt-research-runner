@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest checkpoint: CP-0141 implemented; CI verified on commit `f73fd7e3246d648d85a54be19d2c6f41f6531cfc` (140 tests PASS)
+Latest checkpoint: CP-0142 implemented; exact-head CI passed on `9eb6fd94a210bc7976dd1dbafb0952e129c99f4a` (148 tests PASS; docs update triggers its own CI)
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -167,3 +167,9 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - The CSV entry point uses the existing provenance-gated loader. It cannot authenticate external adjudication; G0 remains BLOCKED_GLOBAL and no real historical run was performed.
 - Goal-direction review: this closes the strategy-to-artifact software integration gap, but does not unblock historical-source provenance or validate profitability. G2 remains FAIL for all 23 current candidates; all research gates remain unchanged.
 - Exact final branch/PR head and terminal CI/test count must be verified before calling CP-0142 complete. PR #2 remains OPEN and must not be merged.
+
+
+### CP-0142 exact-head CI verification
+- Implementation commit `9eb6fd94a210bc7976dd1dbafb0952e129c99f4a` passed GitHub Actions run [39021877488](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39021877488): terminal success, compile and test steps success, `Ran 148 tests in 0.180s`, `OK`.
+- At verification, branch and PR #2 head matched the implementation SHA; PR #2 remained OPEN and unmerged. This continuity-doc update creates a new head and triggers a new CI run, which must be verified separately.
+- Goal-direction decision: pause additional software scaffolding until a genuinely new admissible official evidence path for G0/source provenance is identified. Existing evidence already records 0 historical version-timeline links across 11 cases and the saved Binance issue #504 snapshot has no maintainer response; do not repeat that same search without a new signal. Do not fabricate G0 PASS, run real-market performance analysis, promote a candidate, or enable live controls.
