@@ -80,6 +80,14 @@ def build_research_audit_report(
         "status": ("BLOCKED_GATE" if g0 != "PASS" else
                    "SIMULATED_NOT_VALIDATED" if run_result is not None else "READY_NO_RUN"),
         "gate_snapshot": {key: gate_snapshot[key] for key in _REQUIRED_GATES},
+        "gate_evidence_authentication": {
+            "status": "NOT_AUTHENTICATED",
+            "scope": "SUPPLIED_GATE_SNAPSHOT",
+            "g0_classification": (
+                "SUPPLIED_PASS_CLAIM_NOT_AUTHENTICATED" if g0 == "PASS"
+                else "SUPPLIED_NONPASS_STATE"
+            ),
+        },
         "input_hashes": ({
             "candle_csv_sha256": run_result["data_input"].get("csv_sha256"),
             "data_manifest_sha256": run_result["data_input"].get("manifest_sha256"),
