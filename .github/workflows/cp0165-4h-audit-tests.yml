@@ -7,6 +7,7 @@ on:
       - 'scripts/aists_runner.py'
       - '.github/workflows/python-runner.yml'
       - '.github/workflows/cp0165-4h-audit-tests.yml'
+      - '.github/workflows/cp0165-4h-audit-execution.yml'
       - 'tests/test_cp0165_4h_audit.py'
   push:
     branches: [main]
@@ -15,6 +16,7 @@ on:
       - 'scripts/aists_runner.py'
       - '.github/workflows/python-runner.yml'
       - '.github/workflows/cp0165-4h-audit-tests.yml'
+      - '.github/workflows/cp0165-4h-audit-execution.yml'
       - 'tests/test_cp0165_4h_audit.py'
 
 permissions:
