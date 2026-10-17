@@ -104,3 +104,10 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - **No real historical feature run or performance backtest was performed.** Synthetic candles exist only inside software tests. Current G0 remains `BLOCKED_GLOBAL`; do not create a manifest claiming PASS to bypass it. No live signing, public broadcast, exchange orders, automatic SL/TP, or PR merge.
 - Next: inspect exact final HEAD and CI terminal logs; fix any failures before proceeding. Following a green gate, the next step is to persist deterministic feature artifacts with exact source hashes and connect the producer to the offline research harness without relaxing G0.
 
+## CP-0137 — Deterministic, create-only feature artifact persistence (2026-10-17)
+- Added `aists_brain/feature_artifact_store.py` to validate causal decision lineage before storage, serialize deterministically, record the exact source CSV hash, brain/strategy versions, timeframe and decision count, and bind the payload to SHA-256 metadata.
+- Persistence uses a same-directory temporary file, flush/fsync, and atomic create-only hard-link publication. Existing destination paths are rejected rather than overwritten. The store reloads the saved artifact and verifies its payload hash and causal lineage before reporting success.
+- Added five tests for round-trip persistence and hashes, refusal to overwrite, payload tampering, mismatched candle-close evidence, and rejecting already wrapped artifacts. CI compile list includes the store.
+- Hashes prove identity/integrity only, not source truth, independent archive provenance, or feature correctness. Synthetic candles are software test fixtures only.
+- G0 remains `BLOCKED_GLOBAL`; no real historical run, strategy performance claim, candidate promotion, live signing, public broadcast, exchange orders, automatic SL/TP, or PR merge.
+- Next: verify exact final branch SHA, CI terminal result and PR state; then integrate persisted artifacts into a reproducible offline harness entry point that still refuses to run unless the independent G0/provenance gate is genuinely cleared.
