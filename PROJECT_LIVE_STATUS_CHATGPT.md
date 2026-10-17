@@ -196,3 +196,10 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - Corrected preflight report includes CP-0155 addendum. No market-data candidate build/backtest was run; CP-0152 explicit approval remains pending.
 - Prior HEAD `af1da38f0aec95946211690940aed8d9c28002a4` exact-head CI run 39036029613 was SUCCESS. This documentation correction has a new SHA and must be checked at exact HEAD before claiming CI success.
 - Gates unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`.
+
+
+## CP-0156 — CP-0152 candidate-specific 4h exposure audit (2026-10-17)
+- CP-0155 exact-head CI run `39036179330` completed SUCCESS on `4de3fa6d8bdf03045bdd6a059c959cc69fc6230c`; PR #2 was OPEN/unmerged at that head before CP-0156.
+- Created `evidence/research_scopes/CP0156_CP0152_4H_Blocker_Exposure_Audit_HI.md`. Read-only crosswalk: the 11 unresolved relationship blockers involve 5m→15m, 15m→30m and 30m→1h; CP-0115 records 0 monthly-divergent keys on 4h. No direct interval overlap with the proposed 4h-only EMA20/EMA50/ATR signal inputs was identified.
+- This bounded result does NOT clear G0. Candidate-specific exact rows/hashes, production-path row application, archive coverage/gaps and INR→USDT, fees, lot-size/min-notional and capital allocation assumptions remain unverified. CP-0119 provenance remains blocked and 11 relationship cases remain open.
+- CP-0152 explicit approval remains pending. No market data read, no candidate build/backtest, no source case closed, no strategy promoted. Global G0 remains BLOCKED; G2 FAIL_CURRENT_23_CANDIDATES; G3 blocked; G4 insufficient; G6 not built; G7 live blocked.
