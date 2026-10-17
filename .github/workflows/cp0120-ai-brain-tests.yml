@@ -1,0 +1,28 @@
+name: CP-0120 AI Brain Unit Tests
+
+on:
+  push:
+    branches:
+      - cp-0120-ai-brain-foundation
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  market-context-unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile brain module
+        run: python -m py_compile aists_brain/market_context.py
+      - name: Run standard-library unit tests
+        run: python -m unittest discover -s tests -p 'test_market_context.py' -v
