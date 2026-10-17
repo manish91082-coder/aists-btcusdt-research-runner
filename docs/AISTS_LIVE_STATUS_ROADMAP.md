@@ -1,6 +1,6 @@
 # AISTS Live Status & Mission Roadmap
 
-Last verified checkpoint: **CP-0202 (source-code-only eligibility matrix; review pending)**  
+Last verified checkpoint: **CP-0203 (pinned fail-closed gap-policy gate; static CI PASS)**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
@@ -8,9 +8,9 @@ Current global gate: **G0 = BLOCKED_GLOBAL**
 ## Latest verified GitHub runs
 
 - Read-only execution pipeline through CP-0201: [run 39062577687](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062577687), completed successfully.
-- Latest static CI at the pre-CP-0202 branch head: [run 39062651557](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062651557), completed successfully on branch SHA `72fe22a06ef54be7969b16f44d485c3940eefc0c`.
+- CP-0203 static CI including the new gap-policy gate tests: [run 39063641701](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063641701), terminal `success` on tested SHA `c996807b8bffc247b991d9d82b45d20d02d425be`.
 - Latest execution evidence through CP-0201: [run 39062577687](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39062577687), completed successfully; execution commit `b6b16ab2da9111e4a44a67c5c6d091b46729b8d3`.
-- Note: static CI validates CP-0165 and CP-0192 through CP-0201 tests, but does not compile or invoke CP-0026/CP-0040 gate tests.
+- CP-0203 CI compiles CP-0026 and CP-0203 and runs seven CP-0203 gate tests; the separate CP-0040 gate test suite is still not wired into this workflow.
 - The PR remains open and unmerged; `main` remains at `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`.
 
 ## Verified findings
@@ -57,12 +57,9 @@ Current global gate: **G0 = BLOCKED_GLOBAL**
 - **16 gap-window-only items** do not have a row-level key in the inspected ledgers. They must remain gap-policy entries, not fabricated row cases.
 - No source case was closed; no quarantine was applied to the candidate builder. Crosswalk status: `PASS_EXACT_KEY_CROSSWALK_COMPLETE_G0_STILL_BLOCKED`.
 
-## Next bounded action: CP-0202
+## Historical checkpoint: CP-0202
 
-1. Inspect the existing CP-0026 candidate builder and its deterministic tests for exact-key exclusion, missing-bar/gap-window handling, and fail-closed behavior.
-2. Compare builder behavior against the frozen CP-0040 G0 rulebook and the existing 909 unmatched rows, 52 shared economic conflicts, 8 close-time-only cases, 450 February-2018 off-grid subset, and this 17-slot gap crosswalk. Do not double-count overlapping cases.
-3. Produce a source-code-only eligibility matrix: implemented / missing / not tested, with exact file and line references. No candidate build or backtest.
-4. Only after the matrix is reviewed should the next implementation step patch a fail-closed gate. The current quarantine recommendation remains unapplied.
+The source-code-only eligibility matrix is preserved in [docs/CP0202_Candidate_Builder_Eligibility_Matrix.md](CP0202_Candidate_Builder_Eligibility_Matrix.md). Its findings directly motivated CP-0203. No candidate build or backtest was run.
 
 ## Goal distance / gate status
 
@@ -89,3 +86,16 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - Checkpoint code changes: none. Source authority: `NONE`; G0: `BLOCKED_GLOBAL`; source cases closed: 0; strategy promotion: false; profitability: **NOT ESTABLISHED**.
 - Review boundary: matrix review precedes any CP-0026 gate implementation. Next bounded action after review: implement the minimal fail-closed gap-policy gate and regression tests; keep candidate build/backtest disabled.
 - Safety: live signing, broadcast, and exchange orders remain `BLOCKED`.
+
+
+## CP-0203: Pinned fail-closed gap-policy gate
+
+- Added `scripts/AISTS_CP0203_GapPolicy_Gate.py`; frozen CP-0200 recommendation SHA-256 is pinned to `e59c95764d4db76a8a707d07526d44b2b7e3487c534687584bd9936a5742b3bf`; CP-0201 crosswalk SHA-256 is pinned to `de8d829f405aa60f83e43744d4c281469fec6acb9bb99cfe6aa8823c8509be56`.
+- Gate checks required files, both exact CSV hashes, CP-0200/0201 summary identity/status/counts, all 17 exact 4h keys, one existing overlap (`UNMATCHED-D-4h-1504713600000`), and 16 gap-window-only items. It rejects source selection, case closure, duplicate rows, and any evidence claiming the recommendation was applied.
+- Integrated the gate into `scripts/AISTS_CP0026_Research_Candidate_Builder.py` before the existing row-level gate and before candidate output directory creation. Missing evidence, changed hashes, or still-unresolved gap policy block the candidate build.
+- Added `tests/test_cp0203_gap_policy_gate.py` and wired the module/builder compilation plus CP-0203 tests into the static workflow.
+- CI: [run 39063641701](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063641701) terminal `success`; compile step, all prior test steps, and CP-0203 fail-closed gate tests passed on tested SHA `c996807b8bffc247b991d9d82b45d20d02d425be`.
+- Scope boundary: gate tests use synthetic deterministic fixtures plus pinned constants; no candidate build/backtest was run and no source was promoted. The gate intentionally remains blocking even after evidence validation because the current frozen policy is only recommended, not applied.
+- Current branch commit for CP-0203 gate integration: `c996807b8bffc247b991d9d82b45d20d02d425be`; this roadmap update is a separate documentation commit and will receive its own CI run.
+- Next bounded action: inspect terminal CI for the roadmap update, then perform a source-only audit of whether an explicit, reviewable gap-window quarantine policy can be defined without inventing bars or choosing a canonical source. Keep G0 blocked until that policy is evidence-backed.
+- Safety: canonical source `NONE`; source cases closed: 0; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
