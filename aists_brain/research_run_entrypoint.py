@@ -112,12 +112,13 @@ def run_research_entrypoint(
         entrypoint.update({
             "status": "BLOCKED_INPUT",
             "blocked_reason": "REQUIRED_INPUT_MISSING_OR_REJECTED",
-            "input_artifacts_inspected": True,
+            "input_artifacts_inspected": False,
         })
         if (csv_path is None or manifest_path is None or stored_artifact_path is None
                 or not expected_interval or initial_cash_usdt is None):
             entrypoint["blocked_reason"] = "REQUIRED_INPUT_ARGUMENT_MISSING"
         else:
+            entrypoint["input_artifacts_inspected"] = True
             entrypoint["simulation_attempted"] = True
             try:
                 run_result = run_manifest_driven_simulation_from_stored_features(
@@ -142,6 +143,12 @@ def run_research_entrypoint(
         repository_head_sha=repository_head_sha,
     )
     report["entrypoint"] = entrypoint
+    if run_result is None and entrypoint["status"] == "BLOCKED_INPUT":
+        report["status"] = "BLOCKED_INPUT"
+        report["interpretation"] = (
+            "G0 is a supplied PASS claim, but required inputs were missing or rejected; "
+            "no simulation result is attached and gate evidence remains unauthenticated."
+        )
     _hash_report(report)
 
     # Serializer revalidates the final report hash. For G0 != PASS, no input
