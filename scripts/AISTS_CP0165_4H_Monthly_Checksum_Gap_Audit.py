@@ -64,8 +64,12 @@ class OfficialChecksumRedirectHandler(urllib.request.HTTPRedirectHandler):
         original=urlparse(req.full_url)
         target=urlparse(newurl)
         allowed_paths={original.path, "/data.binance.vision"+original.path}
+        is_s3_target=target.hostname in OFFICIAL_HOSTS and target.hostname!="data.binance.vision"
+        # Binance's official object store may use signed S3 query parameters.
+        # Permit them only on an allowlisted S3 host and exact expected object path.
+        query_invalid=bool(target.query) and not is_s3_target
         if (target.scheme!="https" or target.hostname not in OFFICIAL_HOSTS
-                or target.path not in allowed_paths or target.query or target.fragment):
+                or target.path not in allowed_paths or query_invalid or target.fragment):
             raise urllib.error.HTTPError(req.full_url, code, "Blocked non-allowlisted checksum redirect", headers, fp)
         return super().redirect_request(req,fp,code,msg,headers,newurl)
 
