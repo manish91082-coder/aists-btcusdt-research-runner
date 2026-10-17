@@ -244,7 +244,7 @@ def main():
         "source_gap_csv": str(gaps_path.relative_to(root)), "source_gap_csv_sha256": source_hash,
         "expected_4h_missing_slots": len(slots), "source_gap_events": len({(r["source_gap_previous_open_time_utc"], r["source_gap_next_open_time_utc"]) for r in slots}),
         "months_inspected": periods, "intervals_checked": ["5m", "1h"],
-        "expected_child_archives": len(periods) * 2, "cache_archives_missing": missing, "cache_archives_invalid_or_wrong_unit": invalid,
+        "expected_child_archives": len(periods) * 2, "cache_archives_missing": missing, "cache_archives_invalid_wrong_unit_or_off_grid": invalid,
         "child_archives_with_off_grid_or_duplicate_timestamps": sum(r["open_grid_status"] == "FAIL" for r in archive_rows),
         "child_archive_off_grid_rows": sum(int(r["off_grid_rows"] or 0) for r in archive_rows),
         "child_archive_duplicate_open_times": sum(int(r["duplicate_open_times"] or 0) for r in archive_rows),
@@ -290,7 +290,7 @@ def main():
         "- Network access, downloads, Binance REST, cache mutation, interpolation, backtests, candidate builds, and live actions are prohibited by this task."
     ]
     (out / "CP0192_Report_HI.md").write_text("\n".join(report) + "\n", encoding="utf-8")
-    print(json.dumps({k: summary[k] for k in ("status", "expected_4h_missing_slots", "expected_child_archives", "cache_archives_missing", "cache_archives_invalid_or_wrong_unit", "child_archives_with_off_grid_or_duplicate_timestamps", "child_archive_off_grid_rows", "child_archive_duplicate_open_times", "slots_with_complete_5m_coverage", "slots_with_complete_1h_coverage", "slots_with_complete_5m_and_1h_coverage", "slots_with_any_child_open_inside_missing_4h_windows", "network_used", "archive_downloads", "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
+    print(json.dumps({k: summary[k] for k in ("status", "expected_4h_missing_slots", "expected_child_archives", "cache_archives_missing", "cache_archives_invalid_wrong_unit_or_off_grid", "child_archives_with_off_grid_or_duplicate_timestamps", "child_archive_off_grid_rows", "child_archive_duplicate_open_times", "slots_with_complete_5m_coverage", "slots_with_complete_1h_coverage", "slots_with_complete_5m_and_1h_coverage", "slots_with_any_child_open_inside_missing_4h_windows", "network_used", "archive_downloads", "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
     return 0
 
 if __name__ == "__main__":
