@@ -27,6 +27,21 @@ class TestCP0165AuditHelpers(unittest.TestCase):
         self.assertEqual(hashes, [])
         self.assertTrue(named)
 
+    def test_checksum_parser_does_not_pair_hash_from_another_line(self):
+        digest = "a" * 64
+        text = f"{digest}  BTCUSDT-4h-2017-07.zip\\nBTCUSDT-4h-2017-08.zip"
+        hashes, named = AUDIT.parse_checksum(text, "BTCUSDT-4h-2017-08.zip")
+        self.assertEqual(hashes, [])
+        self.assertTrue(named)
+
+    def test_checksum_parser_rejects_hash_for_different_archive(self):
+        digest = "b" * 64
+        hashes, named = AUDIT.parse_checksum(
+            f"{digest}  BTCUSDT-4h-2017-07.zip", "BTCUSDT-4h-2017-08.zip"
+        )
+        self.assertEqual(hashes, [])
+        self.assertFalse(named)
+
 
     def test_runner_and_workflow_wiring_are_bounded(self):
         root = Path(__file__).resolve().parents[1]
