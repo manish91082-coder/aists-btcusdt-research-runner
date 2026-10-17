@@ -64,6 +64,18 @@ class AccountingReconciliationTests(unittest.TestCase):
         with self.assertRaisesRegex(ReconciliationError, "cumulative fees"):
             reconcile_simulation_with_ledger(self.sim, altered)
 
+    def test_action_side_mismatch_is_rejected(self):
+        altered = copy.deepcopy(self.sim)
+        altered["events"][0]["side"] = "SELL"
+        with self.assertRaisesRegex(ReconciliationError, "action/side mismatch"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
+    def test_order_instruction_flag_is_rejected(self):
+        altered = copy.deepcopy(self.sim)
+        altered["events"][0]["is_order_instruction"] = True
+        with self.assertRaisesRegex(ReconciliationError, "must not be an order instruction"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
     def test_matching_but_incorrect_event_and_ledger_fee_is_detected(self):
         altered_sim = copy.deepcopy(self.sim)
         altered_sim["events"][0]["fee_usdt"] += 0.01
