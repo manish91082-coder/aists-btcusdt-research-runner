@@ -129,3 +129,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Added tests for blocked-G0 no-input-access behavior, deterministic report hashes, create-only publication/no-overwrite, and incomplete gate snapshots. CI compilation includes the new runner.
 - No real BTCUSDT historical run was performed. G0 remains `BLOCKED_GLOBAL`; all 23 current strategy candidates remain G2 FAIL. Live signing, public broadcast, exchange orders, automatic SL/TP, candidate promotion and PR merge remain prohibited.
 - Next: inspect exact branch HEAD, wait for CI terminal result, verify test count and PR state. Do not claim historical performance or treat synthetic fixtures as market evidence.
+
+
+## CP-0140 — Independent audit-report integrity verifier (2026-10-17)
+- Added `aists_brain/research_report_verifier.py` to re-check canonical report SHA-256, schema, repository-head/run-ID bindings, gate/status consistency, safety-control values, and required input-hash shapes plus accounting/ledger statuses for simulated reports.
+- The verifier rejects any report that claims simulation while G0 is not exactly `PASS`, rejects weakened live-control fields, and can read a serialized report from disk while returning its exact file SHA-256.
+- Added six tests for valid blocked report verification, tampering, expected-head/run-ID mismatch, blocked-G0 simulation claim, safety-control weakening, and serialized-file verification. CI compilation includes the new verifier.
+- **Trust boundary:** `PASS_STRUCTURAL_INTEGRITY` means internal report structure and hashes are consistent only. It does not authenticate G0 or external adjudication, prove archive provenance, re-hash the original input files unless separately supplied, or demonstrate strategy profitability.
+- G0 remains `BLOCKED_GLOBAL`; G2 remains FAIL for all 23 current candidates. No real historical simulation or performance claim. Live signing, public broadcast, exchange orders, automatic SL/TP, candidate promotion and PR merge remain prohibited.
+- Next: inspect exact final branch/PR SHA and terminal CI logs; if green, continue with a bound run-manifest/evidence index that links the report, persisted feature artifact and exact inputs without relaxing G0.
