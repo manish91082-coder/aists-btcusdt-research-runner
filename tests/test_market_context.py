@@ -50,6 +50,15 @@ class MarketContextTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "invalid OHLC"):
             analyze_market_context(rows, "5m")
 
+    def test_rejects_zero_or_negative_ohlc_prices(self):
+        for field in ("open", "high", "low", "close"):
+            for invalid_price in (0.0, -1.0):
+                with self.subTest(field=field, invalid_price=invalid_price):
+                    rows = candles_from_closes([100, 101, 102])
+                    rows[1][field] = invalid_price
+                    with self.assertRaisesRegex(ValueError, "OHLC prices must be strictly positive"):
+                        analyze_market_context(rows, "5m")
+
     def test_rejects_unknown_timeframe(self):
         with self.assertRaisesRegex(ValueError, "unsupported timeframe"):
             analyze_market_context(candles_from_closes([100]), "2h")
