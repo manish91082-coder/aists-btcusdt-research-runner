@@ -188,3 +188,11 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - Created `evidence/research_scopes/CP0154_CP0152_Preflight_Readiness_HI.md` with prerequisite matrix. CP-0152 explicit approval remains pending; user message “next” is not treated as approval of exact candidate rules.
 - ₹10,000 INR→USDT basis, fee evidence, BTCUSDT lot-size/minimum notional and frozen allocation/cash reserve remain unverified/unfrozen. No candidate build or backtest run.
 - Gates unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`. Profitability `NOT_ESTABLISHED`.
+
+
+## CP-0155 — Correction to CP-0154 builder finding (2026-10-17)
+- **Correction:** CP-0154 incorrectly stated that current builder lacked row-level CP0107 exclusion. Direct source inspection shows generic exact-key manifest validation/exclusion is already integrated: `load_candidate_gate()` lines 135–180; `partition_candidate_rows()` 182–190; production gate load at 497; row exclusion in interval audit at 368; quarantined-row output at 536. CP-0040 integration report documents the same.
+- True blocker: the fail-closed gate stops while 11 non-row aggregation blockers remain and eligibility status is not `PASS_CANDIDATE_ELIGIBILITY_READY`. Thus no production candidate build has processed real market rows, and application of the current manifest to real input rows remains unproven.
+- Corrected preflight report includes CP-0155 addendum. No market-data candidate build/backtest was run; CP-0152 explicit approval remains pending.
+- Prior HEAD `af1da38f0aec95946211690940aed8d9c28002a4` exact-head CI run 39036029613 was SUCCESS. This documentation correction has a new SHA and must be checked at exact HEAD before claiming CI success.
+- Gates unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`.
