@@ -69,3 +69,11 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - **Trust boundary remains explicit:** PASS labels and source report hashes are not authenticated by this harness. It does not generate decisions, validate the decision producer's causal lineage, resolve historical archive-version provenance, or establish strategy profitability. Current project G0 remains BLOCKED_GLOBAL; therefore the real unresolved data must not be relabelled PASS merely to run this harness.
 - No real-market performance run, source-data mutation, gate relaxation, SL/TP addition or live exchange action occurred.
 - Next: verify the complete CI suite on exact final HEAD; then build independent accounting reconciliation for simulator events versus paper portfolio ledger before any accepted paper run.
+
+
+## CP-0133 — Independent simulator / paper-ledger reconciliation (2026-10-17)
+- Added `aists_brain/accounting_reconciliation.py` to recompute cash flows, BTC inventory, recorded fees and exit-cost-adjusted marked equity from the simulator's ordered fill events, then compare the independent arithmetic with both the simulator output and hash-verified paper ledger.
+- Reconciler checks event counts, decision IDs, fill timestamps, sides, quantities, prices, fees, notionals, no-short inventory, ending cash, BTC quantity, cumulative fees and mark-to-market arithmetic. Any mismatch raises a reconciliation error rather than being silently tolerated.
+- Added six tests for successful reconciliation and deliberate cash, event-ID/hash, fee, equity and event-count mismatches. CI compilation now includes the reconciler.
+- This is accounting consistency only. It does not authenticate source provenance, verify Binance fee terms, validate decisions, establish profitability, or make hypothetical fills real.
+- Next: run and inspect CI on exact final HEAD; if green, integrate the reconciler into the manifest-driven harness as an optional explicit check and preserve all current blocked research gates.
