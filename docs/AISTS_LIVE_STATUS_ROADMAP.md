@@ -1,6 +1,6 @@
 # AISTS Live Status & Mission Roadmap
 
-Last verified checkpoint: **CP-0204 (baseline backtest blocked by unresolved G0 gap policy; static CI PASS)**  
+Last verified checkpoint: **CP-0205 (conservative gap-window quarantine sensitivity contract drafted; G0 remains blocked)**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
@@ -111,3 +111,14 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - Latest tested code/test SHA: `65739d99d1c7599aaa9667688aff8e1a6412b49e`; terminal CI run `39063868131` passed. The earlier CP-0204 assertion-only test failure was corrected and rerun successfully. No candidate build, backtest, market-data download, source promotion, or live action occurred.
 - Safety and gate state remain: G0 `BLOCKED_GLOBAL`; canonical source `NONE`; source cases closed: 0; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
 - Next bounded action CP-0205: design and document the conservative gap-window sensitivity contract at source level: define which signal/position/valuation episodes are considered gap-affected, what is excluded from scored metrics, how excluded P&L is reported, and how to avoid fabricating a fill or claiming a drawdown bound that the data cannot support. Do not implement the performance policy or run a backtest until the contract is internally consistent with the frozen rulebook.
+
+
+## CP-0205: Conservative gap-window quarantine sensitivity contract
+
+- Contract: [docs/CP0205_Conservative_Gap_Window_Quarantine_Sensitivity_Contract.md](CP0205_Conservative_Gap_Window_Quarantine_Sensitivity_Contract.md).
+- Source-only review confirms CP-0027 resets indicators and skips pending fills at non-contiguous boundaries, but carries existing exposure across a gap and marks equity at the next observed close. That endpoint does not establish the intragap path or a maximum-drawdown bound.
+- Recommended primary sensitivity: Policy B, segment quarantine/censor gap-exposed position episodes without fabricating a candle or exit fill. Keep any affected full-period risk acceptance blocked/unscorable until the treatment is formally frozen and validated. Existing carry-through-gap behavior remains diagnostic only; hypothetical boundary closeout is optional counterfactual only.
+- The 17-item population remains 1 existing row-case overlap plus 16 gap-window-only items. No new row cases, source decisions, code changes, candidate build, or backtest were made in CP-0205.
+- Latest code/test CI remains [run 39063868131](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39063868131), terminal `success` on code/test SHA `65739d99d1c7599aaa9667688aff8e1a6412b49e`. This validates CP-0204 code/tests, not the CP-0205 documentation-only contract.
+- Current safety state: G0 `BLOCKED_GLOBAL`; canonical source `NONE`; source cases closed: 0; strategy promotion false; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
+- Next bounded action: internally review the contract against CP-0040 G0/G1/G3 requirements, then freeze an append-only, hash-pinned policy artifact and regression fixtures. Do not build a sensitivity runner or run candidate/backtest performance until the accounting implications are independently tested.
