@@ -67,8 +67,8 @@ class MultiTimeframeTests(unittest.TestCase):
 
 class CausalVolatilityTests(unittest.TestCase):
     def test_percentile_uses_only_prior_values(self):
-        self.assertEqual(causal_atr_percentile(4.0, [1, 2, 3]), 100.0)
-        self.assertEqual(causal_atr_percentile(2.0, [1, 2, 3]), 66.66666666666666)
+        self.assertEqual(causal_atr_percentile(4.0, [1, 2, 3], min_observations=3, lookback=3), 100.0)
+        self.assertEqual(causal_atr_percentile(2.0, [1, 2, 3], min_observations=3, lookback=3), 66.66666666666666)
 
     def test_insufficient_history_returns_none(self):
         self.assertIsNone(causal_atr_percentile(1.0, [0.5, 0.8], min_observations=3, lookback=5))
