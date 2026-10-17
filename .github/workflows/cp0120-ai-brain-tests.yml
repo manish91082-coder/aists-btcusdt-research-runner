@@ -23,6 +23,6 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile brain modules
-        run: python -m py_compile aists_brain/market_context.py aists_brain/market_regime.py aists_brain/strategy_candidates.py aists_brain/multi_timeframe.py aists_brain/causal_volatility.py aists_brain/multi_timeframe_selector.py aists_brain/historical_replay.py aists_brain/capital_risk.py aists_brain/paper_portfolio.py aists_brain/cost_aware_simulator.py aists_brain/provenance_input.py aists_brain/research_harness.py aists_brain/accounting_reconciliation.py aists_brain/research_audit_report.py
+        run: python -m py_compile aists_brain/market_context.py aists_brain/market_regime.py aists_brain/strategy_candidates.py aists_brain/multi_timeframe.py aists_brain/causal_volatility.py aists_brain/multi_timeframe_selector.py aists_brain/historical_replay.py aists_brain/capital_risk.py aists_brain/paper_portfolio.py aists_brain/cost_aware_simulator.py aists_brain/provenance_input.py aists_brain/research_harness.py aists_brain/accounting_reconciliation.py aists_brain/research_audit_report.py aists_brain/decision_lineage.py
       - name: Run brain unit tests
         run: python -m unittest discover -s tests -p 'test_market_*.py' -v
