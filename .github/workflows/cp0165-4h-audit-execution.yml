@@ -9,6 +9,7 @@ on:
       - 'scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py'
       - 'scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py'
       - 'scripts/AISTS_CP0198_DailyReference_4H_ExactKey_Audit.py'
+      - 'scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py'
       - 'evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv'
 
 permissions:
@@ -61,6 +62,13 @@ jobs:
             --archive-inventory evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv \
             --daily-cache .cache/aists/binance-daily-references \
             --output-dir results/cp0198_daily_reference_4h_exact_key_audit
+          python scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py \
+            --exact-key-matrix results/cp0198_daily_reference_4h_exact_key_audit/CP0198_DailyReference_4H_ExactKey_Matrix.csv \
+            --monthly-audit-details results/cp0165_4h_archive_audit/CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv \
+            --archive-inventory evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv \
+            --monthly-cache .cache/aists/binance-monthly-archives \
+            --daily-cache .cache/aists/binance-daily-references \
+            --output-dir results/cp0199_exact_key_source_conflict_probe
           python scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py \
             --triage-csv results/cp0192_cross_interval_gap_triage/CP0192_Cross_Interval_Gap_Triage.csv \
             --prior-evidence-dir evidence/source_adjudication/CP0107_Run_38777979719 \
@@ -75,5 +83,6 @@ jobs:
             results/cp0192_cross_interval_gap_triage/
             results/cp0197_feb2018_evidence_linkage/
             results/cp0198_daily_reference_4h_exact_key_audit/
+            results/cp0199_exact_key_source_conflict_probe/
           if-no-files-found: warn
           retention-days: 30
