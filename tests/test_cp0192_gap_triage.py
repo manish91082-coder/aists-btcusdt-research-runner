@@ -50,6 +50,20 @@ class TestCP0192CacheOnlyTriage(unittest.TestCase):
             with self.assertRaises(ValueError):
                 TRIAGE.read_gap_slots(path)
 
+    def test_boundary_evidence_counts_missing_child_intervals(self):
+        interval_us = TRIAGE.INTERVAL_US["5m"]
+        window_us = TRIAGE.INTERVAL_US["4h"]
+        start_us = 1518062400000000
+        opens = {
+            start_us - interval_us,
+            start_us + window_us + interval_us,
+        }
+        result = TRIAGE.boundary_evidence(opens, start_us, interval_us, window_us)
+        self.assertEqual(result["missing_intervals_between_boundaries"], 49)
+        self.assertEqual(result["boundary_gap_class"], "MULTIPLE_OF_INTERVAL")
+        self.assertTrue(result["previous_open_time_utc"])
+        self.assertTrue(result["next_open_time_utc"])
+
     def test_cache_path_is_exact_and_interval_scoped(self):
         root = Path("/cache/monthly")
         self.assertEqual(
