@@ -131,6 +131,22 @@ def verify_research_audit_report(
     elif status == "BLOCKED_INPUT":
         if run is not None or input_hashes != {}:
             raise ResearchReportVerificationError("BLOCKED_INPUT report must not contain run/input hashes")
+        blocked_entrypoint = report.get("entrypoint")
+        if not isinstance(blocked_entrypoint, Mapping):
+            raise ResearchReportVerificationError("BLOCKED_INPUT report requires an entrypoint section")
+        if blocked_entrypoint.get("status") != "BLOCKED_INPUT":
+            raise ResearchReportVerificationError("BLOCKED_INPUT report requires matching entrypoint status")
+        reason = blocked_entrypoint.get("blocked_reason")
+        if not isinstance(reason, str) or not reason.strip():
+            raise ResearchReportVerificationError("BLOCKED_INPUT entrypoint requires a blocked reason")
+        attempted = blocked_entrypoint.get("simulation_attempted")
+        inspected = blocked_entrypoint.get("input_artifacts_inspected")
+        if not isinstance(attempted, bool) or not isinstance(inspected, bool):
+            raise ResearchReportVerificationError("BLOCKED_INPUT entrypoint inspection flags must be boolean")
+        if attempted and not inspected:
+            raise ResearchReportVerificationError("simulation attempted without input-artifact inspection")
+        if not attempted and (inspected or reason != "REQUIRED_INPUT_ARGUMENT_MISSING"):
+            raise ResearchReportVerificationError("missing-argument BLOCKED_INPUT telemetry mismatch")
     elif status == "READY_NO_RUN":
         if run is not None or not isinstance(input_hashes, Mapping) or input_hashes:
             raise ResearchReportVerificationError("READY_NO_RUN report must not contain run/input hashes")
