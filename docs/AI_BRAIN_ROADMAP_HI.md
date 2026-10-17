@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest checkpoint: CP-0127
+Latest checkpoint: CP-0128
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -30,7 +30,8 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - **Implemented CP-0123/CP-0124 (CI verification pending):** `aists_brain/multi_timeframe.py` joins all eight supported timeframes without filling missing frames; any missing/limited frame forces a non-trade readiness state. `aists_brain/causal_volatility.py` ranks current ATR% only against prior observations and returns unavailable when history is insufficient. These modules require upstream completed-candle, gap and provenance validation.
 - **Implemented CP-0125 (CI verification pending):** `aists_brain/multi_timeframe_selector.py` requires a ready eight-timeframe snapshot, bullish directional alignment, complete candidate evaluations, and at least three timeframes agreeing on one strategy family. It abstains on missing evidence, conflict or weak confirmation. Output remains a research candidate, not an order.
 - **Implemented CP-0126 (CI verified on prior head):** `aists_brain/historical_replay.py` replays timestamped, precomputed snapshots only when the caller supplies an explicit provenance PASS and a source manifest containing SHA-256 values. It enforces increasing decision timestamps and rejects snapshots timestamped after the decision. It deliberately reports `REPLAYED_NO_PNL`; it is not a market-data loader or profitability backtest. The caller-supplied provenance gate is not independently adjudicated by this module.
-- **Implemented CP-0127 (CI pending):** `aists_brain/capital_risk.py` calculates planning-only USDT conversion, allocation/position caps, and simple round-trip fee/slippage sensitivity. FX, fee, slippage, allocation and BNB-discount values are explicit assumptions, not live verified terms. It adds no automatic SL/TP and emits no order instruction.
+- **Implemented CP-0127 (CI verified on prior head):** `aists_brain/capital_risk.py` calculates planning-only USDT conversion, allocation/position caps, and simple round-trip fee/slippage sensitivity. FX, fee, slippage, allocation and BNB-discount values are explicit assumptions, not live verified terms. It adds no automatic SL/TP and emits no order instruction.
+- **Implemented CP-0128 (CI pending):** `aists_brain/paper_portfolio.py` tracks caller-supplied simulated Spot fills in an in-memory event journal. It chains event hashes, accounts for cash, BTC inventory, average-cost realized P&L and recorded fees, and rejects overspending, shorting, duplicate decision IDs, bad timestamps and tampering. Prices and fills are supplied by the caller; it does not fetch market data or submit orders. Durable persistence is not implemented yet.
 - **NOT DONE:** source-gate adjudication, integration with verified historical candle files, fill-based fee/slippage portfolio backtest, trained/adaptive AI, verified account fee tier, paper acceptance, live readiness.
 - **Last known research gates:** G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. Code milestones do not override these gates.
 - Historical source-provenance blockers remain open. Independent brain modules can be developed and unit-tested, but historical performance claims remain blocked until applicable data gates pass.
@@ -39,4 +40,4 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - CP-0119 was inspected from the current repository tree: `BLOCKED_INPUTS_NOT_REPRODUCIBLE`; 11/11 aggregation blockers remain open, 0 source cases closed, no canonical source selected. Current daily/monthly archive identities are recorded, but historical version timeline links established = 0. Binance issue #504 remained open with zero comments in the recorded snapshot; no maintainer answer was observed.
 - This is an evidence gap, not proof that historical versions do not exist. No production candidate build, backtest, strategy promotion or data repair was performed as part of this inspection.
 - Keep G0 `BLOCKED_GLOBAL`, G2 `FAIL_CURRENT_23_CANDIDATES`, G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`, G4 `INSUFFICIENT_EVIDENCE`, G6 `NOT_BUILT`, and G7 `LIVE_BLOCKED` until their own evidence gates change.
-- Next: verify CP-0127 Actions CI, then connect the capital plan only to a future paper ledger after data and cost inputs are independently verified. Do not claim profitability from sizing math or unit tests.
+- Next: verify CP-0128 Actions CI. If green, link decisions to ledger events and add durable export. Paper fills remain hypothetical; unresolved historical source gates still block historical performance claims.
