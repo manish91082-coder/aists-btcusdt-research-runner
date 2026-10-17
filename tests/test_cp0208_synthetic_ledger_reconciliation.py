@@ -81,7 +81,8 @@ class TestCP0208SyntheticLedgerReconciliation(unittest.TestCase):
             "ema_slow": [1.0, 2.0, 1.0, 1.0],
             "rsi14": [50.0]*4, "prior_high20": [float("nan")]*4,
             "prior_low10": [float("nan")]*4,
-            "contiguous": [False, True, True, True],
+            # This fixture begins inside a contiguous segment; the signal at row 0 is valid.
+            "contiguous": [True, True, True, True],
         })
 
     def test_every_ledger_event_matches_independent_decimal_oracle(self):
