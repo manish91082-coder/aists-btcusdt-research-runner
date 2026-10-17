@@ -36,7 +36,9 @@ class MarketRegimeTests(unittest.TestCase):
         self.assertEqual(result["regime"], "TRENDING_BEARISH")
 
     def test_range_when_trend_and_momentum_conflict(self):
-        result = classify_market_regime(context(momentum_10_bar_pct=-0.2))
+        result = classify_market_regime(context(
+            latest_close=108.0, momentum_10_bar_pct=-0.2
+        ))
         self.assertEqual(result["regime"], "RANGE_OR_MIXED")
 
     def test_insufficient_history_abstains(self):
