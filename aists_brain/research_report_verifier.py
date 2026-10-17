@@ -70,6 +70,21 @@ def verify_research_audit_report(
         for key in _REQUIRED_GATES
     ):
         raise ResearchReportVerificationError("missing or invalid gate snapshot")
+    authentication = report.get("gate_evidence_authentication")
+    expected_g0_classification = (
+        "SUPPLIED_PASS_CLAIM_NOT_AUTHENTICATED" if gates["G0"] == "PASS"
+        else "SUPPLIED_NONPASS_STATE"
+    )
+    if (
+        not isinstance(authentication, Mapping)
+        or authentication.get("status") != "NOT_AUTHENTICATED"
+        or authentication.get("scope") != "SUPPLIED_GATE_SNAPSHOT"
+        or authentication.get("g0_classification") != expected_g0_classification
+    ):
+        raise ResearchReportVerificationError(
+            "gate evidence authentication must remain explicitly NOT_AUTHENTICATED"
+        )
+
     controls = report.get("controls")
     if not isinstance(controls, Mapping) or any(
         controls.get(key) != value for key, value in _REQUIRED_CONTROLS.items()
