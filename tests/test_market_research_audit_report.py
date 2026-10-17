@@ -34,6 +34,7 @@ def sample_run():
         },
         "simulation": {
             "status": "SIMULATED_NOT_VALIDATED", "event_count": 0,
+            "closed_round_trip_count": 0, "closed_round_trips": [],
             "events": [], "skipped_decisions": [
                 {"decision_id": "d-gap", "reason": "NO_NEXT_CONTIGUOUS_BAR", "is_order_instruction": False}
             ],
