@@ -84,7 +84,8 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - CP-0200/0201 reconciliation: 16 unresolved missing-key gap windows and one unresolved placeholder conflict; one exact-key overlap links to existing case `UNMATCHED-D-4h-1504713600000`; no duplicate case created.
 - Code inspection: CP-0026 exact-key row quarantine exists, but its gate only checks the manifest SHA against the accompanying mutable summary and does not consume CP-0200/0201 gap-policy evidence. Gap events are recorded, not independently enforced as a candidate-eligibility policy. CP-0026/CP-0040 gate tests are not wired into current static CI.
 - Decision: no candidate build or backtest. Preserve the current fail-closed behavior and all 11 non-row blockers. The 17-item gap policy must be integrated into a pinned, tested eligibility gate before any future candidate build.
-- Files changed in CP-0202: `docs/CP0202_Candidate_Builder_Eligibility_Matrix.md`; this roadmap entry.
+- Files changed in CP-0202: `docs/CP0202_Candidate_Builder_Eligibility_Matrix.md` (file commit `fae7dfc8538182def93eae0396a71076848e47a0`); roadmap checkpoint entry first recorded in commit `0ecbe8524b43cf852c71eb4bc4eb26c5d00d5627`.
+- Verification boundary: GitHub API confirms no new Actions run was created for the documentation-only commits; latest observed static CI remains run `39062651557` on the pre-CP-0202 SHA. Do not report that CI validated the CP-0202 documentation commit.
 - Checkpoint code changes: none. Source authority: `NONE`; G0: `BLOCKED_GLOBAL`; source cases closed: 0; strategy promotion: false; profitability: **NOT ESTABLISHED**.
 - Review boundary: matrix review precedes any CP-0026 gate implementation. Next bounded action after review: implement the minimal fail-closed gap-policy gate and regression tests; keep candidate build/backtest disabled.
 - Safety: live signing, broadcast, and exchange orders remain `BLOCKED`.
