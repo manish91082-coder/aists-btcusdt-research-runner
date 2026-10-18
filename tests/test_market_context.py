@@ -50,6 +50,12 @@ class MarketContextTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "must be numeric"):
             analyze_market_context(rows, "5m")
 
+    def test_rejects_partially_missing_open_timestamps(self):
+        rows = candles_from_closes([100, 101, 102])
+        del rows[1]["open_time_ms"]
+        with self.assertRaisesRegex(ValueError, "supplied for every candle or none"):
+            analyze_market_context(rows, "5m")
+
     def test_rejects_fractional_open_timestamps(self):
         rows = candles_from_closes([100, 101, 102])
         rows[1]["open_time_ms"] += 0.5
