@@ -91,6 +91,34 @@ class TestCP0249ConsecutiveRoundTripReconciliation(unittest.TestCase):
             "contiguous": [True] * 6,
         })
 
+    def test_higher_fees_or_slippage_never_improve_final_equity(self):
+        results = {}
+        for fee_bps in (10.0, 15.0, 20.0):
+            for slippage_bps in (5.0, 10.0, 20.0):
+                result = simulate_strategy(
+                    self.frame, "4h", 0, 6, "EMA_12_26",
+                    fee_bps, slippage_bps,
+                )
+                self.assertEqual(result["status"], "OK")
+                results[(fee_bps, slippage_bps)] = D(str(result["final_equity"]))
+
+        for fee_bps in (10.0, 15.0):
+            for slippage_bps in (5.0, 10.0, 20.0):
+                self.assertLessEqual(
+                    results[(fee_bps + 5.0, slippage_bps)],
+                    results[(fee_bps, slippage_bps)],
+                    f"higher fee improved equity at slippage={slippage_bps}",
+                )
+        for fee_bps in (10.0, 15.0, 20.0):
+            self.assertLessEqual(
+                results[(fee_bps, 10.0)], results[(fee_bps, 5.0)],
+                f"higher slippage improved equity at fee={fee_bps}",
+            )
+            self.assertLessEqual(
+                results[(fee_bps, 20.0)], results[(fee_bps, 10.0)],
+                f"higher slippage improved equity at fee={fee_bps}",
+            )
+
     def test_three_consecutive_round_trips_match_independent_decimal_totals(self):
         got = simulate_strategy(
             self.frame, "4h", 0, 6, "EMA_12_26", 10.0, 5.0,
