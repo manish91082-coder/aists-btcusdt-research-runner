@@ -20,6 +20,8 @@ def causal_atr_percentile(
     """
     if min_observations < 1 or lookback < min_observations:
         raise ValueError("lookback must be >= min_observations >= 1")
+    if isinstance(current_value, bool) or any(isinstance(value, bool) for value in prior_values):
+        raise ValueError("ATR-percent values must be numeric, not boolean")
     try:
         current = float(current_value)
         history = [float(value) for value in prior_values]
