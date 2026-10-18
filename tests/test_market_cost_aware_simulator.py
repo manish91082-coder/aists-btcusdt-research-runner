@@ -42,6 +42,31 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertFalse(result["events"][0]["is_order_instruction"])
         self.assertFalse(result["events"][1]["is_order_instruction"])
 
+    def test_closed_round_trip_ids_and_net_pnl_reconcile_with_sell_event(self):
+        result = simulate_next_open(
+            bars([100, 110, 120]),
+            [
+                {"decision_id": "entry-a", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "exit-a", "as_of_ms": 1999, "action": "SELL_CANDIDATE"},
+            ],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+        )
+
+        self.assertEqual(result["closed_round_trip_count"], 1)
+        trip = result["closed_round_trips"][0]
+        buy_event, sell_event = result["events"]
+        self.assertEqual(trip["entry_decision_id"], buy_event["decision_id"])
+        self.assertEqual(trip["exit_decision_id"], sell_event["decision_id"])
+        self.assertEqual(trip["exit_decision_id"], "exit-a")
+        self.assertAlmostEqual(trip["net_pnl_usdt"], sell_event["realized_net_pnl_usdt"])
+        self.assertAlmostEqual(trip["net_pnl_usdt"], 500 * (120 / 110 - 1))
+        self.assertAlmostEqual(result["cash_usdt"], 1000 + trip["net_pnl_usdt"])
+        self.assertAlmostEqual(result["btc_quantity"], 0.0)
+
     def test_gap_does_not_get_filled_by_later_bar(self):
         candles = bars([100, 130], opens=[0, 2000])
         result = simulate_next_open(
