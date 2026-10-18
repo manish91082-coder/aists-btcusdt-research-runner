@@ -39,7 +39,7 @@ class TestCP0228RuntimeBacktestGate(unittest.TestCase):
             self.assertIn("G0_BLOCKED_GAP_POLICY_FILE_MISSING", output)
             self.assertFalse((data_root / "reports").exists())
             self.assertFalse(
-                data_root / "derived" / "research_candidate_v1" / "BTCUSDT" / "backtest_cp0027"
+                (data_root / "derived" / "research_candidate_v1" / "BTCUSDT" / "backtest_cp0027").exists()
             )
 
     def test_runtime_test_does_not_use_network_or_market_archives(self):
