@@ -15,6 +15,14 @@ class CausalVolatilityTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "not boolean"):
             causal_atr_percentile(1.5, [1.0, False], min_observations=2, lookback=2)
 
+    def test_rejects_numeric_string_current_value(self):
+        with self.assertRaisesRegex(ValueError, "must be numeric"):
+            causal_atr_percentile("1.5", [1.0, 2.0], min_observations=2, lookback=2)
+
+    def test_rejects_numeric_string_in_history(self):
+        with self.assertRaisesRegex(ValueError, "must be numeric"):
+            causal_atr_percentile(1.5, [1.0, "2.0"], min_observations=2, lookback=2)
+
     def test_current_value_is_not_in_its_own_reference_history(self):
         result = causal_atr_percentile_series(
             [1.0, 2.0, 3.0], min_observations=2, lookback=2
