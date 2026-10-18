@@ -109,7 +109,15 @@ class ResearchHarnessTests(unittest.TestCase):
             self.csv_path, self.manifest_path, self.decisions_path,
             expected_interval="5m", initial_cash_usdt=100.0,
             allocation_fraction=0.25, fee_bps_per_side=10, slippage_bps_per_side=5,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5},
         )
+
+    def test_missing_symbol_filters_fail_closed_before_data_access(self):
+        with self.assertRaisesRegex(ResearchHarnessError, "verified symbol_filters are required"):
+            run_manifest_driven_simulation(
+                self.csv_path, self.manifest_path, self.decisions_path,
+                expected_interval="5m", initial_cash_usdt=100.0,
+            )
 
     def test_valid_bound_inputs_run_offline_simulation(self):
         result = self.run_harness()
@@ -118,6 +126,8 @@ class ResearchHarnessTests(unittest.TestCase):
         self.assertEqual(result["decision_input"]["brain_version"], "test-brain-v1")
         self.assertEqual(result["decision_input"]["causal_lineage_status"], "PASS_CAUSAL_CONTRACT")
         self.assertEqual(result["simulation"]["closed_round_trip_count"], 1)
+        self.assertTrue(result["simulation"]["exchange_filters_applied"])
+        self.assertEqual(result["simulation"]["exchange_filters"]["min_notional"], 5.0)
         self.assertEqual(result["accounting_reconciliation"]["status"], "PASS_ACCOUNTING_RECONCILIATION")
         self.assertEqual(result["paper_ledger_integrity"]["status"], "PASS_HASH_CHAIN")
         self.assertFalse(result["simulation"]["events"][0]["is_order_instruction"])
