@@ -114,5 +114,34 @@ class ResearchAuditReportTests(unittest.TestCase):
             )
 
 
+    def test_simulation_event_count_mismatch_is_rejected(self):
+        altered = sample_run()
+        altered["simulation"]["event_count"] = 1
+        with self.assertRaisesRegex(AuditReportError, "event_count does not match"):
+            build_research_audit_report(
+                gate_snapshot=GATES_READY, run_result=altered,
+                run_id="bad-event-count", repository_head_sha=HEAD,
+            )
+
+    def test_simulation_round_trip_count_mismatch_is_rejected(self):
+        altered = sample_run()
+        altered["simulation"]["closed_round_trip_count"] = 1
+        with self.assertRaisesRegex(AuditReportError, "closed_round_trip_count does not match"):
+            build_research_audit_report(
+                gate_snapshot=GATES_READY, run_result=altered,
+                run_id="bad-round-trip-count", repository_head_sha=HEAD,
+            )
+
+    def test_skipped_decision_cannot_be_order_instruction(self):
+        altered = sample_run()
+        altered["simulation"]["skipped_decisions"][0]["is_order_instruction"] = True
+        with self.assertRaisesRegex(AuditReportError, "non-order-instruction"):
+            build_research_audit_report(
+                gate_snapshot=GATES_READY, run_result=altered,
+                run_id="bad-skipped-decision", repository_head_sha=HEAD,
+            )
+
+
+
 if __name__ == "__main__":
     unittest.main()
