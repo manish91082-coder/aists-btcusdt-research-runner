@@ -329,3 +329,15 @@ Recorded: 2026-10-18. Append-only continuity entry.
 - Decision: `CP0231_CI_PASS_OFFICIAL_README_INSUFFICIENT_FOR_POINT_IN_TIME_PROVENANCE`. This documentation narrows what can be claimed but does not close the provenance gap or authorize Policy B.
 - Global gates unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; source cases closed `0`; all 23 historical candidates remain FAIL; candidate build/backtest blocked; profitability **NOT ESTABLISHED**; live signing/broadcast/orders **BLOCKED**.
 - Next action: only genuinely new official point-in-time provenance evidence or an authorized independent review plus separate scoped application record can change the gate. No repeated cache/checksum scan, candidate backtest, source-case closure, Policy B application, strategy promotion, or live action.
+
+
+## CP-0232: CP-0231 exact-HEAD CI terminal success reconciled
+
+Recorded: 2026-10-18. Append-only continuity entry; previous checkpoints are preserved.
+
+- GitHub Actions run [39111303512](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39111303512) reached terminal `success` on exact source SHA `455e7d44f75d3f063eccb60b3a998f3cfb91f293`. The `static-audit-tests` job and all listed steps completed successfully, including compile, bounded audit helpers, cache-only gap triage, prior-evidence linkage, daily-reference exact-key audit, conflict probe, frozen-rulebook disposition, gap/quarantine crosswalk, fail-closed gates, accounting/censor oracles, and CP-0228 runtime fail-closed tests.
+- Repository reconciliation immediately before this entry: feature branch HEAD `455e7d44f75d3f063eccb60b3a998f3cfb91f293`; `main` remains `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`; PR #3 remains OPEN and UNMERGED. No merge or main mutation was performed.
+- Rechecked official upstream [Binance Public Data issue #504](https://github.com/binance/binance-public-data/issues/504): still OPEN, 0 comments, last updated `2026-09-27T18:20:58Z`. No maintainer response or new provenance evidence is present; silence is not interpreted as approval.
+- Decision: `CP0232_CI_PASS_PROVENANCE_BLOCKER_UNCHANGED`. This CI result verifies repository tests and fail-closed controls only; it does not establish historical point-in-time provenance, authorize Policy B, close source cases, or establish strategy profitability.
+- Global gates remain unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; source cases closed `0`; all 23 historical candidates remain FAIL; candidate build/backtest blocked; profitability **NOT ESTABLISHED**; live signing/broadcast/orders **BLOCKED**.
+- Next admissible step: seek genuinely new official point-in-time provenance evidence or authorized independent review with a separate, scoped application record. Do not repeat exhausted checksum/cache scans, post on another party's issue, infer approval, apply Policy B, close source cases, run candidate market backtests, promote a strategy, or enable live actions without required evidence and authority.
