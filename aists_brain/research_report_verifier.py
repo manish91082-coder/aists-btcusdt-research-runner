@@ -172,6 +172,8 @@ def verify_research_audit_report(
             raise ResearchReportVerificationError("entrypoint contradicts blocked-G0 fail-closed policy")
         if entrypoint.get("status") == "SIMULATED_NOT_VALIDATED" and status != "SIMULATED_NOT_VALIDATED":
             raise ResearchReportVerificationError("entrypoint/run status mismatch")
+        if status == "SIMULATED_NOT_VALIDATED" and entrypoint.get("status") != "SIMULATED_NOT_VALIDATED":
+            raise ResearchReportVerificationError("simulated report requires matching entrypoint status")
         if entrypoint.get("status") == "BLOCKED_INPUT" and status != "BLOCKED_INPUT":
             raise ResearchReportVerificationError("entrypoint/report blocked-input status mismatch")
         if entrypoint.get("simulation_attempted") is True and entrypoint.get("input_artifacts_inspected") is not True:
