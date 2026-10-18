@@ -225,3 +225,13 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - Pins 10 evidence files from CP-0215 source revision `03ea280d0140aebeefc7c7283081f5f2d62c976e`; records SHA-256 and Git blob SHA-1.
 - Baseline CI `39101201330` succeeded on CP-0215 source only. Final-head CP-0216 CI verification is pending.
 - G0 remains `BLOCKED_GLOBAL`; canonical source `NONE`; source cases closed `0`; no independent approval/application; no candidate build/backtest; profitability **NOT ESTABLISHED**.
+
+## CP-0217: Correct CP-0216 final-head CI status and reviewer handoff boundary
+
+- CP-0216 roadmap text said final-head CI verification was pending. That status is superseded by the completed verification recorded here: GitHub Actions run [39101594045](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39101594045) reached terminal `success` on exact branch HEAD `6bc41a707a9ce9796c102b24327b89425fca4548`; all 20 substantive test/compile steps completed successfully. This is static/synthetic validation only, not production Policy B scoring or profitability evidence.
+- Reconciled repository state at checkpoint start: PR #3 is OPEN and UNMERGED, base `main` SHA `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`, head branch `cp-0165-4h-archive-audit` at `6bc41a707a9ce9796c102b24327b89425fca4548`. No PR reviews or issue comments were found.
+- CP-0216 manifest and detached SHA-256 receipt remain the evidence-integrity packet; CP-0212 approval/application checklist and CP-0215 residual-gap matrix remain the review scope. Do not interpret a successful CI run or manifest verification as independent approval.
+- Required external dependency: an actually authorized independent reviewer must inspect the pinned evidence and record identity/authority, timestamp, exact reviewed SHA, evidence verification, decision, scope/conditions, and limitations. A separate scoped Policy B application record is required afterward. No reviewer identity was available to request or invent here.
+- Decision: `CP0217_RECONCILED_FINAL_HEAD_CI_STATUS_REVIEWER_AUTHORIZATION_STILL_BLOCKING`.
+- No production scorer implementation/application, candidate build, market-data backtest, source adjudication, source-case closure, strategy promotion, or live action occurred. Canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 prior candidates remain historical-screen `FAIL`; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
+
