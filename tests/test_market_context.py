@@ -44,6 +44,18 @@ class MarketContextTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "strictly increasing"):
             analyze_market_context(rows, "5m")
 
+    def test_rejects_boolean_market_values(self):
+        rows = candles_from_closes([100, 101, 102])
+        rows[1]["close"] = True
+        with self.assertRaisesRegex(ValueError, "must be numeric"):
+            analyze_market_context(rows, "5m")
+
+    def test_rejects_fractional_open_timestamps(self):
+        rows = candles_from_closes([100, 101, 102])
+        rows[1]["open_time_ms"] += 0.5
+        with self.assertRaisesRegex(ValueError, "integer timestamp"):
+            analyze_market_context(rows, "5m")
+
     def test_rejects_invalid_ohlc(self):
         rows = candles_from_closes([100, 101, 102])
         rows[1]["low"] = 500
