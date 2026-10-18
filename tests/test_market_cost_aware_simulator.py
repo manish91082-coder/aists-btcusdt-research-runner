@@ -98,6 +98,67 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertAlmostEqual(result["cash_usdt"], 1000 + total_realized)
         self.assertAlmostEqual(result["btc_quantity"], 0.0)
 
+    def test_closed_round_trip_reconciles_entry_fee_exit_fee_and_slippage(self):
+        fee_rate = 10 / 10000
+        slip_rate = 5 / 10000
+        entry_price = 110 * (1 + slip_rate)
+        exit_price = 120 * (1 - slip_rate)
+        entry_budget = 500.0
+        expected_qty = entry_budget / (entry_price * (1 + fee_rate))
+        expected_exit_notional = expected_qty * exit_price
+        expected_exit_fee = expected_exit_notional * fee_rate
+        expected_proceeds = expected_exit_notional - expected_exit_fee
+        expected_net_pnl = expected_proceeds - entry_budget
+
+        result = simulate_next_open(
+            bars([100, 110, 120]),
+            [
+                {"decision_id": "entry-costs", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "exit-costs", "as_of_ms": 1999, "action": "SELL_CANDIDATE"},
+            ],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=10,
+            slippage_bps_per_side=5,
+        )
+
+        self.assertAlmostEqual(result["events"][0]["fill_price_usdt"], entry_price)
+        self.assertAlmostEqual(result["events"][0]["quantity_btc"], expected_qty)
+        self.assertAlmostEqual(result["events"][0]["fee_usdt"], entry_budget * fee_rate / (1 + fee_rate))
+        self.assertAlmostEqual(result["events"][1]["fill_price_usdt"], exit_price)
+        self.assertAlmostEqual(result["events"][1]["fee_usdt"], expected_exit_fee)
+        self.assertAlmostEqual(result["closed_round_trips"][0]["net_pnl_usdt"], expected_net_pnl)
+        self.assertAlmostEqual(result["cash_usdt"], 1000 - entry_budget + expected_proceeds)
+        self.assertAlmostEqual(result["equity_usdt_after_estimated_exit_costs"], result["cash_usdt"])
+
+    def test_open_position_mark_includes_estimated_exit_slippage_and_fee_once(self):
+        fee_rate = 10 / 10000
+        slip_rate = 5 / 10000
+        entry_price = 110 * (1 + slip_rate)
+        entry_budget = 250.0
+        expected_qty = entry_budget / (entry_price * (1 + fee_rate))
+        expected_cash = 1000 - entry_budget
+        expected_marked_exit = expected_qty * (120 * (1 - slip_rate)) * (1 - fee_rate)
+
+        result = simulate_next_open(
+            bars([100, 110, 120]),
+            [{"decision_id": "entry-open-mark", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.25,
+            fee_bps_per_side=10,
+            slippage_bps_per_side=5,
+        )
+
+        self.assertAlmostEqual(result["cash_usdt"], expected_cash)
+        self.assertAlmostEqual(result["btc_quantity"], expected_qty)
+        self.assertAlmostEqual(result["equity_usdt_after_estimated_exit_costs"], expected_cash + expected_marked_exit)
+        self.assertAlmostEqual(
+            result["net_pnl_usdt_after_modeled_costs"],
+            expected_cash + expected_marked_exit - 1000,
+        )
+
     def test_gap_does_not_get_filled_by_later_bar(self):
         candles = bars([100, 130], opens=[0, 2000])
         result = simulate_next_open(
