@@ -12,6 +12,7 @@ on:
       - 'tests/test_cp0208_synthetic_ledger_reconciliation.py'
       - 'tests/test_cp0209_gap_boundary_verification.py'
       - 'tests/test_cp0210_segment_censor_contract.py'
+      - 'tests/test_cp0213_synthetic_censor_event_ledger.py'
       - 'docs/CP0210_Segment_Censor_Accounting_Contract.md'
       - 'docs/CP0207_Independent_Accounting_Reconciliation_Preflight.md'
       - 'evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy.json'
@@ -108,3 +109,5 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_cp0209_gap_boundary_verification.py' -v
       - name: Test CP-0210 segment/censor contract oracle
         run: python -m unittest discover -s tests -p 'test_cp0210_segment_censor_contract.py' -v
+      - name: Test CP-0213 synthetic censor event ledger oracle
+        run: python -m unittest discover -s tests -p 'test_cp0213_synthetic_censor_event_ledger.py' -v
