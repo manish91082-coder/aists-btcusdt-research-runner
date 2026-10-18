@@ -403,3 +403,17 @@ Recorded: 2026-10-18. This entry labels work stages so repeated GitHub Actions r
 - Display workstream + stage label + exact commit/CI identity. Never describe a repeated CI run as a new research milestone.
 - A new checkpoint is allowed only for decision-changing evidence, verified blocker removal, material defect correction, or a necessary safety invariant.
 - Current gates remain G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. Canonical source NONE; profitability NOT ESTABLISHED.
+
+
+## CP-0237: CP-0152 implementation-readiness audit
+
+Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execution authorized.
+
+- Read-only report: [docs/CP0237_CP0152_Scope_Readiness_Audit.md](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/docs/CP0237_CP0152_Scope_Readiness_Audit.md). Report commit: `b8bbfec181763f107314718ae9c7457706154f87`; report blob SHA: `1fbc2bccb7e4a542c3a2665455b90bbee2004859`.
+- Source review found the current strategy action engine supports only `TREND_FOLLOWING`, `BREAKOUT`, and `MEAN_REVERSION`; the proposed CP-0152 EMA20/EMA50 crossover plus prior-252-observation ATR-percent filter is not implemented end-to-end. The causal percentile helper has configurable parameters but defaults to 30/100 and cannot prove upstream candle/gap validity.
+- The research harness treats provenance PASS and symbol filters as caller-supplied claims; it does not authenticate source authority. CP-0026 remains fail-closed while non-row blockers remain.
+- CP-0152 remains `PENDING_EXPLICIT_APPROVAL`; this audit did not approve it. G0 remains `BLOCKED_GLOBAL`. Capital conversion, fee/slippage evidence, dated symbol filters, allocation/cash reserve and end-to-end exclusion lineage remain prerequisites.
+- No source archive was downloaded, no candidate was built, no backtest/paper run was executed, no source case was closed, and no live action was performed.
+- CI for the documentation-only CP-0237 report commit was not returned by the available exact-commit workflow lookup at verification time; do not claim it passed. No code changed.
+- Decision: `CP0237_SCOPE_PREFLIGHT_BLOCKED_NOT_EXECUTED`. Next admissible action is not a backtest: first obtain explicit approval of the exact CP-0152 scope and legitimately satisfy G0 and all evidence-backed inputs; only then implement the dedicated candidate signal path and test it.
+- Current gates unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`. Canonical source `NONE`; profitability `NOT ESTABLISHED`.
