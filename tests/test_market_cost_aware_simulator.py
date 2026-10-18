@@ -67,6 +67,37 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertAlmostEqual(result["cash_usdt"], 1000 + trip["net_pnl_usdt"])
         self.assertAlmostEqual(result["btc_quantity"], 0.0)
 
+    def test_multiple_round_trips_keep_each_entry_exit_and_pnl_separate(self):
+        result = simulate_next_open(
+            bars([100, 110, 120, 130, 140, 150]),
+            [
+                {"decision_id": "entry-1", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "exit-1", "as_of_ms": 1999, "action": "SELL_CANDIDATE"},
+                {"decision_id": "entry-2", "as_of_ms": 2999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "exit-2", "as_of_ms": 3999, "action": "SELL_CANDIDATE"},
+            ],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+        )
+
+        self.assertEqual(result["closed_round_trip_count"], 2)
+        self.assertEqual(
+            [(t["entry_decision_id"], t["exit_decision_id"])
+             for t in result["closed_round_trips"]],
+            [("entry-1", "exit-1"), ("entry-2", "exit-2")],
+        )
+        sell_events = [event for event in result["events"] if event["side"] == "SELL"]
+        self.assertEqual(len(sell_events), 2)
+        for trip, sell_event in zip(result["closed_round_trips"], sell_events):
+            self.assertEqual(trip["exit_decision_id"], sell_event["decision_id"])
+            self.assertAlmostEqual(trip["net_pnl_usdt"], sell_event["realized_net_pnl_usdt"])
+        total_realized = sum(trip["net_pnl_usdt"] for trip in result["closed_round_trips"])
+        self.assertAlmostEqual(result["cash_usdt"], 1000 + total_realized)
+        self.assertAlmostEqual(result["btc_quantity"], 0.0)
+
     def test_gap_does_not_get_filled_by_later_bar(self):
         candles = bars([100, 130], opens=[0, 2000])
         result = simulate_next_open(
