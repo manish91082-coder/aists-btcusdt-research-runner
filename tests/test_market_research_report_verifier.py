@@ -188,5 +188,45 @@ class ResearchReportVerifierTests(unittest.TestCase):
             self.assertEqual(result["serialized_file_sha256"], hashlib.sha256(path.read_bytes()).hexdigest())
 
 
+    def test_simulated_report_rejects_actionable_skipped_decision(self):
+        gates_ready = {**GATES_BLOCKED, "G0": "PASS"}
+        run = {
+            "status": "SIMULATED_NOT_VALIDATED",
+            "mode": "OFFLINE_RESEARCH_ONLY",
+            "data_input": {"symbol": "BTCUSDT", "market": "spot", "interval": "4h",
+                           "csv_sha256": "a" * 64, "manifest_sha256": "b" * 64, "row_count": 2},
+            "decision_input": {"artifact_sha256": "c" * 64, "brain_version": "fixture-v1", "decision_count": 1},
+            "simulation": {"status": "SIMULATED_NOT_VALIDATED", "event_count": 0, "events": [],
+                           "closed_round_trip_count": 0, "closed_round_trips": [],
+                           "skipped_decisions": [{"decision_id": "skip-1", "is_order_instruction": False}]},
+            "accounting_reconciliation": {"status": "PASS_ACCOUNTING_RECONCILIATION", "event_count": 0},
+            "paper_ledger_integrity": {"status": "PASS_HASH_CHAIN"},
+            "limitations": ["Synthetic fixture only"],
+        }
+        report = build_research_audit_report(
+            gate_snapshot=gates_ready, run_result=run,
+            run_id="cp0240-actionable-skipped-decision", repository_head_sha=HEAD,
+        )
+        report["run"]["simulation"]["skipped_decisions"][0]["is_order_instruction"] = True
+        unsigned = dict(report)
+        unsigned.pop("report_sha256")
+        report["report_sha256"] = hashlib.sha256(json.dumps(
+            unsigned, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+            allow_nan=False,
+        ).encode("utf-8")).hexdigest()
+        report["skipped_decisions"] = report["run"]["simulation"]["skipped_decisions"]
+        unsigned = dict(report)
+        unsigned.pop("report_sha256")
+        report["report_sha256"] = hashlib.sha256(json.dumps(
+            unsigned, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+            allow_nan=False,
+        ).encode("utf-8")).hexdigest()
+        with self.assertRaisesRegex(
+            ResearchReportVerificationError, "actionable skipped decision"
+        ):
+            verify_research_audit_report(report)
+
+
+
 if __name__ == "__main__":
     unittest.main()

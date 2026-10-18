@@ -117,6 +117,13 @@ def verify_research_audit_report(
             raise ResearchReportVerificationError("nested simulation event count mismatch")
         if not isinstance(skipped, list) or report.get("skipped_decisions") != skipped:
             raise ResearchReportVerificationError("skipped decision summary mismatch")
+        if any(
+            not isinstance(item, Mapping) or item.get("is_order_instruction") is not False
+            for item in skipped
+        ):
+            raise ResearchReportVerificationError(
+                "nested simulation contains an actionable skipped decision"
+            )
         if not isinstance(round_trips, list) or isinstance(round_trip_count, bool) or not isinstance(round_trip_count, int) or round_trip_count != len(round_trips):
             raise ResearchReportVerificationError("nested simulation round-trip count mismatch")
         if any(not isinstance(event, Mapping) or event.get("is_order_instruction") is not False for event in events):
