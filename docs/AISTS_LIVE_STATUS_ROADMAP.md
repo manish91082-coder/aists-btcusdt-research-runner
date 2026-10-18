@@ -376,3 +376,30 @@ Recorded: 2026-10-18. Append-only continuity entry; previous checkpoint entries 
 - Scope is limited to test-fixture semantics and static audit tests. No production scoring behavior, market-data candidate build, market backtest, Policy B application, or live action was performed or authorized.
 - This CI success does not resolve historical point-in-time provenance or the authorization dependency. Canonical source remains `NONE`; G0 remains `BLOCKED_GLOBAL`; G3 remains `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; source cases closed: `0`; all 23 historical candidates remain FAIL; profitability remains **NOT ESTABLISHED**; live signing/broadcast/orders remain **BLOCKED**.
 - Next admissible step: only genuinely new official point-in-time provenance evidence or an authorized independent review plus a separate scoped application record can change the gate. Do not repeat exhausted checksum/cache scans, post on another party's issue, infer approval, apply Policy B, close source cases, run candidate market backtests, promote a strategy, or enable live actions without required evidence and authority.
+
+
+## CP-0236: Mission execution map and CP-0165 anti-loop control
+
+Recorded: 2026-10-18. This entry labels work stages so repeated GitHub Actions runs cannot be mistaken for new research checkpoints.
+
+### CP-0165 stage ledger
+- **CP-0165-1 — Static workflow/guard construction:** workflow definition, validation and fail-closed checks. These runs validate software wiring, not archive contents.
+- **CP-0165-2 — Actual archive audit/evidence:** the read-only audit examined the frozen 110 monthly BTCUSDT Spot 4h archives (2017-08 through 2026-09). Verified outcome: 110/110 checksum matches and CRC passes; 19,974 rows; 9 gap events / 17 missing 4h slots.
+- **CP-0165-3 — Follow-up triage/adjudication:** existing child-interval/daily evidence was examined in CP-0192 onward; it did not establish a canonical source. Those cache-only scans are exhausted and must not be repeated absent genuinely new evidence.
+- **CP-0165-4 — Static CI reruns:** PR synchronization triggered repeated workflow runs (the user-visible Actions list shows runs #132–#137). A run number is not a research checkpoint. Repeated green static CI is not a new archive audit, source ruling, candidate evaluation or profitability result.
+- **CP-0165-5 — Current disposition:** structural checks are complete; source provenance and unresolved gap/aggregation policy remain blocked. Do not continue creating CP-0165-labelled commits solely to trigger the same static workflow.
+
+### Whole-project fast-track plan (critical path, no gate bypass)
+1. **Freeze duplicate audit work:** keep PR #3 open/unmerged; stop repeated commits/reruns unless a material defect or new evidence warrants them.
+2. **Source/adjudication decision:** accept only new admissible official point-in-time/version evidence or an authorized independent review plus a separately scoped policy-application record. Do not repeat exhausted cache/checksum scans or post to third-party issues without authority.
+3. **Candidate scope and capital/cost freeze:** CP-0152 EMA20/EMA50 + causal ATR% remains proposal-only. Explicitly approve the exact scope before execution. Freeze the actual INR-to-USDT basis (or mark capital-dependent outputs NOT_COMPUTABLE), fee/BNB assumptions, slippage, dated BTCUSDT filters, allocation and cash reserve.
+4. **Gate-ready data build:** only after the applicable source/policy gate is legitimately satisfied, verify exact input hashes, row-level exclusions, gap censor lineage and fail-closed builder receipt. No fake PASS and no synthetic candles.
+5. **One bounded historical evaluation:** run the approved 4h candidate once on frozen real Binance archive inputs; enforce next-contiguous-open hypothetical fills, fees, slippage, exchange quantity/min-notional constraints and accounting reconciliation. Keep consumed OOS separate from fresh untouched evaluation.
+6. **Acceptance decision:** compare against frozen CP-0040 acceptance rulebook; do not tune repeatedly against consumed OOS. Report net return, drawdown/risk, trades, costs, exposure, censored episodes and uncertainty. Failed or insufficient evidence means no promotion.
+7. **Paper validation:** if historical gates pass, conduct the existing minimum forward-paper horizon (at least 180 calendar days and 30 closed round trips, whichever is longer; classify insufficient evidence if unmet by 365 days). No live exchange orders.
+8. **Adaptive AI/release gates:** only after baseline evidence is defensible, validate adaptive components against leakage, robustness and out-of-sample controls. G6/G7 remain separate gates; live signing/broadcast/orders remain blocked.
+
+### Reporting rule from this checkpoint onward
+- Display workstream + stage label + exact commit/CI identity. Never describe a repeated CI run as a new research milestone.
+- A new checkpoint is allowed only for decision-changing evidence, verified blocker removal, material defect correction, or a necessary safety invariant.
+- Current gates remain G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. Canonical source NONE; profitability NOT ESTABLISHED.
