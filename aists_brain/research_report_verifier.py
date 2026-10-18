@@ -157,6 +157,8 @@ def verify_research_audit_report(
     elif status == "READY_NO_RUN":
         if run is not None or not isinstance(input_hashes, Mapping) or input_hashes:
             raise ResearchReportVerificationError("READY_NO_RUN report must not contain run/input hashes")
+        if report.get("entrypoint") is not None:
+            raise ResearchReportVerificationError("READY_NO_RUN report cannot claim an entrypoint execution")
     else:
         raise ResearchReportVerificationError("unrecognized report status/gate combination")
 

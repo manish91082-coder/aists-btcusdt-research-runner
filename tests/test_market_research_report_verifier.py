@@ -176,6 +176,29 @@ class ResearchReportVerifierTests(unittest.TestCase):
         with self.assertRaisesRegex(ResearchReportVerificationError, "nested simulation event count mismatch"):
             verify_research_audit_report(report)
 
+    def test_ready_no_run_rejects_entrypoint_execution_telemetry(self):
+        report = build_research_audit_report(
+            gate_snapshot={**GATES_BLOCKED, "G0": "PASS"},
+            run_id="cp0242-ready-no-run-entrypoint",
+            repository_head_sha=HEAD,
+        )
+        report["entrypoint"] = {
+            "status": "BLOCKED_INPUT",
+            "blocked_reason": "REQUIRED_INPUT_ARGUMENT_MISSING",
+            "simulation_attempted": False,
+            "input_artifacts_inspected": False,
+        }
+        unsigned = dict(report)
+        unsigned.pop("report_sha256")
+        report["report_sha256"] = hashlib.sha256(json.dumps(
+            unsigned, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+            allow_nan=False,
+        ).encode("utf-8")).hexdigest()
+        with self.assertRaisesRegex(
+            ResearchReportVerificationError, "READY_NO_RUN report cannot claim an entrypoint execution"
+        ):
+            verify_research_audit_report(report)
+
     def test_simulated_report_rejects_blocked_entrypoint_status(self):
         gates_ready = {**GATES_BLOCKED, "G0": "PASS"}
         run = {
