@@ -11,7 +11,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 from aists_brain.accounting_reconciliation import reconcile_simulation_with_ledger
 from aists_brain.decision_lineage import DECISION_SCHEMA, DecisionLineageError, validate_causal_decision_artifact
@@ -44,8 +44,9 @@ def run_manifest_driven_simulation(
     allocation_fraction: float = 0.25,
     fee_bps_per_side: float = 10.0,
     slippage_bps_per_side: float = 5.0,
+    symbol_filters: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Run offline simulation only when both data and decision contracts pass.
+    """Run offline simulation only when data, decisions, and exchange filters pass.
 
     Decision JSON contract:
       schema_version='aists.causal_research_decisions.v1',
@@ -56,6 +57,11 @@ def run_manifest_driven_simulation(
     lineage validator rejects feature timestamps later than the decision cutoff.
     A PASS is an external assertion, not proof of the decision producer's quality.
     """
+    if symbol_filters is None:
+        raise ResearchHarnessError("verified symbol_filters are required before simulation")
+    if not isinstance(symbol_filters, Mapping):
+        raise ResearchHarnessError("symbol_filters must be a mapping")
+
     try:
         loaded = load_provenance_cleared_candles(
             csv_path, manifest_path, expected_interval=expected_interval
@@ -89,6 +95,7 @@ def run_manifest_driven_simulation(
             allocation_fraction=allocation_fraction,
             fee_bps_per_side=fee_bps_per_side,
             slippage_bps_per_side=slippage_bps_per_side,
+            symbol_filters=symbol_filters,
         )
     except (TypeError, ValueError, KeyError) as exc:
         raise ResearchHarnessError(f"decision/simulation contract rejected input: {exc}") from exc
@@ -145,6 +152,7 @@ def run_manifest_driven_simulation(
             "PASS statuses are externally asserted and are not independently authenticated by this harness",
             "decision generation, causal feature lineage and strategy acceptance are not implemented here",
             "fees and slippage are assumptions supplied to the simulator",
+            "symbol_filters are caller-supplied and must be independently evidence-backed for the intended historical period",
             "this result is not a validated historical performance claim or paper acceptance",
             "no automatic stop-loss/take-profit and no live exchange action",
         ],
@@ -160,6 +168,7 @@ def run_manifest_driven_simulation_from_stored_features(
     allocation_fraction: float = 0.25,
     fee_bps_per_side: float = 10.0,
     slippage_bps_per_side: float = 5.0,
+    symbol_filters: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Verify a create-only stored feature artifact, then use it in the harness.
 
@@ -198,6 +207,7 @@ def run_manifest_driven_simulation_from_stored_features(
         allocation_fraction=allocation_fraction,
         fee_bps_per_side=fee_bps_per_side,
         slippage_bps_per_side=slippage_bps_per_side,
+        symbol_filters=symbol_filters,
     )
     result["decision_input"]["stored_artifact_integrity_status"] = stored["status"]
     result["decision_input"]["stored_artifact_payload_sha256"] = stored["payload_sha256"]
