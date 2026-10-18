@@ -233,6 +233,41 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertTrue(result["exchange_filters_applied"])
         self.assertGreaterEqual(result["events"][0]["notional_usdt"], 5)
 
+    def test_step_rounding_preserves_cash_and_does_not_exceed_allocated_budget(self):
+        fee_rate = 10 / 10000
+        slip_rate = 5 / 10000
+        fill_price = 100 * (1 + slip_rate)
+        budget = 1000 * 0.5
+        raw_qty = budget / (fill_price * (1 + fee_rate))
+        expected_qty = float((__import__("decimal").Decimal(str(raw_qty)) /
+                              __import__("decimal").Decimal("0.1")).to_integral_value(
+                                  rounding=__import__("decimal").ROUND_DOWN) *
+                              __import__("decimal").Decimal("0.1"))
+        expected_notional = expected_qty * fill_price
+        expected_fee = expected_notional * fee_rate
+        expected_total = expected_notional + expected_fee
+
+        result = simulate_next_open(
+            bars([100, 100]),
+            [{"decision_id": "buy-rounded-budget", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=10,
+            slippage_bps_per_side=5,
+            symbol_filters={"min_qty": 0.1, "step_size": 0.1, "min_notional": 5},
+        )
+
+        buy = result["events"][0]
+        self.assertAlmostEqual(buy["quantity_btc"], expected_qty)
+        self.assertAlmostEqual(buy["notional_usdt"], expected_notional)
+        self.assertAlmostEqual(buy["fee_usdt"], expected_fee)
+        self.assertLessEqual(expected_total, budget)
+        self.assertAlmostEqual(result["cash_usdt"], 1000 - expected_total)
+        self.assertGreaterEqual(result["cash_usdt"], 0)
+        self.assertAlmostEqual(result["cash_usdt"] + expected_total, 1000)
+        self.assertLessEqual(buy["quantity_btc"] * fill_price + buy["fee_usdt"], budget)
+
     def test_symbol_filters_skip_below_minimum_notional(self):
         result = simulate_next_open(
             bars([100, 100]),
