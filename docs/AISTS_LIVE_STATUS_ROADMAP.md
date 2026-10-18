@@ -304,3 +304,15 @@ Recorded: 2026-10-18. Append-only continuity entry; prior checkpoint records rem
 - Decision: `CP0229_RUNTIME_FAIL_CLOSED_TESTS_PASS_EXTERNAL_PROVENANCE_STILL_BLOCKING`. Do not repeat the completed checksum and child-interval cache scans. The next decisive dependency is new admissible official point-in-time provenance or an actually authorized independent review plus a separate scoped application record. Community reports and CI success are not source adjudication or Policy B approval.
 - Safety/global state unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; source cases closed `0`; all 23 historical candidates remain `FAIL`; candidate build and market backtest remain blocked; profitability `NOT ESTABLISHED`; live signing/broadcast/orders `BLOCKED`.
 - Next action: preserve this checkpoint, then continue only with a non-duplicative provenance/authorization step. Do not run candidate build/backtest, apply Policy B, close source cases, promote a strategy, or enable live actions while the required evidence and authority are absent.
+
+
+## CP-0230: CP-0229 roadmap commit CI and upstream provenance state reconciled
+
+Recorded: 2026-10-18. Append-only continuity entry; earlier checkpoint entries are preserved.
+
+- GitHub Actions run [39110930598](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39110930598) reached terminal `success` on exact feature-branch HEAD `547785d7a9923d737365e2be1f8fab3584e3de02`. The `static-audit-tests` job passed; all listed steps completed, including compilation, bounded audit helpers, cache-only triage, frozen-rulebook gates, accounting/censor oracles, and CP-0228 runtime fail-closed tests.
+- Reconciliation of PR #3 confirms it remains OPEN and UNMERGED. Base/main remains `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`; no merge or main mutation was performed.
+- Rechecked official upstream [Binance Public Data issue #504](https://github.com/binance/binance-public-data/issues/504) through its issue record: state OPEN, comments 0, updated `2026-09-27T18:20:58Z`. The detailed provenance questions remain unanswered by a maintainer. No conclusion is inferred from silence.
+- Decision: `CP0230_CI_PASS_UPSTREAM_PROVENANCE_UNRESOLVED`. CI verifies repository tests and fail-closed behavior only. It does not adjudicate historical source provenance, grant Policy B authority, or establish strategy performance.
+- Global gates remain unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; source cases closed `0`; all 23 historical candidates remain FAIL; candidate build/backtest blocked; profitability **NOT ESTABLISHED**; live signing/broadcast/orders **BLOCKED**.
+- Next admissible action: pursue a genuinely new official provenance answer/source or an authorized independent review with a separate, scoped application record. Do not repeat exhausted checksum/cache scans, post on another party's issue, infer approval, apply Policy B, close cases, run candidate market backtests, or enable live actions without the required evidence and authority.
