@@ -491,3 +491,13 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Decision: `CP0241_EXTERNAL_CORROBORATION_G0_STILL_BLOCKED`. This evidence reinforces the need to distinguish checksum integrity from semantic validity but does not establish a canonical 4h source, close any source case, fill any gap, or clear G0/G3.
 - The previous Roadmap reconciliation commit `41244374eb300399e429f5f3fd69dafd381bca8d` has exact-head static audit run [39153867638](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39153867638) terminal `success`.
 - No archive was downloaded, no candidate/backtest/paper run occurred, and no exchange order, signing, or broadcast occurred.
+
+
+## CP-0242 — External historical gap overlap review (2026-10-19)
+
+- Read-only report: [CP-0242 External Historical Gap Overlap Review](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0165-4h-archive-audit/docs/CP0242_External_Historical_Gap_Overlap_Review.md); report commit `0d914f922b8ab0ef7887d20cd73af24368d8a71f`.
+- Binance Public Data issue [#374](https://github.com/binance/binance-public-data/issues/374) reports missing BTCUSDT Spot 1m data on 2017-09-06 from timestamp `1504713600000`, which is exactly `2017-09-06T16:00:00Z` and matches existing project row-case `UNMATCHED-D-4h-1504713600000`. The project's daily 4h row at this key is a zero-trade placeholder with invalid 4h close-time span, not an accepted candle. Issue #374 is community-reported, has one non-maintainer comment, and does not explain or validate the exact 4h record.
+- Issue [#379](https://github.com/binance/binance-public-data/issues/379) reports missing BTCUSDT Spot 1m data on 2018-02-08; comments claim only 29 records existed and that Binance was down, but these are not official maintainer statements and do not provide exact 4h gap-key mapping.
+- CP-0200 remains 16 `UNRESOLVED_MISSING_KEY_BOTH_SOURCES` plus one `UNRESOLVED_DAILY_PLACEHOLDER_CONFLICT`; CP-0201's one exact-key overlap remains linked to the existing row case. The issue reports provide cross-interval corroboration/lead only: no source case is closed, no gap is filled, and no canonical source is established.
+- Decision: `CP0242_EXTERNAL_GAP_CORROBORATION_G0_STILL_BLOCKED`. G0 remains `BLOCKED_GLOBAL`; canonical source remains `NONE`; G3 remains `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`. No candidate build, backtest, paper run, or live action occurred.
+- PR #2 remains open/unmerged at previously verified head `e0f8a6f6e8a5ebf02e171c8a1a85bf853f8b72ec`; PR #3 was open/unmerged before this CP-0242 append at head `12e682ce8be7f9fff229238b8a76f4c707b644d6`. Verify the new Roadmap commit and exact-head CI separately; do not infer CI success from earlier runs.
