@@ -194,3 +194,12 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - Scope is deliberately test-only: this fixture does not call or modify the production simulator's censor behavior, does not apply Policy B, and does not validate a production scorer. No market data, candidate build/backtest, source adjudication, case closure, strategy promotion, or live action occurred.
 - Independent approval and application record remain `NOT PRESENT`; Policy B application remains `NOT AUTHORIZED`. Global state unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain `FAIL`; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
 - Next bounded action after CI verification: inspect whether additional production-path testing can be authorized only after a real independent reviewer signs the scoped application record. Do not run candidate market performance.
+
+
+## CP-0214: Expanded independent Decimal and fail-closed fixtures
+
+- Expanded `tests/test_cp0213_synthetic_censor_event_ledger.py` with an independent BUY/MARK/SELL Decimal ledger (cash, quantity, fees, marked equity, realized net P&L and conservation identity), explicit null-valued full-window risk metrics when status is `BLOCKED_GAP_VALUATION_UNSCORABLE`, and an exact-population validator rejecting missing, duplicate, or altered/extra keys.
+- This remains synthetic oracle evidence. It does not execute the production censor transition, modify production scoring, authorize Policy B, or establish market profitability.
+- CI must pass on the exact latest branch HEAD. No market data, candidate build/backtest, source adjudication, case closure, strategy promotion, or live action occurred.
+- Approval/application remain `NOT PRESENT` / `NOT AUTHORIZED`; canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain `FAIL`; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
+- Next decision gate: finish CI verification and assemble a precise residual-gap matrix. No production Policy B scorer until actual independent authorization and a separate scoped application record exist.
