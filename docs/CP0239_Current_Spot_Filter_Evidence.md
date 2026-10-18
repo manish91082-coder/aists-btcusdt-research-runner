@@ -12,7 +12,7 @@
 - Workflow: [CP-0239 Capture Current BTCUSDT Spot Filters](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/.github/workflows/cp0239-capture-spot-filters.yml)
 - Workflow run succeeded: [39152856418](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39152856418), head commit `e387b418df289fa5c815dde78f2536d567125d8a`. CP-0120 unit tests also succeeded at that exact head: [39152856412](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39152856412).
 - The workflow validates the response contains exactly BTCUSDT and a non-empty filter list, preserves the exact raw response bytes, calculates SHA-256 over those bytes, and writes a timestamped manifest.
-- Raw response and manifest were re-fetched from the repository. Two captures occurred 29 seconds apart, with identical reported filter values.
+- Raw response and manifest were re-fetched from the repository. Five captures occurred from 18:09:01Z through 18:10:45Z while validating and correcting the workflow trigger. All five manifests report identical symbol filter fields; raw hashes differ because response metadata/serverTime changes.
 
 ## 2. Captured evidence files
 
@@ -33,6 +33,16 @@
 - Git blob SHA of raw file: `ce1f4cc3fef4c90d7b2afb323655e9253bf69e45`
 
 The raw payloads have different hashes because response metadata (including server time) changes. The symbol filter fields reviewed in the two manifests were identical.
+
+### Additional snapshots captured during workflow-trigger verification
+
+The workflow initially also ran on pull-request synchronization, causing redundant captures while its trigger configuration was being corrected. The pull-request trigger has now been removed; the workflow is restricted to pushes that change the capture script/workflow, plus manual dispatch. These extra snapshots are retained, not discarded:
+
+- Snapshot C, captured UTC `2026-10-18T18:09:40.075240Z`: [manifest](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/evidence/operational_filters/BTCUSDT_Spot_exchangeInfo_20261018T180940Z.manifest.json), [raw payload](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/evidence/operational_filters/BTCUSDT_Spot_exchangeInfo_20261018T180940Z.raw.json), recorded raw SHA-256 `d2b6613a128173a4c09926101224fb26d640a5c596ef6df4c3c75249127f16f7`.
+- Snapshot D, captured UTC `2026-10-18T18:10:25.150555Z`: [manifest](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/evidence/operational_filters/BTCUSDT_Spot_exchangeInfo_20261018T181025Z.manifest.json), [raw payload](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/evidence/operational_filters/BTCUSDT_Spot_exchangeInfo_20261018T181025Z.raw.json), recorded raw SHA-256 `5af0f0f65b32e937319f447cc1a33af4b8e72fae06d8d93ffd29b5b2fae5471a`.
+- Snapshot E, captured UTC `2026-10-18T18:10:45.885112Z`: [manifest](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/evidence/operational_filters/BTCUSDT_Spot_exchangeInfo_20261018T181045Z.manifest.json), [raw payload](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/evidence/operational_filters/BTCUSDT_Spot_exchangeInfo_20261018T181045Z.raw.json), recorded raw SHA-256 `293a0ce6d94a241377ee07661b31cce273003971d523b6faaf3aa94e895efd66`.
+
+The five raw payloads and manifests remain individually timestamped and committed. No snapshot is a historical reconstruction. Capture workflow after trigger correction: [run 39152953845](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39152953845), SUCCESS; exact-head unit tests: [run 39152953824](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39152953824), SUCCESS. PR-triggered runs requiring approval are not counted as passing CI.
 
 ## 3. Key current filter values captured
 
