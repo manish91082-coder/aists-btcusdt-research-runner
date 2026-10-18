@@ -277,3 +277,16 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - Global gates remain: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; canonical source `NONE`; source cases closed `0`; profitability **NOT ESTABLISHED**; live actions `BLOCKED`.
 - Next decisive step: external historical-version/source provenance is the remaining evidence dependency for these 11 relationships. Do not repeat this audit or manufacture an adjudication. Until official point-in-time provenance or an independently authorized conservative policy is available, keep the affected cases open and the candidate builder blocked.
 
+
+
+## CP-0224: Continuity reconciliation after CP-0220 and public issue cross-check
+
+Recorded: 2026-10-18. This section is append-only; earlier checkpoint records are preserved.
+
+- Latest branch head verified before this update: `0646df81bbbb1a8632b2e618bc08c643553db141`; `main` remains `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`; PR #3 remains open and unmerged.
+- CP-0220 receipt remains the controlling detailed evidence: 34/34 frozen-rulebook audit checks pass; all 11 non-row aggregation blockers remain open; daily trade-derived bars match 35/35 keys and 315/315 metric fields, while monthly archives match 21/35 bars and 218/315 fields; 14 keys / 97 fields remain divergent.
+- CP-0220 records the frozen quarantine sensitivity TRAIN net-return delta as -15.89174082849894 percentage points. Candidate-specific production quarantine metrics remain not established because the builder is fail-closed.
+- Public issue cross-check reviewed Binance Public Data issues #475, #501, #505, and #504. Issue #475 contains a user-contributed report of other cross-interval/monthly-vs-REST discrepancies; it is contextual corroboration only, not a Binance maintainer ruling and not proof for this project's exact keys. Issues #501/#505 concern different rows. Issue #504 remains open with zero comments as checked 2026-10-18.
+- No new official exact-row provenance evidence or authorized independent Policy B approval/application record was found. No source case is closed. No candidate build/backtest, production scorer change, strategy promotion, or live action was performed.
+- Canonical source remains `NONE`; G0 `BLOCKED_GLOBAL`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; all 23 historical candidates remain FAIL; profitability `NOT ESTABLISHED`; live signing/broadcast/orders `BLOCKED`.
+- Next admissible work: pursue a new official exact-row provenance response/evidence source or obtain an actual authorized independent review and separate scoped Policy B application record. Do not repeat the exhausted correction-archive/checksum route or treat community reports/CI as source adjudication.
