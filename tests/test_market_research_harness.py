@@ -164,6 +164,7 @@ class ResearchHarnessTests(unittest.TestCase):
             run_manifest_driven_simulation(
                 self.csv_path, self.manifest_path, self.decisions_path,
                 expected_interval="4h", initial_cash_usdt=100.0,
+                symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5},
             )
 
 
