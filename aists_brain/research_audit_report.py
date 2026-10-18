@@ -63,6 +63,27 @@ def build_research_audit_report(
             raise AuditReportError("run_result must remain SIMULATED_NOT_VALIDATED")
         if run_result.get("mode") != "OFFLINE_RESEARCH_ONLY":
             raise AuditReportError("run_result must be OFFLINE_RESEARCH_ONLY")
+        simulation = run_result.get("simulation")
+        if not isinstance(simulation, Mapping):
+            raise AuditReportError("run_result simulation must be an object")
+        events = simulation.get("events")
+        if not isinstance(events, list):
+            raise AuditReportError("simulation events must be a list")
+        event_count = simulation.get("event_count")
+        if isinstance(event_count, bool) or not isinstance(event_count, int) or event_count != len(events):
+            raise AuditReportError("simulation event_count does not match event records")
+        round_trips = simulation.get("closed_round_trips")
+        round_trip_count = simulation.get("closed_round_trip_count")
+        if not isinstance(round_trips, list):
+            raise AuditReportError("simulation closed_round_trips must be a list")
+        if (isinstance(round_trip_count, bool) or not isinstance(round_trip_count, int)
+                or round_trip_count != len(round_trips)):
+            raise AuditReportError("simulation closed_round_trip_count does not match records")
+        skipped = simulation.get("skipped_decisions")
+        if not isinstance(skipped, list):
+            raise AuditReportError("simulation skipped_decisions must be a list")
+        if any(not isinstance(item, Mapping) or item.get("is_order_instruction") is not False for item in skipped):
+            raise AuditReportError("skipped decisions must be non-order-instruction records")
         for key in ("data_input", "decision_input", "simulation",
                     "accounting_reconciliation", "paper_ledger_integrity"):
             if key not in run_result:
