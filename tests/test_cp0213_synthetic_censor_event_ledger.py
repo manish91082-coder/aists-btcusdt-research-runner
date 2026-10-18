@@ -50,7 +50,12 @@ def independent_censor_fixture():
     # is an observed event in the synthetic fixture, not an invented boundary fill.
     diagnostic_cash, sell_fee = sell(cash_after_buy, held_qty, later_sale_price, fee_rate)
     diagnostic_pnl = diagnostic_cash - initial_cash
-    scored_pnl = D("0")  # no eligible fully closed scored episode in this fixture
+    # No eligible scored episode means the scored P&L is undefined, not zero.
+    # The censored episode's diagnostic P&L must never be silently converted to
+    # a numeric scored result.
+    scored_pnl = None
+    scored_episode_count = 0
+    scored_pnl_status = "NO_ELIGIBLE_EPISODES"
 
     # Separate post-gap sensitivity replay starts independently, not with held_qty.
     post_gap = {
@@ -70,6 +75,8 @@ def independent_censor_fixture():
         "diagnostic_cash": diagnostic_cash,
         "diagnostic_pnl": diagnostic_pnl,
         "scored_pnl": scored_pnl,
+        "scored_episode_count": scored_episode_count,
+        "scored_pnl_status": scored_pnl_status,
         "post_gap": post_gap,
         "full_window_status": "BLOCKED_GAP_VALUATION_UNSCORABLE",
     }
@@ -154,7 +161,9 @@ class TestCP0213SyntheticCensorEventLedger(unittest.TestCase):
         result = independent_censor_fixture()
         self.assertEqual(result["diagnostic_cash"], D("949.050"))
         self.assertEqual(result["diagnostic_pnl"], D("-50.950"))
-        self.assertEqual(result["scored_pnl"], D("0"))
+        self.assertIsNone(result["scored_pnl"])
+        self.assertEqual(result["scored_episode_count"], 0)
+        self.assertEqual(result["scored_pnl_status"], "NO_ELIGIBLE_EPISODES")
         self.assertNotEqual(result["diagnostic_pnl"], result["scored_pnl"])
         self.assertEqual(result["full_window_status"], "BLOCKED_GAP_VALUATION_UNSCORABLE")
         # Event-level cash/quantity/fee arithmetic reconciles independently.
