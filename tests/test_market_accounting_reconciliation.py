@@ -46,6 +46,12 @@ class AccountingReconciliationTests(unittest.TestCase):
         self.assertEqual(result["sell_count"], 1)
         self.assertAlmostEqual(result["independently_recomputed_cash_usdt"], self.ledger["cash_usdt"])
 
+    def test_initial_cash_mismatch_between_simulator_and_ledger_is_rejected(self):
+        altered = copy.deepcopy(self.sim)
+        altered["initial_cash_usdt"] += 1.0
+        with self.assertRaisesRegex(ReconciliationError, "initial cash mismatch"):
+            reconcile_simulation_with_ledger(altered, self.ledger)
+
     def test_cash_tampering_is_detected(self):
         altered = copy.deepcopy(self.sim)
         altered["cash_usdt"] += 1.0
