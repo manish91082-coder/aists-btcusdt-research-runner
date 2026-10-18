@@ -316,3 +316,16 @@ Recorded: 2026-10-18. Append-only continuity entry; earlier checkpoint entries a
 - Decision: `CP0230_CI_PASS_UPSTREAM_PROVENANCE_UNRESOLVED`. CI verifies repository tests and fail-closed behavior only. It does not adjudicate historical source provenance, grant Policy B authority, or establish strategy performance.
 - Global gates remain unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; source cases closed `0`; all 23 historical candidates remain FAIL; candidate build/backtest blocked; profitability **NOT ESTABLISHED**; live signing/broadcast/orders **BLOCKED**.
 - Next admissible action: pursue a genuinely new official provenance answer/source or an authorized independent review with a separate, scoped application record. Do not repeat exhausted checksum/cache scans, post on another party's issue, infer approval, apply Policy B, close cases, run candidate market backtests, or enable live actions without the required evidence and authority.
+
+
+## CP-0231: CP-0230 exact-HEAD CI pass; official README scope checked
+
+Recorded: 2026-10-18. Append-only continuity entry.
+
+- GitHub Actions run [39111121105](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39111121105) reached terminal `success` on exact source SHA `f5ec4959c0d2f3f7c2a3f1225041794f38793fdb`. The `static-audit-tests` job completed successfully, including the CP-0228 runtime fail-closed tests.
+- Read the official [Binance Public Data README](https://github.com/binance/binance-public-data/blob/master/README.md), blob `e01e34a0b0cd91d62386a5a237190a3167138bae`. It says archived files may be updated later when issues are discovered, and labels its table an exhaustive list of archive updates with replaced/replacement checksums. The listed dates are changelog dates; this README does not itself establish per-file exact first-publication timestamps, exact replacement timestamps, guaranteed retrieval of every prior ZIP version, or a supported point-in-time reconstruction method.
+- Rechecked [Binance Public Data issue #504](https://github.com/binance/binance-public-data/issues/504): still OPEN, 0 comments, last updated `2026-09-27T18:20:58Z`. No official maintainer answer was available in the issue record. No conclusion is inferred from silence.
+- Repository reconciliation: feature branch HEAD remains `f5ec4959c0d2f3f7c2a3f1225041794f38793fdb`; `main` remains `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`; PR #3 remains OPEN and UNMERGED.
+- Decision: `CP0231_CI_PASS_OFFICIAL_README_INSUFFICIENT_FOR_POINT_IN_TIME_PROVENANCE`. This documentation narrows what can be claimed but does not close the provenance gap or authorize Policy B.
+- Global gates unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; source cases closed `0`; all 23 historical candidates remain FAIL; candidate build/backtest blocked; profitability **NOT ESTABLISHED**; live signing/broadcast/orders **BLOCKED**.
+- Next action: only genuinely new official point-in-time provenance evidence or an authorized independent review plus separate scoped application record can change the gate. No repeated cache/checksum scan, candidate backtest, source-case closure, Policy B application, strategy promotion, or live action.
