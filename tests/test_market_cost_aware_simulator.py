@@ -130,6 +130,26 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertEqual(result["event_count"], 0)
         self.assertEqual(result["skipped_decisions"][0]["reason"], "BELOW_MIN_NOTIONAL")
 
+    def test_sell_below_min_notional_is_skipped_and_position_remains_open(self):
+        result = simulate_next_open(
+            bars([100, 100, 1]),
+            [
+                {"decision_id": "buy", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "sell", "as_of_ms": 1999, "action": "SELL_CANDIDATE"},
+            ],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.1,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 20},
+        )
+        self.assertEqual(result["event_count"], 1)
+        self.assertEqual(result["closed_round_trip_count"], 0)
+        self.assertGreater(result["btc_quantity"], 0)
+        self.assertEqual(result["skipped_decisions"][0]["reason"], "SELL_BELOW_MIN_NOTIONAL")
+        self.assertIn("open position is marked using last close", " ".join(result["limitations"]))
+
     def test_symbol_filters_require_min_qty_step_and_min_notional(self):
         with self.assertRaisesRegex(ValueError, "missing required fields"):
             simulate_next_open(
