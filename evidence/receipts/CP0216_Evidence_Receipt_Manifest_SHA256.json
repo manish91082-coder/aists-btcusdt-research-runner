@@ -1,0 +1,11 @@
+{
+  "checkpoint": "CP-0216",
+  "manifest_path": "evidence/receipts/CP0216_Evidence_Receipt_Manifest.json",
+  "manifest_git_blob_sha1": "bc63b2e5469b072d00aaceaa672ebe29eb9827bf",
+  "manifest_sha256": "fbdb8820d451c0e268e3424f971c5da622415e2d941aebae7e2cb0fa15e99dbb",
+  "sha256_algorithm": "SHA-256",
+  "canonicalization": "Exact UTF-8 file content, including trailing newline, as retrieved from GitHub at commit d33558538f6945e2a914a073347d8669c40d3a47",
+  "manifest_commit": "d33558538f6945e2a914a073347d8669c40d3a47",
+  "source_revision": "03ea280d0140aebeefc7c7283081f5f2d62c976e",
+  "warning": "This receipt pins the manifest bytes only. It does not establish independent approval, policy application, G0 clearance, candidate eligibility, or profitability."
+}
