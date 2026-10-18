@@ -7,13 +7,6 @@ on:
     paths:
       - ".github/workflows/cp0239-capture-spot-filters.yml"
       - "scripts/capture_binance_spot_filters.py"
-  pull_request:
-    branches:
-      - main
-    types: [opened, synchronize, reopened]
-    paths:
-      - ".github/workflows/cp0239-capture-spot-filters.yml"
-      - "scripts/capture_binance_spot_filters.py"
   workflow_dispatch:
 
 permissions:
