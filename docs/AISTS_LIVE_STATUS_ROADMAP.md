@@ -540,3 +540,13 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Report: [CP-0245_Binance_Kline_Correction_Package_Probe.md](CP0245_Binance_Kline_Correction_Package_Probe.md). Probe run [39157359192](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39157359192) completed successfully; static audit CI [39157315873](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39157315873) succeeded on the preceding revision.
 - Decision: `CP0245_CORRECTION_MANIFEST_DOES_NOT_COVER_KNOWN_2017_KEY_G0_UNCHANGED`. Canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G2 23 candidates still FAIL; G3 remains blocked; G4 insufficient; G6 not built; G7 live blocked; profitability not established. CP-0152 remains pending explicit approval.
 - No market data was modified or repaired; no source case was closed; no backtest, paper run, or exchange action occurred. Do not repeat this package scan.
+
+
+### CP-0246 — official public correction-directory inventory (2026-10-19)
+
+- The official `binance/binance-public-data/updates/` directory currently lists three files: one aggregate-trade ZIP, the already inspected `2022-08-08_kline_updates.zip`, and one aggregate-trade CSV. No separate monthly Spot kline correction package is listed in that directory.
+- CP-0245's kline manifest lists four BTCUSDT 4h daily archive checksum replacements (2021-08-02, 2022-03-10, 2022-03-14, 2022-03-22), none matching the known 2017-09-06T16:00:00Z project key. This is a bounded public-directory observation, not proof that no other correction record exists elsewhere.
+- Official issue [#504](https://github.com/binance/binance-public-data/issues/504) remains OPEN with zero comments at recheck; last updated `2026-09-27T18:20:58Z`.
+- Report: [CP-0246_Official_Public_Correction_Directory_Inventory.md](CP0246_Official_Public_Correction_Directory_Inventory.md). Decision `CP0246_PUBLIC_UPDATES_DIRECTORY_HAS_NO_LISTED_MONTHLY_SPOT_KLINE_CORRECTION_G0_UNCHANGED`.
+- No market data changed; no source case closed; no candidate build/backtest/paper run or exchange action occurred. Do not repeat this public-directory inventory or CP-0245 package scan.
+- Gates unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G2 all 23 candidates FAIL; G3 blocked; G4 insufficient; G6 not built; G7 live blocked; profitability not established; CP-0152 pending explicit approval.
