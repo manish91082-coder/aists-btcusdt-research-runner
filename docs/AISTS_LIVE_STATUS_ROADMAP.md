@@ -1,6 +1,6 @@
 # AISTS Live Status & Mission Roadmap
 
-Last verified checkpoint: **CP-0208 (opt-in simulator ledger trace and synthetic event-tape reconciliation; G0 remains blocked pending CI terminal verification)**  
+Last documented checkpoint: **CP-0215 (residual gap evidence matrix; production Policy B scoring remains unauthorized and G0 remains blocked)**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
@@ -203,3 +203,15 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - CI must pass on the exact latest branch HEAD. No market data, candidate build/backtest, source adjudication, case closure, strategy promotion, or live action occurred.
 - Approval/application remain `NOT PRESENT` / `NOT AUTHORIZED`; canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain `FAIL`; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
 - Next decision gate: finish CI verification and assemble a precise residual-gap matrix. No production Policy B scorer until actual independent authorization and a separate scoped application record exist.
+
+
+## CP-0215: Residual gap evidence matrix
+
+- Matrix: [CP0215_Residual_Gap_Evidence_Matrix.md](CP0215_Residual_Gap_Evidence_Matrix.md).
+- Classifies each readiness requirement as synthetic-fixture evidence, production-path evidence still missing, and/or blocked pending actual independent approval and a separate scoped application record.
+- CP-0213/0214 demonstrate only their in-memory synthetic fixtures and static source guards. They do **not** invoke a production censor transition, prove diagnostic/scored P&L isolation through production reporting, or authorize Policy B scoring.
+- Source review still identifies carry-through-gap position behavior in CP-0027 as diagnostic behavior. CP-0209 prevents a boundary row from originating a pending signal but does not implement censoring.
+- Decision: `CP0215_MATRIX_RECORDED_PRODUCTION_EVIDENCE_GAPS_AND_AUTHORIZATION_BLOCK`.
+- No production Policy B scorer implementation/application, candidate build, market-data backtest, source adjudication, source-case closure, strategy promotion, or live action occurred.
+- Independent approval and application record remain `NOT PRESENT` / `NOT AUTHORIZED`; canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 prior candidates remain historical-screen `FAIL`; profitability **NOT ESTABLISHED**.
+- Next step: only continue non-duplicative documentation/static verification unless and until actual independent approval and a separate scoped application record are provided. Verify CI terminal result on the exact final branch HEAD, plus unchanged `main` and open/unmerged PR #3.
