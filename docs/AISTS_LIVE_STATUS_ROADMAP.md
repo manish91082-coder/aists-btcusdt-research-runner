@@ -185,3 +185,12 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - No market archives, candidate build, market-data backtest, source adjudication, case closure, strategy promotion, synthetic candle/fill, or live action occurred.
 - Global state unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain `FAIL`; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
 - Next bounded action: implement only deterministic synthetic censor-ledger tests for the listed gaps, then obtain a real independent review and a separate scoped application record before any Policy B scoring is considered.
+
+
+## CP-0213: Synthetic censor-event ledger oracle (test-only)
+
+- Added `tests/test_cp0213_synthetic_censor_event_ledger.py`, an independent in-memory Decimal fixture covering: gap censor with zero fabricated candles/fills/exit price; a later observed sale retained as diagnostic rather than scored P&L; clean flat-cash post-gap replay state with no inherited quantity/pending signal/indicator state; adjacent missing-key grouping preserving exact identities; frozen CP-0206 17-key population and fail-closed G0 guards.
+- Wired the new test into `.github/workflows/cp0165-4h-audit-tests.yml`. CI run must finish terminal-success on the exact branch HEAD before this checkpoint is accepted.
+- Scope is deliberately test-only: this fixture does not call or modify the production simulator's censor behavior, does not apply Policy B, and does not validate a production scorer. No market data, candidate build/backtest, source adjudication, case closure, strategy promotion, or live action occurred.
+- Independent approval and application record remain `NOT PRESENT`; Policy B application remains `NOT AUTHORIZED`. Global state unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain `FAIL`; live signing/broadcast/orders `BLOCKED`; profitability **NOT ESTABLISHED**.
+- Next bounded action after CI verification: inspect whether additional production-path testing can be authorized only after a real independent reviewer signs the scoped application record. Do not run candidate market performance.
