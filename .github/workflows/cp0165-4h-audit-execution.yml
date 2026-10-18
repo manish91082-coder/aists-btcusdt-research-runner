@@ -1,6 +1,7 @@
 name: CP-0165 Read-only 4h Archive Audit Execution
 
 on:
+  workflow_dispatch:
   push:
     branches: [cp-0165-4h-archive-audit]
     paths:
