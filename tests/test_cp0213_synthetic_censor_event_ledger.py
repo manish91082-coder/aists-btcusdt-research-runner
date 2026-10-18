@@ -89,6 +89,58 @@ def group_adjacent_missing_slots(open_times_ms, step_ms=14_400_000):
     return groups
 
 
+
+def validate_exact_population(candidate_keys, expected_keys):
+    """Fail closed on missing, duplicate, altered, or extra exact keys."""
+    if len(candidate_keys) != len(set(candidate_keys)):
+        raise ValueError("duplicate exact key")
+    if set(candidate_keys) != set(expected_keys) or len(candidate_keys) != len(expected_keys):
+        raise ValueError("exact-key population mismatch")
+    return True
+
+
+def unscorable_full_window_result():
+    """Do not publish numeric risk metrics where the path is unobservable."""
+    return {
+        "status": "BLOCKED_GAP_VALUATION_UNSCORABLE",
+        "scored_return": None,
+        "scored_equity": None,
+        "scored_max_drawdown": None,
+    }
+
+
+def independent_event_ledger():
+    """Small independent Decimal event ledger including a mark and fee accounting."""
+    cash = D("1000")
+    qty = D("0")
+    fee_rate = D("0.001")
+    events = []
+
+    buy_gross = D("200") * D("2")
+    buy_fee = buy_gross * fee_rate
+    cash -= buy_gross + buy_fee
+    qty += D("2")
+    events.append({"event": "BUY_FILL", "cash": cash, "qty": qty, "fee": buy_fee})
+
+    mark_price = D("210")
+    equity_at_mark = cash + qty * mark_price
+    events.append({"event": "BAR_CLOSE_MARK", "cash": cash, "qty": qty,
+                   "mark_price": mark_price, "equity": equity_at_mark})
+
+    sell_gross = qty * D("190")
+    sell_fee = sell_gross * fee_rate
+    cash += sell_gross - sell_fee
+    qty -= D("2")
+    events.append({"event": "SELL_FILL", "cash": cash, "qty": qty, "fee": sell_fee})
+
+    return {
+        "events": events,
+        "final_cash": cash,
+        "final_qty": qty,
+        "total_fees": buy_fee + sell_fee,
+        "realized_net_pnl": cash - D("1000"),
+    }
+
 class TestCP0213SyntheticCensorEventLedger(unittest.TestCase):
     def test_gap_censor_has_no_fabricated_boundary_fill(self):
         result = independent_censor_fixture()
@@ -127,6 +179,35 @@ class TestCP0213SyntheticCensorEventLedger(unittest.TestCase):
         self.assertEqual(sorted(k for group in groups for k in group), sorted(keys))
         with self.assertRaises(ValueError):
             group_adjacent_missing_slots([0, 0], step)
+
+    def test_event_level_decimal_ledger_reconciles_cash_quantity_fees_and_equity(self):
+        result = independent_event_ledger()
+        events = result["events"]
+        self.assertEqual([e["event"] for e in events], ["BUY_FILL", "BAR_CLOSE_MARK", "SELL_FILL"])
+        self.assertEqual(events[0]["cash"], D("599.600"))
+        self.assertEqual(events[0]["qty"], D("2"))
+        self.assertEqual(events[1]["equity"], D("1019.600"))
+        self.assertEqual(events[2]["cash"], D("979.220"))
+        self.assertEqual(result["final_qty"], D("0"))
+        self.assertEqual(result["total_fees"], D("0.780"))
+        self.assertEqual(result["realized_net_pnl"], D("-20.780"))
+        # Independent conservation identity: start cash + net P&L = ending cash.
+        self.assertLessEqual(abs(D("1000") + result["realized_net_pnl"] - result["final_cash"]), TOL)
+
+    def test_full_window_risk_metrics_are_null_when_unscorable(self):
+        result = unscorable_full_window_result()
+        self.assertEqual(result["status"], "BLOCKED_GAP_VALUATION_UNSCORABLE")
+        self.assertIsNone(result["scored_return"])
+        self.assertIsNone(result["scored_equity"])
+        self.assertIsNone(result["scored_max_drawdown"])
+
+    def test_exact_population_validator_rejects_missing_duplicate_and_extra_keys(self):
+        expected = ["k1", "k2", "k3"]
+        self.assertTrue(validate_exact_population(["k3", "k1", "k2"], expected))
+        for candidate in (["k1", "k2"], ["k1", "k2", "k2"], ["k1", "k2", "k4"]):
+            with self.subTest(candidate=candidate):
+                with self.assertRaises(ValueError):
+                    validate_exact_population(candidate, expected)
 
     def test_frozen_population_identity_and_fail_closed_guards_remain(self):
         policy = json.loads(POLICY.read_text(encoding="utf-8"))
