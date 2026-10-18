@@ -100,6 +100,46 @@ class CostAwareSimulatorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "allocation_fraction"):
             simulate_next_open(candles, [], interval_ms=1000, initial_cash_usdt=1000, allocation_fraction=1.1)
 
+    def test_symbol_filters_round_quantity_down_to_step_size(self):
+        result = simulate_next_open(
+            bars([100, 100, 100]),
+            [{"decision_id": "buy-step", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5, "max_qty": 10},
+        )
+        qty = result["events"][0]["quantity_btc"]
+        self.assertAlmostEqual(qty / 0.001, round(qty / 0.001), places=8)
+        self.assertTrue(result["exchange_filters_applied"])
+        self.assertGreaterEqual(result["events"][0]["notional_usdt"], 5)
+
+    def test_symbol_filters_skip_below_minimum_notional(self):
+        result = simulate_next_open(
+            bars([100, 100]),
+            [{"decision_id": "buy-min-notional", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=100,
+            allocation_fraction=0.1,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 20},
+        )
+        self.assertEqual(result["event_count"], 0)
+        self.assertEqual(result["skipped_decisions"][0]["reason"], "BELOW_MIN_NOTIONAL")
+
+    def test_symbol_filters_require_min_qty_step_and_min_notional(self):
+        with self.assertRaisesRegex(ValueError, "missing required fields"):
+            simulate_next_open(
+                bars([100, 100]),
+                [],
+                interval_ms=1000,
+                initial_cash_usdt=1000,
+                symbol_filters={"step_size": 0.001, "min_notional": 5},
+            )
+
     def test_rejects_nonmonotonic_candles(self):
         with self.assertRaisesRegex(ValueError, "strictly increasing"):
             simulate_next_open(
