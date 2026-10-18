@@ -15,7 +15,10 @@ TIMEFRAMES = ("5m", "15m", "30m", "1h", "4h", "1d", "1w", "1mo")
 
 def _number(candle: Mapping[str, Any], field: str) -> float:
     try:
-        value = float(candle[field])
+        raw_value = candle[field]
+        if isinstance(raw_value, bool):
+            raise ValueError("boolean is not a numeric market value")
+        value = float(raw_value)
     except (KeyError, TypeError, ValueError) as exc:
         raise ValueError(f"candle field {field!r} must be numeric") from exc
     if not isfinite(value):
@@ -35,7 +38,10 @@ def _validate(candles: Sequence[Mapping[str, Any]]) -> list[dict[str, float]]:
         if row["low"] > row["high"] or row["volume"] < 0:
             raise ValueError(f"invalid low/high/volume at candle index {index}")
         if "open_time_ms" in candle:
-            timestamp = int(_number(candle, "open_time_ms"))
+            timestamp_value = _number(candle, "open_time_ms")
+            if not timestamp_value.is_integer():
+                raise ValueError("open_time_ms must be an integer timestamp")
+            timestamp = int(timestamp_value)
             if previous_time is not None and timestamp <= previous_time:
                 raise ValueError("open_time_ms must be strictly increasing")
             previous_time = timestamp
