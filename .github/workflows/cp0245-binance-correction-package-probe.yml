@@ -1,0 +1,40 @@
+name: CP-0245 Official Kline Correction Package Probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [cp-0165-4h-archive-audit]
+    paths:
+      - '.github/workflows/cp0245-binance-correction-package-probe.yml'
+      - 'scripts/AISTS_CP0245_Binance_Kline_Correction_Package_Probe.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cp0245-binance-correction-package-probe
+  cancel-in-progress: false
+
+jobs:
+  inspect-official-correction-bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact branch commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download and inspect official correction bundle only
+        run: python scripts/AISTS_CP0245_Binance_Kline_Correction_Package_Probe.py
+      - name: Upload probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp0245-binance-kline-correction-probe-${{ github.run_id }}
+          path: results/cp0245_binance_kline_correction_probe/CP0245_Binance_Kline_Correction_Package_Probe.json
+          if-no-files-found: warn
+          retention-days: 30
