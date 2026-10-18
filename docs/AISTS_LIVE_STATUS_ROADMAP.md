@@ -479,3 +479,15 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - No account access, conversion, archive download, candidate build, backtest, paper run, order, signing or broadcast occurred.
 - Gates unchanged: G0 `BLOCKED_GLOBAL`; canonical historical source `NONE`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`; profitability `NOT ESTABLISHED`.
 - Next: preserve actual funding evidence if available, or obtain a reproducible, explicitly hypothetical executable conversion quote path before freezing the capital basis. In parallel, continue independent G0 source adjudication. Do not run CP-0152 without explicit approval and G0 clearance.
+
+
+## CP-0241 — External Spot kline discrepancy evidence review
+
+- Read-only review report: [CP-0241 External Spot Kline Discrepancy Evidence Review](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0165-4h-archive-audit/docs/CP0241_External_Spot_Kline_Discrepancy_Evidence_Review.md); report commit `71a73b5adf2ab44a4647fc92c3f47b44b7221b4e`.
+- Public Binance tracker issue [#475](https://github.com/binance/binance-public-data/issues/475) contains community-reported monthly/daily/API Spot kline conflicts and a comment reporting additional BTCUSDT 4h aggregation conflicts at 2021-01-21 08:00 UTC and 2022-04-13 04:00 UTC. These are community claims, not maintainer-verified canonical-source decisions, and are not the exact 17 missing keys in this audit.
+- Public issue [#505](https://github.com/binance/binance-public-data/issues/505) reports one checksum-valid BTCUSDT 5m row with malformed close_time; it is not direct proof about the project's 4h records.
+- Official README [correction history](https://github.com/binance/binance-public-data/blob/master/README.md) documents a 2022-08-08 kline update marked “Fixed inconsistent data,” but does not establish exact historical publication/replacement timestamps or point-in-time reconstruction.
+- Issue [#504](https://github.com/binance/binance-public-data/issues/504) remains open with no comments in the checked snapshot. No maintainer response or official point-in-time guarantee was found.
+- Decision: `CP0241_EXTERNAL_CORROBORATION_G0_STILL_BLOCKED`. This evidence reinforces the need to distinguish checksum integrity from semantic validity but does not establish a canonical 4h source, close any source case, fill any gap, or clear G0/G3.
+- The previous Roadmap reconciliation commit `41244374eb300399e429f5f3fd69dafd381bca8d` has exact-head static audit run [39153867638](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39153867638) terminal `success`.
+- No archive was downloaded, no candidate/backtest/paper run occurred, and no exchange order, signing, or broadcast occurred.
