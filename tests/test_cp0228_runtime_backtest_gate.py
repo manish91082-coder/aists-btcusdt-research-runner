@@ -16,24 +16,25 @@ BACKTEST = ROOT / "scripts" / "AISTS_CP0027_MultiTimeframe_Baseline_Backtest.py"
 
 
 class TestCP0228RuntimeBacktestGate(unittest.TestCase):
+    def _run_backtest(self, data_root):
+        env = os.environ.copy()
+        env["AISTS_DATA_ROOT"] = str(data_root)
+        # Ensure this subprocess cannot accidentally inherit a Colab mount.
+        env.pop("COLAB_RELEASE_TAG", None)
+        return subprocess.run(
+            [sys.executable, str(BACKTEST)],
+            cwd=str(ROOT),
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+
     def test_missing_frozen_gap_evidence_stops_before_any_outputs(self):
         with tempfile.TemporaryDirectory(prefix="aists-cp0228-") as tmp:
             data_root = Path(tmp)
-            env = os.environ.copy()
-            env["AISTS_DATA_ROOT"] = str(data_root)
-            # Ensure this subprocess cannot accidentally inherit a Colab mount.
-            env.pop("COLAB_RELEASE_TAG", None)
-
-            proc = subprocess.run(
-                [sys.executable, str(BACKTEST)],
-                cwd=str(ROOT),
-                env=env,
-                capture_output=True,
-                text=True,
-                timeout=30,
-                check=False,
-            )
-
+            proc = self._run_backtest(data_root)
             output = proc.stdout + "\n" + proc.stderr
             self.assertNotEqual(proc.returncode, 0, output)
             self.assertIn("G0_BLOCKED_GAP_POLICY_FILE_MISSING", output)
@@ -41,6 +42,32 @@ class TestCP0228RuntimeBacktestGate(unittest.TestCase):
             self.assertFalse(
                 (data_root / "derived" / "research_candidate_v1" / "BTCUSDT" / "backtest_cp0027").exists()
             )
+
+    def test_present_but_tampered_gate_evidence_stops_before_backtest_outputs(self):
+        with tempfile.TemporaryDirectory(prefix="aists-cp0228-tampered-") as tmp:
+            data_root = Path(tmp)
+            report_dir = data_root / "reports"
+            report_dir.mkdir(parents=True)
+            # All required paths exist, but the first manifest is not the frozen
+            # CP-0200 artifact. The runtime must reject its hash before parsing
+            # summaries, loading candidates, or creating backtest output paths.
+            (report_dir / "CP0200_G0_Gap_Quarantine_Recommendation.csv").write_text(
+                "not,the,frozen,evidence\n", encoding="utf-8"
+            )
+            (report_dir / "CP0200_Summary.json").write_text("{}", encoding="utf-8")
+            (report_dir / "CP0201_Gap_Quarantine_Overlap_Crosswalk.csv").write_text(
+                "not,the,frozen,crosswalk\n", encoding="utf-8"
+            )
+            (report_dir / "CP0201_Summary.json").write_text("{}", encoding="utf-8")
+
+            proc = self._run_backtest(data_root)
+            output = proc.stdout + "\n" + proc.stderr
+            self.assertNotEqual(proc.returncode, 0, output)
+            self.assertIn("G0_BLOCKED_GAP_MANIFEST_SHA256_MISMATCH", output)
+            self.assertFalse(
+                (data_root / "derived" / "research_candidate_v1" / "BTCUSDT" / "backtest_cp0027").exists()
+            )
+            self.assertFalse((report_dir / "cp0026_research_candidate_manifest.json").exists())
 
     def test_runtime_test_does_not_use_network_or_market_archives(self):
         source = BACKTEST.read_text(encoding="utf-8")
