@@ -195,7 +195,7 @@ class ResearchReportVerifierTests(unittest.TestCase):
             run_id="cp0241-entrypoint-status-mismatch", repository_head_sha=HEAD,
         )
         report["entrypoint"] = {
-            "status": "BLOCKED_INPUT",
+            "status": "BLOCKED_GATE",
             "blocked_reason": "synthetic contradiction",
             "simulation_attempted": False,
             "input_artifacts_inspected": False,
