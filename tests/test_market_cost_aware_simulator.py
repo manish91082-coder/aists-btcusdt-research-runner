@@ -338,6 +338,30 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertEqual(result["skipped_decisions"][0]["reason"], "SELL_BELOW_MIN_NOTIONAL")
         self.assertIn("open position is marked using last close", " ".join(result["limitations"]))
 
+    def test_quantity_equal_to_min_qty_is_accepted(self):
+        result = simulate_next_open(
+            bars([100, 100]),
+            [{"decision_id": "buy-at-min-qty", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.1,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={
+                "min_qty": 1.0,
+                "step_size": 1.0,
+                "min_notional": 100.0,
+                "max_qty": 1.0,
+            },
+        )
+
+        self.assertEqual(result["event_count"], 1)
+        self.assertEqual(result["events"][0]["quantity_btc"], 1.0)
+        self.assertEqual(result["events"][0]["notional_usdt"], 100.0)
+        self.assertEqual(result["cash_usdt"], 900.0)
+        self.assertEqual(result["skipped_decisions"], [])
+        self.assertFalse(result["events"][0]["is_order_instruction"])
+
     def test_symbol_filters_reject_max_qty_below_min_qty(self):
         with self.assertRaisesRegex(ValueError, "max_qty must be >= min_qty"):
             simulate_next_open(
