@@ -83,6 +83,23 @@ def inspect_zip_bytes(payload: bytes, label: str, result: dict, depth: int = 0) 
                     continue
                 if info.filename.lower().endswith(".zip"):
                     inspect_zip_bytes(data, name, result, depth + 1)
+                elif info.filename.lower().endswith(".csv") and "kline_updates" in info.filename.lower():
+                    try:
+                        manifest_rows = list(csv.reader(io.StringIO(data.decode("utf-8-sig"))))
+                        result["correction_manifest"] = {
+                            "member": name,
+                            "header": manifest_rows[0] if manifest_rows else [],
+                            "data_row_count": max(0, len(manifest_rows) - 1),
+                            "btc_usdt_4h_rows": [
+                                {"row_number": idx + 1, "row": row}
+                                for idx, row in enumerate(manifest_rows[1:], start=1)
+                                if any("BTCUSDT" in cell.upper() for cell in row)
+                                and any("4H" in cell.upper() for cell in row)
+                            ],
+                            "first_rows": manifest_rows[:3],
+                        }
+                    except (UnicodeDecodeError, csv.Error) as exc:
+                        result["read_errors"].append({"member": name, "error": type(exc).__name__})
                 elif ("BTCUSDT" in info.filename.upper() and "4H" in info.filename.upper()) or info.filename.lower().endswith(".csv"):
                     before = result["numeric_rows_seen"]
                     read_csv_rows(data, name, result)
@@ -117,6 +134,7 @@ def main() -> int:
         "known_open_time_utc": "2017-09-06T16:00:00Z",
         "zip_files": [],
         "btc_usdt_4h_csv_members": [],
+        "correction_manifest": None,
         "numeric_rows_seen": 0,
         "known_key_matches": [],
         "read_errors": [],
