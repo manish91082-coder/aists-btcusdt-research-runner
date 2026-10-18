@@ -62,6 +62,9 @@ def reconcile_simulation_with_ledger(
     fee_rate = fee_bps / 10000.0
 
     initial_cash = _num("initial_cash_usdt", simulation.get("initial_cash_usdt"))
+    ledger_initial_cash = _num("ledger_initial_cash_usdt", ledger.get("initial_cash_usdt"))
+    if abs(initial_cash - ledger_initial_cash) > tolerance_usdt:
+        raise ReconciliationError("initial cash mismatch between simulator and paper ledger")
     cash = initial_cash
     btc = 0.0
     fees = 0.0
