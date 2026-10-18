@@ -71,6 +71,14 @@ class TestCP0192CacheOnlyTriage(unittest.TestCase):
             root / "5m" / "2018-02" / "BTCUSDT-5m-2018-02.zip"
         )
         self.assertEqual(
+            TRIAGE.expected_archive_path(root, "15m", "2018-02"),
+            root / "15m" / "2018-02" / "BTCUSDT-15m-2018-02.zip"
+        )
+        self.assertEqual(
+            TRIAGE.expected_archive_path(root, "30m", "2018-02"),
+            root / "30m" / "2018-02" / "BTCUSDT-30m-2018-02.zip"
+        )
+        self.assertEqual(
             TRIAGE.expected_archive_path(root, "1h", "2018-02"),
             root / "1h" / "2018-02" / "BTCUSDT-1h-2018-02.zip"
         )
@@ -112,6 +120,12 @@ class TestCP0192CacheOnlyTriage(unittest.TestCase):
             self.assertEqual(record["zip_crc"], "PASS")
             self.assertEqual(record["timestamp_unit_status"], "FAIL")
             self.assertEqual(len(opens), 1)
+
+    def test_expected_child_interval_counts_cover_exact_4h_window(self):
+        self.assertEqual(TRIAGE.CHILD_INTERVALS, ("5m", "15m", "30m", "1h"))
+        self.assertEqual(TRIAGE.EXPECTED_CHILD_INTERVALS, {"5m": 48, "15m": 16, "30m": 8, "1h": 4})
+        for interval in TRIAGE.CHILD_INTERVALS:
+            self.assertEqual(TRIAGE.EXPECTED_CHILD_INTERVALS[interval] * TRIAGE.INTERVAL_US[interval], TRIAGE.INTERVAL_US["4h"])
 
     def test_triage_source_has_no_network_or_mutation_path(self):
         source = SCRIPT.read_text(encoding="utf-8")

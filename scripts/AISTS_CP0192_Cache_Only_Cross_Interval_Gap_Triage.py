@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Cache-only triage of missing 4h open times against existing 5m and 1h monthly archives."""
+"""Cache-only triage of missing 4h open times against existing 5m/15m/30m/1h monthly archives."""
 from __future__ import annotations
 import argparse, csv, hashlib, json, zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-INTERVAL_US = {"5m": 5 * 60 * 1_000_000, "1h": 60 * 60 * 1_000_000, "4h": 4 * 60 * 60 * 1_000_000}
-EXPECTED_CHILD_INTERVALS = {"5m": 48, "1h": 4}
+INTERVAL_US = {"5m": 5 * 60 * 1_000_000, "15m": 15 * 60 * 1_000_000, "30m": 30 * 60 * 1_000_000, "1h": 60 * 60 * 1_000_000, "4h": 4 * 60 * 60 * 1_000_000}
+EXPECTED_CHILD_INTERVALS = {"5m": 48, "15m": 16, "30m": 8, "1h": 4}
+CHILD_INTERVALS = ("5m", "15m", "30m", "1h")
 
 def sha256_file(path):
     h = hashlib.sha256()
@@ -179,7 +180,7 @@ def main():
     archive_rows = []
     open_index = {}
     for period in periods:
-        for interval in ("5m", "1h"):
+        for interval in CHILD_INTERVALS:
             path = expected_archive_path(cache_root, interval, period)
             record, opens = inspect_cached_archive(path, interval, period)
             archive_rows.append(record)
@@ -193,7 +194,7 @@ def main():
         row["period"] = period
         all_intervals_complete = True
         any_interval_available = False
-        for interval in ("5m", "1h"):
+        for interval in CHILD_INTERVALS:
             opens = open_index[(interval, period)]
             expected_count = EXPECTED_CHILD_INTERVALS[interval]
             expected_opens = set(range(t, t + INTERVAL_US["4h"], INTERVAL_US[interval]))
@@ -217,13 +218,15 @@ def main():
                     all_intervals_complete = False
             else:
                 all_intervals_complete = False
-        row["triage_status"] = "COMPLETE_FINER_INTERVAL_COVERAGE" if all_intervals_complete else "PARTIAL_FINER_INTERVAL_COVERAGE" if any_interval_available and any(row[f"{i}_found_opens"] not in ("", 0) for i in ("5m", "1h")) else "NO_COMPLETE_FINER_INTERVAL_EVIDENCE"
+        row["triage_status"] = "COMPLETE_FINER_INTERVAL_COVERAGE" if all_intervals_complete else "PARTIAL_FINER_INTERVAL_COVERAGE" if any_interval_available and any(row[f"{i}_found_opens"] not in ("", 0) for i in CHILD_INTERVALS) else "NO_COMPLETE_FINER_INTERVAL_EVIDENCE"
         row["interpretation"] = "coverage_only_not_reconstruction_or_canonical_source"
         detail_rows.append(row)
 
     missing = sum(r["cache_status"] != "PRESENT" for r in archive_rows)
     invalid = sum(r["cache_status"] == "PRESENT" and (r["zip_crc"] != "PASS" or r["timestamp_unit_status"] != "PASS" or r["open_grid_status"] != "PASS") for r in archive_rows)
     complete_5m = sum(r["5m_coverage_status"] == "COMPLETE" for r in detail_rows)
+    complete_15m = sum(r["15m_coverage_status"] == "COMPLETE" for r in detail_rows)
+    complete_30m = sum(r["30m_coverage_status"] == "COMPLETE" for r in detail_rows)
     complete_1h = sum(r["1h_coverage_status"] == "COMPLETE" for r in detail_rows)
     complete_any = sum(r["triage_status"] == "COMPLETE_FINER_INTERVAL_COVERAGE" for r in detail_rows)
     slots_with_any_child_open = sum(
@@ -237,7 +240,7 @@ def main():
         and r["5m_found_opens"] == 0 and r["1h_found_opens"] == 0
         for r in detail_rows)
     slots_with_unavailable_child_data = sum(
-        r["5m_archive_status"] != "VALID" or r["1h_archive_status"] != "VALID"
+        any(r[f"{interval}_archive_status"] != "VALID" for interval in CHILD_INTERVALS)
         for r in detail_rows)
     if len(detail_rows) != len(slots) or missing or invalid:
         status = "REVIEW_REQUIRED_CACHE_COVERAGE_INCOMPLETE"
@@ -253,12 +256,13 @@ def main():
         "started_at_utc": started, "finished_at_utc": datetime.now(timezone.utc).isoformat(),
         "source_gap_csv": str(gaps_path.relative_to(root)), "source_gap_csv_sha256": source_hash,
         "expected_4h_missing_slots": len(slots), "source_gap_events": len({(r["source_gap_previous_open_time_utc"], r["source_gap_next_open_time_utc"]) for r in slots}),
-        "months_inspected": periods, "intervals_checked": ["5m", "1h"],
-        "expected_child_archives": len(periods) * 2, "cache_archives_missing": missing, "cache_archives_invalid_wrong_unit_or_off_grid": invalid,
+        "months_inspected": periods, "intervals_checked": list(CHILD_INTERVALS),
+        "expected_child_archives": len(periods) * len(CHILD_INTERVALS), "cache_archives_missing": missing, "cache_archives_invalid_wrong_unit_or_off_grid": invalid,
         "child_archives_with_off_grid_or_duplicate_timestamps": sum(r["open_grid_status"] == "FAIL" for r in archive_rows),
         "child_archive_off_grid_rows": sum(int(r["off_grid_rows"] or 0) for r in archive_rows),
         "child_archive_duplicate_open_times": sum(int(r["duplicate_open_times"] or 0) for r in archive_rows),
-        "slots_with_complete_5m_coverage": complete_5m, "slots_with_complete_1h_coverage": complete_1h,
+        "slots_with_complete_5m_coverage": complete_5m, "slots_with_complete_15m_coverage": complete_15m,
+        "slots_with_complete_30m_coverage": complete_30m, "slots_with_complete_1h_coverage": complete_1h,
         "slots_with_complete_5m_and_1h_coverage": complete_any,
         "slots_with_any_child_open_inside_missing_4h_windows": slots_with_any_child_open,
         "slots_with_both_child_archives_grid_valid": slots_with_both_archives_valid,
@@ -275,6 +279,12 @@ def main():
         "5m_archive_status", "5m_expected_opens", "5m_found_opens", "5m_coverage_status",
         "5m_previous_open_time_utc", "5m_next_open_time_utc", "5m_delta_between_boundaries_us",
         "5m_missing_intervals_between_boundaries", "5m_boundary_gap_class",
+        "15m_archive_status", "15m_expected_opens", "15m_found_opens", "15m_coverage_status",
+        "15m_previous_open_time_utc", "15m_next_open_time_utc", "15m_delta_between_boundaries_us",
+        "15m_missing_intervals_between_boundaries", "15m_boundary_gap_class",
+        "30m_archive_status", "30m_expected_opens", "30m_found_opens", "30m_coverage_status",
+        "30m_previous_open_time_utc", "30m_next_open_time_utc", "30m_delta_between_boundaries_us",
+        "30m_missing_intervals_between_boundaries", "30m_boundary_gap_class",
         "1h_archive_status", "1h_expected_opens", "1h_found_opens", "1h_coverage_status",
         "1h_previous_open_time_utc", "1h_next_open_time_utc", "1h_delta_between_boundaries_us",
         "1h_missing_intervals_between_boundaries", "1h_boundary_gap_class",
@@ -293,9 +303,11 @@ def main():
         f"- Expected missing 4h slots inspected: {len(slots)} across {len(periods)} months.",
         f"- Existing child archives checked: {len(archive_rows)}; missing: {missing}; invalid or wrong-unit: {invalid}.",
         f"- Slots with complete 5m coverage: {complete_5m}/{len(slots)}.",
+        f"- Slots with complete 15m coverage: {complete_15m}/{len(slots)}.",
+        f"- Slots with complete 30m coverage: {complete_30m}/{len(slots)}.",
         f"- Slots with complete 1h coverage: {complete_1h}/{len(slots)}.",
         f"- Slots with complete 5m and 1h coverage: {complete_any}/{len(slots)}.",
-        f"- Slots with any 5m or 1h open inside the missing 4h windows: {slots_with_any_child_open}/{len(slots)}.",
+        f"- Slots with any 5m/15m/30m/1h open inside the missing 4h windows: {slots_with_any_child_open}/{len(slots)}.",
         f"- Slots with both child archives grid-valid: {slots_with_both_archives_valid}/{len(slots)}; zero child opens in valid archives: {slots_with_zero_child_opens_valid}; unavailable/invalid child data: {slots_with_unavailable_child_data}.",
         f"- Child archives with off-grid/duplicate open times: {summary['child_archives_with_off_grid_or_duplicate_timestamps']}; off-grid rows: {summary['child_archive_off_grid_rows']}; duplicate opens: {summary['child_archive_duplicate_open_times']}.",
         "- Boundary timestamps and estimated child-interval gaps are recorded for each missing 4h window.",
@@ -303,7 +315,7 @@ def main():
         "- Network access, downloads, Binance REST, cache mutation, interpolation, backtests, candidate builds, and live actions are prohibited by this task."
     ]
     (out / "CP0192_Report_HI.md").write_text("\n".join(report) + "\n", encoding="utf-8")
-    print(json.dumps({k: summary[k] for k in ("status", "expected_4h_missing_slots", "expected_child_archives", "cache_archives_missing", "cache_archives_invalid_wrong_unit_or_off_grid", "child_archives_with_off_grid_or_duplicate_timestamps", "child_archive_off_grid_rows", "child_archive_duplicate_open_times", "slots_with_complete_5m_coverage", "slots_with_complete_1h_coverage", "slots_with_complete_5m_and_1h_coverage", "slots_with_any_child_open_inside_missing_4h_windows", "slots_with_both_child_archives_grid_valid", "slots_with_zero_child_opens_in_valid_archives", "slots_with_unavailable_or_invalid_child_archives", "network_used", "archive_downloads", "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
+    print(json.dumps({k: summary[k] for k in ("status", "expected_4h_missing_slots", "expected_child_archives", "cache_archives_missing", "cache_archives_invalid_wrong_unit_or_off_grid", "child_archives_with_off_grid_or_duplicate_timestamps", "child_archive_off_grid_rows", "child_archive_duplicate_open_times", "slots_with_complete_5m_coverage", "slots_with_complete_15m_coverage", "slots_with_complete_30m_coverage", "slots_with_complete_1h_coverage", "slots_with_complete_5m_and_1h_coverage", "slots_with_any_child_open_inside_missing_4h_windows", "slots_with_both_child_archives_grid_valid", "slots_with_zero_child_opens_in_valid_archives", "slots_with_unavailable_or_invalid_child_archives", "network_used", "archive_downloads", "canonical_source", "g0", "live_signing_broadcast_orders")}, sort_keys=True))
     return 0
 
 if __name__ == "__main__":
