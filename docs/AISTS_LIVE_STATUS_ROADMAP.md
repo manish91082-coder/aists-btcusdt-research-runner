@@ -530,3 +530,13 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Follow-up read-only lookup found the official repository object for `updates/2022-08-08_kline_updates.zip` (GitHub object SHA `90631298cf50ac2e1ee8372a087767b010d78a21`, listed size 6,653,240 bytes) and verified Git commit [`d246b9785575078d02730d02240bf99d9f36feec`](https://github.com/binance/binance-public-data/commit/d246b9785575078d02730d02240bf99d9f36feec), timestamped `2022-08-09T06:43:40Z`; GitHub reports its signature verified.
 - The timestamp is evidence of the correction package's repository commit, not proof of the exact production archive replacement time or point-in-time availability at `data.binance.vision`. The package contents were not downloaded/inspected, so whether it includes project-specific BTCUSDT 4h keys remains UNKNOWN.
 - CP-0244 report addendum commit: `10c3f0029d9b138a2c1330e0f260e652a2d94d10`. G0 remains `BLOCKED_GLOBAL`; canonical source `NONE`; no source case closed and no strategy execution authorized.
+
+
+### CP-0245 — official correction-package manifest inspected (2026-10-19)
+
+- Downloaded only the official `updates/2022-08-08_kline_updates.zip` package through isolated GitHub Actions. HTTP 200; 6,653,240 bytes; SHA-256 `1404dbfb3d62534b2576a6c0c046826fe652f895b9bebfe4c13df58bc8cf6240`; outer ZIP CRC PASS.
+- The ZIP contains a 73,234-row `2022-08-08_kline_updates.csv` checksum manifest and a macOS metadata entry, not replacement market-data ZIPs.
+- Four manifest rows name BTCUSDT 4h daily archives (2021-08-02, 2022-03-10, 2022-03-14, 2022-03-22). No row matches the known 2017-09-06T16:00:00Z project key. This is a limited negative finding about this manifest only, not proof that no correction exists elsewhere.
+- Report: [CP-0245_Binance_Kline_Correction_Package_Probe.md](CP0245_Binance_Kline_Correction_Package_Probe.md). Probe run [39157359192](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39157359192) completed successfully; static audit CI [39157315873](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39157315873) succeeded on the preceding revision.
+- Decision: `CP0245_CORRECTION_MANIFEST_DOES_NOT_COVER_KNOWN_2017_KEY_G0_UNCHANGED`. Canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G2 23 candidates still FAIL; G3 remains blocked; G4 insufficient; G6 not built; G7 live blocked; profitability not established. CP-0152 remains pending explicit approval.
+- No market data was modified or repaired; no source case was closed; no backtest, paper run, or exchange action occurred. Do not repeat this package scan.
