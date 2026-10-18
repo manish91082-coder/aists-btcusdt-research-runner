@@ -53,3 +53,11 @@ Do not repeat checksum/cache-only scans. Seek a documented official per-file ver
 ## Validation boundary
 
 This checkpoint records official documentation and public Git/issue state. It does not validate profitability, establish canonical market data, provide legal advice, or authorize strategy execution.
+
+
+## Addendum — correction-package repository timestamp (reviewed 2026-10-19)
+
+- Official repository path: `updates/2022-08-08_kline_updates.zip`; current GitHub object SHA `90631298cf50ac2e1ee8372a087767b010d78a21`; displayed file size 6,653,240 bytes.
+- File-path commit history returns commit [`d246b9785575078d02730d02240bf99d9f36feec`](https://github.com/binance/binance-public-data/commit/d246b9785575078d02730d02240bf99d9f36feec), message “Kline data update (#174)”, author/committer API timestamp `2022-08-09T06:43:40Z`; GitHub reports the commit signature as verified.
+- This establishes a repository commit timestamp for the correction package, which is more specific than the README's date-only changelog. It does not prove the exact time when the corrected production archive became available at `data.binance.vision`, nor when each affected archive was replaced, whether every prior ZIP version is retained, or whether the package includes the project’s exact unresolved BTCUSDT 4h keys. The package contents were not downloaded or inspected in this checkpoint.
+- Accordingly, the finding narrows one historical metadata gap but does not change `CP0244_OFFICIAL_VERSION_HISTORY_INSUFFICIENT_G0_UNCHANGED`; G0 remains blocked.
