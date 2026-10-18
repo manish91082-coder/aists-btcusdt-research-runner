@@ -64,6 +64,10 @@ def inspect_zip_bytes(payload: bytes, label: str, result: dict, depth: int = 0) 
                 "members": len(zf.infolist()),
                 "crc_test": "PASS" if bad is None else "FAIL",
                 "bad_member": bad,
+                "member_inventory": [
+                    {"name": item.filename, "bytes": item.file_size, "crc32": format(item.CRC, "08x")}
+                    for item in zf.infolist() if not item.is_dir()
+                ],
             })
             for info in zf.infolist():
                 if info.is_dir():
