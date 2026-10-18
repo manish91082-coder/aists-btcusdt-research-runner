@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0220",
+  "title": "Frozen-rulebook audit of 11 non-row aggregation blockers",
+  "branch": "cp-0165-4h-archive-audit",
+  "source_commit": "6b95f2d96b2363a3d38dcd2563afc461b9cdec22",
+  "workflow": {
+    "run_id": 39104124599,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39104124599",
+    "artifact_id": 12127693072,
+    "artifact_name": "cp0165-read-only-audit-39104124599-attempt-1",
+    "artifact_sha256": "2e2936e2dba356646f1fea2bda557efe704a829c61232c61f274fb76c05e19a8",
+    "artifact_bytes": 45553,
+    "artifact_expires_at_utc": "2026-11-17T06:28:12Z"
+  },
+  "outputs": {
+    "summary": "cp0117_rulebook_bound_blocker_disposition/CP0117_Rulebook_Bound_Blocker_Disposition_Summary.json",
+    "summary_sha256": "85f1b11b6606f26b6a4ee0a9ac367ca9b4201e2321a984c3ba209c46b9fa16a9",
+    "summary_bytes": 26548,
+    "report": "cp0117_rulebook_bound_blocker_disposition/CP0117_Rulebook_Bound_Blocker_Disposition_Report_HI.md",
+    "report_sha256": "20f954f737cb6e4466b3fe0f5dd82318105e407d3c5920a4759e79c7cde0f7f4",
+    "report_bytes": 4251,
+    "matrix": "cp0117_rulebook_bound_blocker_disposition/CP0117_NonRow_Blocker_Disposition_Matrix.csv",
+    "matrix_sha256": "b031e22afce350ff6acab7f69f266276a4989f29f5d9b4bb9f9109480e4ed8a3",
+    "matrix_bytes": 4059
+  },
+  "findings": {
+    "audit_checks_passed": 34,
+    "audit_checks_total": 34,
+    "nonrow_blockers": 11,
+    "cases_kept_open": 11,
+    "cases_with_exact_manifest_keyset_match": 11,
+    "unique_bucket_keys": 35,
+    "daily_trade_derived_bars_exact": "35/35",
+    "daily_trade_derived_metric_fields_exact": "315/315",
+    "trade_derived_parent_child_rollups_pass": "11/11",
+    "monthly_unique_bars_exact": "21/35",
+    "monthly_metric_fields_exact": "218/315",
+    "monthly_divergent_keys": 14,
+    "monthly_divergent_fields": 97,
+    "synthetic_filter_excluded": "35/35",
+    "train_quarantine_delta_percentage_points": -15.89174082849894,
+    "issue_504_state": "open",
+    "issue_504_comments": 0,
+    "historical_archive_version_provenance": "OPEN_NOT_ESTABLISHED"
+  },
+  "decision": {
+    "status": "PASS_RULEBOOK_BOUND_NONROW_DISPOSITION_G0_STILL_BLOCKED",
+    "nonrow_blocker_disposition": "KEEP_ALL_11_OPEN_QUARANTINED_DIAGNOSTIC_ONLY",
+    "canonical_source_selected": false,
+    "source_cases_closed": 0,
+    "accepted_candidate_quarantine_metrics": "NOT_ESTABLISHED_PRODUCTION_BUILD_BLOCKED",
+    "g0": "BLOCKED_GLOBAL",
+    "g2": "FAIL_CURRENT_23_CANDIDATES",
+    "g3": "BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT",
+    "g7": "LIVE_BLOCKED",
+    "candidate_build": false,
+    "backtest": false,
+    "strategy_promotion": false,
+    "profitability": "NOT_ESTABLISHED",
+    "live_signing_broadcast_orders": "BLOCKED"
+  },
+  "safety": {
+    "archive_downloads": 0,
+    "network_used_in_audit": false,
+    "raw_source_archives_modified": false,
+    "synthetic_candles_created": false,
+    "timestamps_shifted_or_rounded": false,
+    "binance_orders_placed": false
+  },
+  "interpretation": [
+    "This audit validates frozen evidence identities and the existing 11 non-row blocker dispositions; it does not close any case or select a canonical source.",
+    "Current checksum-verified Spot trades reproduce 35/35 daily bars and 315/315 daily metric fields for the 35 exact target keys; monthly archives match 21/35 bars and 218/315 fields.",
+    "The 14 monthly divergent keys and 97 mismatching fields remain unresolved because historical archive-version/publication provenance is not established.",
+    "The frozen sensitivity result changes TRAIN net return by -15.89174082849894 percentage points, so G3 remains blocked; candidate-specific production quarantine metrics were not produced because the builder remains fail-closed.",
+    "Public Binance issue #504 was rechecked on 2026-10-18: still open, zero comments. This is an external dependency; the audit does not infer a maintainer answer."
+  ]
+}
