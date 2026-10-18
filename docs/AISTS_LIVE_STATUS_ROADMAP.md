@@ -458,3 +458,16 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Some pull-request-triggered runs showed `action_required`; these are not counted as CI passes. Do not claim every PR event passed.
 - Report/roadmap documentation commits still need exact-head CI lookup if a claim is needed; this note does not infer CI status for the roadmap commit.
 - Current filter evidence remains operational-only. G0, historical provenance, CP-0152 approval, capital conversion, account fee tier, and allocation/cash reserve remain unresolved. No candidate/backtest/paper/live action was performed.
+
+
+## CP-0240 — INR-to-USDT capital basis preflight
+
+- Report: [CP-0240 INR-USDT Capital Basis Preflight](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/docs/CP0240_INR_USDT_Capital_Basis_Preflight.md)
+- Report commit: `e0f8a6f6e8a5ebf02e171c8a1a85bf853f8b72ec` on `cp-0120-ai-brain-foundation`.
+- The report distinguishes actual funded capital from a hypothetical research conversion, lists evidence required for each, and explicitly forbids using USD/INR alone as an executable INR-to-USDT rate.
+- Starting amount remains ₹10,000 INR; the old `initial_capital_usdt: 10000` diagnostic basis must not be reused or rescaled.
+- INR-to-USDT conversion remains `NOT_FROZEN`; user-capital P&L/returns remain `NOT_COMPUTABLE` until an admissible rate/path, timestamp, spread, fees and evidence hash are preserved.
+- Allocation/cash reserve remains `NOT_FROZEN`. The CP-0152 G4 25% virtual allocation is a paper-gate requirement only, not general authorization or a real-capital allocation decision.
+- No account access, conversion, archive download, candidate build, backtest, paper run, order, signing or broadcast occurred.
+- Gates unchanged: G0 `BLOCKED_GLOBAL`; canonical historical source `NONE`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`; profitability `NOT ESTABLISHED`.
+- Next: preserve actual funding evidence if available, or obtain a reproducible, explicitly hypothetical executable conversion quote path before freezing the capital basis. In parallel, continue independent G0 source adjudication. Do not run CP-0152 without explicit approval and G0 clearance.
