@@ -79,6 +79,7 @@ def run_research_entrypoint(
     allocation_fraction: float = 0.25,
     fee_bps_per_side: float = 10.0,
     slippage_bps_per_side: float = 5.0,
+    symbol_filters: Mapping[str, Any] | None = None,
     report_path: str | Path | None = None,
 ) -> dict[str, Any]:
     """Run only with explicit gate snapshot and produce a hash-bound audit report.
@@ -115,7 +116,7 @@ def run_research_entrypoint(
             "input_artifacts_inspected": False,
         })
         if (csv_path is None or manifest_path is None or stored_artifact_path is None
-                or not expected_interval or initial_cash_usdt is None):
+                or not expected_interval or initial_cash_usdt is None or symbol_filters is None):
             entrypoint["blocked_reason"] = "REQUIRED_INPUT_ARGUMENT_MISSING"
         else:
             entrypoint["input_artifacts_inspected"] = True
@@ -128,6 +129,7 @@ def run_research_entrypoint(
                     allocation_fraction=allocation_fraction,
                     fee_bps_per_side=fee_bps_per_side,
                     slippage_bps_per_side=slippage_bps_per_side,
+                    symbol_filters=symbol_filters,
                 )
                 entrypoint.update({
                     "status": "SIMULATED_NOT_VALIDATED",
