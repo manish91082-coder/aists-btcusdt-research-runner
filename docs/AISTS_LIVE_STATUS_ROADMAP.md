@@ -448,3 +448,13 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - No klines/trade history downloaded, no candidate/backtest/paper test, no strategy promotion, and no exchange order/signature/broadcast.
 - Gates unchanged: G0 `BLOCKED_GLOBAL`, canonical historical source `NONE`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`; profitability `NOT ESTABLISHED`.
 - Next bounded step: record the provenance/evidence requirements for INR-to-USDT conversion and allocation/cash reserve without inventing a rate or freezing an unsupported value. Do not execute CP-0152 without explicit approval and G0 clearance.
+
+
+### CP-0239 follow-up — trigger correction and snapshot reconciliation
+
+- Updated CP-0239 report: [CP0239_Current_Spot_Filter_Evidence.md](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/docs/CP0239_Current_Spot_Filter_Evidence.md), reconciliation commit `083ed66212fe100d12f0ff1631d87f32595ab154`.
+- Five timestamped raw responses and manifests were captured during workflow-trigger validation: 18:09:01Z, 18:09:30Z, 18:09:40Z, 18:10:25Z, and 18:10:45Z. All five manifests report identical BTCUSDT filter fields. They are all retained; raw hashes differ because response metadata/serverTime changes.
+- The workflow was corrected to remove the pull-request trigger, which had caused redundant captures while the PR changed. It now triggers on relevant pushes and manual dispatch. The final corrected push-trigger capture run [39152953845](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39152953845) and exact-head unit test run [39152953824](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39152953824) both succeeded.
+- Some pull-request-triggered runs showed `action_required`; these are not counted as CI passes. Do not claim every PR event passed.
+- Report/roadmap documentation commits still need exact-head CI lookup if a claim is needed; this note does not infer CI status for the roadmap commit.
+- Current filter evidence remains operational-only. G0, historical provenance, CP-0152 approval, capital conversion, account fee tier, and allocation/cash reserve remain unresolved. No candidate/backtest/paper/live action was performed.
