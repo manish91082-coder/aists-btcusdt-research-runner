@@ -61,6 +61,24 @@ class ResearchRunEntryPointTests(unittest.TestCase):
         self.assertEqual(verified["report_status"], "BLOCKED_INPUT")
         self.assertEqual(verified["status"], "PASS_STRUCTURAL_INTEGRITY")
 
+    def test_g0_pass_with_paths_but_missing_symbol_filters_does_not_inspect_inputs(self):
+        report = run_research_entrypoint(
+            gate_snapshot={**GATES_BLOCKED, "G0": "PASS"},
+            run_id="cp0237-missing-symbol-filters",
+            repository_head_sha=HEAD,
+            csv_path="/path/that/must/not/be/opened.csv",
+            manifest_path="/path/that/must/not/be/opened.json",
+            stored_artifact_path="/path/that/must/not/be/opened-features.json",
+            expected_interval="4h",
+            initial_cash_usdt=100.0,
+        )
+        self.assertEqual(report["status"], "BLOCKED_INPUT")
+        self.assertEqual(report["entrypoint"]["blocked_reason"], "REQUIRED_INPUT_ARGUMENT_MISSING")
+        self.assertFalse(report["entrypoint"]["input_artifacts_inspected"])
+        self.assertFalse(report["entrypoint"]["simulation_attempted"])
+        self.assertEqual(report["input_hashes"], {})
+        self.assertIsNone(report["run"])
+
     def test_blocked_report_is_deterministic_for_same_inputs(self):
         kwargs = dict(
             gate_snapshot=GATES_BLOCKED,
