@@ -6,6 +6,7 @@ signals, fetches quotes, sends orders, or claims profitability. No SL/TP logic.
 from __future__ import annotations
 
 import math
+from decimal import Decimal, ROUND_DOWN
 from typing import Any, Mapping, Sequence
 
 
@@ -29,6 +30,7 @@ def simulate_next_open(
     allocation_fraction: float = 0.25,
     fee_bps_per_side: float = 10.0,
     slippage_bps_per_side: float = 5.0,
+    symbol_filters: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Simulate explicit BUY_CANDIDATE/SELL_CANDIDATE decisions at next contiguous open.
 
@@ -36,7 +38,10 @@ def simulate_next_open(
     supplied series. Its eligible fill is the immediately following bar whose
     open_time_ms equals as_of_ms + 1. Gaps are not bridged and signals are skipped.
     At most one long position is held. BUY sizing uses a fraction of available cash,
-    including the entry fee. SELL closes the full position. No automatic SL/TP.
+    including the entry fee. If symbol_filters are supplied, BUY quantity is rounded
+    down to step_size and checked against min_qty, optional max_qty and min_notional.
+    The caller must supply evidence-backed filters; this function does not fetch them.
+    SELL closes the full position. No automatic SL/TP.
     """
     if isinstance(interval_ms, bool) or not isinstance(interval_ms, int) or interval_ms <= 0:
         raise ValueError("interval_ms must be a positive integer")
@@ -50,6 +55,24 @@ def simulate_next_open(
         raise ValueError("fee/slippage bps must be below 10000")
     if not candles:
         raise ValueError("candles must not be empty")
+
+    filters = None
+    if symbol_filters is not None:
+        if not isinstance(symbol_filters, Mapping):
+            raise ValueError("symbol_filters must be a mapping")
+        required_filter_fields = ("min_qty", "step_size", "min_notional")
+        missing_filter_fields = [name for name in required_filter_fields if name not in symbol_filters]
+        if missing_filter_fields:
+            raise ValueError("symbol_filters missing required fields: " + ", ".join(missing_filter_fields))
+        filters = {
+            "min_qty": _number("symbol_filters.min_qty", symbol_filters["min_qty"], positive=True),
+            "step_size": _number("symbol_filters.step_size", symbol_filters["step_size"], positive=True),
+            "min_notional": _number("symbol_filters.min_notional", symbol_filters["min_notional"], non_negative=True),
+        }
+        if "max_qty" in symbol_filters and symbol_filters["max_qty"] is not None:
+            filters["max_qty"] = _number("symbol_filters.max_qty", symbol_filters["max_qty"], positive=True)
+        if filters.get("max_qty") is not None and filters["max_qty"] < filters["min_qty"]:
+            raise ValueError("symbol_filters.max_qty must be >= min_qty")
 
     bars = []
     by_close = {}
@@ -125,8 +148,24 @@ def simulate_next_open(
                 continue
             fill_price = fill_bar["open"] * (1.0 + slip_rate)
             budget = cash * allocation
-            qty = budget / (fill_price * (1.0 + fee_rate))
+            raw_qty = budget / (fill_price * (1.0 + fee_rate))
+            qty = raw_qty
+            if filters is not None:
+                step = Decimal(str(filters["step_size"]))
+                qty = float((Decimal(str(raw_qty)) / step).to_integral_value(rounding=ROUND_DOWN) * step)
+                if qty < filters["min_qty"]:
+                    skipped.append({"decision_id": decision["decision_id"], "as_of_ms": decision["as_of_ms"],
+                                    "reason": "BELOW_MIN_QTY", "is_order_instruction": False})
+                    continue
+                if filters.get("max_qty") is not None and qty > filters["max_qty"]:
+                    skipped.append({"decision_id": decision["decision_id"], "as_of_ms": decision["as_of_ms"],
+                                    "reason": "ABOVE_MAX_QTY", "is_order_instruction": False})
+                    continue
             notional = qty * fill_price
+            if filters is not None and notional < filters["min_notional"]:
+                skipped.append({"decision_id": decision["decision_id"], "as_of_ms": decision["as_of_ms"],
+                                "reason": "BELOW_MIN_NOTIONAL", "is_order_instruction": False})
+                continue
             fee = notional * fee_rate
             total = notional + fee
             if qty <= 0 or total > cash + 1e-10:
@@ -183,6 +222,8 @@ def simulate_next_open(
         "fee_bps_per_side": fee_bps,
         "slippage_bps_per_side": slip_bps,
         "allocation_fraction": allocation,
+        "exchange_filters_applied": filters is not None,
+        "exchange_filters": filters,
         "event_count": len(events),
         "closed_round_trip_count": len(closed_round_trips),
         "events": events,
@@ -193,5 +234,6 @@ def simulate_next_open(
             "not a full acceptance backtest: no coverage, regime-block, PBO/DSR or drawdown gate",
             "open position is marked using last close with estimated exit costs; it is not force-liquidated",
             "no automatic stop-loss/take-profit, no network, no exchange orders, no live account access",
+            "exchange quantity/notional filters are not enforced unless caller supplies verified symbol_filters",
         ],
     }
