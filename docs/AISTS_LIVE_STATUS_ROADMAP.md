@@ -417,3 +417,18 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - CI for the documentation-only CP-0237 report commit was not returned by the available exact-commit workflow lookup at verification time; do not claim it passed. No code changed.
 - Decision: `CP0237_SCOPE_PREFLIGHT_BLOCKED_NOT_EXECUTED`. Next admissible action is not a backtest: first obtain explicit approval of the exact CP-0152 scope and legitimately satisfy G0 and all evidence-backed inputs; only then implement the dedicated candidate signal path and test it.
 - Current gates unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`. Canonical source `NONE`; profitability `NOT ESTABLISHED`.
+
+
+## CP-0238 — Capital/cost evidence preflight (2026-10-18)
+
+- Report: [CP-0238 Capital and Cost Evidence Preflight](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/docs/CP0238_Capital_Cost_Evidence_Preflight.md)
+- Report commit on `cp-0120-ai-brain-foundation`: `8016681a4037b1658e4a085fd12906ae3d2e3ce5`.
+- Decision: `CP0238_PREFLIGHT_PARTIAL_EVIDENCE_CAPTURED_EXECUTION_BLOCKED`.
+- Public Binance Spot fee page currently shows Regular User 0.100% maker/taker and 0.07500% in the BNB-fee column. This is reference information only, not evidence of this user's account tier, eligibility, enabled discount, or pair-specific promotions.
+- The CP-0152 fee/slippage grid is retained as scenario assumptions only. Moderate stress is 15 bps fee + 10 bps extra slippage per side, approximately 50 bps round trip; these are not measured costs.
+- Still unfrozen/unknown: ₹10,000 INR to USDT conversion source/time/convention and costs; allocation fraction and cash reserve; actual account fee/BNB eligibility; dated BTCUSDT Spot `exchangeInfo` payload and hash.
+- The cited filter definition page is not proof of current BTCUSDT Spot filter values. No current Spot payload was captured in CP-0238.
+- No market data download, candidate build, backtest, paper test, strategy promotion, exchange order, signing, or public broadcast occurred.
+- Exact-commit CI status for the documentation commit was not verified in this step; do not claim CI pass.
+- Gate status unchanged: G0 `BLOCKED_GLOBAL`, canonical source `NONE`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`; profitability `NOT ESTABLISHED`.
+- Next bounded step: capture a timestamped official BTCUSDT Spot filter payload and hash as current operational evidence, while keeping it separate from historical G0 provenance. Do not execute CP-0152 until explicit approval and G0 clearance.
