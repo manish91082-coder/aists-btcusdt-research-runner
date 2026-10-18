@@ -249,3 +249,17 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - Global state: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain FAIL; profitability **NOT ESTABLISHED**.
 - Next decisive step: adjudicate the 2017-09-06 16:00 UTC zero-trade placeholder conflict against the frozen acceptance rulebook and existing quarantine case, then determine whether any remaining missing key can be resolved by already verified evidence without downloads or reconstruction. Keep the 16 keys absent from both verified archives unresolved unless new admissible evidence exists. Do not run candidate build/backtest while G0 is blocked.
 
+
+## CP-0219: Extend missing-4h-slot triage across all cached child intervals
+
+- Evidence receipt: [CP-0219 all-child-interval gap-triage receipt](../evidence/receipts/CP0219_AllChildInterval_GapTriage_Receipt.json). It pins the exact source commit, terminal-success execution and static CI runs, artifact SHA-256, and key output hashes.
+- Extended the cache-only CP-0192 triage to inspect existing 5m, 15m, 30m, and 1h monthly archives for each of the 17 missing 4h open-time slots. Added exact interval-count and archive-path regression tests.
+- Read-only execution [39103638096](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39103638096) and static CI [39103640389](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39103640389) both reached terminal `success` on exact source HEAD `4d1b293d8a601f3980785bac888919ff2c303135`.
+- All 36 expected cached child archives were present; 4 February-2018 child archives fail grid validation, with 450 off-grid rows total: 5m=241, 15m=81, 30m=85, 1h=43. Duplicate child open times: 0.
+- Across all four intervals, **0/17** missing 4h slots have any child open timestamp inside the gap windows, and **0/17** have complete interval coverage. Seven slots have at least one unavailable/invalid child archive. No child-interval reconstruction or interpolation was performed.
+- This strengthens the conclusion that the currently cached finer-interval archives cannot resolve the 17 missing 4h keys. It does not establish why the keys are absent, select a canonical source, or close source cases.
+- Decision: `CP0219_ALL_CHILD_INTERVAL_COVERAGE_AUDIT_COMPLETE_G0_STILL_BLOCKED`. The 2017-09-06 16:00 UTC daily zero-trade placeholder remains a source conflict; the other 16 exact keys are absent from both verified monthly and daily-reference archives. Keep all 17 missing slots unresolved/quarantined; do not infer or synthesize candles.
+- Scope/safety: no archive downloads, no network access in CP-0192, no Binance REST, no cache/raw archive mutation, no candidate build/backtest, no Policy B application, no strategy promotion, and no live action.
+- Current gates: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 historical candidates remain FAIL; profitability **NOT ESTABLISHED**; live signing/broadcast/orders `BLOCKED`.
+- Next decisive action: do not spend another cycle repeating cache-only coverage scans. The remaining gap cannot be resolved from the current cache. Obtain admissible new source evidence or a properly authorized conservative quarantine/application decision, then verify the exact candidate-input exclusion path before any eligible offline performance evaluation. Independent reviewer identity/authorization is still absent for Policy B.
+
