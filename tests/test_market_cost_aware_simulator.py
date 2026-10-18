@@ -268,6 +268,24 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertAlmostEqual(result["cash_usdt"] + expected_total, 1000)
         self.assertLessEqual(buy["quantity_btc"] * fill_price + buy["fee_usdt"], budget)
 
+    def test_symbol_filters_skip_above_max_quantity_without_spending_cash(self):
+        result = simulate_next_open(
+            bars([100, 100]),
+            [{"decision_id": "buy-max-qty", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5, "max_qty": 2},
+        )
+
+        self.assertEqual(result["event_count"], 0)
+        self.assertEqual(result["btc_quantity"], 0.0)
+        self.assertEqual(result["cash_usdt"], 1000)
+        self.assertEqual(result["skipped_decisions"][0]["reason"], "ABOVE_MAX_QTY")
+        self.assertFalse(result["skipped_decisions"][0]["is_order_instruction"])
+
     def test_symbol_filters_skip_below_minimum_notional(self):
         result = simulate_next_open(
             bars([100, 100]),
