@@ -1,9 +1,17 @@
 # AISTS Live Status & Mission Roadmap
 
-Last documented checkpoint: **CP-0216 (deterministic evidence receipt manifest recorded; final-head CI verification pending)**  
+Last documented checkpoint: **CP-0240 (INR-to-USDT capital basis preflight; conversion/allocation remain unfrozen)**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
+
+## Current state reconciliation (2026-10-18)
+
+- CP-0240 report commit `e0f8a6f6e8a5ebf02e171c8a1a85bf853f8b72ec`: exact-head AI brain unit-test run [39153129905](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39153129905) terminal `success`.
+- Roadmap parent revision `84381464f8d2c09cd54f57ab47d1a044b4ad87d5`: exact-head static audit run [39153139328](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39153139328) terminal `success`. This update is a documentation reconciliation; its own new commit must receive a separate exact-head CI check.
+- PR #2 remains `OPEN / UNMERGED`, head `e0f8a6f6e8a5ebf02e171c8a1a85bf853f8b72ec`; PR #3 remains `OPEN / UNMERGED`, head `84381464f8d2c09cd54f57ab47d1a044b4ad87d5`. Both report mergeable; neither was merged.
+- Official Binance Spot historical-provenance issue [#504](https://github.com/binance/binance-public-data/issues/504) remains `OPEN`, with `0` comments as checked in this review. No new official point-in-time provenance evidence was found; this does not clear G0.
+- CP-0240 does not freeze a conversion rate, allocation or cash reserve. ₹10,000 remains INR; user-capital P&L remains `NOT_COMPUTABLE` without admissible conversion evidence.
 
 ## Latest verified GitHub runs
 
