@@ -74,6 +74,7 @@ class StoredFeatureHarnessTests(unittest.TestCase):
         return run_manifest_driven_simulation_from_stored_features(
             self.csv_path, self.manifest_path, self.features_path,
             expected_interval="5m", initial_cash_usdt=100.0,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5},
         )
 
     def test_verified_stored_artifact_flows_into_harness(self):
