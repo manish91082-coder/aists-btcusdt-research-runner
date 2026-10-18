@@ -215,3 +215,13 @@ A green GitHub Actions run confirms the bounded audit program and tests executed
 - No production Policy B scorer implementation/application, candidate build, market-data backtest, source adjudication, source-case closure, strategy promotion, or live action occurred.
 - Independent approval and application record remain `NOT PRESENT` / `NOT AUTHORIZED`; canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; all 23 prior candidates remain historical-screen `FAIL`; profitability **NOT ESTABLISHED**.
 - Next step: only continue non-duplicative documentation/static verification unless and until actual independent approval and a separate scoped application record are provided. Verify CI terminal result on the exact final branch HEAD, plus unchanged `main` and open/unmerged PR #3.
+
+
+## CP-0216: Deterministic evidence receipt manifest
+
+- Manifest: `evidence/receipts/CP0216_Evidence_Receipt_Manifest.json`.
+- Detached SHA-256 receipt: `evidence/receipts/CP0216_Evidence_Receipt_Manifest_SHA256.json`.
+- Manifest SHA-256: `fbdb8820d451c0e268e3424f971c5da622415e2d941aebae7e2cb0fa15e99dbb`; Git blob SHA-1: `bc63b2e5469b072d00aaceaa672ebe29eb9827bf`.
+- Pins 10 evidence files from CP-0215 source revision `03ea280d0140aebeefc7c7283081f5f2d62c976e`; records SHA-256 and Git blob SHA-1.
+- Baseline CI `39101201330` succeeded on CP-0215 source only. Final-head CP-0216 CI verification is pending.
+- G0 remains `BLOCKED_GLOBAL`; canonical source `NONE`; source cases closed `0`; no independent approval/application; no candidate build/backtest; profitability **NOT ESTABLISHED**.
