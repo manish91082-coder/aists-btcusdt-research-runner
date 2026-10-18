@@ -29,6 +29,9 @@ def _number(candle: Mapping[str, Any], field: str) -> float:
 def _validate(candles: Sequence[Mapping[str, Any]]) -> list[dict[str, float]]:
     rows: list[dict[str, float]] = []
     previous_time: int | None = None
+    timestamp_presence = ["open_time_ms" in candle for candle in candles]
+    if any(timestamp_presence) and not all(timestamp_presence):
+        raise ValueError("open_time_ms must be supplied for every candle or none")
     for index, candle in enumerate(candles):
         row = {key: _number(candle, key) for key in ("open", "high", "low", "close", "volume")}
         if any(row[field] <= 0 for field in ("open", "high", "low", "close")):
