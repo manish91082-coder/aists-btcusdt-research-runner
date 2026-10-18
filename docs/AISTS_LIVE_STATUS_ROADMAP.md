@@ -432,3 +432,19 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Exact-commit CI status for the documentation commit was not verified in this step; do not claim CI pass.
 - Gate status unchanged: G0 `BLOCKED_GLOBAL`, canonical source `NONE`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`; profitability `NOT ESTABLISHED`.
 - Next bounded step: capture a timestamped official BTCUSDT Spot filter payload and hash as current operational evidence, while keeping it separate from historical G0 provenance. Do not execute CP-0152 until explicit approval and G0 clearance.
+
+
+## CP-0239 — Current BTCUSDT Spot filter snapshot captured (2026-10-18)
+
+- Audit report: [CP-0239 Current Spot Filter Evidence](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0120-ai-brain-foundation/docs/CP0239_Current_Spot_Filter_Evidence.md)
+- Report commit on `cp-0120-ai-brain-foundation`: `ed22f1286cc9d2043910e96240c0206bc66baa42`.
+- Capture implementation: `scripts/capture_binance_spot_filters.py`; workflow: `.github/workflows/cp0239-capture-spot-filters.yml`.
+- Successful capture workflow: [run 39152856418](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39152856418); exact-head CP-0120 unit tests also passed: [run 39152856412](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39152856412).
+- Snapshot A captured at `2026-10-18T18:09:01.577309Z`, raw SHA-256 `24f73a00a40402ad3b622fb55e87084d08bd0b0ec2fe5d3b7c80f1d04272a7b6`; raw and manifest committed under `evidence/operational_filters/`.
+- Snapshot B captured at `2026-10-18T18:09:30.811077Z`, raw SHA-256 `3f22b055b83ce3d837e5b90a54156573220f48900d736af782e812fe5f5ee1c6`; raw and manifest committed. The two response payloads differ due to changing response metadata/server time; the filter fields reviewed in both manifests match.
+- Key current values: symbol status `TRADING`; price tick `0.01`; LOT_SIZE min quantity `0.00001`, step `0.00001`; NOTIONAL minimum `5 USDT`. See report for other captured fields and order-type caveats.
+- This is current operational metadata only, not historical filters. G0 candle provenance and historical archive discrepancies remain unresolved.
+- CP-0239 report commit's exact-head CI status was not verified in this step; do not claim it passed. The capture workflow and unit tests passed on their recorded exact head.
+- No klines/trade history downloaded, no candidate/backtest/paper test, no strategy promotion, and no exchange order/signature/broadcast.
+- Gates unchanged: G0 `BLOCKED_GLOBAL`, canonical historical source `NONE`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`; profitability `NOT ESTABLISHED`.
+- Next bounded step: record the provenance/evidence requirements for INR-to-USDT conversion and allocation/cash reserve without inventing a rate or freezing an unsupported value. Do not execute CP-0152 without explicit approval and G0 clearance.
