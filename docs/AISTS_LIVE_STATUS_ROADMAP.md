@@ -1,6 +1,6 @@
 # AISTS Live Status & Mission Roadmap
 
-Last documented checkpoint: **CP-0215 (residual gap evidence matrix; production Policy B scoring remains unauthorized and G0 remains blocked)**  
+Last documented checkpoint: **CP-0216 (deterministic evidence receipt manifest recorded; final-head CI verification pending)**  
 Branch: `cp-0165-4h-archive-audit`  
 Research target: BTCUSDT historical-data provenance and risk-adjusted strategy validation  
 Current global gate: **G0 = BLOCKED_GLOBAL**
