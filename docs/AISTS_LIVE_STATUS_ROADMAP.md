@@ -523,3 +523,10 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - No archive downloaded; no source case closed; no candidate build, backtest, paper run, or exchange action occurred. CP-0152 remains `PENDING_EXPLICIT_APPROVAL`.
 - Gates unchanged: G0 `BLOCKED_GLOBAL`; canonical source `NONE`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`; profitability `NOT ESTABLISHED`.
 - Next admissible step: seek an official per-file version/provenance mechanism or written maintainer response to the existing issue #504. Do not repeat cache/checksum-only scans or infer G0 clearance from documentation history.
+
+
+### CP-0244 addendum — correction-package commit timestamp
+
+- Follow-up read-only lookup found the official repository object for `updates/2022-08-08_kline_updates.zip` (GitHub object SHA `90631298cf50ac2e1ee8372a087767b010d78a21`, listed size 6,653,240 bytes) and verified Git commit [`d246b9785575078d02730d02240bf99d9f36feec`](https://github.com/binance/binance-public-data/commit/d246b9785575078d02730d02240bf99d9f36feec), timestamped `2022-08-09T06:43:40Z`; GitHub reports its signature verified.
+- The timestamp is evidence of the correction package's repository commit, not proof of the exact production archive replacement time or point-in-time availability at `data.binance.vision`. The package contents were not downloaded/inspected, so whether it includes project-specific BTCUSDT 4h keys remains UNKNOWN.
+- CP-0244 report addendum commit: `10c3f0029d9b138a2c1330e0f260e652a2d94d10`. G0 remains `BLOCKED_GLOBAL`; canonical source `NONE`; no source case closed and no strategy execution authorized.
