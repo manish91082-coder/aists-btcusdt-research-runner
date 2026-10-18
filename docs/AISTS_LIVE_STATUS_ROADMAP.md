@@ -501,3 +501,14 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - CP-0200 remains 16 `UNRESOLVED_MISSING_KEY_BOTH_SOURCES` plus one `UNRESOLVED_DAILY_PLACEHOLDER_CONFLICT`; CP-0201's one exact-key overlap remains linked to the existing row case. The issue reports provide cross-interval corroboration/lead only: no source case is closed, no gap is filled, and no canonical source is established.
 - Decision: `CP0242_EXTERNAL_GAP_CORROBORATION_G0_STILL_BLOCKED`. G0 remains `BLOCKED_GLOBAL`; canonical source remains `NONE`; G3 remains `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`. No candidate build, backtest, paper run, or live action occurred.
 - PR #2 remains open/unmerged at previously verified head `e0f8a6f6e8a5ebf02e171c8a1a85bf853f8b72ec`; PR #3 was open/unmerged before this CP-0242 append at head `12e682ce8be7f9fff229238b8a76f4c707b644d6`. Verify the new Roadmap commit and exact-head CI separately; do not infer CI success from earlier runs.
+
+
+## CP-0243 — Binance Vision Dataset Terms and release boundary (2026-10-19)
+
+- Read-only report: [CP-0243 Binance Vision Dataset Terms Review](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/cp-0165-4h-archive-audit/docs/CP0243_Binance_Vision_Dataset_Terms_Review.md).
+- Newly reviewed official source: [Binance Vision Dataset Terms](https://github.com/binance/binance-public-data/blob/master/TERMS_AND_CONDITIONS.md), Version 1.0, last updated 2026-08-26.
+- The published terms describe CC BY-NC-SA 4.0 dataset licensing, permit specified personal/non-production historical research, and prohibit listed live proprietary execution and commercial trading-bot/order-generation uses absent separate written commercial licensing. This is a source-text summary, not a legal opinion; qualified legal/licensing review is required before commercial or live use.
+- This is a separate release/data-use constraint. It does not establish historical archive version history, canonical source authority, or point-in-time reproducibility; G0 remains `BLOCKED_GLOBAL`.
+- No archive downloaded, candidate/backtest/paper run, strategy approval, source-case closure, account access, exchange order, signing, or broadcast occurred. CP-0152 remains `PENDING_EXPLICIT_APPROVAL`.
+- Gates unchanged: G0 `BLOCKED_GLOBAL`; canonical historical source `NONE`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`; profitability `NOT ESTABLISHED`.
+- Decision: `CP0243_OFFICIAL_TERMS_FOUND_COMMERCIAL_LIVE_USE_REVIEW_REQUIRED_G0_UNCHANGED`. The next admissible step for the historical-data gate remains new official point-in-time provenance evidence or an authorized independent review. Any future commercial/live product path also requires its own written licensing/legal clearance.
