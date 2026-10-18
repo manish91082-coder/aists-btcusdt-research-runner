@@ -39,7 +39,8 @@ def simulate_next_open(
     open_time_ms equals as_of_ms + 1. Gaps are not bridged and signals are skipped.
     At most one long position is held. BUY sizing uses a fraction of available cash,
     including the entry fee. If symbol_filters are supplied, BUY quantity is rounded
-    down to step_size and checked against min_qty, optional max_qty and min_notional.
+    down to step_size and both BUY and SELL quantities/notionals are checked against
+    the supplied min_qty, optional max_qty and min_notional.
     The caller must supply evidence-backed filters; this function does not fetch them.
     SELL closes the full position. No automatic SL/TP.
     """
@@ -188,6 +189,19 @@ def simulate_next_open(
                 continue
             fill_price = fill_bar["open"] * (1.0 - slip_rate)
             notional = quantity * fill_price
+            if filters is not None:
+                if quantity < filters["min_qty"]:
+                    skipped.append({"decision_id": decision["decision_id"], "as_of_ms": decision["as_of_ms"],
+                                    "reason": "SELL_BELOW_MIN_QTY", "is_order_instruction": False})
+                    continue
+                if filters.get("max_qty") is not None and quantity > filters["max_qty"]:
+                    skipped.append({"decision_id": decision["decision_id"], "as_of_ms": decision["as_of_ms"],
+                                    "reason": "SELL_ABOVE_MAX_QTY", "is_order_instruction": False})
+                    continue
+                if notional < filters["min_notional"]:
+                    skipped.append({"decision_id": decision["decision_id"], "as_of_ms": decision["as_of_ms"],
+                                    "reason": "SELL_BELOW_MIN_NOTIONAL", "is_order_instruction": False})
+                    continue
             fee = notional * fee_rate
             proceeds = notional - fee
             realized = proceeds - position_cost_usdt
