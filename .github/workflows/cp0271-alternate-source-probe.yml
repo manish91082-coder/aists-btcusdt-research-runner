@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: cp0271-alternate-source-probe-v2
+  group: cp0271-alternate-source-probe-v3
   cancel-in-progress: false
 
 jobs:
