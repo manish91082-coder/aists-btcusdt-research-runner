@@ -729,3 +729,13 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - CP-0270 now records the source-routing decision and actual probe result. Binance's historical version/publication evidence remains pending/not available in reviewed public evidence; no maintainer reply has been observed.
 - **Gate decision unchanged:** G0 `BLOCKED_GLOBAL`; canonical historical source `NONE`; historical version provenance `NOT_VERIFIED`; no CP-0040 cases closed by this probe; G2 candidates not promoted; profitability not established; acceptance-grade backtest and live signing/broadcast/orders remain blocked.
 - Next admissible step: independent authorized clause-level adjudication of the frozen 969 exact-key rows and 27 non-row blockers, then dependency/accounting reconciliation and exact-head all-scope verification. Do not repeat generic scans or infer approval from this corroboration probe.
+
+## CP-0272 — CP-0040 quarantine-gate regression coverage (2026-10-19)
+
+- Independent engineering work proceeds while global G0 remains blocked: added `tests/test_cp0040_quarantine_gate.py` for frozen-manifest hash/population, hash mismatch, exact interval + millisecond identity, timestamp token validation, unsupported intervals, duplicate case IDs, and fail-closed rejection of closed/selected-source manifest rows.
+- Updated `.github/workflows/cp0165-4h-audit-tests.yml` to compile the CP-0040 gate, run the dedicated tests, and include both the gate and test in pull-request and main-push path filters.
+- Report: [CP-0272 CP-0040 Gate CI Coverage](../evidence/source_adjudication/CP0272_CP0040_Gate_CI_Coverage_Report_HI.md).
+- This is safety/regression coverage only. It does not modify CP-0040, adjudicate source cases, apply quarantine, build candidates, run an acceptance-grade backtest, or promote a strategy.
+- Exact final-head CI is pending until GitHub Actions reaches a terminal state. A green static CI run will validate only the bounded code/tests, not G0 or profitability.
+- Gate status remains: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G2 23 candidates `FAIL`; profitability `NOT_ESTABLISHED`; live signing/broadcast/orders `BLOCKED`.
+
