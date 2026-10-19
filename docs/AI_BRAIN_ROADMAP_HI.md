@@ -306,3 +306,14 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - This is a software safety invariant only. It does not run market data, build candidates, backtest, approve a strategy, change CP-0040, or alter G0.
 - Exact-head CI is pending until the updated branch HEAD has a terminal result. G0 remains `BLOCKED_GLOBAL`; G2 23 candidates remain FAIL; profitability remains NOT ESTABLISHED; live signing/broadcast/orders and automatic SL/TP remain blocked.
 
+
+## CP-0274 — Synthetic-only decision-pipeline integration (2026-10-20)
+
+- Added `tests/test_market_synthetic_pipeline_integration.py` to connect the existing causal decision producer → offline next-open simulator → paper ledger → independent accounting reconciliation using deterministic synthetic software fixtures only.
+- Added a regression test that the producer rejects a timestamp gap instead of repairing it.
+- This checkpoint is software wiring only. The synthetic fixtures are not BTCUSDT market data, not a candidate build, not a backtest, and not profitability evidence.
+- Exact-head CI is pending. The integration checkpoint is not marked PASS until the branch's exact current HEAD has terminal-success Actions and the new test is confirmed executed.
+- G0 remains `BLOCKED_GLOBAL`; canonical historical source remains `NONE`; G2 remains FAIL for the current 23 candidates; G3 blocked; G4 insufficient; G6 not built/validated; G7 live blocked. CP-0040 remains frozen; PR #2 stays open and unmerged.
+- No real historical input was opened, no candidate/backtest/paper session was run, and no live signing, broadcast, exchange order, or automatic SL/TP path was enabled.
+- Report: [CP-0274 Synthetic Pipeline Integration](CP0274_Synthetic_Pipeline_Integration_HI.md).
+
