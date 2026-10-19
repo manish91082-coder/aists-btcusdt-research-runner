@@ -1,0 +1,13 @@
+{
+  "checkpoint": "CP-0206",
+  "policy_path": "evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy.json",
+  "policy_sha256": "f8bdc5b034a65e6a9e906c3b80443e9cc149e3d922f6f6f763692cb38cfa8641",
+  "policy_id": "AISTS-4H-GAP-WINDOW-QUARANTINE-POLICY-B-v1",
+  "status": "FROZEN_FOR_SENSITIVITY_ONLY_NOT_G0_CLEARANCE",
+  "sha256_algorithm": "SHA-256",
+  "policy_bytes": 7766,
+  "rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0",
+  "cp0200_recommendation_csv_sha256": "e59c95764d4db76a8a707d07526d44b2b7e3487c534687584bd9936a5742b3bf",
+  "cp0201_crosswalk_csv_sha256": "de8d829f405aa60f83e43744d4c281469fec6acb9bb99cfe6aa8823c8509be56",
+  "warning": "Pins policy bytes only; does not establish policy application, source authority, G0 clearance, candidate eligibility or profitability."
+}

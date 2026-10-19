@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0219",
+  "title": "All-child-interval cached gap triage extension",
+  "branch": "cp-0165-4h-archive-audit",
+  "source_commit": "4d1b293d8a601f3980785bac888919ff2c303135",
+  "changes": [
+    "Extended CP-0192 cache-only gap triage from 5m/1h to 5m/15m/30m/1h.",
+    "Added deterministic tests for exact child interval counts and 15m/30m archive paths.",
+    "No cache archives downloaded or modified; no network or Binance REST access in CP-0192."
+  ],
+  "execution": {
+    "run_id": 39103638096,
+    "conclusion": "success",
+    "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39103638096",
+    "artifact_id": 12127541856,
+    "artifact_name": "cp0165-read-only-audit-39103638096-attempt-1",
+    "artifact_sha256": "a030191d400052b38df58a209769b900416c470ec0e07f81dba57355615785b0",
+    "artifact_bytes": 38060,
+    "artifact_expires_at_utc": "2026-11-17T06:19:58Z"
+  },
+  "static_ci": {
+    "run_id": 39103640389,
+    "conclusion": "success",
+    "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39103640389",
+    "exact_head_sha": "4d1b293d8a601f3980785bac888919ff2c303135"
+  },
+  "findings": {
+    "intervals_checked": [
+      "5m",
+      "15m",
+      "30m",
+      "1h"
+    ],
+    "expected_child_archives": 36,
+    "cache_archives_missing": 0,
+    "cache_archives_invalid_or_wrong_unit_or_off_grid": 4,
+    "invalid_archives": [
+      {
+        "interval": "5m",
+        "period": "2018-02",
+        "off_grid_rows": 241
+      },
+      {
+        "interval": "15m",
+        "period": "2018-02",
+        "off_grid_rows": 81
+      },
+      {
+        "interval": "30m",
+        "period": "2018-02",
+        "off_grid_rows": 85
+      },
+      {
+        "interval": "1h",
+        "period": "2018-02",
+        "off_grid_rows": 43
+      }
+    ],
+    "total_off_grid_child_rows": 450,
+    "duplicate_child_open_times": 0,
+    "missing_4h_slots": 17,
+    "slots_with_any_child_open_inside_missing_4h_windows": 0,
+    "slots_with_complete_5m_coverage": 0,
+    "slots_with_complete_15m_coverage": 0,
+    "slots_with_complete_30m_coverage": 0,
+    "slots_with_complete_1h_coverage": 0,
+    "slots_with_complete_all_four_child_intervals": 0,
+    "slots_with_unavailable_or_invalid_child_archives": 7,
+    "source_gap_csv_sha256": "0a1c60f2b5e30e01a91fd2ec85c5a345272dee8c348717a539ded1bc077b6f6b",
+    "cp0192_summary_sha256": "d0350db1edf22e3fa7d17709c827896e02e7584ae23cefffb3f1775729c4c645",
+    "cp0192_detail_csv_sha256": "90a9c8d52cdf7961dabd1cf3eb02a9094c436473678887b0f53d822da71d227a",
+    "cp0192_archive_manifest_sha256": "5e375eed192a31f576413635831c701decf3d69cf9881c4f697ab91ce9cffe73",
+    "cp0192_report_sha256": "6affab23df82859864a06843dfe1ee570ea4f8f23f6fb8d6f7a061616c19fe67"
+  },
+  "interpretation": [
+    "Expanding coverage inspection to 15m and 30m adds no child candle opens inside any of the 17 missing 4h windows.",
+    "All four inspected child intervals have 0/17 complete 4h-window coverage. February 2018 child archives contain 450 off-grid rows across 5m/15m/30m/1h and are not accepted as valid coverage for affected slots.",
+    "The result strengthens the evidence that existing cached child archives cannot repair or validate the missing 4h slots. No reconstruction or interpolation is allowed.",
+    "This is coverage evidence only. It does not select a canonical source, close source cases, clear global G0, authorize Policy B, or establish strategy profitability."
+  ],
+  "unchanged_gates": {
+    "canonical_source": "NONE",
+    "g0": "BLOCKED_GLOBAL",
+    "source_cases_closed": 0,
+    "policy_b_application": "NOT_AUTHORIZED",
+    "candidate_build": false,
+    "market_backtest": false,
+    "strategy_promotion": false,
+    "profitability": "NOT_ESTABLISHED",
+    "live_signing_broadcast_orders": "BLOCKED",
+    "main_sha": "f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733",
+    "pr3": "OPEN_UNMERGED"
+  }
+}

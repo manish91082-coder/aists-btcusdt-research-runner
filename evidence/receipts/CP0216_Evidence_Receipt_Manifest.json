@@ -1,0 +1,107 @@
+{
+  "checkpoint": "CP-0216",
+  "title": "Deterministic Evidence Receipt Manifest",
+  "status": "MANIFEST_RECORDED_PENDING_FINAL_HEAD_CI_VERIFICATION",
+  "purpose": "Pin exact source evidence files and their content hashes for reproducible verification. This manifest records provenance only; it does not authorize policy application or clear any gate.",
+  "schema_version": "1.0",
+  "hash_algorithms": {
+    "content": "SHA-256 over UTF-8 file content as retrieved from the GitHub repository at source_commit",
+    "git_blob": "Git blob object ID (SHA-1), as returned by GitHub Contents API; distinct from content SHA-256"
+  },
+  "source_revision": {
+    "repository": "manish91082-coder/aists-btcusdt-research-runner",
+    "branch": "cp-0165-4h-archive-audit",
+    "commit": "03ea280d0140aebeefc7c7283081f5f2d62c976e",
+    "commit_role": "CP-0215 baseline snapshot; manifest itself is committed after this revision"
+  },
+  "ci_baseline": {
+    "run_id": 39101201330,
+    "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39101201330",
+    "head_sha": "03ea280d0140aebeefc7c7283081f5f2d62c976e",
+    "conclusion": "success",
+    "scope_note": "Baseline CI result for the source revision only. CP-0216 final-head CI must be checked separately."
+  },
+  "gate_state": {
+    "canonical_source": "NONE",
+    "g0": "BLOCKED_GLOBAL",
+    "source_cases_closed": 0,
+    "policy_b_status": "FROZEN_FOR_SENSITIVITY_ONLY_NOT_G0_CLEARANCE",
+    "independent_approval": "NOT_PRESENT",
+    "policy_b_application_record": "NOT_PRESENT",
+    "candidate_build": "BLOCKED",
+    "market_backtest": "BLOCKED",
+    "profitability": "NOT_ESTABLISHED",
+    "live_signing": "BLOCKED",
+    "public_broadcast": "BLOCKED",
+    "binance_orders": "BLOCKED"
+  },
+  "entries": [
+    {
+      "path": "evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy.json",
+      "git_blob_sha1": "224deb40b9acae340103ed1acc360a2d50d971c9",
+      "sha256_utf8": "f8bdc5b034a65e6a9e906c3b80443e9cc149e3d922f6f6f763692cb38cfa8641",
+      "role": "Frozen Policy B sensitivity-only policy"
+    },
+    {
+      "path": "evidence/source_adjudication/CP0206_Gap_Window_Quarantine_Policy_SHA256.json",
+      "git_blob_sha1": "0cbb6d059bc4d4cf66f7c38187903f6544a182e3",
+      "sha256_utf8": "6b289480b73a4c41d5070cbea0c68fb8d6c5737221b76e2acb54ea19615510ac",
+      "role": "Existing detached SHA-256 receipt; policy digest cross-checked against the policy bytes"
+    },
+    {
+      "path": "docs/CP0210_Segment_Censor_Accounting_Contract.md",
+      "git_blob_sha1": "e65a501a8a5c6d3b6a6eb5992ce109038a501087",
+      "sha256_utf8": "32da997120e294cc9b78777ccfb7080ad0ccfdab75489c4f9885d5a54a032ffe",
+      "role": "Accounting semantics contract, not production implementation"
+    },
+    {
+      "path": "docs/CP0212_Policy_B_Approval_Application_Readiness_Checklist.md",
+      "git_blob_sha1": "a865e3135938c24530158afe1f84e8c55ffcaed8",
+      "sha256_utf8": "16d67fd69e9672fca11bb289f4c18e3f3b7031f7fd1a5c3e961497f16e98050e",
+      "role": "Approval/application readiness checklist; sign-off remains absent"
+    },
+    {
+      "path": "tests/test_cp0210_segment_censor_contract.py",
+      "git_blob_sha1": "8280f4a169bcb1b6fc043b34672ade122328a70a",
+      "sha256_utf8": "2bdc53aae043fd79c3413cd8cf517e5eda3f719943a67d01f34a43a30d675dd3",
+      "role": "CP-0210 synthetic contract oracle and static guards"
+    },
+    {
+      "path": "tests/test_cp0213_synthetic_censor_event_ledger.py",
+      "git_blob_sha1": "df11e708986b93f05fe551ec2df0541570860c54",
+      "sha256_utf8": "c7c1a7aafdb9aa63ee4c1c1762fddb5fb6e51a6eab0deed63afbcd9c12172684",
+      "role": "CP-0213/0214 synthetic-only event ledger fixtures"
+    },
+    {
+      "path": "docs/CP0215_Residual_Gap_Evidence_Matrix.md",
+      "git_blob_sha1": "b4b75841f9c15ce1336919614754bd54927a10d2",
+      "sha256_utf8": "524af9a7f2378b261fab10d66fc98ea924ae5fca9872545b031d9b13ddb58cdb",
+      "role": "Residual evidence gaps and authorization blockers"
+    },
+    {
+      "path": "docs/AISTS_LIVE_STATUS_ROADMAP.md",
+      "git_blob_sha1": "dc5dd649bdc1f1b786e7bce0a3d993f85c9e9587",
+      "sha256_utf8": "d6a4703408461ccac6669782e0d40728c5be358730e7235a00c73ae752a2035d",
+      "role": "Roadmap as of CP-0215 source revision; later CP-0216 update will be a new version"
+    },
+    {
+      "path": ".github/workflows/cp0165-4h-audit-tests.yml",
+      "git_blob_sha1": "83483d80eccb19a1eeff94e37c95f601deb743a0",
+      "sha256_utf8": "7701deb6a55b215ff42a1130f6e8c52b5d3829ade033e575f4391f1b75a3d059",
+      "role": "Static audit test workflow definition"
+    },
+    {
+      "path": "scripts/AISTS_CP0027_MultiTimeframe_Baseline_Backtest.py",
+      "git_blob_sha1": "93207f20543c31b0f81ee12840a40ab9ee13a073",
+      "sha256_utf8": "0f7badd4d1cd198e4df8d4d0bfd463867fbb0a5df931f076628a3a7a82014e41",
+      "role": "Production simulator source reviewed for current diagnostic gap behavior; not executed as a market backtest"
+    }
+  ],
+  "limitations": [
+    "The manifest pins files from the CP-0215 source revision; it does not establish independent reviewer approval.",
+    "Synthetic test evidence is not production-path proof.",
+    "The frozen 17-key population remains unresolved and no source cases are closed.",
+    "No market data was downloaded or processed by this checkpoint.",
+    "Do not implement/apply production Policy B scoring or run candidate builds/backtests while G0 remains blocked."
+  ]
+}

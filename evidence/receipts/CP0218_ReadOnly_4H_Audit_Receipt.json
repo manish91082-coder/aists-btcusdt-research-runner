@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP-0218",
+  "title": "Read-only 4h archive audit and exact-key evidence receipt",
+  "source_commit": "ae6453b5b03b3027f5a3f7516b2eeec1e9e8ede9",
+  "branch": "cp-0165-4h-archive-audit",
+  "pr": 3,
+  "pr_state": "OPEN_UNMERGED",
+  "main_sha_unchanged": "f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733",
+  "workflow": {
+    "name": "CP-0165 Read-only 4h Archive Audit Execution",
+    "run_id": 39103357873,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39103357873",
+    "artifact_id": 12127373041,
+    "artifact_name": "cp0165-read-only-audit-39103357873-attempt-1",
+    "artifact_sha256": "069bd8a4f72416dbd9ded7bba3058541e06caae6e29a46ea4947e69678ee5282",
+    "artifact_size_bytes": 36547,
+    "artifact_expires_at_utc": "2026-11-17T06:15:10Z"
+  },
+  "static_ci": {
+    "run_id": 39103360183,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39103360183",
+    "exact_head_sha": "ae6453b5b03b3027f5a3f7516b2eeec1e9e8ede9"
+  },
+  "results": {
+    "cp0165": {
+      "status": "PASS_ALL_110_OFFICIAL_CHECKSUMS_MATCH",
+      "expected_months": 110,
+      "inventory_rows": 110,
+      "archive_crc_pass": 110,
+      "frozen_inventory_sha256_matches": 110,
+      "frozen_inventory_byte_matches": 110,
+      "official_sidecar_matches": 110,
+      "checksum_unavailable_or_mismatched": 0,
+      "raw_4h_rows_audited": 19974,
+      "duplicate_open_times": 0,
+      "off_grid_open_times": 0,
+      "exact_gap_events": 9,
+      "estimated_missing_4h_intervals": 17,
+      "gap_csv_sha256": "0a1c60f2b5e30e01a91fd2ec85c5a345272dee8c348717a539ded1bc077b6f6b",
+      "summary_json_sha256": "9f2f0ce93985af5c0ba465ea89161f4654a02ae44beedb3af1d646d7c334047f",
+      "details_csv_sha256": "f4ae49c83c6bee55f1ca622a4ad87b71d3207a8db39a266b34e9d8aa74e6cea4"
+    },
+    "cp0192": {
+      "status": "REVIEW_REQUIRED_CACHE_COVERAGE_INCOMPLETE",
+      "expected_missing_4h_slots": 17,
+      "slots_with_complete_5m_and_1h_coverage": 0,
+      "slots_with_any_5m_or_1h_open_inside_gap_windows": 0,
+      "child_archives_missing": 0,
+      "child_archives_invalid_or_wrong_unit": 2,
+      "child_off_grid_rows": 284,
+      "summary_json_sha256": "59c5967f6b9249fcadbe16d0f3bc6e4555a2eaff233a5f1f013b92fbcab89c72",
+      "triage_csv_sha256": "dd2d49efd846887761f7d0444a46203d90f8c3ca5619d4d4b02b21cadd971eeb"
+    },
+    "cp0197": {
+      "status": "PASS_PRIOR_EVIDENCE_HASHES_VERIFIED_LINKAGE_REVIEW_REQUIRED",
+      "prior_evidence_hash_checks": "2/2 PASS",
+      "summary_json_sha256": "b2450b8a36d22e157506ec98dfe1698529c08191e004208e44e9f2bc0a3ea08d"
+    },
+    "cp0198": {
+      "status": "PASS_DAILY_REFERENCE_EXACT_KEY_SCAN_COMPLETE_SOURCE_AUTHORITY_OPEN",
+      "exact_keys_present_in_verified_daily_archive": 1,
+      "exact_keys_absent_from_verified_daily_archive": 16,
+      "exact_keys_unknown": 0,
+      "summary_json_sha256": "5ac895d8a22e2e6c9e5d4a89788a0c66813d0aafebb2c2837baf37b254388ce9",
+      "exact_key_matrix_sha256": "31f061231bc9dd8d875ef7891e98f6647593d711d318f129e733d624fd674fa9"
+    },
+    "cp0199": {
+      "status": "REVIEW_REQUIRED_EXACT_KEY_SOURCE_CONFLICTS",
+      "source_conflict_rows": 1,
+      "unresolved_rows_reported_by_probe": 0,
+      "daily_exact_keys_zero_trade_placeholders": 1,
+      "daily_exact_keys_with_close_time_anomaly": 1,
+      "summary_json_sha256": "01885bacea9c5c90e93bc74242fe8cee86f639ba3346ec50fe779943e372fc7d",
+      "source_conflict_matrix_sha256": "a035e9d0e2725e5543d73e4daff9e264c932bea1565bef0bcd1b9ba0e0944f3f"
+    },
+    "cp0200": {
+      "status": "BLOCKED_G0_UNRESOLVED_GAP_AND_SOURCE_ITEMS",
+      "missing_keys_absent_from_both_verified_archives": 16,
+      "source_or_placeholder_conflicts": 1,
+      "frozen_rulebook_receipt_match": "PASS",
+      "quarantine_applied_to_candidate_builder": false,
+      "summary_json_sha256": "afa3eda8fcb3f60ffa66b9f8099c33a73372d980fab77e6918b9e061873b695e",
+      "quarantine_recommendation_sha256": "e59c95764d4db76a8a707d07526d44b2b7e3487c534687584bd9936a5742b3bf"
+    },
+    "cp0201": {
+      "status": "PASS_EXACT_KEY_CROSSWALK_COMPLETE_G0_STILL_BLOCKED",
+      "exact_keys_crosswalked": 17,
+      "overlap_with_existing_row_ledger": 1,
+      "gap_window_only_items": 16,
+      "duplicate_cases_created": 0,
+      "quarantine_applied_to_candidate_builder": false,
+      "summary_json_sha256": "40fc0e5df2967ee78f3dc4c854ac18fa5e050afea047bd50cf512e04280cef71",
+      "crosswalk_csv_sha256": "de8d829f405aa60f83e43744d4c281469fec6acb9bb99cfe6aa8823c8509be56"
+    }
+  },
+  "decision": {
+    "canonical_source": "NONE",
+    "g0": "BLOCKED_GLOBAL",
+    "source_cases_closed": 0,
+    "policy_b_application": "NOT_AUTHORIZED",
+    "candidate_build": false,
+    "market_backtest": false,
+    "strategy_promotion": false,
+    "profitability": "NOT_ESTABLISHED",
+    "live_signing_broadcast_orders": "BLOCKED"
+  },
+  "interpretation": [
+    "The 110 cached monthly 4h ZIPs passed official sidecar SHA-256, frozen inventory SHA-256/byte size, ZIP CRC, and timestamp-unit checks.",
+    "The audit found 9 gap events totaling 17 estimated missing 4h slots. This is integrity/coverage evidence, not source authority or a strategy performance result.",
+    "CP-0198 found 1 daily-reference exact-key match and 16 absent keys. CP-0199 identified the one present daily row as a zero-trade placeholder with close-time span anomaly; this requires source adjudication, not automatic source selection.",
+    "Cross-interval cache coverage does not resolve the 17 slots. CP-0200/0201 created an evidence-only recommendation/crosswalk; nothing was applied to the production candidate builder.",
+    "No monthly ZIPs or daily archives were downloaded, no Binance REST API used, no raw archive changed, and no candidate build/backtest/live action ran."
+  ],
+  "artifact_output_sha256": {
+    "cp0165_4h_archive_audit/CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv": "0a1c60f2b5e30e01a91fd2ec85c5a345272dee8c348717a539ded1bc077b6f6b",
+    "cp0165_4h_archive_audit/CP0165_4H_Monthly_Checksum_Gap_Audit_Report_HI.md": "42b3e47cdb63fd795b770ffeaf97aaec3585dbe7ce929de3afb2784aa7053a52",
+    "cp0165_4h_archive_audit/CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv": "f4ae49c83c6bee55f1ca622a4ad87b71d3207a8db39a266b34e9d8aa74e6cea4",
+    "cp0165_4h_archive_audit/CP0165_4H_Monthly_Checksum_Gap_Audit_Summary.json": "9f2f0ce93985af5c0ba465ea89161f4654a02ae44beedb3af1d646d7c334047f",
+    "cp0192_cross_interval_gap_triage/CP0192_Cache_Archive_Manifest.csv": "24628e3bae7322850605a8fc85d179cbab3e306c4db416613e2ef68b6cbe756e",
+    "cp0192_cross_interval_gap_triage/CP0192_Cross_Interval_Gap_Triage.csv": "dd2d49efd846887761f7d0444a46203d90f8c3ca5619d4d4b02b21cadd971eeb",
+    "cp0192_cross_interval_gap_triage/CP0192_Report_HI.md": "1cd557231be2d6108aeb84447c72a348c911eea232fb4538e555826a60badfe9",
+    "cp0192_cross_interval_gap_triage/CP0192_Summary.json": "59c5967f6b9249fcadbe16d0f3bc6e4555a2eaff233a5f1f013b92fbcab89c72",
+    "cp0197_feb2018_evidence_linkage/CP0197_Feb2018_DailyEvidence_Linkage.csv": "d2da465a5b5f0eb9d26ec00ba9760ca5e6b3ba328bdc7325ae100070b52b8a84",
+    "cp0197_feb2018_evidence_linkage/CP0197_PriorEvidence_HashChecks.csv": "3395534bdaac992eb7c61ede5efbab18976e146616d34889f2879d05ad2236f0",
+    "cp0197_feb2018_evidence_linkage/CP0197_Report_HI.md": "085c152a4b3c463ba08e487c03dacc48b583b6e5339bdcce51a50c34ce7f3c8e",
+    "cp0197_feb2018_evidence_linkage/CP0197_Summary.json": "b2450b8a36d22e157506ec98dfe1698529c08191e004208e44e9f2bc0a3ea08d",
+    "cp0198_daily_reference_4h_exact_key_audit/CP0198_DailyReference_4H_ExactKey_Matrix.csv": "31f061231bc9dd8d875ef7891e98f6647593d711d318f129e733d624fd674fa9",
+    "cp0198_daily_reference_4h_exact_key_audit/CP0198_DailyReference_Archive_Manifest.csv": "172a4b82e63606ec537c8d5fe63ffb9bf1612a075674a38957a288b7f431d680",
+    "cp0198_daily_reference_4h_exact_key_audit/CP0198_Report_HI.md": "98c4a95ae4be999804e031f465b48bb93d45436c53a5f1775eab0735f58bd955",
+    "cp0198_daily_reference_4h_exact_key_audit/CP0198_Summary.json": "5ac895d8a22e2e6c9e5d4a89788a0c66813d0aafebb2c2837baf37b254388ce9",
+    "cp0199_exact_key_source_conflict_probe/CP0199_Archive_Integrity_Manifest.csv": "de6e10af303325ff7dc2aa61321148d949ae5c6daa356a45bdfa5ffd7394a9d5",
+    "cp0199_exact_key_source_conflict_probe/CP0199_ExactKey_SourceConflict_Matrix.csv": "a035e9d0e2725e5543d73e4daff9e264c932bea1565bef0bcd1b9ba0e0944f3f",
+    "cp0199_exact_key_source_conflict_probe/CP0199_Report_HI.md": "ea003cbd6a232c6f487c377c87970f87ff3c516c9f6ef2475f78bc84f5f20cbe",
+    "cp0199_exact_key_source_conflict_probe/CP0199_Summary.json": "01885bacea9c5c90e93bc74242fe8cee86f639ba3346ec50fe779943e372fc7d",
+    "cp0200_g0_rulebook_bound_gap_disposition/CP0200_G0_Gap_Quarantine_Recommendation.csv": "e59c95764d4db76a8a707d07526d44b2b7e3487c534687584bd9936a5742b3bf",
+    "cp0200_g0_rulebook_bound_gap_disposition/CP0200_Report_HI.md": "0ace1963767039a9c236af621b7ce11a0fa52a664eaa9aeb426d195f7b4649d4",
+    "cp0200_g0_rulebook_bound_gap_disposition/CP0200_Summary.json": "afa3eda8fcb3f60ffa66b9f8099c33a73372d980fab77e6918b9e061873b695e",
+    "cp0201_gap_quarantine_overlap_crosswalk/CP0201_Input_Manifest.csv": "725ef8ba063e6d0f964b288e357f54f92973a1b523be48fffeb2d514c522c7ce",
+    "cp0201_gap_quarantine_overlap_crosswalk/CP0201_Gap_Quarantine_Overlap_Crosswalk.csv": "de8d829f405aa60f83e43744d4c281469fec6acb9bb99cfe6aa8823c8509be56",
+    "cp0201_gap_quarantine_overlap_crosswalk/CP0201_Report_HI.md": "795929cea8f602f461f111dd17762d70fd51a7bbb5af5e8ae5b421ea3c1df3cc",
+    "cp0201_gap_quarantine_overlap_crosswalk/CP0201_Summary.json": "40fc0e5df2967ee78f3dc4c854ac18fa5e050afea047bd50cf512e04280cef71"
+  }
+}

@@ -22,6 +22,9 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
 
+# CP-0203: mandatory frozen gap-policy gate. Missing module/evidence fails closed.
+from AISTS_CP0203_GapPolicy_Gate import load_gap_policy_gate
+
 SYMBOL = "BTCUSDT"
 BASE_INTERVALS = ["5m", "15m", "30m", "1h", "4h", "1d"]
 FIXED_MS = {"5m":300_000, "15m":900_000, "30m":1_800_000, "1h":3_600_000, "4h":14_400_000, "1d":86_400_000}
@@ -478,6 +481,10 @@ def main():
     ap.add_argument("--blockers")
     ap.add_argument("--gate-summary")
     ap.add_argument("--gate-test-output")
+    ap.add_argument("--gap-manifest", help="Frozen CP-0200 gap recommendation CSV; exact SHA-256 pinned by CP-0203")
+    ap.add_argument("--gap-summary", help="CP-0200 summary JSON")
+    ap.add_argument("--gap-crosswalk", help="Frozen CP-0201 overlap crosswalk CSV; exact SHA-256 pinned by CP-0203")
+    ap.add_argument("--gap-crosswalk-summary", help="CP-0201 summary JSON")
     args=ap.parse_args()
     if args.gate_self_test:
         if not (args.manifest and args.blockers and args.gate_summary):
@@ -491,6 +498,12 @@ def main():
     root=get_root()
     if not root.exists(): raise FileNotFoundError(f"Expected Drive data root not found: {root}")
     gate_dir=root/"reports"
+    gap_manifest_path=Path(args.gap_manifest) if args.gap_manifest else gate_dir/"CP0200_G0_Gap_Quarantine_Recommendation.csv"
+    gap_summary_path=Path(args.gap_summary) if args.gap_summary else gate_dir/"CP0200_Summary.json"
+    gap_crosswalk_path=Path(args.gap_crosswalk) if args.gap_crosswalk else gate_dir/"CP0201_Gap_Quarantine_Overlap_Crosswalk.csv"
+    gap_crosswalk_summary_path=Path(args.gap_crosswalk_summary) if args.gap_crosswalk_summary else gate_dir/"CP0201_Summary.json"
+    # CP-0203 must reject missing, changed, or still-unresolved gap evidence before row gate or output creation.
+    load_gap_policy_gate(gap_manifest_path,gap_summary_path,gap_crosswalk_path,gap_crosswalk_summary_path)
     manifest_path=Path(args.manifest) if args.manifest else gate_dir/"CP0040_ExactKey_Quarantine_Manifest.csv"
     blockers_path=Path(args.blockers) if args.blockers else gate_dir/"CP0040_NonRow_Blockers.csv"
     gate_summary_path=Path(args.gate_summary) if args.gate_summary else gate_dir/"CP0040_ExactKey_Quarantine_Manifest_Summary.json"

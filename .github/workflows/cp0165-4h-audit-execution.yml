@@ -1,0 +1,112 @@
+name: CP-0165 Read-only 4h Archive Audit Execution
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [cp-0165-4h-archive-audit]
+    paths:
+      - '.github/workflows/cp0165-4h-audit-execution.yml'
+      - 'scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py'
+      - 'scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py'
+      - 'scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py'
+      - 'scripts/AISTS_CP0198_DailyReference_4H_ExactKey_Audit.py'
+      - 'scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py'
+      - 'scripts/AISTS_CP0200_G0_Rulebook_Bound_Gap_Disposition.py'
+      - 'scripts/AISTS_CP0201_Gap_Quarantine_Overlap_Crosswalk.py'
+      - 'scripts/AISTS_CP0117_Rulebook_Bound_NonRow_Blocker_Disposition_Audit.py'
+      - 'evidence/source_adjudication/CP0040_Original_Frozen_Strategy_Acceptance_Rulebook_HI.md'
+      - 'evidence/source_adjudication/CP0040_Original_Rulebook_Verification_Receipt.json'
+      - 'evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: cp0165-read-only-4h-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout exact branch commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore existing monthly archive cache only
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            .cache/aists/binance-monthly-archives
+            .cache/aists/binance-daily-references
+          key: aists-btcusdt-source-cache-v3-7intervals-2017-08-2026-09
+          restore-keys: |
+            aists-btcusdt-source-cache-v2-
+            aists-btcusdt-monthly-spot-v2-7intervals-2017-08-2026-09
+            aists-btcusdt-monthly-spot-v1-2017-08-2026-09
+      - name: Run bounded CP-0165 audit
+        run: |
+          python scripts/AISTS_CP0165_4H_Monthly_Checksum_Gap_Audit.py \
+            --archive-inventory evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv \
+            --monthly-cache .cache/aists/binance-monthly-archives \
+            --output-dir results/cp0165_4h_archive_audit
+          python scripts/AISTS_CP0192_Cache_Only_Cross_Interval_Gap_Triage.py \
+            --monthly-cache .cache/aists/binance-monthly-archives \
+            --gaps-csv results/cp0165_4h_archive_audit/CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv \
+            --output-dir results/cp0192_cross_interval_gap_triage
+          python scripts/AISTS_CP0198_DailyReference_4H_ExactKey_Audit.py \
+            --gaps-csv results/cp0165_4h_archive_audit/CP0165_4H_Monthly_Checksum_Gap_Audit_Gaps.csv \
+            --archive-inventory evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv \
+            --daily-cache .cache/aists/binance-daily-references \
+            --output-dir results/cp0198_daily_reference_4h_exact_key_audit
+          python scripts/AISTS_CP0199_ExactKey_SourceConflict_Probe.py \
+            --exact-key-matrix results/cp0198_daily_reference_4h_exact_key_audit/CP0198_DailyReference_4H_ExactKey_Matrix.csv \
+            --monthly-audit-details results/cp0165_4h_archive_audit/CP0165_4H_Monthly_Checksum_Gap_Audit_Details.csv \
+            --archive-inventory evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv \
+            --monthly-cache .cache/aists/binance-monthly-archives \
+            --daily-cache .cache/aists/binance-daily-references \
+            --output-dir results/cp0199_exact_key_source_conflict_probe
+          python scripts/AISTS_CP0200_G0_Rulebook_Bound_Gap_Disposition.py \
+            --conflict-matrix results/cp0199_exact_key_source_conflict_probe/CP0199_ExactKey_SourceConflict_Matrix.csv \
+            --rulebook evidence/source_adjudication/CP0040_Original_Frozen_Strategy_Acceptance_Rulebook_HI.md \
+            --rulebook-receipt evidence/source_adjudication/CP0040_Original_Rulebook_Verification_Receipt.json \
+            --output-dir results/cp0200_g0_rulebook_bound_gap_disposition
+          python scripts/AISTS_CP0201_Gap_Quarantine_Overlap_Crosswalk.py \
+            --gap-manifest results/cp0200_g0_rulebook_bound_gap_disposition/CP0200_G0_Gap_Quarantine_Recommendation.csv \
+            --existing-quarantine evidence/source_adjudication/CP0040_Run_38883792900/CP0040_ExactKey_Quarantine_Manifest.csv \
+            --worklist-delta evidence/source_adjudication/CP0107_CP0041_Worklist_Disposition_Delta_450.csv \
+            --feb2018-disposition evidence/source_adjudication/CP0107_Feb2018_OffGrid_RowDisposition.csv \
+            --shared52 evidence/source_adjudication/CP0107_Shared52_EvidenceLinked_Disposition_Matrix.csv \
+            --close-time-only evidence/source_adjudication/CP0107_CloseTimeOnly_FieldDisposition_Final.csv \
+            --output-dir results/cp0201_gap_quarantine_overlap_crosswalk
+          python scripts/AISTS_CP0197_Feb2018_DailyReference_Evidence_Linkage.py \
+            --triage-csv results/cp0192_cross_interval_gap_triage/CP0192_Cross_Interval_Gap_Triage.csv \
+            --prior-evidence-dir evidence/source_adjudication/CP0107_Run_38777979719 \
+            --output-dir results/cp0197_feb2018_evidence_linkage
+          python scripts/AISTS_CP0117_Rulebook_Bound_NonRow_Blocker_Disposition_Audit.py \
+            --output-dir results/cp0117_rulebook_bound_blocker_disposition
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp0165-read-only-audit-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: |
+            results/cp0165_4h_archive_audit/
+            results/cp0192_cross_interval_gap_triage/
+            results/cp0197_feb2018_evidence_linkage/
+            results/cp0198_daily_reference_4h_exact_key_audit/
+            results/cp0199_exact_key_source_conflict_probe/
+            results/cp0200_g0_rulebook_bound_gap_disposition/
+            results/cp0201_gap_quarantine_overlap_crosswalk/
+            results/cp0117_rulebook_bound_blocker_disposition/
+          if-no-files-found: warn
+          retention-days: 30
