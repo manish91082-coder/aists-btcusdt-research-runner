@@ -35,7 +35,7 @@ The two rows that link to two aggregation cases do not become two source conflic
 
 Interval-only candidate exposure, using the frozen CP-0115 candidate universe, is:
 
-- 5m rows (including eight monthly-only keys and four economic-divergence keys): `CP0027_5m_EMA_12_26`, `CP0027_5m_RSI14_30_55`, `CP0027_5m_DONCHIAN20_10`.
+- 5m rows (including eight monthly-only keys and nine economic-divergence keys): `CP0027_5m_EMA_12_26`, `CP0027_5m_RSI14_30_55`, `CP0027_5m_DONCHIAN20_10`.
 - 15m rows (two monthly-only keys and four economic-divergence keys): `CP0027_15m_EMA_12_26`, `CP0027_15m_RSI14_30_55`, `CP0027_15m_DONCHIAN20_10`.
 - 30m row (one economic-divergence key): `CP0027_30m_EMA_12_26`, `CP0027_30m_RSI14_30_55`, `CP0027_30m_DONCHIAN20_10`.
 
