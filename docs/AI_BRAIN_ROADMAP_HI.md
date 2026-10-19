@@ -324,7 +324,7 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - INR 10,000 remains the fixed source capital. No FX conversion is inferred unless the caller supplies an explicit verified source reference and rate.
 - Allocation, fee, slippage and BTCUSDT symbol filters are retained as unknown/unusable unless the value, explicit verification and source reference are all supplied.
 - BNB savings and conversion overhead are optional scenario inputs only; the code makes no claim about current Binance fee terms. Simple round-trip cost math is not a fill simulation or market-performance result.
-- Exact-head CI is pending; do not mark CP-0275 verified until the current branch head has terminal-success Actions and the nine new tests are confirmed executed.
+- Added the module to the CI compile list. Exact-head run [39311654371](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39311654371) on `a604748a5d8bb9580febb36536e6636d0a2f81c1` completed SUCCESS: compile passed and all 212 tests passed (`OK`), including nine CP-0275 tests. This is software-only verification and does not alter G0 or establish profitability.
 - Gate boundary unchanged: G0 `BLOCKED_GLOBAL`, canonical source `NONE`, CP-0040 frozen, 23 current candidates G2 FAIL, G3 blocked, G4 insufficient, G6 not validated, G7 live blocked. No real historical input, candidate build, backtest or paper session was run. PR #2 stays open/unmerged.
 - Report: [CP-0275 Capital & Cost Contract](CP0275_Capital_Cost_Contract_HI.md).
 
