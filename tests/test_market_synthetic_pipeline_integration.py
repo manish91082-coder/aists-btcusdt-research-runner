@@ -69,6 +69,8 @@ class SyntheticDecisionPipelineIntegrationTests(unittest.TestCase):
         self.assertTrue(all(item["is_order_instruction"] is False for item in decisions))
         self.assertTrue(all(item["snapshot"]["as_of_ms"] == item["as_of_ms"] for item in decisions))
         self.assertTrue(all(item["snapshot_sha256"] for item in decisions))
+        self.assertEqual(len({item["decision_id"] for item in decisions}), len(decisions))
+        self.assertEqual([item["as_of_ms"] for item in decisions], sorted(item["as_of_ms"] for item in decisions))
 
         simulation = simulate_next_open(
             candles,
