@@ -1,0 +1,48 @@
+name: CP-0271 Alternate-Source Corroboration Probe
+
+on:
+  push:
+    branches: [cp-0271-alternate-source-crosscheck]
+    paths:
+      - '.github/workflows/cp0271-alternate-source-probe.yml'
+      - 'scripts/AISTS_CP0271_Alternate_Source_Probe.py'
+      - 'evidence/source_adjudication/CP0040_Run_38882377148/CP0040_ExactKey_Quarantine_Manifest.csv'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cp0271-alternate-source-probe-v3
+  cancel-in-progress: false
+
+jobs:
+  alternate-source-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Restore existing verified archive cache only
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/aists/binance-monthly-archives
+          key: aists-btcusdt-source-cache-v3-7intervals-2017-08-2026-09
+          restore-keys: |
+            aists-btcusdt-source-cache-v2-
+            aists-btcusdt-monthly-spot-v2-7intervals-2017-08-2026-09
+            aists-btcusdt-monthly-spot-v1-2017-08-2026-09
+      - name: Compile probe
+        run: python -m py_compile scripts/AISTS_CP0271_Alternate_Source_Probe.py
+      - name: Acquire and compare third-party hourly OHLCV
+        run: python scripts/AISTS_CP0271_Alternate_Source_Probe.py
+      - name: Upload probe receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp0271-alternate-source-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: results/cp0271_alternate_source/
+          if-no-files-found: warn
+          retention-days: 30

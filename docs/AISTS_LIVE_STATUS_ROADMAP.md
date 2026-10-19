@@ -714,3 +714,18 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Joined the census interval counts to the frozen CP-0115 23-candidate universe: 909 source keys yield 2,728 row-candidate interval-exposure relationships (5m 1,458; 15m 489; 30m 516; 1h 261; 4h 4). These are exposure counts only, not proof of exact builder consumption or performance impact. The one 4h key remains the existing CP-0201 overlap, not a new gap case.
 - All 909 source cases and all 11 AGG cases remain open. Canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G2 23 candidates `FAIL`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; profitability `NOT ESTABLISHED`; live actions blocked. No Policy B application, candidate build, or backtest.
 - Next decision-changing dependency: admissible official key-specific historical-version/correction evidence or actually authorized independent written adjudication under frozen CP-0040. No repeat joins/archive scans absent changed inputs. The report and roadmap commits each require their own exact-HEAD CI terminal verification.
+
+
+## CP-0271 — Alternate-source corroboration execution (2026-10-19)
+
+- Goal-directed decision: test a real third-party BTCUSDT hourly CSV against the six unresolved 4h exact keys in the frozen CP-0040 manifest, without changing CP-0040 or claiming G0 closure.
+- Source: CryptoDataDownload `https://www.cryptodatadownload.com/cdd/Binance_BTCUSDT_1h.csv`; HTTP 200; 8,753,754 bytes; SHA-256 `072ae35fcd953e11df176aed8a73a06d0698e95ef3db07d349015a5ac37174e4`.
+- Parsed 78,627 hourly rows; 43 rejected rows; 19,256 complete UTC 4h aggregates; 543 incomplete 4h buckets excluded without filling.
+- Existing monthly Binance 4h cache: 110 ZIPs / 19,974 parsed rows.
+- Exact-key results among six frozen unresolved 4h keys: three keys had both a complete third-party aggregate and monthly Binance row. Two matched across OHLC, base/quote volume and trade count; one matched OHLC but differed in base volume, quote volume and trade count. Three keys had no comparable third-party aggregate.
+- Important limit: close time and taker-buy base/quote volumes were not compared. In particular, the 2017-09-06 12:00 UTC close-time-only case remains unresolved despite matching the seven compared fields. Third-party agreement does not establish immutable point-in-time provenance.
+- Run: [CP-0271 GitHub Actions 39292714869](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39292714869), terminal `completed/success` on tested script SHA `ec28036ca35347256e8cd769c36eef71299020a7`.
+- Durable report: [CP0271_Alternate_Source_Corroboration_Report_HI.md](../evidence/source_adjudication/CP0271_Alternate_Source_Corroboration_Report_HI.md) on branch `cp-0271-alternate-source-crosscheck`.
+- CP-0270 now records the source-routing decision and actual probe result. Binance's historical version/publication evidence remains pending/not available in reviewed public evidence; no maintainer reply has been observed.
+- **Gate decision unchanged:** G0 `BLOCKED_GLOBAL`; canonical historical source `NONE`; historical version provenance `NOT_VERIFIED`; no CP-0040 cases closed by this probe; G2 candidates not promoted; profitability not established; acceptance-grade backtest and live signing/broadcast/orders remain blocked.
+- Next admissible step: independent authorized clause-level adjudication of the frozen 969 exact-key rows and 27 non-row blockers, then dependency/accounting reconciliation and exact-head all-scope verification. Do not repeat generic scans or infer approval from this corroboration probe.
