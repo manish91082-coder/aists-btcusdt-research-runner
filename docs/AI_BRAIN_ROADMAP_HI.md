@@ -317,3 +317,14 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - No real historical input was opened, no candidate/backtest/paper session was run, and no live signing, broadcast, exchange order, or automatic SL/TP path was enabled.
 - Report: [CP-0274 Synthetic Pipeline Integration](CP0274_Synthetic_Pipeline_Integration_HI.md).
 
+
+## CP-0275 — Evidence-gated INR capital and cost contract (2026-10-20)
+
+- Added `aists_brain/capital_cost_contract.py` and nine unit tests in `tests/test_market_capital_cost_contract.py`.
+- INR 10,000 remains the fixed source capital. No FX conversion is inferred unless the caller supplies an explicit verified source reference and rate.
+- Allocation, fee, slippage and BTCUSDT symbol filters are retained as unknown/unusable unless the value, explicit verification and source reference are all supplied.
+- BNB savings and conversion overhead are optional scenario inputs only; the code makes no claim about current Binance fee terms. Simple round-trip cost math is not a fill simulation or market-performance result.
+- Exact-head CI is pending; do not mark CP-0275 verified until the current branch head has terminal-success Actions and the nine new tests are confirmed executed.
+- Gate boundary unchanged: G0 `BLOCKED_GLOBAL`, canonical source `NONE`, CP-0040 frozen, 23 current candidates G2 FAIL, G3 blocked, G4 insufficient, G6 not validated, G7 live blocked. No real historical input, candidate build, backtest or paper session was run. PR #2 stays open/unmerged.
+- Report: [CP-0275 Capital & Cost Contract](CP0275_Capital_Cost_Contract_HI.md).
+
