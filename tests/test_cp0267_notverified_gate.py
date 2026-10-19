@@ -34,6 +34,30 @@ class TestCP0267NotVerifiedGate(unittest.TestCase):
         with self.assertRaisesRegex(GATE.NotVerifiedGateError, "KEY_NOT_IN_MANIFEST"):
             GATE.partition_rows([self.rows[0]], {})
 
+    def test_frozen_ledger_population_and_policy_load(self):
+        root = Path(__file__).resolve().parents[1]
+        evidence = root / "evidence" / "source_adjudication" / "CP0040_Run_38882377148"
+        policy = GATE.load_scoped_policy(
+            evidence / "CP0040_ExactKey_Quarantine_Manifest.csv",
+            evidence / "CP0040_NonRow_Blockers.csv",
+        )
+        self.assertEqual(policy["exact_rows"], 969)
+        self.assertEqual(policy["nonrow_rows"], 27)
+        self.assertEqual(policy["gap_keys"], 17)
+        self.assertEqual(policy["status"], "NOT_VERIFIED_EXCLUSION_POLICY_LOADED")
+
+    def test_all_three_blocker_families_are_excluded_by_exact_key_or_date(self):
+        root = Path(__file__).resolve().parents[1]
+        evidence = root / "evidence" / "source_adjudication" / "CP0040_Run_38882377148"
+        policy = GATE.load_scoped_policy(
+            evidence / "CP0040_ExactKey_Quarantine_Manifest.csv",
+            evidence / "CP0040_NonRow_Blockers.csv",
+        )
+        self.assertTrue(GATE.exclusion_reasons(policy, "4h", "1504713600000"))
+        self.assertTrue(GATE.exclusion_reasons(policy, "5m", "1512378000000", "2017-12-04T09:00:00Z"))
+        self.assertTrue(GATE.exclusion_reasons(policy, "15m", "1512378000000", "2017-12-04T09:00:00Z"))
+        self.assertFalse(GATE.exclusion_reasons(policy, "1d", "1609459200000", "2021-01-01T00:00:00Z"))
+
     def test_manifest_hash_and_schema_are_required(self):
         data = ("symbol,market,interval,open_time_ms,status,reason\n"
                 "BTCUSDT,BINANCE_SPOT,4h,1000,NOT_VERIFIED_GAP,missing key\n")
