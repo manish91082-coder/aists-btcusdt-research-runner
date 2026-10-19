@@ -57,3 +57,15 @@ No comment was posted to Binance's repository, no reviewer was invited, and no e
 ## Verification boundary
 
 This checkpoint records the observed public status as of 2026-10-19. A community issue remaining unanswered is not proof that no private/internal record exists; it means no public official answer was available in the checked evidence. No claim of complete internet-wide discovery is made.
+
+
+## Addendum: related public gap reports found during the bounded follow-up
+
+A targeted follow-up surfaced two additional open community reports in the official `binance/binance-public-data` issue tracker:
+
+- [Issue #365: Missing Klines for BTC USDT between 2017-2024 (1 sec interval)](https://github.com/binance/binance-public-data/issues/365), opened 2024-11-01, label `reviewing`, still open with zero comments as checked on 2026-10-19. Its author lists a gap beginning at **2017-09-06 16:00 UTC** in monthly Spot 1-second kline data, alongside other gaps. This timestamp overlaps the project's disputed key, but the reported interval is 1-second data, not a direct finding about the project's 4h candle.
+- [Issue #374: Incomplete historic data for BTCUSDT spot klines 1m interval](https://github.com/binance/binance-public-data/issues/374), opened 2024-11-16, label `reviewing`, still open as checked on 2026-10-19. It reports missing 1-minute data on 2017-09-06. Its one comment is a community suggestion to sort rows, not an official maintainer response.
+
+**Interpretation:** These are independent community reports that corroborate a public-data coverage concern around the same historical date. They are not official Binance confirmations, do not establish the disputed 4h row's correctness, and do not provide old archive versions, point-in-time publication metadata, or a correction for the exact key. They are therefore context evidence only; they do not change the gate.
+
+No comments were posted and no external issue was modified. No old scans were repeated. G0 remains `BLOCKED_GLOBAL`; no source case is closed and no candidate/backtest is authorized.
