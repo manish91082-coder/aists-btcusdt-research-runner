@@ -98,7 +98,7 @@ def load_scoped_policy(exact_manifest_path, nonrow_path):
             date_blockers.add((interval, day, case_id))
         elif kind == "RESIDUAL_AGGREGATION_BUCKET":
             import re
-            m = re.fullmatch(r"AGG-\\d+-(5m|15m|30m|1h|4h|1d)-(5m|15m|30m|1h|4h|1d)-(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z)", case_id)
+            m = re.fullmatch(r"AGG-\d+-(5m|15m|30m|1h|4h|1d)-(5m|15m|30m|1h|4h|1d)-(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)", case_id)
             if not m:
                 raise NotVerifiedGateError(f"CP0267_AGG_KEY_UNPARSEABLE:{case_id}")
             child, parent, iso = m.groups()
