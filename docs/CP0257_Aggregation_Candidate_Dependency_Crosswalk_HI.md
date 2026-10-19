@@ -46,7 +46,7 @@ This bounded checkpoint links all 11 frozen aggregation case IDs to the already-
 The following are the exact source archive SHA-256 values recorded in the linked 78-row evidence. Daily sidecar hashes are recorded separately. These establish identity/integrity links for the observed files, not which version was historically authoritative at the time of publication.
 
 ### AGG-01-5m-15m-2017-12-04T09:00:00Z
-- Bucket: `2017-12-04T09:00:00Z`; relationship: `undefined → undefined`; row evidence records: 8.
+- Bucket: `2017-12-04T09:00:00Z`; relationship: `5m → 15m`; row evidence records: 8.
 - Monthly child: `BTCUSDT-5m-2017-12.zip SHA256=fab87582c0bfd79f200dfbbeebbce39fabf7c137c768daa867d9d688f64c6b19`.
 - Monthly parent: `BTCUSDT-15m-2017-12.zip SHA256=a737d013096403196346f6297fe21fce7e3e8f7b6366e517535d9835eeb2fdf4`.
 - Daily child: `BTCUSDT-5m-2017-12-04.zip SHA256=2d58f4ef76ecffe0764546bb13c6e304a862ec038d2f367a8f306d4badc7693e; sidecar SHA256=e43f46de3ec5185336e71a4cbfdfbfefb0041b75bc47be14991b0546afba64dd`.
@@ -55,7 +55,7 @@ The following are the exact source archive SHA-256 values recorded in the linked
 - Candidate relevance result: direct interval overlap with `MTF_BREAKOUT_4H_D1` = `False`. Current decision: No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate.
 
 ### AGG-02-5m-15m-2017-12-04T09:15:00Z
-- Bucket: `2017-12-04T09:15:00Z`; relationship: `undefined → undefined`; row evidence records: 8.
+- Bucket: `2017-12-04T09:15:00Z`; relationship: `5m → 15m`; row evidence records: 8.
 - Monthly child: `BTCUSDT-5m-2017-12.zip SHA256=fab87582c0bfd79f200dfbbeebbce39fabf7c137c768daa867d9d688f64c6b19`.
 - Monthly parent: `BTCUSDT-15m-2017-12.zip SHA256=a737d013096403196346f6297fe21fce7e3e8f7b6366e517535d9835eeb2fdf4`.
 - Daily child: `BTCUSDT-5m-2017-12-04.zip SHA256=2d58f4ef76ecffe0764546bb13c6e304a862ec038d2f367a8f306d4badc7693e; sidecar SHA256=e43f46de3ec5185336e71a4cbfdfbfefb0041b75bc47be14991b0546afba64dd`.
@@ -64,7 +64,7 @@ The following are the exact source archive SHA-256 values recorded in the linked
 - Candidate relevance result: direct interval overlap with `MTF_BREAKOUT_4H_D1` = `False`. Current decision: No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate.
 
 ### AGG-03-5m-15m-2018-02-05T10:00:00Z
-- Bucket: `2018-02-05T10:00:00Z`; relationship: `undefined → undefined`; row evidence records: 8.
+- Bucket: `2018-02-05T10:00:00Z`; relationship: `5m → 15m`; row evidence records: 8.
 - Monthly child: `BTCUSDT-5m-2018-02.zip SHA256=44bc33f321fbc4a4dd5c99bec7bbb4ca86e5cc33ddc6459610a18db7ae872c0b`.
 - Monthly parent: `BTCUSDT-15m-2018-02.zip SHA256=9b7f75cef2aefea621bfedb0f136f15fc60aed5e6f4da1c521765a4c267123e0`.
 - Daily child: `BTCUSDT-5m-2018-02-05.zip SHA256=a8832f5595a15373e9354685f2179c737b46127a8e88484498679e4b83cd65a4; sidecar SHA256=57782cf82de2e1f02b3d47732b028b951a797a7561217d88942d746895ca1550`.
@@ -73,7 +73,7 @@ The following are the exact source archive SHA-256 values recorded in the linked
 - Candidate relevance result: direct interval overlap with `MTF_BREAKOUT_4H_D1` = `False`. Current decision: No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate.
 
 ### AGG-04-5m-15m-2018-03-04T14:30:00Z
-- Bucket: `2018-03-04T14:30:00Z`; relationship: `undefined → undefined`; row evidence records: 8.
+- Bucket: `2018-03-04T14:30:00Z`; relationship: `5m → 15m`; row evidence records: 8.
 - Monthly child: `BTCUSDT-5m-2018-03.zip SHA256=9f79a89dad86fbce45f7be8f0487e115a4e8d609b4c415b5a32781e823df0cd4`.
 - Monthly parent: `BTCUSDT-15m-2018-03.zip SHA256=52982e2c0ceb520365cf320c631fd0603aff6d0b0b0a81d06e2c23f5a81e8be2`.
 - Daily child: `BTCUSDT-5m-2018-03-04.zip SHA256=56e67ffe2108239a15a6955bcd0b1324337ba8eb3ed2d7b8434e1367b45b83fc; sidecar SHA256=06241af728c9b0d2cecd6378e32df0c711c8b2b13aca6e5237680c518d224034`.
@@ -82,7 +82,7 @@ The following are the exact source archive SHA-256 values recorded in the linked
 - Candidate relevance result: direct interval overlap with `MTF_BREAKOUT_4H_D1` = `False`. Current decision: No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate.
 
 ### AGG-05-5m-15m-2018-03-04T14:45:00Z
-- Bucket: `2018-03-04T14:45:00Z`; relationship: `undefined → undefined`; row evidence records: 8.
+- Bucket: `2018-03-04T14:45:00Z`; relationship: `5m → 15m`; row evidence records: 8.
 - Monthly child: `BTCUSDT-5m-2018-03.zip SHA256=9f79a89dad86fbce45f7be8f0487e115a4e8d609b4c415b5a32781e823df0cd4`.
 - Monthly parent: `BTCUSDT-15m-2018-03.zip SHA256=52982e2c0ceb520365cf320c631fd0603aff6d0b0b0a81d06e2c23f5a81e8be2`.
 - Daily child: `BTCUSDT-5m-2018-03-04.zip SHA256=56e67ffe2108239a15a6955bcd0b1324337ba8eb3ed2d7b8434e1367b45b83fc; sidecar SHA256=06241af728c9b0d2cecd6378e32df0c711c8b2b13aca6e5237680c518d224034`.
@@ -91,7 +91,7 @@ The following are the exact source archive SHA-256 values recorded in the linked
 - Candidate relevance result: direct interval overlap with `MTF_BREAKOUT_4H_D1` = `False`. Current decision: No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate.
 
 ### AGG-06-5m-15m-2018-09-05T09:45:00Z
-- Bucket: `2018-09-05T09:45:00Z`; relationship: `undefined → undefined`; row evidence records: 8.
+- Bucket: `2018-09-05T09:45:00Z`; relationship: `5m → 15m`; row evidence records: 8.
 - Monthly child: `BTCUSDT-5m-2018-09.zip SHA256=820d494c55b1b0149872f54af63d8245a98c48d83ede5f8b949ee49f42b52704`.
 - Monthly parent: `BTCUSDT-15m-2018-09.zip SHA256=17c6956d455bcba50c83a17fb04f5c84feddfd3f217cbb117c3f6fe8fe366667`.
 - Daily child: `BTCUSDT-5m-2018-09-05.zip SHA256=80396c452ecba3c2da0446755abe3cf945777a9cd5aa24017fcaec7d168073d2; sidecar SHA256=b08183196d4b5957af844b6ece8d0ed21211b26caa7b486aede9e88ec7b82796`.
@@ -100,7 +100,7 @@ The following are the exact source archive SHA-256 values recorded in the linked
 - Candidate relevance result: direct interval overlap with `MTF_BREAKOUT_4H_D1` = `False`. Current decision: No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate.
 
 ### AGG-07-15m-30m-2017-12-04T09:00:00Z
-- Bucket: `2017-12-04T09:00:00Z`; relationship: `undefined → undefined`; row evidence records: 6.
+- Bucket: `2017-12-04T09:00:00Z`; relationship: `15m → 30m`; row evidence records: 6.
 - Monthly child: `BTCUSDT-15m-2017-12.zip SHA256=a737d013096403196346f6297fe21fce7e3e8f7b6366e517535d9835eeb2fdf4`.
 - Monthly parent: `BTCUSDT-30m-2017-12.zip SHA256=c64fcc280bc444ad7508982d526198373812e3ed44804969dc0d2b57da39517b`.
 - Daily child: `BTCUSDT-15m-2017-12-04.zip SHA256=909b18ee1bb2e2269a2a763ae1c76ebe3b01db433c9e7055ddd95e7b9839940f; sidecar SHA256=cb88e27b62c3137838bdfd0aa44f5890fbda9865fd320adcb8fe0451d111bf1c`.
@@ -109,7 +109,7 @@ The following are the exact source archive SHA-256 values recorded in the linked
 - Candidate relevance result: direct interval overlap with `MTF_BREAKOUT_4H_D1` = `False`. Current decision: No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate.
 
 ### AGG-08-15m-30m-2018-02-07T06:30:00Z
-- Bucket: `2018-02-07T06:30:00Z`; relationship: `undefined → undefined`; row evidence records: 6.
+- Bucket: `2018-02-07T06:30:00Z`; relationship: `15m → 30m`; row evidence records: 6.
 - Monthly child: `BTCUSDT-15m-2018-02.zip SHA256=9b7f75cef2aefea621bfedb0f136f15fc60aed5e6f4da1c521765a4c267123e0`.
 - Monthly parent: `BTCUSDT-30m-2018-02.zip SHA256=e14dc22f1ede6a9ae50130101de3fefb8ddf06220cb3e6afae9315b441e66681`.
 - Daily child: `BTCUSDT-15m-2018-02-07.zip SHA256=0f1d760a85010d35d4d2b2cce8d2f4e20fba1ff54705f1162154545b69104e68; sidecar SHA256=e89fb1810b4b2255d0c1574f8eff835d74640a3bc9d4cb3932ef31e3315d9eee`.
@@ -118,7 +118,7 @@ The following are the exact source archive SHA-256 values recorded in the linked
 - Candidate relevance result: direct interval overlap with `MTF_BREAKOUT_4H_D1` = `False`. Current decision: No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate.
 
 ### AGG-09-15m-30m-2018-03-04T14:30:00Z
-- Bucket: `2018-03-04T14:30:00Z`; relationship: `undefined → undefined`; row evidence records: 6.
+- Bucket: `2018-03-04T14:30:00Z`; relationship: `15m → 30m`; row evidence records: 6.
 - Monthly child: `BTCUSDT-15m-2018-03.zip SHA256=52982e2c0ceb520365cf320c631fd0603aff6d0b0b0a81d06e2c23f5a81e8be2`.
 - Monthly parent: `BTCUSDT-30m-2018-03.zip SHA256=21d47d7deb9582046c22786b676b9de869d4b00772c06c3a438d37ef57e3ca28`.
 - Daily child: `BTCUSDT-15m-2018-03-04.zip SHA256=e466638b5103fd169f4976807db249215d120326172c0567e56280d16756408f; sidecar SHA256=a0243bd96bd70810e1e78b8b3190ce0b2806e62f30a3e97af6456be3f2cc93f7`.
@@ -127,7 +127,7 @@ The following are the exact source archive SHA-256 values recorded in the linked
 - Candidate relevance result: direct interval overlap with `MTF_BREAKOUT_4H_D1` = `False`. Current decision: No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate.
 
 ### AGG-10-15m-30m-2018-06-20T03:30:00Z
-- Bucket: `2018-06-20T03:30:00Z`; relationship: `undefined → undefined`; row evidence records: 6.
+- Bucket: `2018-06-20T03:30:00Z`; relationship: `15m → 30m`; row evidence records: 6.
 - Monthly child: `BTCUSDT-15m-2018-06.zip SHA256=a80442581d5ac478c283158bc754b62c90cb45bac2081126b2a5f3400ddd74bc`.
 - Monthly parent: `BTCUSDT-30m-2018-06.zip SHA256=cd72295e0b4806803e08b9af1ab3580f420d1ac7a29b62e6f827c6e35ded7dcf`.
 - Daily child: `BTCUSDT-15m-2018-06-20.zip SHA256=e9e1bbf1f0ee6c58bb0ca82eb1dd9f3b8e7b1edef4fe00058a30155c313213b9; sidecar SHA256=a92d14c392adfda255bb1259dac5cf0889cc609f32574f1055868500d62f0af0`.
@@ -136,7 +136,7 @@ The following are the exact source archive SHA-256 values recorded in the linked
 - Candidate relevance result: direct interval overlap with `MTF_BREAKOUT_4H_D1` = `False`. Current decision: No direct interval overlap with 4h/D1 comparator; relationship remains open under global gate.
 
 ### AGG-11-30m-1h-2018-03-20T03:00:00Z
-- Bucket: `2018-03-20T03:00:00Z`; relationship: `undefined → undefined`; row evidence records: 6.
+- Bucket: `2018-03-20T03:00:00Z`; relationship: `30m → 1h`; row evidence records: 6.
 - Monthly child: `BTCUSDT-30m-2018-03.zip SHA256=21d47d7deb9582046c22786b676b9de869d4b00772c06c3a438d37ef57e3ca28`.
 - Monthly parent: `BTCUSDT-1h-2018-03.zip SHA256=a3f45f20d28eab88292d1baac72402ebf59f4462d0bb834288f69b59a65cbf5f`.
 - Daily child: `BTCUSDT-30m-2018-03-20.zip SHA256=862a652e1550c2e3286a40a3f24fee234b1c895cb08cb811ad48ab1daf5006cf; sidecar SHA256=f1b11f618a23f940ef887109a9d71200ba10094ec00d358ea5af315e396a0263`.
