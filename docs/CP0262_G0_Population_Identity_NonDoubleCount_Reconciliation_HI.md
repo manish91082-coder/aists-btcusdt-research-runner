@@ -29,7 +29,7 @@ CP-0107's validated derived worklist reports 996 source records and 996 derived 
 | **Unmatched exact-open-key rows subtotal** | **909** | 452 + 457 |
 | `SHARED_OPEN_VALUE_CONFLICT` | 60 | Count aligns with 52 economic conflicts + 8 close-time-only conflicts |
 | `RESIDUAL_AGGREGATION_BUCKET` | 11 | Count aligns with 11 aggregation blockers |
-| `MISSING_DAILY_REFERENCE_ACQUISITION` | 16 | Count aligns with the 16 gap-only slots, but exact identity join is not established by the cited summary alone |
+| `MISSING_DAILY_REFERENCE_ACQUISITION` | 16 | Distinct date-level reference-acquisition records for 5m/15m/30m/1h; statuses say `NOT_ACQUIRED_BLOCKED_EXTERNAL_NETWORK`. They are not the 16 missing 4h gap-only slots. |
 | **Total worklist records** | **996** | **909 + 60 + 11 + 16 = 996** |
 
 This is a validated **count partition**, not proof that every cross-population relationship is adjudicated. The 996 derived worklist validation says all non-disposition fields and source JSON were preserved; it does not establish canonical historical source authority.
@@ -43,7 +43,7 @@ This is a validated **count partition**, not proof that every cross-population r
 | 52 shared economic conflicts + 8 close-time-only conflicts | Counts reconcile to the 60 shared-conflict worklist category. All remain open; count reconciliation does not authorize source selection. |
 | 11 aggregation blockers | Count reconciles to 11 residual aggregation buckets; all remain unresolved. |
 | 17 missing 4h slots | Existing evidence says one overlaps the already-counted 4h placeholder row and 16 are gap-only. Do not count 17 as 17 additional unmatched rows. |
-| 16 `MISSING_DAILY_REFERENCE_ACQUISITION` records vs 16 gap-only slots | **Exact key-level identity is not proven by the summaries inspected here.** Equal counts alone are not a join. Keep the relation `MISSING_EVIDENCE` until exact IDs are joined. |
+| 16 `MISSING_DAILY_REFERENCE_ACQUISITION` records vs 16 gap-only 4h slots | **Distinct scope, not a same-count join.** FETCHREF records are date-level acquisition blockers on 5m/15m/30m/1h; the 16 gap-only items are 4h open-time slots. Keep these ledgers separate. |
 | 909 unmatched rows vs candidate builder | CP-0261 maps intervals to candidate families, but exact full-builder row consumption after an authorized gate transition remains unverified. |
 
 ## 4. What this action actually resolves
@@ -66,4 +66,4 @@ No canonical source was selected. No source case was closed. No Policy B applica
 - Candidate build / acceptance-grade backtest: `BLOCKED`
 - Live signing / broadcast / exchange orders: `BLOCKED`
 
-**Next atomic action:** inspect the committed CP-0107 996-row minimal index and the exact CP-0200/0201 gap-key ledger, then perform a strict exact-key join for the 16 missing-reference records versus the 16 gap-only slots. If the source artifacts do not expose those keys in the active branch, record `MISSING_EVIDENCE`; do not infer the join. After that, the remaining G0 decision-changing dependency is admissible official key-specific historical-version evidence or an actually authorized independent written adjudication.
+**Next atomic action:** reconcile the 16 date-level FETCHREF acquisition blockers against their existing daily-reference acquisition queue and archive manifest to determine whether acquisition has since been completed. Keep the 16 gap-only 4h slots separate. If acquisition evidence is absent, preserve `NOT_ACQUIRED_BLOCKED_EXTERNAL_NETWORK` / `MISSING_EVIDENCE`; do not repeat exhausted full archive scans. The remaining G0 decision-changing dependency is admissible official key-specific historical-version evidence or an actually authorized independent written adjudication.
