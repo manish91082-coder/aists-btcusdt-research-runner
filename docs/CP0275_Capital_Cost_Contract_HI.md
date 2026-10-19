@@ -1,6 +1,6 @@
 # CP-0275 — Evidence-gated INR capital and cost contract
 
-**Status:** Code and nine unit tests committed; exact-head CI verification pending.  
+**Status:** Verified. Exact-head run [39311654371](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39311654371) completed successfully on `a604748a5d8bb9580febb36536e6636d0a2f81c1`; compile passed and all 212 tests passed (`OK`), including nine CP-0275 tests.  
 **Branch:** `cp-0120-ai-brain-foundation`  
 **Capital basis:** INR 10,000, preserved as the source amount.
 
@@ -21,6 +21,6 @@
 - Live signing, public broadcast, exchange orders, and automatic stop-loss/take-profit remain blocked.
 - PR #2 remains open and unmerged.
 
-## Verification required
+## Verification result
 
-Confirm the exact branch-head GitHub Actions run is terminal-success and inspect the test log. If any test fails, correct only the demonstrated defect and rerun. A green CI result proves code behavior under tests, not source authority or profitability.
+Exact-head run [39311654371](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39311654371) was terminal-success on `a604748a5d8bb9580febb36536e6636d0a2f81c1`. Compile step passed; test log reports `Ran 212 tests ... OK`, including all nine CP-0275 tests. The workflow compile list explicitly includes `aists_brain/capital_cost_contract.py`. This verifies the software contract only, not source truth or profitability.
