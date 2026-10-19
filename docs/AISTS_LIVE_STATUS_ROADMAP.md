@@ -684,3 +684,13 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - No source selected, no source case closed, no Policy B application, no row/rulebook mutation, no candidate build/backtest. G0 remains `BLOCKED_GLOBAL`; G2 23 candidates `FAIL`; G3 blocked; profitability not established; live actions blocked.
 - Exact-head CI for the CP-0262 report and this roadmap update must be checked independently after these commits.
 - Next single action: reconcile the 16 date-level FETCHREF acquisition blockers against their existing daily-reference acquisition queue and archive manifest to determine whether acquisition has since completed. Keep them separate from the 16 gap-only 4h slots. Do not repeat full archive scans.
+
+
+## CP-0263 — 16 daily-reference acquisition records reconciled (2026-10-19)
+
+- Added [CP-0263 daily-reference acquisition resolution](CP0263_DailyReference_Acquisition_16_Row_Resolution_HI.md), report commit `43a65c018c29d116152233f3970f00e23039cd48`.
+- Used existing CP-0107 Run 38909366995 artifacts only; no new archive scans/downloads. The 16-row daily archive manifest shows 16/16 HTTP 200, ZIP CRC PASS, ZIP SHA matching sidecar, and sidecar token matching ZIP SHA. Acquisition summary reports 98/98 checks PASS. The earlier queue's `NOT_ACQUIRED_BEFORE_THIS_RUN` status is historical; it is superseded for acquisition only, not source adjudication.
+- Per-period summary has 16 unique FETCHREF records: 14 periods complete expected grid; 2 remain `OPEN_COVERAGE_REVIEW` (15m and 5m on 2017-12-04). Across them: 1,982 shared keys; 1,550 exact raw row pairs; 432 divergent raw row pairs; 14 economic-field divergent pairs; 10 monthly-only keys / 10 expected daily keys absent; zero daily-only keys; zero close-time-only pairs. All 16 case dispositions remain `OPEN_REVIEW_REQUIRED`; archive integrity does not select canonical source.
+- No source cases closed; no Policy B application; no candidate build/backtest; profitability not established; live actions blocked. Do not conflate these 16 lower-timeframe FETCHREF periods with the 16 gap-only 4h slots.
+- Next single action: exact-key reconcile the 10 monthly-only keys and 14 economic-field divergent pairs against the frozen CP-0041/CP-0107 case ledger and candidate-input relevance matrix; only exact intersections may be counted. Do not repeat acquisition or archive scans.
+- CP-0263 report and this roadmap update require exact-HEAD terminal CI verification.
