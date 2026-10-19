@@ -24,6 +24,8 @@ DATA_ROOT = REPO / ".runtime" / "aists_data" / "market_data" / "binance_spot" / 
 AUDIT_DIR = REPO / "results" / "cp0165_4h_archive_audit"
 OUT_DIR = REPO / "results" / "cp0268_g0_runtime"
 FROZEN = REPO / "evidence" / "source_adjudication" / "CP0040_Run_38882377148"
+FLAGGED_DATES_FILE = REPO / "evidence" / "runs" / "38725478106_flagged_dates.csv"
+FLAGGED_DATES_SHA256 = "9692ebcfc5a73e96fc9e78b0ac9eb56086a6bd7b7bf05596b837170ded607ce9"
 EXPECTED = {
     "CP0040_ExactKey_Quarantine_Manifest.csv": "d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819",
     "CP0040_NonRow_Blockers.csv": "d0126152a58baecd8f61bcdcc21286ecffacba6427e7b09696ca63db33c1f0d0",
@@ -71,6 +73,16 @@ def main():
         frozen_hashes[name] = actual
         if actual != expected_sha:
             fail(f"CP0268_BLOCKED_FROZEN_SHA256_MISMATCH:{name}:{actual}")
+
+    # Pin the pre-existing 40-date CP-0025 flagged-date evidence. Scoped mode
+    # excludes these dates rather than selecting daily data or falling back to monthly.
+    if not FLAGGED_DATES_FILE.is_file() or sha256(FLAGGED_DATES_FILE) != FLAGGED_DATES_SHA256:
+        fail("CP0268_BLOCKED_FLAGGED_DATES_EVIDENCE_MISSING_OR_HASH_MISMATCH")
+    with FLAGGED_DATES_FILE.open(newline="", encoding="utf-8-sig") as stream:
+        flagged_rows = list(csv.DictReader(stream))
+    flagged_dates = [str(row.get("date", "")).strip() for row in flagged_rows]
+    if len(flagged_dates) != 40 or len(set(flagged_dates)) != 40 or any(len(day) != 10 for day in flagged_dates):
+        fail(f"CP0268_BLOCKED_FLAGGED_DATES_SCHEMA_OR_COUNT:{len(flagged_dates)}")
 
     # Official checksum sidecars only; CP-0165 refuses to download monthly ZIPs.
     audit_cmd = [
@@ -139,7 +151,7 @@ def main():
         writer.writerows(official_rows)
 
     # Explicitly use monthly 4h archives only. No daily overrides or fabricated bars.
-    write_json(reports / "cp0025_reference_dates.json", {"dates": []})
+    write_json(reports / "cp0025_reference_dates.json", {"dates": sorted(flagged_dates)})
     with (reports / "cp0025_daily_reference_manifest.csv").open("w", newline="", encoding="utf-8") as stream:
         csv.writer(stream, lineterminator="\n").writerow(
             ["interval", "date", "filename", "checksum_status", "zip_sha256", "official_sha256"]
@@ -166,6 +178,8 @@ def main():
         "cp0165_summary_sha256": sha256(audit_summary_path),
         "cp0165_details_sha256": sha256(details_path),
         "frozen_evidence_sha256": frozen_hashes,
+        "flagged_dates_evidence_sha256": sha256(FLAGGED_DATES_FILE),
+        "flagged_dates_excluded_count": len(flagged_dates),
         "official_4h_archive_count": len(archive_hashes),
         "official_4h_archive_manifest_sha256": hashlib.sha256(
             json.dumps(archive_hashes, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -202,6 +216,8 @@ def main():
                         fail("CP0268_NOT_VERIFIED_KEY_LEAKED")
                     if row.get("source_status") != "VERIFIED_PRIMARY_CURRENT_SNAPSHOT" or not row.get("source_sha256"):
                         fail("CP0268_SOURCE_IDENTITY_MISSING")
+                    if str(row.get("open_time_utc", ""))[:10] in set(flagged_dates):
+                        fail("CP0268_FLAGGED_DATE_LEAKED_INTO_MONTHLY_ONLY_CANDIDATE")
             if row_count != candidate_meta.get("candidate_rows"):
                 fail("CP0268_CANDIDATE_ROW_COUNT_MISMATCH")
             if report.get("g0_scope", {}).get("status") == "G0_SCOPED_PASS_4H_CANDIDATE_ELIGIBILITY_ONLY":
