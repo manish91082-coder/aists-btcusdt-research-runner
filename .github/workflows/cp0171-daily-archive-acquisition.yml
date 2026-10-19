@@ -1,0 +1,47 @@
+name: CP-0171 Official Daily Archive Acquisition Only
+
+on:
+  push:
+    branches: [cp-0171-daily-archive-acquisition]
+    paths:
+      - '.github/workflows/cp0171-daily-archive-acquisition.yml'
+      - 'scripts/AISTS_CP0171_Daily_Archive_Acquisition.py'
+      - 'tests/test_cp0171_daily_archive_acquisition.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cp0171-daily-archive-acquisition
+  cancel-in-progress: false
+
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout exact branch commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run deterministic no-network self-tests
+        run: python scripts/AISTS_CP0171_Daily_Archive_Acquisition.py --self-test
+      - name: Run bounded acquisition test suite
+        run: python -m unittest discover -s tests -p 'test_cp0171_daily_archive_acquisition.py' -v
+      - name: Acquire only frozen official daily archive scope
+        run: python scripts/AISTS_CP0171_Daily_Archive_Acquisition.py --output-dir results/cp0171_daily_archive_acquisition
+      - name: Upload raw archives and verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp0171-btcusdt-spot-daily-archives-2026-10-01-to-2026-10-18
+          path: results/cp0171_daily_archive_acquisition/
+          if-no-files-found: warn
+          retention-days: 30
