@@ -35,9 +35,14 @@ def f(row, *names):
 def read_cdd(raw):
     text = raw.decode("utf-8-sig", errors="replace")
     lines = text.splitlines()
-    while lines and (not lines[0].strip() or lines[0].lstrip().startswith("#")):
-        lines.pop(0)
-    reader = csv.DictReader(lines)
+    # CryptoDataDownload CSVs may begin with a plain URL banner (not a # comment).
+    # Locate the real header instead of assuming it is the first physical line.
+    header_index = next((i for i, line in enumerate(lines[:25])
+                         if "," in line and "unix" in line.lower()
+                         and "open" in line.lower() and "close" in line.lower()), None)
+    if header_index is None:
+        raise ValueError("CDD_CSV_HEADER_NOT_FOUND:" + repr(lines[:5]))
+    reader = csv.DictReader(lines[header_index:])
     rows = {}
     bad = 0
     for row in reader:
