@@ -265,3 +265,100 @@ def simulate_next_open(
             "exchange quantity/notional filters are not enforced unless caller supplies verified symbol_filters",
         ],
     }
+
+def simulate_next_open_with_capital_cost_contract(
+    candles: Sequence[Mapping[str, Any]],
+    decisions: Sequence[Mapping[str, Any]],
+    *,
+    interval_ms: int,
+    capital_cost_contract: Mapping[str, Any],
+    research_input_scope: str,
+) -> dict[str, Any]:
+    """Run a synthetic-fixture-only simulation using an evidence-gated cost contract.
+
+    The required scope literal deliberately blocks historical-market inputs in this
+    checkpoint while G0 is blocked. Fixture source references exercise contract
+    wiring only; they are not external evidence, exchange terms, or market results.
+    """
+    from aists_brain.capital_cost_contract import CONTRACT_SCHEMA
+
+    if research_input_scope != "SYNTHETIC_SOFTWARE_FIXTURE_ONLY":
+        raise ValueError(
+            "CP-0276 permits synthetic software fixtures only while G0 is blocked"
+        )
+    if not isinstance(capital_cost_contract, Mapping):
+        raise ValueError("capital_cost_contract must be a mapping")
+    if capital_cost_contract.get("schema_version") != CONTRACT_SCHEMA:
+        raise ValueError("unsupported capital_cost_contract schema")
+    if capital_cost_contract.get("status") != "ASSUMPTIONS_VERIFIED_FOR_MODELING_ONLY":
+        raise ValueError("capital_cost_contract assumptions are blocked or unverified")
+    gate_boundary = capital_cost_contract.get("gate_boundary")
+    if not isinstance(gate_boundary, Mapping) or gate_boundary.get(
+        "g0_must_be_independently_cleared_before_real_historical_inputs"
+    ) is not True:
+        raise ValueError("capital_cost_contract is missing the G0 boundary")
+    if gate_boundary.get("candidate_build_backtest_or_paper_authorized_by_this_contract") is not False:
+        raise ValueError("capital_cost_contract cannot authorize backtest or paper activity")
+    if gate_boundary.get("live_signing_public_broadcast_exchange_orders") is not False:
+        raise ValueError("capital_cost_contract safety boundary is invalid")
+    if gate_boundary.get("automatic_stop_loss_take_profit") is not False:
+        raise ValueError("capital_cost_contract SL/TP boundary is invalid")
+    if gate_boundary.get("profitability_established") is not False:
+        raise ValueError("capital_cost_contract cannot claim profitability")
+
+    required = (
+        "capital_usdt", "allocation_fraction", "fee_bps_per_side",
+        "slippage_bps_per_side", "symbol_filters",
+    )
+    missing = [key for key in required if capital_cost_contract.get(key) is None]
+    if missing:
+        raise ValueError("capital_cost_contract missing usable fields: " + ", ".join(missing))
+    source_fields = (
+        ("fx_verified", "fx_source_ref"),
+        ("allocation_fraction", "allocation_source_ref"),
+        ("fee_bps_per_side", "fee_source_ref"),
+        ("slippage_bps_per_side", "slippage_source_ref"),
+        ("symbol_filters", "symbol_filters_source_ref"),
+    )
+    if capital_cost_contract.get("fx_verified") is not True:
+        raise ValueError("capital_cost_contract FX is not verified")
+    for value_field, source_field in source_fields:
+        if capital_cost_contract.get(value_field) is None:
+            raise ValueError(f"capital_cost_contract {value_field} is unavailable")
+        source_ref = capital_cost_contract.get(source_field)
+        if not isinstance(source_ref, str) or not source_ref.strip():
+            raise ValueError(f"capital_cost_contract {source_field} is missing")
+    if not isinstance(capital_cost_contract.get("symbol_filters"), Mapping):
+        raise ValueError("capital_cost_contract symbol_filters must be a mapping")
+
+    result = simulate_next_open(
+        candles,
+        decisions,
+        interval_ms=interval_ms,
+        initial_cash_usdt=capital_cost_contract["capital_usdt"],
+        allocation_fraction=capital_cost_contract["allocation_fraction"],
+        fee_bps_per_side=capital_cost_contract["fee_bps_per_side"],
+        slippage_bps_per_side=capital_cost_contract["slippage_bps_per_side"],
+        symbol_filters=capital_cost_contract["symbol_filters"],
+    )
+    result["capital_cost_contract_schema"] = CONTRACT_SCHEMA
+    result["capital_cost_contract_status"] = capital_cost_contract["status"]
+    result["execution_mode"] = "CONTRACT_BOUND_SYNTHETIC_FIXTURE_ONLY"
+    result["research_input_scope"] = research_input_scope
+    result["capital_cost_contract_sources"] = {
+        source_field: capital_cost_contract[source_field]
+        for _, source_field in source_fields
+    }
+    result["limitations"].append(
+        "CP-0276 contract wiring was exercised with synthetic software fixtures only; "
+        "fixture references are not real external evidence or market-performance results"
+    )
+    result["safety_boundary"] = {
+        "real_historical_inputs_permitted": False,
+        "candidate_build_backtest_or_paper_authorized": False,
+        "live_signing_public_broadcast_exchange_orders": False,
+        "automatic_stop_loss_take_profit": False,
+        "profitability_established": False,
+    }
+    return result
+
