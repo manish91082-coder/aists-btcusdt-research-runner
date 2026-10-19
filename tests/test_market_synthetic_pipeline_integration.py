@@ -103,7 +103,7 @@ class SyntheticDecisionPipelineIntegrationTests(unittest.TestCase):
         reconciliation = reconcile_simulation_with_ledger(simulation, ledger)
         self.assertEqual(reconciliation["status"], "PASS_ACCOUNTING_RECONCILIATION")
         self.assertEqual(reconciliation["event_count"], simulation["event_count"])
-        self.assertEqual(verify_ledger(ledger), True)
+        self.assertEqual(verify_ledger(ledger)["status"], "PASS_HASH_CHAIN")
 
     def test_producer_refuses_gapped_synthetic_fixture_without_repair(self):
         candles = synthetic_candles(4)
