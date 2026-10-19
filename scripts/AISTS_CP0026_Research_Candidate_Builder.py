@@ -519,7 +519,10 @@ def main():
     if args.scope_not_verified:
         scoped_policy=load_scoped_policy(manifest_path,blockers_path)
         quarantine_keys=set(scoped_policy["exact_cases"]) | set(scoped_policy["agg_cases"]) | set(scoped_policy["gap_cases"])
-        quarantine_cases={**scoped_policy["exact_cases"],**scoped_policy["agg_cases"],**scoped_policy["gap_cases"]}
+        quarantine_cases={}
+        quarantine_cases.update(scoped_policy["exact_cases"])
+        quarantine_cases.update(scoped_policy["agg_cases"])
+        quarantine_cases.update(scoped_policy["gap_cases"])
         gate_summary={"status":"NOT_VERIFIED_SCOPED_4H_ONLY","row_level_manifest":{"sha256":scoped_policy["exact_sha256"],"rows":scoped_policy["exact_rows"]},
                       "nonrow_blockers":{"sha256":scoped_policy["nonrow_sha256"],"rows":scoped_policy["nonrow_rows"]}}
         print("CP-0267 scoped NOT_VERIFIED policy loaded; exact keys:",scoped_policy["exact_rows"],"nonrow blockers:",scoped_policy["nonrow_rows"],"gaps:",scoped_policy["gap_keys"])
@@ -585,7 +588,7 @@ def main():
         "g0_scope":{"status":("G0_SCOPED_PASS_4H_CANDIDATE_ELIGIBILITY_ONLY" if args.scope_not_verified and not blocking else ("G0_SCOPED_BLOCKED_STRUCTURAL_ERRORS" if args.scope_not_verified else "FROZEN_GLOBAL_GATE_MODE")),"intervals":["4h"] if args.scope_not_verified else BASE_INTERVALS+["1mo"],"historical_version_provenance":"NOT_VERIFIED","acceptance_grade":False,"policy_manifest_sha256":scoped_policy["exact_sha256"] if scoped_policy else None,"nonrow_blockers_sha256":scoped_policy["nonrow_sha256"] if scoped_policy else None,"not_verified_gap_keys":scoped_policy["gap_keys"] if scoped_policy else None},
         "drive_root":str(root),"candidate_root":str(CANDIDATE_ROOT),
         "flagged_date_count":len(flagged_dates),"flagged_dates":sorted(flagged_dates),
-        "cp0040_quarantine_gate":{"status":gate_summary["status"],"manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":len(quarantine_keys),"selected_source_rows_quarantined":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
+        "cp0040_quarantine_gate":{"status":gate_summary["status"],"manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":scoped_policy["exact_rows"] if scoped_policy else len(quarantine_keys),"expanded_exclusion_keys":len(quarantine_keys),"selected_source_rows_quarantined":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
         "source_policy":{
             "flagged_dates":"Select daily public archive only when its local SHA256 matches CP-0025's official SHA256 evidence.",
             "unflagged_dates":"Select monthly archive only when its local SHA256 matches the published official SHA256 sidecar recorded in CP-0023.",
@@ -593,7 +596,7 @@ def main():
             "close_time":"Normalize on the derived candidate only to the deterministic interval boundary. Keep raw close-time token and boolean provenance.",
             "open_time":"Never round; any off-grid candidate open blocks structural PASS.",
             "gaps":"Record but never fill. Need interpreted gap policy before use in performance claims.",
-            "monthly":"Derived from the constructed candidate 1d series to provide complete 1mo coverage and one clear source lineage."
+            "monthly":"Not built in 4h scoped mode; otherwise derived from the constructed candidate 1d series."
         },
         "monthly_raw_archives_checksum_verified":len(monthly_archive_manifest),
         "daily_reference_archive_manifest_rows":len(daily_manifest_rows),
