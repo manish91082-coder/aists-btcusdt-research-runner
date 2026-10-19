@@ -172,7 +172,7 @@ def main():
     counts={}
     for r in rows:
         s=r.get("archive_status","UNKNOWN"); counts[s]=counts.get(s,0)+1
-    verified=sum(r.get("actual_sha256")==r.get("official_sha256") and r.get("official_sha256") for r in rows)
+    verified=sum(1 for r in rows if r.get("actual_sha256") and r.get("actual_sha256")==r.get("official_sha256"))
     failures=[r for r in rows if r.get("archive_status") in {"HASH_MISMATCH","UNHANDLED_ERROR","BLOCKED_URL_VALIDATION","BLOCKED_REDIRECT_VALIDATION","SIZE_LIMIT_EXCEEDED"} or r.get("sidecar_status") in {"INVALID_ENCODING","INVALID_OR_AMBIGUOUS_FILENAME_BOUND_HASH"}]
     reviews=[r for r in rows if "REVIEW_REQUIRED" in r.get("archive_status","")]
     status="PASS_INTEGRITY_WITH_REVIEW_ITEMS" if not failures and not reviews else ("FAIL_INTEGRITY" if failures else "REVIEW_REQUIRED")
