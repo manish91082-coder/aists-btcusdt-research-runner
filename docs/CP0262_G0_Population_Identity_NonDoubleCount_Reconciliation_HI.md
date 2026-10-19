@@ -51,7 +51,7 @@ This is a validated **count partition**, not proof that every cross-population r
 - The 996-record worklist's top-level count partition is reconciled without double-counting the 450 off-grid subset.
 - The December seven are accounted for within the dated unmatched census population, not added on top of 909.
 - The 60 shared-conflict count and 11 aggregation-bucket count reconcile to the separately reported blocker families.
-- A specific unresolved internal link is now explicit: the 16 missing-reference acquisition IDs must be joined to the 16 gap-only IDs by exact identity, not assumed equal by count.
+- A cross-ledger scope distinction is now explicit: the 16 \`FETCHREF-*\` records are date-level acquisition blockers for 5m/15m/30m/1h (e.g. 2017-12-04, 2018-02-05, 2018-03-04); they are not the 16 4h gap-only slots. Equal count is coincidental and must not be treated as an identity join. The gap ledger remains its own population.
 - This identifies the next useful internal verification task; it does not re-run exhausted archive scans or change any source row.
 
 ## 5. G0 decision boundary
