@@ -602,7 +602,7 @@ def main():
         "daily_reference_archive_manifest_rows":len(daily_manifest_rows),
         "results":source_counts,
         "blocking_interval_count":len(blocking),
-        "gate":("G0_SCOPED_PASS_4H_CANDIDATE_ELIGIBILITY_ONLY" if args.scope_not_verified and not blocking else ("G0_SCOPED_BLOCKED_STRUCTURAL_ERRORS" if args.scope_not_verified else ("BLOCKED_STRUCTURAL_ERRORS" if blocking else "PROVISIONAL_CANDIDATE_BUILT_GAPS_RECORDED")),
+        "gate":("G0_SCOPED_PASS_4H_CANDIDATE_ELIGIBILITY_ONLY" if args.scope_not_verified and not blocking else ("G0_SCOPED_BLOCKED_STRUCTURAL_ERRORS" if args.scope_not_verified else ("BLOCKED_STRUCTURAL_ERRORS" if blocking else "PROVISIONAL_CANDIDATE_BUILT_GAPS_RECORDED"))),
         "interpretation":"Provisional research artifact, not proof of strategy profitability or a declaration that daily archives are globally authoritative. It applies a transparent source-selection policy only to known flagged dates.",
         "important":"Do not enable live trading based on this artifact. Review per-interval gap counts and candidate_quality_issues.csv before interpreting a backtest."
     }
