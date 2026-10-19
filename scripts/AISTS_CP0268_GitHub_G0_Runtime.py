@@ -255,14 +255,22 @@ if __name__ == "__main__":
         main()
     except Exception as exc:
         out = OUT_DIR / "CP0268_G0_Runtime_Receipt.json"
+        error_text = f"{type(exc).__name__}: {exc}"
         if not out.exists():
             write_json(out, {
                 "checkpoint": "CP-0268", "status": "BLOCKED_RUNTIME_EXCEPTION",
-                "error": f"{type(exc).__name__}: {exc}",
+                "error": error_text,
                 "github_run_id": os.environ.get("GITHUB_RUN_ID", ""),
                 "github_sha": os.environ.get("GITHUB_SHA", ""),
                 "historical_version_provenance": "NOT_VERIFIED",
                 "live_signing_broadcast_orders": "BLOCKED",
             })
-        print(f"CP0268_BLOCKED:{type(exc).__name__}:{exc}", file=sys.stderr)
+        else:
+            existing = load_json(out)
+            if existing.get("status") != "PASS_G0_SCOPED_4H_CANDIDATE_ELIGIBILITY_ONLY":
+                existing["runtime_exception"] = error_text
+                if existing.get("status") == "BLOCKED_RUNTIME_BUILD":
+                    existing["status"] = "BLOCKED_RUNTIME_EXCEPTION"
+                write_json(out, existing)
+        print(f"CP0268_BLOCKED:{error_text}", file=sys.stderr)
         raise
