@@ -312,7 +312,7 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Added `tests/test_market_synthetic_pipeline_integration.py` to connect the existing causal decision producer → offline next-open simulator → paper ledger → independent accounting reconciliation using deterministic synthetic software fixtures only.
 - Added a regression test that the producer rejects a timestamp gap instead of repairing it.
 - This checkpoint is software wiring only. The synthetic fixtures are not BTCUSDT market data, not a candidate build, not a backtest, and not profitability evidence.
-- Exact-head CI is pending. The integration checkpoint is not marked PASS until the branch's exact current HEAD has terminal-success Actions and the new test is confirmed executed.
+- First exact-head test run failed on a test assertion expecting a boolean from `verify_ledger`; assertion corrected to require `PASS_HASH_CHAIN`. Run [39310148650](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39310148650) completed successfully: compile passed and all 203 tests passed. A final exact-head run is required after the final integration-test hardening commit; do not mark CP-0274 fully closed until that run is terminal-success.
 - G0 remains `BLOCKED_GLOBAL`; canonical historical source remains `NONE`; G2 remains FAIL for the current 23 candidates; G3 blocked; G4 insufficient; G6 not built/validated; G7 live blocked. CP-0040 remains frozen; PR #2 stays open and unmerged.
 - No real historical input was opened, no candidate/backtest/paper session was run, and no live signing, broadcast, exchange order, or automatic SL/TP path was enabled.
 - Report: [CP-0274 Synthetic Pipeline Integration](CP0274_Synthetic_Pipeline_Integration_HI.md).
