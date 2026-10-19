@@ -559,3 +559,11 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - It explicitly distinguishes checksum integrity from historical-version provenance, and CP-0212 readiness from independent approval/application authorization.
 - Live PR #3 review submissions were empty at inspection; the existing owner-authored read-only review request comment is not a completed independent review.
 - No source case is closed, no canonical source selected, no policy applied, no candidate/backtest run, and no G0 gate change. The next decision-changing input is official key-specific version/correction provenance or a properly authorized independent review.
+
+
+## Unified G0 unresolved-population crosswalk (2026-10-19)
+
+- Added [CP-0251 G0 Unified Unresolved-Population Crosswalk](CP0251_G0_Unified_Unresolved_Population_Crosswalk_HI.md) at commit `c667ca3636bdf17c132733e6addd632e1589ad32`. It consolidates existing documented population counts, dependencies, closure evidence and responsibility without closing cases or weakening CP-0040.
+- Explicitly preserves overlap rules: 450 February-2018 off-grid rows are within 909 unmatched rows; 17 missing 4h slots include one existing row-case overlap plus 16 gap-only keys; the 14/35 aggregate divergences are not a new additive row population.
+- Exact-head CI for the immediately preceding worklist commit `bf87e4a21115f671b2b083164d97a8cd75dde73a` completed successfully in [run 39242786774](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39242786774). That run does **not** validate the newer CP-0251 commit or the forthcoming roadmap update; each new head requires its own exact-head run.
+- G0 remains `BLOCKED_GLOBAL`; canonical source `NONE`; G2 23 candidates FAIL; G3 blocked; G4 insufficient; Policy B sensitivity-only; no source cases closed; no candidate market backtest; profitability not established; live signing/broadcast/orders blocked.
