@@ -221,12 +221,12 @@ def run_gate_self_test(manifest_path: Path, blockers_path: Path, summary_path: P
     return {"status":"PASS","tests_passed":len(checks),"tests_total":len(checks),"tests":checks,
             "scope":"actual manifest preflight plus synthetic partition fixtures; no market data, candidate build, or backtest"}
 
-def verify_monthly_manifest(root):
+def verify_monthly_manifest(root, intervals=None):
     path = root / "reports" / "official_checksum_verification.csv"
     records = load_dict_csv(path)
     bykey = {(r.get("interval"),r.get("filename")):r for r in records}
     required = []
-    for interval in BASE_INTERVALS + ["1mo"]:
+    for interval in (intervals if intervals is not None else BASE_INTERVALS + ["1mo"]):
         folder = root / "klines" / interval
         for p in sorted(folder.glob(f"{SYMBOL}-{interval}-????-??.zip")) if folder.exists() else []:
             r = bykey.get((interval,p.name))
@@ -532,7 +532,7 @@ def main():
     if not dates_path.exists(): raise FileNotFoundError(f"Run CP-0025 first; not found: {dates_path}")
     flagged=json.loads(dates_path.read_text(encoding="utf-8"))["dates"]
     flagged_dates=set(flagged)
-    monthly_checksums,monthly_archive_manifest=verify_monthly_manifest(root)
+    monthly_checksums,monthly_archive_manifest=verify_monthly_manifest(root,["4h"] if args.scope_not_verified else None)
     daily_manifest,daily_manifest_rows=load_daily_manifest(root)
     # Validate coverage for every flagged date and each base interval before modifying the derived candidate.
     missing=[]
