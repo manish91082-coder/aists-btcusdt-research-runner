@@ -83,6 +83,8 @@ on:
       - 'tests/test_cp0201_gap_quarantine_crosswalk.py'
       - 'scripts/AISTS_CP0267_NotVerified_Gate.py'
       - 'tests/test_cp0267_notverified_gate.py'
+      - 'scripts/AISTS_CP0040_Quarantine_Gate.py'
+      - 'tests/test_cp0040_quarantine_gate.py'
       - 'docs/AISTS_LIVE_STATUS_ROADMAP.md'
 
 permissions:
