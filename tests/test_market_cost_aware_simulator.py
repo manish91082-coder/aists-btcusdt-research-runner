@@ -197,6 +197,39 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertIn("equity_usdt_after_estimated_exit_costs", result)
         self.assertGreater(result["equity_usdt_after_estimated_exit_costs"], 0)
 
+    def test_rejects_explicit_order_live_and_automatic_sl_tp_flags(self):
+        candles = bars([100, 110])
+        forbidden_flags = (
+            "is_order_instruction",
+            "live_signing_enabled",
+            "public_broadcast_enabled",
+            "binance_orders_placed",
+            "automatic_stop_loss",
+            "automatic_take_profit",
+        )
+        for flag in forbidden_flags:
+            with self.subTest(flag=flag):
+                with self.assertRaisesRegex(ValueError, f"cannot enable {flag}"):
+                    simulate_next_open(
+                        candles,
+                        [{"decision_id": "unsafe", "as_of_ms": 999,
+                          "action": "BUY_CANDIDATE", flag: True}],
+                        interval_ms=1000,
+                        initial_cash_usdt=1000,
+                    )
+
+    def test_rejects_non_boolean_safety_flags(self):
+        for value in ("true", 1, None):
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(ValueError, "must be boolean"):
+                    simulate_next_open(
+                        bars([100, 110]),
+                        [{"decision_id": "bad-flag", "as_of_ms": 999,
+                          "action": "NO_TRADE", "is_order_instruction": value}],
+                        interval_ms=1000,
+                        initial_cash_usdt=1000,
+                    )
+
     def test_rejects_decision_that_does_not_reference_candle_close(self):
         with self.assertRaisesRegex(ValueError, "reference a supplied candle close"):
             simulate_next_open(
