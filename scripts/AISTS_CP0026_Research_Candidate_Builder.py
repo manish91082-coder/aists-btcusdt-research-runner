@@ -542,7 +542,11 @@ def main():
     for day in sorted(flagged_dates):
         for interval in (["4h"] if args.scope_not_verified else BASE_INTERVALS):
             date_blocked = scoped_policy and any(iv == interval and blocked_day == day for iv, blocked_day, _ in scoped_policy["date_blockers"])
-            if (interval,day) not in daily_manifest and not date_blocked:
+            # In the explicitly scoped CP-0267 mode, every flagged date is excluded
+            # from monthly rows. Missing daily evidence therefore cannot cause a
+            # monthly fallback for those dates; no daily replacement is inferred.
+            scoped_flagged_date_exclusion = bool(scoped_policy and args.scope_not_verified)
+            if (interval,day) not in daily_manifest and not date_blocked and not scoped_flagged_date_exclusion:
                 missing.append({"date":day,"interval":interval,"reason":"no daily reference manifest entry"})
     if missing:
         raise RuntimeError(f"Flagged-day reference coverage incomplete ({len(missing)}); see notebook error and do not build candidate.")
@@ -551,8 +555,11 @@ def main():
     reports=root/"reports"; reports.mkdir(parents=True,exist_ok=True)
     summaries=[]; all_dispositions=[]; all_issues=[]; all_quarantined=[]
     print("AISTS CP-0026 | build provisional research candidate")
-    print("No downloads. No raw ZIP edits. Uses current Drive files + existing checksum evidence.")
-    print(f"Flagged UTC dates: {len(flagged_dates)}; day-level source policy: official-checksum-verified daily archive for flagged days.")
+    print("No downloads. No raw ZIP edits. Uses the existing checksum-verified monthly archive cache + frozen evidence.")
+    if scoped_policy:
+        print(f"CP-0267 scoped mode: all {len(flagged_dates)} CP-0025 flagged UTC dates are excluded; no daily override or monthly fallback is selected for those dates.")
+    else:
+        print(f"Flagged UTC dates: {len(flagged_dates)}; day-level source policy: official-checksum-verified daily archive for flagged days.")
     print("Other dates: checksum-reverified monthly archive. Open times are never rounded.")
     for interval in (["4h"] if args.scope_not_verified else BASE_INTERVALS):
         out=outdir/f"{SYMBOL}-{interval}-research-candidate.csv.gz"
@@ -590,7 +597,7 @@ def main():
         "flagged_date_count":len(flagged_dates),"flagged_dates":sorted(flagged_dates),
         "cp0040_quarantine_gate":{"status":gate_summary["status"],"manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":scoped_policy["exact_rows"] if scoped_policy else len(quarantine_keys),"expanded_exclusion_keys":len(quarantine_keys),"selected_source_rows_quarantined":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
         "source_policy":{
-            "flagged_dates":"Select daily public archive only when its local SHA256 matches CP-0025's official SHA256 evidence.",
+            "flagged_dates":("In CP-0267 scoped mode, all CP-0025 flagged UTC dates are excluded; no daily override or monthly fallback is selected for those dates." if scoped_policy else "Select daily public archive only when its local SHA256 matches CP-0025's official SHA256 evidence."),
             "unflagged_dates":"Select monthly archive only when its local SHA256 matches the published official SHA256 sidecar recorded in CP-0023.",
             "raw_archives":"Immutable; no edits/deletions.",
             "close_time":"Normalize on the derived candidate only to the deterministic interval boundary. Keep raw close-time token and boolean provenance.",
