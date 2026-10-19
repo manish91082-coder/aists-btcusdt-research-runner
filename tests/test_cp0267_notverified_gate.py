@@ -1,4 +1,6 @@
+import csv
 import hashlib
+import json
 import importlib.util
 import tempfile
 import unittest
@@ -57,6 +59,23 @@ class TestCP0267NotVerifiedGate(unittest.TestCase):
         self.assertTrue(GATE.exclusion_reasons(policy, "5m", "1512378000000", "2017-12-04T09:00:00Z"))
         self.assertTrue(GATE.exclusion_reasons(policy, "15m", "1512378000000", "2017-12-04T09:00:00Z"))
         self.assertFalse(GATE.exclusion_reasons(policy, "1d", "1609459200000", "2021-01-01T00:00:00Z"))
+
+    def test_frozen_4h_manifest_hash_and_population(self):
+        root = Path(__file__).resolve().parents[1]
+        manifest = root / "evidence" / "source_adjudication" / "CP0267_4H_NOT_VERIFIED_Exclusion_Manifest.csv"
+        receipt = root / "evidence" / "source_adjudication" / "CP0267_4H_NOT_VERIFIED_Exclusion_Manifest_SHA256.json"
+        receipt_data = json.loads(receipt.read_text(encoding="utf-8"))
+        self.assertEqual(hashlib.sha256(manifest.read_bytes()).hexdigest(), receipt_data["sha256"])
+        with manifest.open(encoding="utf-8-sig", newline="") as stream:
+            rows = list(csv.DictReader(stream))
+        keys = [(r["symbol"], r["market"], r["interval"], r["open_time_ms"]) for r in rows]
+        self.assertEqual(len(rows), 22)
+        self.assertEqual(len(set(keys)), 22)
+        self.assertTrue(all(r["interval"] == "4h" for r in rows))
+        self.assertEqual(sum(r["status"] == "NOT_VERIFIED_GAP" for r in rows), 16)
+        self.assertEqual(sum(r["status"] == "NOT_VERIFIED_CLOSE_TIME_CONFLICT" for r in rows), 3)
+        self.assertEqual(sum(r["status"] == "NOT_VERIFIED_MISMATCH" for r in rows), 2)
+        self.assertEqual(sum(r["status"] == "NOT_VERIFIED_INVALID_ROW" for r in rows), 1)
 
     def test_manifest_hash_and_schema_are_required(self):
         data = ("symbol,market,interval,open_time_ms,status,reason\n"
