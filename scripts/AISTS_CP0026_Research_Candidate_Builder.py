@@ -331,7 +331,8 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
                     try:
                         k=parse_kline(row)
                         day=utc_dt(k["open_time_ms"]).date().isoformat()
-                        if day in flagged_dates:
+                        scoped_date_blocked = scoped_policy and any(iv == interval and blocked_day == day for iv, blocked_day, _ in scoped_policy["date_blockers"])
+                        if day in flagged_dates or scoped_date_blocked:
                             summary["monthly_rows_suppressed_for_flagged_dates"] += 1
                             continue
                         monthly_rows.append(candidate_row(k,interval,"monthly_archive",interval,archive.name,actual))
