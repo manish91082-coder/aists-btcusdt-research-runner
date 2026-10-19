@@ -155,6 +155,8 @@ def main():
         hourly, bad = read_cdd(raw)
         report["source_hourly_rows"] = len(hourly)
         report["source_parse_rejects"] = bad
+        report["source_first_open_time_utc"] = datetime.fromtimestamp(min(hourly)/1000, timezone.utc).isoformat() if hourly else None
+        report["source_last_open_time_utc"] = datetime.fromtimestamp(max(hourly)/1000, timezone.utc).isoformat() if hourly else None
         report["source_access_status"] = "DOWNLOADED_PARSED" if hourly else "DOWNLOADED_NO_PARSEABLE_ROWS"
         agg, incomplete = aggregate_4h(hourly)
         report["complete_4h_aggregates"] = len(agg)
@@ -169,10 +171,21 @@ def main():
                        if r.get("interval") == "4h" and str(r.get("open_time_ms","")).isdigit()})
         report["manifest_4h_unresolved_keys"] = len(keys)
         field_counts = defaultdict(lambda: defaultdict(int))
+        per_key = []
         for key in keys:
+            rec = {
+                "open_time_ms": key,
+                "open_time_utc": datetime.fromtimestamp(key/1000, timezone.utc).isoformat(),
+                "third_party_4h_available": key in agg,
+                "binance_monthly_4h_available": key in official,
+            }
             if key not in agg or key not in official:
+                rec["comparison"] = "NO_OVERLAP"
+                per_key.append(rec)
                 continue
             cmp = compare(agg[key], official[key])
+            rec["field_comparison"] = cmp
+            rec["comparison"] = "ALL_FIELDS_MATCH" if all(v == "MATCH" for v in cmp.values()) else ("FIELD_DIFFERENCE" if any(v == "DIFF" for v in cmp.values()) else "PARTIAL_NOT_COMPARABLE")
             report["exact_key_comparisons"] += 1
             if all(v == "MATCH" for v in cmp.values()):
                 report["all_field_matches"] += 1
@@ -180,6 +193,8 @@ def main():
                 report["any_field_differences"] += 1
             for field, status in cmp.items():
                 field_counts[field][status] += 1
+            per_key.append(rec)
+        report["per_key_results"] = per_key
         report["field_level_results"] = {k:dict(v) for k,v in field_counts.items()}
         report["comparison_status"] = ("COMPARISON_COMPLETED" if report["exact_key_comparisons"] else "NO_OVERLAPPING_EXACT_KEYS")
     except Exception as exc:
