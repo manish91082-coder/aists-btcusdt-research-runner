@@ -297,3 +297,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - This is not G0 PASS: CP-0152 actual input rows/hashes and production-path exclusion are not verified, provenance remains open, capital/cost/quantity assumptions remain unverified, and the global builder still fails closed. Historical candidate-scoped G0 results for existing 4h candidates do not automatically approve CP-0152.
 - CP-0152 explicit approval remains pending; no market data was read, no candidate built, no backtest run. All release gates unchanged.
 - Next: exact-head CI verification for CP-0156 docs, then wait for explicit CP-0152 approval; if approved, verify candidate-specific prerequisites before any build.
+
+## CP-0273 — Offline simulator decision-boundary hardening (2026-10-19)
+
+- Created the ordered goal execution plan at [CP-0273 onwards: Goal Execution Plan](CP0273_Goal_Execution_Plan_HI.md). It preserves G0 and orders the remaining work by prerequisites and exit evidence.
+- Code review found the offline simulator accepted optional decision flags such as `is_order_instruction=true`, `live_signing_enabled=true`, `public_broadcast_enabled=true`, `binance_orders_placed=true`, or automatic SL/TP flags without rejecting contradictory metadata.
+- Updated `aists_brain/cost_aware_simulator.py` to fail closed when any of these supplied flags is true, or when a supplied flag is not boolean. Added two regression tests covering all six forbidden flags and malformed flag values.
+- This is a software safety invariant only. It does not run market data, build candidates, backtest, approve a strategy, change CP-0040, or alter G0.
+- Exact-head CI is pending until the updated branch HEAD has a terminal result. G0 remains `BLOCKED_GLOBAL`; G2 23 candidates remain FAIL; profitability remains NOT ESTABLISHED; live signing/broadcast/orders and automatic SL/TP remain blocked.
+
