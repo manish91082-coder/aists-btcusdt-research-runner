@@ -595,3 +595,12 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Current status remains **G0 = BLOCKED_GLOBAL**, canonical source `NONE`, source cases closed `0`. No independent review/approval was invented, Policy B was not applied, and the frozen CP-0040 rulebook was not changed.
 - Acceptance-grade backtest, candidate promotion, live signing/broadcast/orders remain blocked. The packet only removes the handoff/decision-packaging delay; it does not manufacture missing provenance evidence.
 - The new packet commit and this roadmap update each require exact-HEAD CI verification; static CI success alone cannot clear G0.
+
+
+## CP-0255 — G0 closure path reconciliation of CP-0202 versus current gate (2026-10-19)
+
+- Corrected the current-state description in [CP-0202 Candidate Builder Eligibility Matrix](CP0202_Candidate_Builder_Eligibility_Matrix.md) with an append-only addendum at commit `c31b762d99a7f1422e7998fb04829eb82111f85b`; original CP-0202 historical findings remain intact.
+- Current HEAD already contains `scripts/AISTS_CP0203_GapPolicy_Gate.py`; its fail-closed logic validates the frozen 17-key CP-0200/0201 evidence and then raises `G0_BLOCKED_GAP_POLICY_UNRESOLVED`, so it does not authorize candidate eligibility.
+- Current `.github/workflows/cp0165-4h-audit-tests.yml` compiles CP-0203 and runs `test_cp0203_gap_policy_gate.py`, CP-0204 backtest-gate tests, and CP-0206 frozen-policy tests. The CP-0203 tests explicitly assert gate invocation before candidate output. This supersedes the older CP-0202 snapshot's claim that those tests were not wired into static CI.
+- This removes a stale implementation-status ambiguity from the G0 review packet; it does not close source cases or establish historical source authority. Canonical source remains `NONE`; G0 remains `BLOCKED_GLOBAL`; Policy B remains sensitivity-only; no candidate build/backtest was run.
+- Next closure action remains authorized independent adjudication or genuinely new official, key-specific point-in-time provenance. Do not repeat archive/checksum scans, loosen the gate, or infer G0 PASS from static CI.
