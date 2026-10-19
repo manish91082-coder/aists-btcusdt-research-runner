@@ -108,6 +108,20 @@ def simulate_next_open(
         asof = raw.get("as_of_ms")
         decision_id = raw.get("decision_id")
         action = raw.get("action")
+        # Fail closed if a caller attempts to pass an order/live/automatic-SLTP
+        # instruction through the research simulator. The simulator is paper-only.
+        for flag in (
+            "is_order_instruction",
+            "live_signing_enabled",
+            "public_broadcast_enabled",
+            "binance_orders_placed",
+            "automatic_stop_loss",
+            "automatic_take_profit",
+        ):
+            if flag in raw and not isinstance(raw[flag], bool):
+                raise ValueError(f"decision {flag} must be boolean when supplied")
+            if raw.get(flag) is True:
+                raise ValueError(f"research decision cannot enable {flag}")
         if isinstance(asof, bool) or not isinstance(asof, int) or asof < 0:
             raise ValueError("decision as_of_ms must be a non-negative integer")
         if previous_asof is not None and asof <= previous_asof:
