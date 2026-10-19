@@ -604,3 +604,11 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Current `.github/workflows/cp0165-4h-audit-tests.yml` compiles CP-0203 and runs `test_cp0203_gap_policy_gate.py`, CP-0204 backtest-gate tests, and CP-0206 frozen-policy tests. The CP-0203 tests explicitly assert gate invocation before candidate output. This supersedes the older CP-0202 snapshot's claim that those tests were not wired into static CI.
 - This removes a stale implementation-status ambiguity from the G0 review packet; it does not close source cases or establish historical source authority. Canonical source remains `NONE`; G0 remains `BLOCKED_GLOBAL`; Policy B remains sensitivity-only; no candidate build/backtest was run.
 - Next closure action remains authorized independent adjudication or genuinely new official, key-specific point-in-time provenance. Do not repeat archive/checksum scans, loosen the gate, or infer G0 PASS from static CI.
+
+
+## CP-0256 — provisional 4h OOS trade-ledger risk diagnostic (2026-10-19)
+
+- Re-downloaded existing workflow artifact `11967997123` from CP-0027 run [38725478106](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/38725478106); verified outer ZIP SHA-256 against the prior run summary and passed ZIP integrity checks. Extracted ledger hash is recorded in [CP-0256](CP0256_4H_OOS_Trade_Ledger_Risk_Diagnostic_HI.md).
+- Recomputed existing 4h OOS trade-ledger totals, not a new backtest: EMA `-4,632.87 USDT`, profit factor `0.5722`, 77 trades; RSI `+62.68 USDT`, profit factor `1.0085`, 27 trades, worst trade `-2,376.78 USDT`; Donchian `-2,484.99 USDT`, profit factor `0.7015`, 55 trades. Assumed initial equity was 10,000 USDT, with 10 bps/side fees and 5 bps/side slippage.
+- Interpretation is strictly exploratory: the small RSI net gain is fragile, the OOS period (2025-01-01 through 2026-10-01) is already consumed, and the provisional candidate/source disputes remain. No strategy promoted; no parameters tuned; no stop-loss/take-profit inferred; no new market backtest run.
+- This improves risk interpretation but does not clear G0. Canonical source remains `NONE`, G0 remains `BLOCKED_GLOBAL`, and the next G0 decision-changing dependency is authorized independent adjudication or admissible new key-specific historical-version provenance.
