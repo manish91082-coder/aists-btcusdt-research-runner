@@ -24,6 +24,7 @@ from pathlib import Path
 
 # CP-0203: mandatory frozen gap-policy gate. Missing module/evidence fails closed.
 from AISTS_CP0203_GapPolicy_Gate import load_gap_policy_gate
+from AISTS_CP0267_NotVerified_Gate import load_scoped_policy, exclusion_reasons
 
 SYMBOL = "BTCUSDT"
 BASE_INTERVALS = ["5m", "15m", "30m", "1h", "4h", "1d"]
@@ -36,7 +37,7 @@ OUTPUT_FIELDS = [
     "taker_buy_base_asset_volume","taker_buy_quote_asset_volume","ignore",
     "source_type","source_interval","source_archive","source_sha256",
     "raw_open_time_token","raw_close_time_token","close_time_normalized",
-    "aggregation_bar_count","partial_calendar_month"
+    "aggregation_bar_count","partial_calendar_month","source_status"
 ]
 RAW_FIELDS = [
     "open_time","open","high","low","close","volume","close_time",
@@ -220,12 +221,12 @@ def run_gate_self_test(manifest_path: Path, blockers_path: Path, summary_path: P
     return {"status":"PASS","tests_passed":len(checks),"tests_total":len(checks),"tests":checks,
             "scope":"actual manifest preflight plus synthetic partition fixtures; no market data, candidate build, or backtest"}
 
-def verify_monthly_manifest(root):
+def verify_monthly_manifest(root, intervals=None):
     path = root / "reports" / "official_checksum_verification.csv"
     records = load_dict_csv(path)
     bykey = {(r.get("interval"),r.get("filename")):r for r in records}
     required = []
-    for interval in BASE_INTERVALS + ["1mo"]:
+    for interval in (intervals if intervals is not None else BASE_INTERVALS + ["1mo"]):
         folder = root / "klines" / interval
         for p in sorted(folder.glob(f"{SYMBOL}-{interval}-????-??.zip")) if folder.exists() else []:
             r = bykey.get((interval,p.name))
@@ -278,7 +279,7 @@ def candidate_row(k, interval, source_type, source_interval, archive, source_sha
         "taker_buy_base_asset_volume": str(k["taker_buy_base_asset_volume"]),
         "taker_buy_quote_asset_volume": str(k["taker_buy_quote_asset_volume"]),
         "ignore": str(k.get("ignore","0")),
-        "source_type": source_type, "source_interval": source_interval,
+        "source_type": source_type, "source_interval": source_interval, "source_status": "VERIFIED_PRIMARY_CURRENT_SNAPSHOT",
         "source_archive": archive, "source_sha256": source_sha,
         "raw_open_time_token": str(k.get("raw_open_time_token","")),
         "raw_close_time_token": str(k.get("raw_close_time_token","")),
@@ -287,7 +288,7 @@ def candidate_row(k, interval, source_type, source_interval, archive, source_sha
         "partial_calendar_month": ""
     }
 
-def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, monthly_checksums, out_path, quarantine_keys, quarantine_cases):
+def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, monthly_checksums, out_path, quarantine_keys, quarantine_cases, scoped_policy=None):
     interval_dir = root / "klines" / interval
     paths = sorted(interval_dir.glob(f"{SYMBOL}-{interval}-????-??.zip"))
     month_paths = {}
@@ -330,7 +331,8 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
                     try:
                         k=parse_kline(row)
                         day=utc_dt(k["open_time_ms"]).date().isoformat()
-                        if day in flagged_dates:
+                        scoped_date_blocked = scoped_policy and any(iv == interval and blocked_day == day for iv, blocked_day, _ in scoped_policy["date_blockers"])
+                        if day in flagged_dates or scoped_date_blocked:
                             summary["monthly_rows_suppressed_for_flagged_dates"] += 1
                             continue
                         monthly_rows.append(candidate_row(k,interval,"monthly_archive",interval,archive.name,actual))
@@ -339,6 +341,15 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
                         issues.append({"interval":interval,"file":archive.name,"line":line,"type":"MONTHLY_PARSE_ERROR","detail":f"{type(e).__name__}: {e}"})
             daily_rows=[]
             for day in sorted(days_by_month.get(ym,[])):
+                if scoped_policy and day in flagged_dates:
+                    date_reason = ("CP0267 FETCHREF date exclusion; no replacement inferred"
+                                   if any(iv == interval and blocked_day == day for iv, blocked_day, _ in scoped_policy["date_blockers"])
+                                   else "CP0267 scoped CP-0025 flagged-date exclusion; no daily override or monthly fallback")
+                    disposition.append({"interval":interval,"date":day,"selected_source":"NOT_VERIFIED_EXCLUDED_DATE",
+                                        "daily_archive":"","daily_sha256":"","daily_rows_selected":0,
+                                        "reason":date_reason,
+                                        "raw_monthly_archives_modified":False})
+                    continue
                 daily_path, daily_sha=verify_daily_reference(root,interval,day,daily_manifest)
                 day_count=0
                 for member,line,row in read_zip_rows(daily_path):
@@ -368,10 +379,11 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
             for r in chunk:
                 t=int(r["open_time_ms"])
                 qkey=(interval,str(t))
-                if qkey in quarantine_keys:
+                scoped_reasons=exclusion_reasons(scoped_policy, interval, t, r.get("open_time_utc","")) if scoped_policy else []
+                if qkey in quarantine_keys or scoped_reasons:
                     qr=dict(r)
-                    qr["quarantine_case_ids"]=";".join(quarantine_cases.get(qkey,[]))
-                    qr["quarantine_reason"]="CP-0040 exact interval + open_time_ms key"
+                    qr["quarantine_case_ids"]=";".join(sorted(set(quarantine_cases.get(qkey,[]) + scoped_reasons)))
+                    qr["quarantine_reason"]="CP-0267 NOT_VERIFIED exact-key/date/aggregation/gap exclusion" if scoped_policy else "CP-0040 exact interval + open_time_ms key"
                     quarantined.append(qr)
                     summary["quarantined_rows"]+=1
                     continue
@@ -477,6 +489,7 @@ def create_monthly_from_daily(root, daily_candidate_path, monthly_out):
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--gate-self-test",action="store_true")
+    ap.add_argument("--scope-not-verified",action="store_true",help="Research-only 4h scope with explicit NOT_VERIFIED exclusions; not acceptance-grade.")
     ap.add_argument("--manifest")
     ap.add_argument("--blockers")
     ap.add_argument("--gate-summary")
@@ -502,24 +515,41 @@ def main():
     gap_summary_path=Path(args.gap_summary) if args.gap_summary else gate_dir/"CP0200_Summary.json"
     gap_crosswalk_path=Path(args.gap_crosswalk) if args.gap_crosswalk else gate_dir/"CP0201_Gap_Quarantine_Overlap_Crosswalk.csv"
     gap_crosswalk_summary_path=Path(args.gap_crosswalk_summary) if args.gap_crosswalk_summary else gate_dir/"CP0201_Summary.json"
-    # CP-0203 must reject missing, changed, or still-unresolved gap evidence before row gate or output creation.
-    load_gap_policy_gate(gap_manifest_path,gap_summary_path,gap_crosswalk_path,gap_crosswalk_summary_path)
     manifest_path=Path(args.manifest) if args.manifest else gate_dir/"CP0040_ExactKey_Quarantine_Manifest.csv"
     blockers_path=Path(args.blockers) if args.blockers else gate_dir/"CP0040_NonRow_Blockers.csv"
     gate_summary_path=Path(args.gate_summary) if args.gate_summary else gate_dir/"CP0040_ExactKey_Quarantine_Manifest_Summary.json"
-    quarantine_keys,quarantine_cases,gate_summary=load_candidate_gate(manifest_path,blockers_path,gate_summary_path)
-    print("CP-0040 quarantine gate PASS; exact keys loaded:",len(quarantine_keys))
+    scoped_policy=None
+    if args.scope_not_verified:
+        scoped_policy=load_scoped_policy(manifest_path,blockers_path)
+        quarantine_keys=set(scoped_policy["exact_cases"]) | set(scoped_policy["agg_cases"]) | set(scoped_policy["gap_cases"])
+        quarantine_cases={}
+        quarantine_cases.update(scoped_policy["exact_cases"])
+        quarantine_cases.update(scoped_policy["agg_cases"])
+        quarantine_cases.update(scoped_policy["gap_cases"])
+        gate_summary={"status":"NOT_VERIFIED_SCOPED_4H_ONLY","row_level_manifest":{"sha256":scoped_policy["exact_sha256"],"rows":scoped_policy["exact_rows"]},
+                      "nonrow_blockers":{"sha256":scoped_policy["nonrow_sha256"],"rows":scoped_policy["nonrow_rows"]}}
+        print("CP-0267 scoped NOT_VERIFIED policy loaded; exact keys:",scoped_policy["exact_rows"],"nonrow blockers:",scoped_policy["nonrow_rows"],"gaps:",scoped_policy["gap_keys"])
+    else:
+        # Frozen acceptance-grade gates remain unchanged and fail closed by default.
+        load_gap_policy_gate(gap_manifest_path,gap_summary_path,gap_crosswalk_path,gap_crosswalk_summary_path)
+        quarantine_keys,quarantine_cases,gate_summary=load_candidate_gate(manifest_path,blockers_path,gate_summary_path)
+        print("CP-0040 quarantine gate PASS; exact keys loaded:",len(quarantine_keys))
     dates_path=root/"reports"/"cp0025_reference_dates.json"
     if not dates_path.exists(): raise FileNotFoundError(f"Run CP-0025 first; not found: {dates_path}")
     flagged=json.loads(dates_path.read_text(encoding="utf-8"))["dates"]
     flagged_dates=set(flagged)
-    monthly_checksums,monthly_archive_manifest=verify_monthly_manifest(root)
+    monthly_checksums,monthly_archive_manifest=verify_monthly_manifest(root,["4h"] if args.scope_not_verified else None)
     daily_manifest,daily_manifest_rows=load_daily_manifest(root)
     # Validate coverage for every flagged date and each base interval before modifying the derived candidate.
     missing=[]
     for day in sorted(flagged_dates):
-        for interval in BASE_INTERVALS:
-            if (interval,day) not in daily_manifest:
+        for interval in (["4h"] if args.scope_not_verified else BASE_INTERVALS):
+            date_blocked = scoped_policy and any(iv == interval and blocked_day == day for iv, blocked_day, _ in scoped_policy["date_blockers"])
+            # In the explicitly scoped CP-0267 mode, every flagged date is excluded
+            # from monthly rows. Missing daily evidence therefore cannot cause a
+            # monthly fallback for those dates; no daily replacement is inferred.
+            scoped_flagged_date_exclusion = bool(scoped_policy and args.scope_not_verified)
+            if (interval,day) not in daily_manifest and not date_blocked and not scoped_flagged_date_exclusion:
                 missing.append({"date":day,"interval":interval,"reason":"no daily reference manifest entry"})
     if missing:
         raise RuntimeError(f"Flagged-day reference coverage incomplete ({len(missing)}); see notebook error and do not build candidate.")
@@ -528,21 +558,32 @@ def main():
     reports=root/"reports"; reports.mkdir(parents=True,exist_ok=True)
     summaries=[]; all_dispositions=[]; all_issues=[]; all_quarantined=[]
     print("AISTS CP-0026 | build provisional research candidate")
-    print("No downloads. No raw ZIP edits. Uses current Drive files + existing checksum evidence.")
-    print(f"Flagged UTC dates: {len(flagged_dates)}; day-level source policy: official-checksum-verified daily archive for flagged days.")
+    print("No downloads. No raw ZIP edits. Uses the existing checksum-verified monthly archive cache + frozen evidence.")
+    if scoped_policy:
+        print(f"CP-0267 scoped mode: all {len(flagged_dates)} CP-0025 flagged UTC dates are excluded; no daily override or monthly fallback is selected for those dates.")
+    else:
+        print(f"Flagged UTC dates: {len(flagged_dates)}; day-level source policy: official-checksum-verified daily archive for flagged days.")
     print("Other dates: checksum-reverified monthly archive. Open times are never rounded.")
-    for interval in BASE_INTERVALS:
+    for interval in (["4h"] if args.scope_not_verified else BASE_INTERVALS):
         out=outdir/f"{SYMBOL}-{interval}-research-candidate.csv.gz"
-        summary,dispositions,issues,quarantined=audit_and_write_interval(root,interval,flagged_dates,daily_manifest,monthly_checksums,out,quarantine_keys,quarantine_cases)
+        summary,dispositions,issues,quarantined=audit_and_write_interval(root,interval,flagged_dates,daily_manifest,monthly_checksums,out,quarantine_keys,quarantine_cases,scoped_policy)
         summary["file"]=str(out)
         summary["sha256"]=sha256_file(out)
+        if scoped_policy:
+            with gzip.open(out,"rt",newline="",encoding="utf-8") as candidate_stream:
+                for candidate_row_item in csv.DictReader(candidate_stream):
+                    if exclusion_reasons(scoped_policy, interval, candidate_row_item.get("open_time_ms",""), candidate_row_item.get("open_time_utc","")):
+                        raise RuntimeError("CP0267_UNVERIFIED_ROW_LEAKED_INTO_SCOPED_CANDIDATE")
+                    if candidate_row_item.get("source_status") != "VERIFIED_PRIMARY_CURRENT_SNAPSHOT" or not candidate_row_item.get("source_sha256"):
+                        raise RuntimeError("CP0267_SCOPED_CANDIDATE_SOURCE_IDENTITY_MISSING")
         summaries.append(summary);all_dispositions.extend(dispositions);all_issues.extend(issues);all_quarantined.extend(quarantined)
         print(json.dumps(summary,ensure_ascii=False))
-    monthly_out=outdir/f"{SYMBOL}-1mo-research-candidate.csv.gz"
-    daily_path=outdir/f"{SYMBOL}-1d-research-candidate.csv.gz"
-    monthly_summary=create_monthly_from_daily(root,daily_path,monthly_out)
-    monthly_summary["file"]=str(monthly_out);monthly_summary["sha256"]=sha256_file(monthly_out)
-    summaries.append(monthly_summary)
+    if not args.scope_not_verified:
+        monthly_out=outdir/f"{SYMBOL}-1mo-research-candidate.csv.gz"
+        daily_path=outdir/f"{SYMBOL}-1d-research-candidate.csv.gz"
+        monthly_summary=create_monthly_from_daily(root,daily_path,monthly_out)
+        monthly_summary["file"]=str(monthly_out);monthly_summary["sha256"]=sha256_file(monthly_out)
+        summaries.append(monthly_summary)
     write_csv_path=reports/"cp0026_day_source_disposition.csv"
     write_rows(write_csv_path,all_dispositions)
     write_rows(reports/"cp0026_candidate_quality_issues.csv",all_issues)
@@ -554,23 +595,24 @@ def main():
     report={
         "project":"AISTS CP-0026",
         "generated_at_utc":now_utc(),"symbol":SYMBOL,"market":"spot",
+        "g0_scope":{"status":("G0_SCOPED_PASS_4H_CANDIDATE_ELIGIBILITY_ONLY" if args.scope_not_verified and not blocking else ("G0_SCOPED_BLOCKED_STRUCTURAL_ERRORS" if args.scope_not_verified else "FROZEN_GLOBAL_GATE_MODE")),"intervals":["4h"] if args.scope_not_verified else BASE_INTERVALS+["1mo"],"historical_version_provenance":"NOT_VERIFIED","acceptance_grade":False,"policy_manifest_sha256":scoped_policy["exact_sha256"] if scoped_policy else None,"nonrow_blockers_sha256":scoped_policy["nonrow_sha256"] if scoped_policy else None,"not_verified_gap_keys":scoped_policy["gap_keys"] if scoped_policy else None},
         "drive_root":str(root),"candidate_root":str(CANDIDATE_ROOT),
         "flagged_date_count":len(flagged_dates),"flagged_dates":sorted(flagged_dates),
-        "cp0040_quarantine_gate":{"status":"PASS","manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":len(quarantine_keys),"selected_source_rows_quarantined":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
+        "cp0040_quarantine_gate":{"status":gate_summary["status"],"manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":scoped_policy["exact_rows"] if scoped_policy else len(quarantine_keys),"expanded_exclusion_keys":len(quarantine_keys),"selected_source_rows_quarantined":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
         "source_policy":{
-            "flagged_dates":"Select daily public archive only when its local SHA256 matches CP-0025's official SHA256 evidence.",
+            "flagged_dates":("In CP-0267 scoped mode, all CP-0025 flagged UTC dates are excluded; no daily override or monthly fallback is selected for those dates." if scoped_policy else "Select daily public archive only when its local SHA256 matches CP-0025's official SHA256 evidence."),
             "unflagged_dates":"Select monthly archive only when its local SHA256 matches the published official SHA256 sidecar recorded in CP-0023.",
             "raw_archives":"Immutable; no edits/deletions.",
             "close_time":"Normalize on the derived candidate only to the deterministic interval boundary. Keep raw close-time token and boolean provenance.",
             "open_time":"Never round; any off-grid candidate open blocks structural PASS.",
             "gaps":"Record but never fill. Need interpreted gap policy before use in performance claims.",
-            "monthly":"Derived from the constructed candidate 1d series to provide complete 1mo coverage and one clear source lineage."
+            "monthly":"Not built in 4h scoped mode; otherwise derived from the constructed candidate 1d series."
         },
         "monthly_raw_archives_checksum_verified":len(monthly_archive_manifest),
         "daily_reference_archive_manifest_rows":len(daily_manifest_rows),
         "results":source_counts,
         "blocking_interval_count":len(blocking),
-        "gate":"BLOCKED_STRUCTURAL_ERRORS" if blocking else "PROVISIONAL_CANDIDATE_BUILT_GAPS_RECORDED",
+        "gate":("G0_SCOPED_PASS_4H_CANDIDATE_ELIGIBILITY_ONLY" if args.scope_not_verified and not blocking else ("G0_SCOPED_BLOCKED_STRUCTURAL_ERRORS" if args.scope_not_verified else ("BLOCKED_STRUCTURAL_ERRORS" if blocking else "PROVISIONAL_CANDIDATE_BUILT_GAPS_RECORDED"))),
         "interpretation":"Provisional research artifact, not proof of strategy profitability or a declaration that daily archives are globally authoritative. It applies a transparent source-selection policy only to known flagged dates.",
         "important":"Do not enable live trading based on this artifact. Review per-interval gap counts and candidate_quality_issues.csv before interpreting a backtest."
     }

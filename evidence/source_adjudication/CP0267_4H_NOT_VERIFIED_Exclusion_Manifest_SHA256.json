@@ -1,0 +1,15 @@
+{
+  "checkpoint": "CP-0267",
+  "artifact": "evidence/source_adjudication/CP0267_4H_NOT_VERIFIED_Exclusion_Manifest.csv",
+  "sha256": "c4daf0be851d9a4ae5dfca62e40f719ef8b6c3c8de7294d98f42c31fa4667241",
+  "rows": 22,
+  "source_exact_key_rows": 6,
+  "expected_gap_slots": 17,
+  "gap_slots_overlapping_existing_row_case": 1,
+  "distinct_gap_only_slots": 16,
+  "canonical_source": "NONE",
+  "historical_version_provenance": "NOT_VERIFIED",
+  "status": "FROZEN_EXCLUSION_MANIFEST_NOT_G0_CLOSURE",
+  "cp0040_exact_manifest_sha256": "d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819",
+  "cp0040_rulebook_sha256": "5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0"
+}
