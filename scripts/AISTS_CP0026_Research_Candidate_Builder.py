@@ -341,10 +341,13 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
                         issues.append({"interval":interval,"file":archive.name,"line":line,"type":"MONTHLY_PARSE_ERROR","detail":f"{type(e).__name__}: {e}"})
             daily_rows=[]
             for day in sorted(days_by_month.get(ym,[])):
-                if scoped_policy and any(iv == interval and blocked_day == day for iv, blocked_day, _ in scoped_policy["date_blockers"]):
+                if scoped_policy and day in flagged_dates:
+                    date_reason = ("CP0267 FETCHREF date exclusion; no replacement inferred"
+                                   if any(iv == interval and blocked_day == day for iv, blocked_day, _ in scoped_policy["date_blockers"])
+                                   else "CP0267 scoped CP-0025 flagged-date exclusion; no daily override or monthly fallback")
                     disposition.append({"interval":interval,"date":day,"selected_source":"NOT_VERIFIED_EXCLUDED_DATE",
                                         "daily_archive":"","daily_sha256":"","daily_rows_selected":0,
-                                        "reason":"CP0267 FETCHREF date exclusion; no replacement inferred",
+                                        "reason":date_reason,
                                         "raw_monthly_archives_modified":False})
                     continue
                 daily_path, daily_sha=verify_daily_reference(root,interval,day,daily_manifest)
