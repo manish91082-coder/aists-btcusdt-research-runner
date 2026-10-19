@@ -41,7 +41,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cp0171-btcusdt-spot-daily-archives-2026-10-01-to-2026-10-18-\${{ github.run_id }}
+          name: cp0171-btcusdt-spot-daily-archives-2026-10-01-to-2026-10-18
           path: results/cp0171_daily_archive_acquisition/
           if-no-files-found: warn
           retention-days: 30
