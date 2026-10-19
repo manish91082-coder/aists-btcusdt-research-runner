@@ -673,3 +673,14 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - This narrows interval-level dependency mapping only. It does not prove signal/position/valuation impact, establish historical authority, close cases, apply Policy B, clear G0, or establish profitability.
 - CP-0261 report and this roadmap update require exact-head CI terminal results. G0 remains BLOCKED_GLOBAL; canonical source NONE; G2 23 candidates FAIL; G3 blocked; candidate build/backtest blocked; profitability not established; live actions blocked.
 - Next action: exact-head verify the report and roadmap CI. Then stop repeating interval-level mapping; the remaining decision-changing prerequisite is admissible official key-specific historical-version evidence or an actually authorized independent written adjudication.
+
+
+## CP-0262 — population identity and non-double-counting reconciliation (2026-10-19)
+
+- Added [CP-0262 G0 population identity and non-double-counting reconciliation](CP0262_G0_Population_Identity_NonDoubleCount_Reconciliation_HI.md), report commit `ea11de61bb872c7fe126778c1f2cb0a840aec2d3`.
+- Reconciled the validated CP-0107 996-record worklist count partition: 452 daily-only + 457 monthly-only = 909 unmatched; plus 60 shared open-value conflicts, 11 residual aggregation buckets, and 16 missing daily-reference acquisition records = 996. This is count reconciliation, not source adjudication.
+- Non-double-counting confirmed: 450 February-2018 off-grid rows are a subset of 909; the seven 2020-12-21 monthly-only rows occur within the 909 unmatched census; 52 economic conflicts + 8 close-time-only cases reconcile to 60; 11 aggregation blockers reconcile to 11 residual buckets. The 17 missing 4h slots comprise one overlap with the known 4h placeholder row plus 16 gap-only slots.
+- Remaining internal identity gap: the exact-key join between the 16 `MISSING_DAILY_REFERENCE_ACQUISITION` worklist records and the 16 gap-only slots is **not proven** by count equality. CP-0262 marks it `MISSING_EVIDENCE` until exact keys are joined. Full builder consumption of the 909 exact keys also remains unverified.
+- No source selected, no source case closed, no Policy B application, no row/rulebook mutation, no candidate build/backtest. G0 remains `BLOCKED_GLOBAL`; G2 23 candidates `FAIL`; G3 blocked; profitability not established; live actions blocked.
+- Exact-head CI for the CP-0262 report and this roadmap update must be checked independently after these commits.
+- Next single action: exact-key join the 16 missing-reference acquisition records against the CP-0200/0201 gap-only ledger using existing committed artifacts. Do not infer identity from matching counts and do not repeat archive scans.
