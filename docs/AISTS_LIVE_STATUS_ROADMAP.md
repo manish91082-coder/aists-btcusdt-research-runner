@@ -550,3 +550,12 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Report: [CP-0246_Official_Public_Correction_Directory_Inventory.md](CP0246_Official_Public_Correction_Directory_Inventory.md). Decision `CP0246_PUBLIC_UPDATES_DIRECTORY_HAS_NO_LISTED_MONTHLY_SPOT_KLINE_CORRECTION_G0_UNCHANGED`.
 - No market data changed; no source case closed; no candidate build/backtest/paper run or exchange action occurred. Do not repeat this public-directory inventory or CP-0245 package scan.
 - Gates unchanged: canonical source `NONE`; G0 `BLOCKED_GLOBAL`; G2 all 23 candidates FAIL; G3 blocked; G4 insufficient; G6 not built; G7 live blocked; profitability not established; CP-0152 pending explicit approval.
+
+
+## G0 closure execution worklist (2026-10-19)
+
+- Added [G0 Closure Worklist and Responsibility Matrix](CP0250_G0_Closure_Worklist_HI.md), an execution artifact that separates assistant/research tasks, GitHub/CI responsibilities, and external official-evidence/independent-review dependencies.
+- The matrix preserves known populations without double-counting: 17 missing 4h slots (1 overlap + 16 gap-only), 909 unmatched rows (with the 450 February-2018 off-grid rows as a subset), 52 shared economic conflicts, 8 close-time-only conflicts, and 11 non-row aggregation blockers.
+- It explicitly distinguishes checksum integrity from historical-version provenance, and CP-0212 readiness from independent approval/application authorization.
+- Live PR #3 review submissions were empty at inspection; the existing owner-authored read-only review request comment is not a completed independent review.
+- No source case is closed, no canonical source selected, no policy applied, no candidate/backtest run, and no G0 gate change. The next decision-changing input is official key-specific version/correction provenance or a properly authorized independent review.
