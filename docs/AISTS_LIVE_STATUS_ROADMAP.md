@@ -567,3 +567,12 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Explicitly preserves overlap rules: 450 February-2018 off-grid rows are within 909 unmatched rows; 17 missing 4h slots include one existing row-case overlap plus 16 gap-only keys; the 14/35 aggregate divergences are not a new additive row population.
 - Exact-head CI for the immediately preceding worklist commit `bf87e4a21115f671b2b083164d97a8cd75dde73a` completed successfully in [run 39242786774](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39242786774). That run does **not** validate the newer CP-0251 commit or the forthcoming roadmap update; each new head requires its own exact-head run.
 - G0 remains `BLOCKED_GLOBAL`; canonical source `NONE`; G2 23 candidates FAIL; G3 blocked; G4 insufficient; Policy B sensitivity-only; no source cases closed; no candidate market backtest; profitability not established; live signing/broadcast/orders blocked.
+
+
+## Frozen G0 clause-to-aggregation-blocker crosswalk (2026-10-19)
+
+- Added [CP-0252 Frozen G0 Clause-to-Aggregation-Blocker Crosswalk](CP0252_Frozen_G0_Aggregation_Clause_Crosswalk_HI.md), commit `6e6d8e2b8f61d45e82b92066906de7dba707b7e0`.
+- The crosswalk anchors each of the 11 open `RESIDUAL_AGGREGATION_BUCKET` cases to frozen CP-0040 G0 clauses A/C/D, preserving exact relationship identity and UTC anchor. Equal timestamps across different interval relationships are not treated as duplicate cases.
+- It records why row-level quarantine alone cannot close these relationship blockers: the frozen ledger says the exact row open-key is absent from the minimal index; CP-0107's 11/11 daily rollup match and 11/11 monthly mismatch signature are diagnostic, not source authority.
+- Frozen CP-0040 rulebook blob `f0d0e81ea6708a0abeb34676f3ff12859080a3c7`; package-member SHA-256 `5ecba19d303d9065f26121f53894b8d4732054155e0d40b87db188e49d8b99e0`. Rulebook thresholds were not changed.
+- No source case closed, no canonical source selected, no Policy B application authorized, no candidate build/backtest run. G0 remains `BLOCKED_GLOBAL`; profitability remains `NOT ESTABLISHED`; live actions remain blocked. New commit requires its own exact-head CI result.
