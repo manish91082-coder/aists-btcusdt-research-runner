@@ -537,8 +537,9 @@ def main():
     # Validate coverage for every flagged date and each base interval before modifying the derived candidate.
     missing=[]
     for day in sorted(flagged_dates):
-        for interval in BASE_INTERVALS:
-            if (interval,day) not in daily_manifest:
+        for interval in (["4h"] if args.scope_not_verified else BASE_INTERVALS):
+            date_blocked = scoped_policy and any(iv == interval and blocked_day == day for iv, blocked_day, _ in scoped_policy["date_blockers"])
+            if (interval,day) not in daily_manifest and not date_blocked:
                 missing.append({"date":day,"interval":interval,"reason":"no daily reference manifest entry"})
     if missing:
         raise RuntimeError(f"Flagged-day reference coverage incomplete ({len(missing)}); see notebook error and do not build candidate.")
@@ -555,6 +556,13 @@ def main():
         summary,dispositions,issues,quarantined=audit_and_write_interval(root,interval,flagged_dates,daily_manifest,monthly_checksums,out,quarantine_keys,quarantine_cases,scoped_policy)
         summary["file"]=str(out)
         summary["sha256"]=sha256_file(out)
+        if scoped_policy:
+            with gzip.open(out,"rt",newline="",encoding="utf-8") as candidate_stream:
+                for candidate_row_item in csv.DictReader(candidate_stream):
+                    if exclusion_reasons(scoped_policy, interval, candidate_row_item.get("open_time_ms",""), candidate_row_item.get("open_time_utc","")):
+                        raise RuntimeError("CP0267_UNVERIFIED_ROW_LEAKED_INTO_SCOPED_CANDIDATE")
+                    if candidate_row_item.get("source_status") != "VERIFIED_PRIMARY_CURRENT_SNAPSHOT" or not candidate_row_item.get("source_sha256"):
+                        raise RuntimeError("CP0267_SCOPED_CANDIDATE_SOURCE_IDENTITY_MISSING")
         summaries.append(summary);all_dispositions.extend(dispositions);all_issues.extend(issues);all_quarantined.extend(quarantined)
         print(json.dumps(summary,ensure_ascii=False))
     if not args.scope_not_verified:
@@ -574,7 +582,7 @@ def main():
     report={
         "project":"AISTS CP-0026",
         "generated_at_utc":now_utc(),"symbol":SYMBOL,"market":"spot",
-        "g0_scope":{"status":"G0_SCOPED_4H_NOT_VERIFIED_EXCLUSIONS_APPLIED_PENDING_RUNTIME_RECONCILIATION" if args.scope_not_verified else "FROZEN_GLOBAL_GATE_MODE","intervals":["4h"] if args.scope_not_verified else BASE_INTERVALS+["1mo"],"historical_version_provenance":"NOT_VERIFIED","acceptance_grade":False,"policy_manifest_sha256":scoped_policy["exact_sha256"] if scoped_policy else None,"nonrow_blockers_sha256":scoped_policy["nonrow_sha256"] if scoped_policy else None,"not_verified_gap_keys":scoped_policy["gap_keys"] if scoped_policy else None},
+        "g0_scope":{"status":("G0_SCOPED_PASS_4H_CANDIDATE_ELIGIBILITY_ONLY" if args.scope_not_verified and not blocking else ("G0_SCOPED_BLOCKED_STRUCTURAL_ERRORS" if args.scope_not_verified else "FROZEN_GLOBAL_GATE_MODE")),"intervals":["4h"] if args.scope_not_verified else BASE_INTERVALS+["1mo"],"historical_version_provenance":"NOT_VERIFIED","acceptance_grade":False,"policy_manifest_sha256":scoped_policy["exact_sha256"] if scoped_policy else None,"nonrow_blockers_sha256":scoped_policy["nonrow_sha256"] if scoped_policy else None,"not_verified_gap_keys":scoped_policy["gap_keys"] if scoped_policy else None},
         "drive_root":str(root),"candidate_root":str(CANDIDATE_ROOT),
         "flagged_date_count":len(flagged_dates),"flagged_dates":sorted(flagged_dates),
         "cp0040_quarantine_gate":{"status":gate_summary["status"],"manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":len(quarantine_keys),"selected_source_rows_quarantined":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
@@ -591,7 +599,7 @@ def main():
         "daily_reference_archive_manifest_rows":len(daily_manifest_rows),
         "results":source_counts,
         "blocking_interval_count":len(blocking),
-        "gate":"BLOCKED_STRUCTURAL_ERRORS" if blocking else "PROVISIONAL_CANDIDATE_BUILT_GAPS_RECORDED",
+        "gate":("G0_SCOPED_PASS_4H_CANDIDATE_ELIGIBILITY_ONLY" if args.scope_not_verified and not blocking else ("G0_SCOPED_BLOCKED_STRUCTURAL_ERRORS" if args.scope_not_verified else ("BLOCKED_STRUCTURAL_ERRORS" if blocking else "PROVISIONAL_CANDIDATE_BUILT_GAPS_RECORDED")),
         "interpretation":"Provisional research artifact, not proof of strategy profitability or a declaration that daily archives are globally authoritative. It applies a transparent source-selection policy only to known flagged dates.",
         "important":"Do not enable live trading based on this artifact. Review per-interval gap counts and candidate_quality_issues.csv before interpreting a backtest."
     }
