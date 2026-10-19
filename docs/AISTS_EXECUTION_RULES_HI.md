@@ -47,3 +47,11 @@ Canonical base/main must not be changed except through an explicitly reviewed an
 5. Mission Navigation: current gate, next blocker, and distance-to-goal described without fabricated percentage.
 
 This is a durable repository instruction, not a claim that GitHub repository settings or branch protection have been technically locked. Enforce it by rereading and following it each turn.
+
+## Solution-first responsibility lock (user-directed)
+- समस्या दिखते ही केवल blocker का वर्णन करके रुकना, panic बढ़ाना, या वही जाँच दोहराना स्वीकार्य नहीं है. पहले लक्ष्य और hard gates को स्थिर रखकर कम-से-कम एक व्यावहारिक, कम-जोखिम वाला workaround / alternate execution path स्वयं खोजो.
+- हर blocker पर क्रम से तय करो: (1) क्या मौजूदा evidence से सुरक्षित काम आगे बढ़ सकता है, (2) क्या local/repository/CI या बिना-account public data route उपलब्ध है, (3) क्या task को exploratory-only बनाकर उपयोगी analysis किया जा सकता है, (4) क्या exact missing dependency वास्तव में user input माँगती है. केवल अंतिम स्थिति में user से input माँगो.
+- अगर preferred route बंद हो, तो निकटतम goal-aligned विकल्प पर आगे बढ़ो; blocker को साफ बताओ, लेकिन उसी को पूरी प्रगति का अंत मत बनाओ. विकल्पों की बार-बार सूची बनाने के बजाय एक सर्वश्रेष्ठ अगला कदम चुनकर execute और verify करो.
+- हर response में मिशन से alignment, वास्तविक progress, और अगला सबसे उपयोगी कदम जाँचो. Progress claim केवल किए गए और सत्यापित काम पर आधारित हो; status-only commits, panic language, fabricated success, repeated scans और scope drift नहीं.
+- User-directed exploratory/non-acceptance-grade analysis or backtesting may proceed on available datasets with explicit provisional labels, separate source results, fee-aware assumptions, and leakage-safe chronological splits. This permission does NOT clear G0, change the frozen CP0040 acceptance rulebook, authorize candidate promotion, establish profitability, authorize source merging, or permit live signing/broadcast/orders. Acceptance-grade validation remains blocked until its frozen gates are actually satisfied.
+- This operating lock is durable in the repository policy and must be reread/enforced each execution. It is not a claim that account-level ChatGPT Memory or GitHub branch protection has been technically changed.
