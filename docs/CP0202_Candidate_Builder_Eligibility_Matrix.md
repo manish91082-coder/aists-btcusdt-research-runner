@@ -55,3 +55,14 @@ The artifact establishes archive integrity and exact-key observations for this b
 - G0: `BLOCKED_GLOBAL`.
 - Live signing/broadcast/orders: `BLOCKED`.
 - Profitability: `NOT ESTABLISHED`.
+
+
+## Addendum — current-HEAD reconciliation (2026-10-19)
+
+This addendum preserves the original CP-0202 snapshot and records later repository state observed at branch HEAD `c16a4a37580970c7d2a9cbcd7338fcec37ff94e2`. It does not change the frozen CP-0040 acceptance rulebook or authorize candidate execution.
+
+- The original CP-0202 statements that CP-0200/0201 gap evidence is not wired into candidate eligibility and that CP-0203 tests are absent from static CI are historical snapshot statements, not accurate descriptions of the current branch.
+- Current `scripts/AISTS_CP0026_Research_Candidate_Builder.py` integration is asserted by `tests/test_cp0203_gap_policy_gate.py::test_candidate_builder_invokes_gate_before_candidate_output`: the test checks that `load_gap_policy_gate()` occurs before the row gate and candidate output path.
+- Current `.github/workflows/cp0165-4h-audit-tests.yml` includes `scripts/AISTS_CP0203_GapPolicy_Gate.py` and `tests/test_cp0203_gap_policy_gate.py` in its path filters, compiles the gate, and runs the CP-0203, CP-0204 and CP-0206 tests.
+- The current CP-0203 gate is intentionally fail-closed: it validates the frozen 17-key gap evidence and then raises `G0_BLOCKED_GAP_POLICY_UNRESOLVED`; it returns no candidate eligibility PASS. Policy B remains sensitivity-only, and the current gate state remains G0 `BLOCKED_GLOBAL`.
+- This reconciliation corrects the current-state description only. It does not resolve historical source authority, the 909 unmatched rows, 52 shared economic conflicts, 8 close-time conflicts, 11 non-row aggregation relationships, or the independent-review requirement. No candidate build/backtest is authorized by this addendum.
