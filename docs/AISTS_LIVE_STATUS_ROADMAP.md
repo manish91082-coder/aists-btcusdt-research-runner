@@ -612,3 +612,15 @@ Recorded: 2026-10-18. Append-only cross-workstream checkpoint; no strategy execu
 - Recomputed existing 4h OOS trade-ledger totals, not a new backtest: EMA `-4,632.87 USDT`, profit factor `0.5722`, 77 trades; RSI `+62.68 USDT`, profit factor `1.0085`, 27 trades, worst trade `-2,376.78 USDT`; Donchian `-2,484.99 USDT`, profit factor `0.7015`, 55 trades. Assumed initial equity was 10,000 USDT, with 10 bps/side fees and 5 bps/side slippage.
 - Interpretation is strictly exploratory: the small RSI net gain is fragile, the OOS period (2025-01-01 through 2026-10-01) is already consumed, and the provisional candidate/source disputes remain. No strategy promoted; no parameters tuned; no stop-loss/take-profit inferred; no new market backtest run.
 - This improves risk interpretation but does not clear G0. Canonical source remains `NONE`, G0 remains `BLOCKED_GLOBAL`, and the next G0 decision-changing dependency is authorized independent adjudication or admissible new key-specific historical-version provenance.
+
+
+
+## CP-0257 — exact-source and candidate-dependency crosswalk for 11 aggregation blockers (2026-10-19)
+
+- Added [CP-0257 aggregation/candidate dependency crosswalk](CP0257_Aggregation_Candidate_Dependency_Crosswalk_HI.md), commit `9175a5b8d015f8c6166c1ab1daad86a9e93ec785`.
+- Cross-linked all 11 frozen aggregation case IDs to CP-0107's 78-row evidence (blob `5ccb7fc91b829b4599de73f3b63683fbf1d5ebb9`), 11-case comparison (blob `5dae35e8d420b3997be90cabc263825e98b8b918`), and CP-0040 candidate-input relevance matrix (blob `2ae5c36aa1f370cb143f8a30d5a61f41be0d60eb`). Per-case monthly/daily archive SHA-256 values and daily sidecar hashes are recorded.
+- Reconciliation: daily child roll-up matches daily parent 11/11; frozen monthly mismatch signature reproduced 11/11; monthly child-volume exact numeric match 10/11; trade-count sums match 11/11. AGG-10's non-exact volume representation remains exposed, not normalized.
+- Candidate matrix records no direct 4h/D1 interval overlap for these 11 lower-timeframe relationships. This narrow comparator result is not source authority, does not prove global candidate-input irrelevance, and does not close any case.
+- Decision: all 11 cases remain OPEN; canonical source `NONE`; G0 `BLOCKED_GLOBAL`; source cases closed `0`; Policy B not applied; candidate build/backtest not run; profitability not established; live actions blocked. No market data downloaded or modified.
+- The report commit was pushed to the existing feature branch tracked by PR #3; PR #3 remains open/unmerged against main `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`. Exact-HEAD CI for the report commit was not yet returned at the time of this entry; the roadmap update also requires its own exact-HEAD verification.
+- Next decision-changing dependency: admissible official key-specific historical-version provenance, or an authorized independent written adjudication plus a separate scoped Policy B application record where required. Do not infer closure from crosswalk or CI.
