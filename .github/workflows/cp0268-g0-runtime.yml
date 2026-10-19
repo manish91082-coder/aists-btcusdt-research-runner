@@ -13,6 +13,7 @@ on:
       - 'evidence/source_adjudication/CP0040_Run_38882377148/CP0040_ExactKey_Quarantine_Manifest.csv'
       - 'evidence/source_adjudication/CP0040_Run_38882377148/CP0040_NonRow_Blockers.csv'
       - 'evidence/source_adjudication/CP0040_Reconstruction_Run_38895499283/CP0040_Baseline_Reconstruction_Archive_Inventory.csv'
+      - 'evidence/runs/38725478106_flagged_dates.csv'
 
 permissions:
   contents: read
