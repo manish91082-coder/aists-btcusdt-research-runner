@@ -120,3 +120,21 @@ Canonical repository: `manish91082-coder/aists-btcusdt-research-runner`, public,
 - ChatGPT: this report and the verified summary are available in this conversation, but do not treat the chat as durable binary storage.
 
 **Final status:** ZIP integrity PASS; internal source lineage PASS; canonical source authority NOT ESTABLISHED; candidate eligibility FAIL/BLOCKED; profitability NOT ESTABLISHED. No gate was promoted by this audit.
+
+
+## 10. Reconciliation addendum against the latest GitHub Roadmap (checked 2026-10-19)
+
+The uploaded ZIP's latest checkpoint is CP-0098, but the live GitHub roadmap has progressed beyond it. Before treating the ZIP as a complete project backup, use the canonical branch's later evidence:
+
+- The current Roadmap includes CP-0241 through CP-0246, including an official correction-package manifest probe, public correction-directory inventory, dataset-terms review and official archive-version-history review.
+- CP-0245 inspected the same official 2022-08-08 correction package already described above. CP-0246 records that the public `updates/` directory has no separate listed monthly Spot kline correction package. These findings are bounded and do not resolve the exact 2017-09-06 placeholder or the other missing keys. Do not repeat those scans.
+- Latest Roadmap state remains: G0 `BLOCKED_GLOBAL`; canonical source `NONE`; G2 all 23 current candidates fail; G3 quarantine/censor effect blocked; G4 insufficient evidence; G6 not built; G7 live blocked; profitability not established; CP-0152 pending explicit approval.
+- Licensing boundary: the Roadmap's CP-0243 summary of official Binance Vision Dataset Terms flags a separate legal/licensing review before commercial or live use. This is not a data-source clearance and is not legal advice.
+- Current workflow `.github/workflows/python-runner.yml` is pinned to source-cache key `2017-08-2026-09`; its allowlisted tasks do not include a task for acquiring new October 2026 daily archives. The only data-refresh task available by default, `legacy_pipeline`, includes candidate construction and historical backtest stages, so it is **not admissible** while G0 is blocked.
+- The available GitHub connector exposes read/write repository operations but no workflow-dispatch action. I did not create a request that could accidentally launch `legacy_pipeline`, and I did not alter the workflow or main branch to bypass this boundary.
+
+### Step 2 gate, clarified
+
+Do **not** repeat old checksum, correction-package or cache-only scans. Step 2 should be a separately scoped, read-only GitHub Actions task for the currently missing official Spot daily archives (only if those exact dates are published), with SHA-256 sidecar verification, CRC, row/grid checks, and an explicit output artifact/hash manifest. It must not build a candidate, backtest, or alter the frozen dataset. Before that can run, the workflow must expose this task and an authorized dispatch route. The current available connector cannot dispatch it, so fresh-data acquisition has **not** been performed in this turn.
+
+This is a tool/workflow capability boundary, not a request for the user to bring Colab back. Keep the allowed working surface to ChatGPT + GitHub; use Drive only for large durable binary retention when needed.
