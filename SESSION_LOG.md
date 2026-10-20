@@ -1,3 +1,11 @@
+## 2026-10-21 | Market-data manifest specification
+- Added MARKET_DATA_MANIFEST_SPEC.md with one-row-per-artifact provenance, checksum, timestamp-unit, schema, row/gap and validation fields.
+- Proposed BTCUSDT Spot 5m plus matching USDⓈ-M Futures archive as the first representative audit target. This is only a proposed target; no file was downloaded and no checksum was run.
+- README links the strategy dossier and market-data manifest spec.
+- Next step: execute the representative archive audit through an available reliable download path; if unavailable in the current environment, report the blocker rather than pretend validation passed.
+
+---
+
 ## 2026-10-21 | Strategy research focus and Binance data requirements
 
 ### User direction
