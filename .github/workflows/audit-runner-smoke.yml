@@ -1,0 +1,40 @@
+name: Audit runner smoke checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/audit_binance_archive.py"
+      - ".github/workflows/audit-runner-smoke.yml"
+  pull_request:
+    paths:
+      - "tools/audit_binance_archive.py"
+      - ".github/workflows/audit-runner-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile without executing network requests
+        run: python -m py_compile tools/audit_binance_archive.py
+      - name: Verify CLI help
+        run: python tools/audit_binance_archive.py --help
+      - name: Verify invalid date is rejected before network access
+        shell: bash
+        run: |
+          if python tools/audit_binance_archive.py --market spot --date not-a-date >invalid-date.stdout 2>invalid-date.stderr; then
+            echo "Expected invalid date to be rejected"
+            exit 1
+          fi
+          grep -q "Date must be canonical YYYY-MM-DD" invalid-date.stderr
