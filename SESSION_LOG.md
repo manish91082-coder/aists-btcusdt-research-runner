@@ -110,3 +110,16 @@ Phase 2: actual official Binance archive download/verification and data-quality 
 - This proves a current-environment retrieval blocker only. It does not prove the candidate archives exist or do not exist, and no archive bytes, checksum, schema, timestamp, row count, gap result or data-quality PASS is claimed.
 - Created DATA_AUDIT_LOG.md with exact attempted URLs, observed errors, evidence boundaries and a reproducible zero-cost next route via a network-enabled user-owned runtime such as Colab.
 - Phase 2 remains BLOCKED pending actual retrieval. No bulk download, strategy backtest, model training, paper run or live order was performed. Next: retrieve one real official artifact and its checksum, audit it end-to-end, then freeze S-01 to S-04 before any backtest.
+
+
+## 2026-10-21 | Phase 2 audit runner and zero-cost handoff
+### Work performed
+- Added `tools/audit_binance_archive.py`, a standard-library Python audit utility for official daily kline ZIP/checksum retrieval, SHA-256, ZIP/CSV structure, timestamp normalization, duplicate/order/gap checks, OHLC/volume invariants and up to three official API spot checks.
+- Added `RUN_DATA_AUDIT.md` with reproducible Colab instructions and separate Spot and USDⓈ-M Futures commands.
+- Re-read the new files and recorded this work as a prepared route, not an executed data audit.
+
+### Honest status
+The current execution environment still cannot resolve the Binance archive host. No downloaded archive, official checksum match, row count, API comparison or data-quality PASS is available. Phase 2 remains BLOCKED pending the reports from a network-enabled runtime.
+
+### Next action
+Run the documented audit for a completed candidate UTC date in Colab; preserve both market reports and any failure output. Independently review the evidence. Only after the representative data gate is resolved, freeze S-01 to S-04 protocols before any backtest.
