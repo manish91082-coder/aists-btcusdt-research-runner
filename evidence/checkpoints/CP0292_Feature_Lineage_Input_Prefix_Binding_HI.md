@@ -38,3 +38,8 @@ This tightens internal causal-lineage consistency. It does not independently pro
 - The later documentation head `86bc46b682d117b33591e604c9885883de5ee81a` was associated with GitHub Actions run [39391222478](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39391222478), terminal `success`. Its job log confirms Python compile passed, all 233 brain unit tests passed (`OK`), and all 11 CP-0026 quarantine tests passed (`OK`). The CP-0292 source-hash consistency tests are included in the 233 brain tests.
 - PR #2 was re-fetched and remained OPEN, `merged=false`; its head matched `86bc46b682d117b33591e604c9885883de5ee81a` before this report update. Because this report update creates a newer head, final verification must be repeated for the resulting head.
 - Gates unchanged: G0 blocked; G2 23 candidates fail/not promoted; G3 blocked; G4 insufficient; G6 not built/validated; G7 live blocked. No real-market research was run.
+
+
+## Latest documentation-head verification — 2026-10-20
+- Branch/PR head `14f5e4c8ecd30bdde066a2d837ff845bb3a16e64` was verified by Actions run [39391875141](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39391875141), terminal `success`. Job steps confirm compile PASS, 233 brain tests PASS, and 11 CP-0026 quarantine tests PASS; log summaries explicitly report `Ran 233 tests` and `Ran 11 tests`, both `OK`.
+- PR #2 matched this SHA, OPEN, unmerged, and mergeable at verification. This checkpoint/status update is documentation-only; recheck exact-head CI after these writes.
