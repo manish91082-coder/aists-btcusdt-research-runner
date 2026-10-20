@@ -21,3 +21,12 @@ Sources checked: 2026-10-21. Prefer official primary sources. Each claim is deli
 
 ## Evidence protocol
 For every new source record: ID, canonical URL, publisher, access date, document/update date, exact supported claim, limitation, and linked decision/requirement. Preserve source hashes for downloaded evidence where appropriate. Re-check before implementation because exchange API, fees, product availability and regulation change. Community/secondary sources can raise questions but cannot close a critical fee/legal/product gate.
+
+## 2026-10-21 | Strategy-stage API source additions
+| ID | Official source | Observed finding | Supports | Limitation / next check |
+|---|---|---|---|---|
+| E-015 | https://developers.binance.info/en/docs/catalog/core-trading-spot-trading/api/rest-api/general | Spot exchange information endpoint provides current symbol status/rules and rate-limit metadata. | Dated symbol/product metadata snapshot and current filter discovery. | Current state is not historical membership; capture snapshots and preserve point-in-time history. |
+| E-016 | https://developers.binance.info/en/docs/products/spot/rest-api | Spot API documentation explains request-weight/IP limits and HTTP 429 behavior. | Data acquisition must throttle, retry safely and respect rate limits. | Current limits can change; re-check at implementation time and inspect response headers. |
+| E-017 | https://github.com/binance/binance-spot-api-docs/blob/master/filters.md | Official filters include price tick/stop-price and other symbol/exchange rules. | Order proposals must be validated against current filters. | Not a substitute for current exchangeInfo values or product-specific Futures filters. |
+| E-018 | https://developers.binance.info/en/docs/catalog/core-trading-derivatives-trading-usd-s-m-futures/api/rest-api/market-data | Official USDⓈ-M Futures market-data catalogue documents kline endpoint, intervals, time bounds, response limits and request weights. | Futures candle data acquisition and backtest inventory. | Exact history, funding/mark/index coverage and current endpoint semantics require dedicated audit. |
+| E-019 | https://github.com/binance/binance-public-data | Official archive docs list requested kline intervals including 1mo, checksum files, and a Spot timestamp-unit change for data from 2025-01-01 onward. | Required intervals and archive integrity/timestamp handling. | Per-symbol/market coverage remains unknown until a representative archive is downloaded and audited. |
