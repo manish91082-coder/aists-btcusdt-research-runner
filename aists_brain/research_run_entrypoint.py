@@ -130,8 +130,8 @@ def run_research_entrypoint(
     if run_result is None and entrypoint["status"] == "BLOCKED_INPUT":
         report["status"] = "BLOCKED_INPUT"
         report["interpretation"] = (
-            "G0 is a supplied PASS claim, but required inputs were missing or rejected; "
-            "no simulation result is attached and gate evidence remains unauthenticated."
+            "G0 is only a supplied PASS claim and gate evidence is not authenticated; "
+            "input paths were not inspected and no simulation was attempted."
         )
     _hash_report(report)
 
