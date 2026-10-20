@@ -1,3 +1,23 @@
+## 2026-10-21 | Strategy research focus and Binance data requirements
+
+### User direction
+Defer tax/jurisdiction research to a later stage; focus the immediate work on strategies and the Binance data required to test them. BNB commission payment remains a requirement wherever the product/account supports it. This is a sequencing change, not a waiver of later execution gates.
+
+### Research performed
+- Reviewed official Binance Spot exchange-information and rate-limit documentation.
+- Reviewed official Spot symbol filter documentation.
+- Reviewed official USDⓈ-M Futures market-data/kline reference.
+- Rechecked official public archive documentation for requested kline intervals, checksums and Spot timestamp-unit handling.
+- Created STRATEGY_RESEARCH.md with 12 testable hypotheses: trend, mean reversion, breakout, momentum, regime selection, candle features, funding-aware filtering, liquidity filtering, cross-asset context, supervised probability, portfolio allocation and exit-policy tournament.
+
+### Honest status
+No strategy was run or proven profitable. No archive was downloaded, no checksum was executed, no model trained, no backtest/paper run occurred, and no live order was sent. Strategy hypotheses are registered only.
+
+### Next task
+Build a reproducible market-data manifest design and audit one representative archive end-to-end; then pre-register S-01 to S-04 experiments before any backtest.
+
+---
+
 # Session Log
 
 Newest entries first. Record verified facts, not intentions as completed work.
