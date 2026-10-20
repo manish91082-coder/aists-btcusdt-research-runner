@@ -96,15 +96,41 @@ jobs:
           rc=$?
           echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
           exit 0
+      - name: Select a date whose monthly archive should be published
+        if: always()
+        id: cadence_date
+        shell: bash
+        env:
+          AUDIT_DATE: ${{ inputs.archive_date || '2026-10-15' }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import os
+          from datetime import date, timedelta, timezone
+          requested = date.fromisoformat(os.environ["AUDIT_DATE"])
+          today = date.today()
+          # A monthly archive for the current UTC month may not be published until month-end.
+          # Keep the main daily/API audit on its requested date; use a prior completed month
+          # only for this separate daily-vs-monthly diagnostic.
+          if (requested.year, requested.month) >= (today.year, today.month):
+              first = requested.replace(day=1)
+              prior_month_last = first - timedelta(days=1)
+              day = min(requested.day, (prior_month_last.replace(day=28) + timedelta(days=4)).replace(day=1).day - 1)
+              selected = prior_month_last.replace(day=day)
+          else:
+              selected = requested
+          print(f"date={selected.isoformat()}")
+          print(f"requested_date={requested.isoformat()}")
+          PY
       - name: Cross-check Spot daily archive against monthly archive (diagnostic only)
         if: always()
         shell: bash
         env:
-          AUDIT_DATE: ${{ inputs.archive_date || '2026-10-15' }}
+          AUDIT_DATE: ${{ steps.cadence_date.outputs.date }}
           AUDIT_SYMBOL: ${{ inputs.symbol || 'BTCUSDT' }}
           AUDIT_INTERVAL: ${{ inputs.interval || '5m' }}
         run: |
           set +e
+          echo "Diagnostic date (may differ from main audit date): $AUDIT_DATE"
           python tools/compare_binance_archive_cadences.py --market spot --symbol "$AUDIT_SYMBOL" --interval "$AUDIT_INTERVAL" --date "$AUDIT_DATE" --out audit_output/cadence_spot
           rc=$?
           echo "Spot daily-monthly diagnostic exit code: $rc"
@@ -113,11 +139,12 @@ jobs:
         if: always()
         shell: bash
         env:
-          AUDIT_DATE: ${{ inputs.archive_date || '2026-10-15' }}
+          AUDIT_DATE: ${{ steps.cadence_date.outputs.date }}
           AUDIT_SYMBOL: ${{ inputs.symbol || 'BTCUSDT' }}
           AUDIT_INTERVAL: ${{ inputs.interval || '5m' }}
         run: |
           set +e
+          echo "Diagnostic date (may differ from main audit date): $AUDIT_DATE"
           python tools/compare_binance_archive_cadences.py --market usdm --symbol "$AUDIT_SYMBOL" --interval "$AUDIT_INTERVAL" --date "$AUDIT_DATE" --out audit_output/cadence_usdm
           rc=$?
           echo "USDⓈ-M daily-monthly diagnostic exit code: $rc"
