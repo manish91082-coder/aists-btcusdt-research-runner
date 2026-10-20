@@ -12,6 +12,7 @@ from aists_brain.research_harness import (
 )
 from aists_brain.provenance_input import SCHEMA_VERSION
 from aists_brain.decision_lineage import canonical_sha256
+from aists_brain.causal_feature_producer import produce_causal_feature_snapshots
 
 
 class ResearchHarnessTests(unittest.TestCase):
@@ -69,40 +70,20 @@ class ResearchHarnessTests(unittest.TestCase):
 
     def write_decisions(self, **overrides):
         source_hash = hashlib.sha256(self.csv_path.read_bytes()).hexdigest()
-        brain_version = "test-brain-v1"
-        strategy_version = "test-strategy-v1"
-        def decision(decision_id, as_of_ms, action):
-            snapshot = {
-                "as_of_ms": as_of_ms,
-                "brain_version": brain_version,
-                "strategy_version": strategy_version,
-                "input_prefix_sha256": "d" * 64,
-                "feature_observations": [{
-                    "feature_name": "test_close",
-                    "timeframe": "5m",
-                    "observed_close_time_ms": as_of_ms,
-                    "source_sha256": "d" * 64,
-                    "value": 102.0,
-                }],
-            }
-            return {
-                "decision_id": decision_id,
-                "as_of_ms": as_of_ms,
-                "action": action,
-                "snapshot": snapshot,
-                "snapshot_sha256": canonical_sha256(snapshot),
-            }
-        artifact = {
-            "schema_version": DECISION_SCHEMA,
-            "status": "PASS",
-            "source_csv_sha256": source_hash,
-            "brain_version": brain_version,
-            "strategy_version": strategy_version,
-            "decisions": [
-                decision("d1", 299999, "BUY_CANDIDATE"),
-                decision("d2", 599999, "SELL_CANDIDATE"),
-            ],
-        }
+        artifact = produce_causal_feature_snapshots(
+            self.rows,
+            timeframe="5m",
+            candle_csv_sha256=source_hash,
+            brain_version="test-brain-v1",
+            strategy_version="test-strategy-v1",
+        )
+        # Keep the three-candle software fixture but exercise one buy/sell round trip.
+        artifact["decisions"] = artifact["decisions"][:2]
+        artifact["decision_count"] = len(artifact["decisions"])
+        artifact["decisions"][0]["decision_id"] = "d1"
+        artifact["decisions"][0]["action"] = "BUY_CANDIDATE"
+        artifact["decisions"][1]["decision_id"] = "d2"
+        artifact["decisions"][1]["action"] = "SELL_CANDIDATE"
         artifact.update(overrides)
         self.decisions_path.write_text(json.dumps(artifact), encoding="utf-8")
 
