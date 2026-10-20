@@ -514,6 +514,8 @@ def main():
     ap.add_argument("--gate-summary")
     ap.add_argument("--gate-test-output")
     args=ap.parse_args()
+    if not args.gate_self_test and any((args.manifest, args.blockers, args.gate_summary, args.gate_test_output)):
+        ap.error("production mode rejects gate-file overrides; canonical CP-0040 paths are mandatory")
     if args.gate_self_test:
         if not (args.manifest and args.blockers and args.gate_summary):
             ap.error("--gate-self-test requires --manifest, --blockers, and --gate-summary")
