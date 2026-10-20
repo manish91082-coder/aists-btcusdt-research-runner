@@ -60,6 +60,15 @@ class AuditStatusClassificationTests(unittest.TestCase):
             "PASS",
         )
 
+    def test_proven_failure_takes_precedence_over_blocker(self):
+        self.assertEqual(
+            audit_runner.classify_audit_status(
+                {"gaps": "FAIL", "official_api_spot_check": "BLOCKED"},
+                ["gaps", "official_api_spot_check"],
+            ),
+            "FAIL",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
