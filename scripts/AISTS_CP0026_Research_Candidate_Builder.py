@@ -545,6 +545,8 @@ def main():
             test_out=Path(args.gate_test_output); test_out.parent.mkdir(parents=True,exist_ok=True)
             test_out.write_text(json.dumps(result,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
         return
+    from g0_execution_guard import require_authenticated_g0
+    require_authenticated_g0("cp0026_candidate_builder")
     root=get_root()
     if not root.exists(): raise FileNotFoundError(f"Expected Drive data root not found: {root}")
     gate_dir=root/"reports"
