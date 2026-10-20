@@ -68,6 +68,61 @@ class CP0026QuarantineEnforcementTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "MANIFEST_SHA256_MISMATCH"):
                 BUILDER.load_candidate_gate(manifest, blockers, summary)
 
+    def _write_frozen_gate_fixture(self, root):
+        manifest = root / "manifest.csv"
+        blockers = root / "blockers.csv"
+        summary = root / "summary.json"
+        manifest.write_text(
+            "case_id,case_class,interval,open_time_ms,disposition,canonical_source,case_closed\\n"
+            "ROW-1,EXACT_KEY,5m,1518170294789,QUARANTINE,NONE,false\\n",
+            encoding="utf-8",
+        )
+        blockers.write_text("case_id,record_type,disposition\\nAGG-1,AGG,UNRESOLVED\\n", encoding="utf-8")
+        summary.write_text(json.dumps({
+            "status": "PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN",
+            "row_level_manifest": {
+                "sha256": BUILDER.FROZEN_CP0040_MANIFEST_SHA256,
+                "rows": 1,
+                "case_class_counts": {"EXACT_KEY": 1},
+            },
+            "nonrow_blockers": {
+                "rows": 1,
+                "sha256": BUILDER.FROZEN_CP0040_BLOCKERS_SHA256,
+                "candidate_eligibility_blocked": True,
+            },
+        }), encoding="utf-8")
+        return manifest, blockers, summary
+
+    def test_production_gate_rejects_manifest_not_matching_frozen_cp0040_hash(self):
+        with tempfile.TemporaryDirectory() as temp:
+            manifest, blockers, summary = self._write_frozen_gate_fixture(Path(temp))
+            with patch.object(BUILDER, "sha256_file", return_value="a" * 64):
+                with self.assertRaisesRegex(RuntimeError, "FROZEN_MANIFEST_SHA256_MISMATCH"):
+                    BUILDER.load_candidate_gate(manifest, blockers, summary, require_frozen_hashes=True)
+
+    def test_production_gate_rejects_blockers_not_matching_frozen_cp0040_hash(self):
+        with tempfile.TemporaryDirectory() as temp:
+            manifest, blockers, summary = self._write_frozen_gate_fixture(Path(temp))
+            with patch.object(
+                BUILDER, "sha256_file",
+                side_effect=[BUILDER.FROZEN_CP0040_MANIFEST_SHA256, "b" * 64],
+            ):
+                with self.assertRaisesRegex(RuntimeError, "FROZEN_NONROW_BLOCKERS_SHA256_MISMATCH"):
+                    BUILDER.load_candidate_gate(manifest, blockers, summary, require_frozen_hashes=True)
+
+    def test_production_gate_rejects_mutated_summary_hash_even_if_artifacts_match(self):
+        with tempfile.TemporaryDirectory() as temp:
+            manifest, blockers, summary = self._write_frozen_gate_fixture(Path(temp))
+            data = json.loads(summary.read_text(encoding="utf-8"))
+            data["nonrow_blockers"]["sha256"] = "c" * 64
+            summary.write_text(json.dumps(data), encoding="utf-8")
+            with patch.object(
+                BUILDER, "sha256_file",
+                side_effect=[BUILDER.FROZEN_CP0040_MANIFEST_SHA256, BUILDER.FROZEN_CP0040_BLOCKERS_SHA256],
+            ):
+                with self.assertRaisesRegex(RuntimeError, "SUMMARY_BLOCKER_HASH_NOT_FROZEN"):
+                    BUILDER.load_candidate_gate(manifest, blockers, summary, require_frozen_hashes=True)
+
     def test_unresolved_nonrow_blockers_fail_closed(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
