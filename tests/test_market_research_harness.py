@@ -171,7 +171,7 @@ class ResearchHarnessTests(unittest.TestCase):
 
     def test_wrong_interval_refused(self):
         with self.assertRaisesRegex(ResearchHarnessError, "historical data gate rejected"):
-            run_manifest_driven_simulation(
+            _run_manifest_driven_simulation_test_only(
                 self.csv_path, self.manifest_path, self.decisions_path,
                 expected_interval="4h", initial_cash_usdt=100.0,
                 symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5},
