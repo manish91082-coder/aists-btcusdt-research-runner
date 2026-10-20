@@ -234,6 +234,35 @@ def main() -> int:
             "FAIL" if expected_opens is not None else "NOT_APPLICABLE"
         )
 
+        day_start_ms = int(datetime.combine(
+            archive_date, datetime.min.time(), tzinfo=timezone.utc
+        ).timestamp() * 1000)
+        outside_archive_day = sum(
+            1 for r in rows
+            if not (day_start_ms <= r["open_ms"] < day_start_ms + 86_400_000)
+        )
+        misaligned_opens = 0
+        wrong_close_times = 0
+        if interval_ms <= 86_400_000 and 86_400_000 % interval_ms == 0:
+            misaligned_opens = sum(
+                1 for r in rows if (r["open_ms"] - day_start_ms) % interval_ms != 0
+            )
+            # Kline close timestamps are inclusive: open + interval - 1 ms after
+            # normalization of both millisecond and microsecond archive timestamps.
+            wrong_close_times = sum(
+                1 for r in rows if r["close_ms"] != r["open_ms"] + interval_ms - 1
+            )
+        report["rows_outside_archive_utc_day"] = outside_archive_day
+        report["misaligned_open_timestamps"] = misaligned_opens if interval_ms <= 86_400_000 and 86_400_000 % interval_ms == 0 else None
+        report["unexpected_close_timestamps"] = wrong_close_times if interval_ms <= 86_400_000 and 86_400_000 % interval_ms == 0 else None
+        report["checks"]["archive_date_membership"] = "PASS" if outside_archive_day == 0 else "FAIL"
+        report["checks"]["open_time_alignment"] = (
+            "PASS" if misaligned_opens == 0 else "FAIL"
+        ) if interval_ms <= 86_400_000 and 86_400_000 % interval_ms == 0 else "NOT_APPLICABLE"
+        report["checks"]["close_time_semantics"] = (
+            "PASS" if wrong_close_times == 0 else "FAIL"
+        ) if interval_ms <= 86_400_000 and 86_400_000 % interval_ms == 0 else "NOT_APPLICABLE"
+
         bad_ohlc = sum(1 for r in rows if not (
             r["low"] <= r["open"] <= r["high"] and
             r["low"] <= r["close"] <= r["high"] and r["low"] <= r["high"]
@@ -290,7 +319,8 @@ def main() -> int:
 
         required_checks = [
             "archive_download", "official_checksum_match", "zip_integrity", "row_schema",
-            "duplicates", "ordering", "gaps", "utc_day_coverage", "ohlc_invariants",
+            "duplicates", "ordering", "gaps", "utc_day_coverage", "archive_date_membership",
+            "open_time_alignment", "close_time_semantics", "ohlc_invariants",
             "nonnegative_volume_counts", "official_api_spot_check"
         ]
         if all(report["checks"].get(k) == "PASS" for k in required_checks):
