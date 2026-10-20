@@ -153,3 +153,11 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - Main 2026-10-15 daily archives for both markets still pass official checksum, ZIP, schema and candle-quality checks. Spot API sample checks are BLOCKED because all five official endpoints returned HTTP 451. Futures primary endpoint returned HTTP 451 and numbered endpoints HTTP 202, which is not accepted as a verified candle response. Both market reports therefore remain BLOCKED and the enforcement gate correctly failed.
 - Artifact digest: sha256:86af75cb7f442854d2d3d95a9880067fa44eeefc066c9658cce7e05807a191b6. Daily/monthly comparison is same-publisher diagnostic evidence only, not independent-source verification and not a substitute for API checks.
 - Phase 2 remains BLOCKED. Do not backtest, train, paper trade, place live orders or deploy until the locked data gate is satisfied.
+
+## 2026-10-21 — Official Spot API candidate coverage expanded
+- Official Binance Spot REST documentation lists `api-gcp.binance.com` and `api1`–`api4.binance.com` as available base endpoints, and explicitly recommends `data-api.binance.vision` for public market-data endpoints including `GET /api/v3/klines`. Source: https://developers.binance.com/en/docs/products/spot/rest-api
+- Updated `tools/audit_binance_archive.py` to try the documented Spot `api-gcp` endpoint and the documented public market-data endpoint in addition to the existing official Spot hosts. The candidate list remains within Binance-owned official endpoints; no proxy, VPN, alternate venue or restriction bypass was introduced.
+- Added unit tests for the Spot candidate policy and to ensure the Futures path does not use the Spot-only `data-api` endpoint.
+- Commits: runner `5354bc1cc0f6df19a1b5ec63b5dc49b87771d986`; tests `707b294c8d5279b40d44c1119795b8909013072c`.
+- Verification state at log time: source and tests were read back from main; smoke CI run `39496780166` was observed as QUEUED, not passed. The push-triggered Phase 2 run has not yet been verified. This change may resolve Spot API verification only if those official endpoints return valid candle JSON in the runner environment; it does not alter the gate or resolve the Futures HTTP 451/202 blocker.
+- Gate remains BLOCKED. Do not backtest, train, paper trade, place live orders or deploy until both market reports satisfy the locked gate.
