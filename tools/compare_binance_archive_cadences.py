@@ -89,9 +89,14 @@ def main():
         report["daily_only_open_count"]=len(missing_monthly); report["monthly_only_open_count"]=len(missing_daily)
         report["value_mismatch_count"]=len(mismatches)
         report["first_mismatch_open_ms"]=mismatches[0] if mismatches else None
+        interval_ms=INTERVALS[a.interval]
+        expected_count=86400000//interval_ms if interval_ms<=86400000 and 86400000%interval_ms==0 else None
+        report["expected_rows_for_utc_day"]=expected_count
+        coverage_ok=(expected_count is None) or (len(d)==expected_count and len(m)==expected_count)
+        report["checks"]["daily_utc_day_coverage"]="PASS" if coverage_ok else "FAIL"
         equal=bool(d) and d==m
         report["checks"]["daily_monthly_rows_identical"]="PASS" if equal else "FAIL"
-        report["status"]="PASS" if equal else "FAIL"
+        report["status"]="PASS" if equal and coverage_ok else "FAIL"
     except (urllib.error.URLError,TimeoutError,OSError,zipfile.BadZipFile,RuntimeError,ValueError) as e:
         report["errors"].append(f"{type(e).__name__}: {e}")
         report["status"]="BLOCKED" if isinstance(e,(urllib.error.URLError,TimeoutError)) or "HTTP " in str(e) else "FAIL"
