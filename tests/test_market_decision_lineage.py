@@ -17,6 +17,7 @@ def make_artifact():
         "as_of_ms": 299999,
         "brain_version": "brain-v1",
         "strategy_version": "strategy-v1",
+        "input_prefix_sha256": SOURCE_HASH,
         "feature_observations": [{
             "feature_name": "ema_spread",
             "timeframe": "5m",
@@ -96,6 +97,21 @@ class DecisionLineageTests(unittest.TestCase):
         artifact = make_artifact()
         artifact["decisions"][0]["as_of_ms"] = 123
         with self.assertRaisesRegex(DecisionLineageError, "supplied candle close"):
+            self.validate(artifact)
+
+    def test_feature_source_hash_must_match_declared_input_prefix(self):
+        artifact = make_artifact()
+        feature = artifact["decisions"][0]["snapshot"]["feature_observations"][0]
+        feature["source_sha256"] = "c" * 64
+        artifact["decisions"][0]["snapshot_sha256"] = canonical_sha256(artifact["decisions"][0]["snapshot"])
+        with self.assertRaisesRegex(DecisionLineageError, "does not match input prefix hash"):
+            self.validate(artifact)
+
+    def test_missing_input_prefix_hash_is_rejected(self):
+        artifact = make_artifact()
+        artifact["decisions"][0]["snapshot"].pop("input_prefix_sha256")
+        artifact["decisions"][0]["snapshot_sha256"] = canonical_sha256(artifact["decisions"][0]["snapshot"])
+        with self.assertRaisesRegex(DecisionLineageError, "invalid input prefix SHA-256"):
             self.validate(artifact)
 
 
