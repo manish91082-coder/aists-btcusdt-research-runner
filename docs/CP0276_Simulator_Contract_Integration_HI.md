@@ -15,10 +15,11 @@ CP-0275 के evidence-gated INR-to-USDT capital/cost contract को offline n
 - `tests/test_market_simulator_contract_integration.py` में synthetic fixtures से contract wiring, 2 simulated events, blocked contract, missing source reference, wrong schema, historical scope rejection और forged gate-boundary rejection के tests हैं।
 
 ## सत्यापन और सीमाएँ
-- GitHub Actions run [39311740842](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39311740842) exact HEAD `2f3557d7d4f490c4c442dd936d83230f648de9c1` पर terminal SUCCESS था; compile और test steps सफल; log में 212 tests, `OK` है।
-- सावधानी: run log में CP-0276 integration test के नाम स्पष्ट रूप से सूचीबद्ध नहीं दिखे। इसलिए उस run को CP-0276 के नए test की executed verification नहीं माना जाएगा, भले कुल 212 tests पास हों। CP-0276 को complete/verified कहने से पहले नए test file वाले exact commit पर नया CI run चाहिए।
+- Test commit `1c052b2b415a075d15fc25f821ec4586c4d1e4b4` पर GitHub Actions run [39362322504](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39362322504) terminal SUCCESS: compile और test steps सफल; कुल 219 tests, `OK`।
+- Logs में `test_non_finite_contract_capital_is_rejected_by_simulator` नाम से नया test स्पष्ट रूप से चला और पास हुआ। PR #2 HEAD भी इस test commit से मेल खाता है और PR OPEN/unmerged है।
 - Fixture FX 100 INR/USDT, fee/slippage और filters केवल test values हैं, वास्तविक FX rate, Binance fee terms या verified exchange snapshot नहीं।
 - कोई historical BTCUSDT data, candidate build, performance backtest या paper session नहीं चलाया गया। कोई profitability claim नहीं।
+- Roadmap/report के बाद आने वाले documentation-only commit के exact HEAD पर CI को फिर से verify करना आवश्यक है।
 
 ## Gate और सुरक्षा स्थिति
 - G0: `BLOCKED_GLOBAL`; canonical historical source: `NONE`.
@@ -29,4 +30,4 @@ CP-0275 के evidence-gated INR-to-USDT capital/cost contract को offline n
 - PR #2 open और unmerged रहना चाहिए।
 
 ## अगला सीमित कदम
-पहले CP-0276 test file और wrapper वाले वास्तविक current branch HEAD को reconcile करें, फिर उसी exact HEAD पर CI terminal success तथा test-name/count सत्यापित करें। यदि test discovery में शामिल न हो, CI/test pattern ठीक करें। G0 के लिए नया authoritative evidence न मिलने तक real-market run नहीं।
+CP-0276 code/test commit पर CI सत्यापित है। अब documentation-final HEAD का CI terminal result और test count फिर से verify करना है। उसके बाद अगला कदम G0 के वास्तविक external dependency (authorized independent adjudication / authoritative Binance historical-version evidence) पर ही केंद्रित होगा, न कि और infrastructure जोड़ने पर। G0 के लिए नया admissible evidence न मिलने तक real-market run नहीं।
