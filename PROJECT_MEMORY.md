@@ -99,3 +99,8 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 ## 2026-10-21 — Smoke CI verified; real-data gate still open
 - GitHub Actions smoke run [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620) succeeded for test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`, including the unit tests for the optional kline header change.
 - This is not evidence of a real archive download or market-data audit. The latest 100 workflow runs inspected did not show a Phase 2 manual audit run. Keep Phase 2 BLOCKED until both Spot and USDⓈ-M reports are independently reviewed.
+
+## 2026-10-21 — Phase 2 state rechecked
+- Live main ref: `ba547c6e18db46d4032757dc3ee4af89099c40bd`. Offline smoke CI success remains verified.
+- Latest 100 workflow runs inspected show no Phase 2 archive audit run. The available GitHub connector does not expose workflow dispatch, so the workflow has not been run from this session.
+- Active blocker and next step unchanged: manually dispatch representative BTCUSDT Spot/Futures 5m audit; review both JSON reports and evidence. No backtest before the data gate and S-01..S-04 preregistration.
