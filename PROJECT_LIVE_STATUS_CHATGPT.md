@@ -249,3 +249,12 @@ The next action must address the actual blocker to useful strategy evaluation, n
 ## CP-0292 final exact-head CI confirmation — 2026-10-20
 - Branch head `1aff8d3b2ee6f764504b92c6bb222bdf8ffd633b` verified by Actions run [39393936726](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39393936726), terminal `success` on exact SHA. Compile brain modules, brain unit tests and CP-0026 quarantine enforcement job all passed.
 - PR #2 remains OPEN and unmerged. Frozen gates unchanged; profitability unestablished. No market research/backtest/live action was run.
+
+
+## CP-0293 — Latest verified state supersedes earlier status entries (2026-10-20)
+- Current branch HEAD: `473ef1e950d892801782aec71b89e4ae06bde9e9`; PR #2 is OPEN and unmerged, with matching head.
+- Exact-HEAD push run [39402003605](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39402003605) and PR run [39402010103](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39402010103) both terminal SUCCESS. Inspected job steps: compile PASS, 236 brain tests PASS, 11 CP-0026 quarantine tests PASS.
+- Latest software increment verifies feature values by recomputing market context from supplied causal candle rows and rejects rehashed tampering. This is not external source authentication and does not clear G0.
+- G0 remains BLOCKED_GLOBAL because independent G0-A..G0-E adjudication / admissible archive-version evidence is absent. Exact minimum receipt requirements and gate limitations are recorded in [CP-0293](evidence/checkpoints/CP0293_Source_Feature_Verification_and_G0_Unblock_HI.md).
+- Gate state unchanged: G1 PARTIAL_SYSTEM_LEVEL; G2 FAIL / NOT PROMOTED; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G5 NOT_RUN; G6 NOT_BUILT / NOT_VALIDATED; G7 LIVE_BLOCKED; profitability NOT ESTABLISHED.
+- No market backtest, candidate promotion, paper session, external issue comment, signing, broadcast or exchange order was performed. PR #2 must remain open/unmerged.
