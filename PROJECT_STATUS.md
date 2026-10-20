@@ -50,3 +50,11 @@ Use live main ref as authority. After the current write, re-fetch main, root lis
 - After the data audit, freeze S-01 through S-04 experiment protocols before any backtest.
 - User's earlier instruction to defer tax/jurisdiction research remains active for the current strategy/data stage; it remains a mandatory later live-release gate, not waived.
 - No strategy/backtest/model/paper run/live order is newly claimed. All live/execution locks remain.
+
+
+## 2026-10-21 — Full requirement saturation and anti-drift audit
+- Re-read the detailed user requirement against PROJECT_BLUEPRINT, PLAN_AND_PHASE_LOCK, STRATEGY_RESEARCH, MARKET_DATA_MANIFEST_SPEC and governance/continuity records.
+- Expanded PLAN_AND_PHASE_LOCK.md with an explicit AI decision contract, ten logical AI roles, independent Safety Kernel, continuous multi-timeframe scanner semantics, dynamic stop/target/trailing and multiple-entry risk, zero-cost measurement, ten-year-history feasibility, fee accounting and per-response anti-drift audit.
+- Linked the expanded plan from PROJECT_BLUEPRINT.md. The master plan remains the default ordered roadmap; no phase is passed by documentation alone.
+- Verified strategy candidates remain hypotheses only. The representative archive audit is still not completed; no strategy/backtest/model/paper/live execution is claimed.
+- Next action remains Phase 2: obtain and validate an actual official Binance archive with observed checksum/schema/timestamp/gap output. If blocked, preserve the exact blocker and investigate a verifiable zero-cost path.
