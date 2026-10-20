@@ -56,3 +56,12 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 - Current immediate priority is strategy/data: audit one real official Binance archive end-to-end, then freeze S-01 to S-04 experiment protocols before backtesting.
 - Tax/jurisdiction research is deferred for the current stage per the user's instruction, but is still required before any live execution. No restrictions are bypassed.
 - The plan does not imply that any gate has passed. No data audit, top-ten selection, model training, backtest, paper run, real order or deployment is claimed unless separately evidenced.
+
+
+## 2026-10-21 — Full AI requirement and anti-drift lock
+- User's detailed full-system requirement is consolidated in PROJECT_BLUEPRINT.md and the binding phase order is PLAN_AND_PHASE_LOCK.md.
+- AI must dynamically select among validated strategies/features and propose direction, entries, risk-bounded sizing, exits, stops, targets and trailing/gain-lock changes across 5m, 15m, 1h, 4h, 8h, 1d, 1w and monthly. Ten logical AI roles are proposed; the independent deterministic Safety Kernel remains mandatory.
+- Up to ten coins must be evidence-ranked with point-in-time historical membership. Use the longest verifiable history per asset/product; no invented ten-year coverage.
+- BNB commission is used only where current product/account rules support it and actual records verify deduction. Funding/spread/slippage/impact remain distinct costs.
+- At each substantive task, check live GitHub head, active phase, acceptance gate, evidence and blockers. Log real changes and read them back. Do not claim unverified tests, persistent model-memory changes, full uptime or zero error.
+- Current next gate: representative official Binance archive audit. No data audit, backtest, model training, paper run or live trade is claimed.
