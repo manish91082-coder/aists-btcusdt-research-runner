@@ -167,3 +167,9 @@ Check the complete plan every response, prevent drift strictly, preserve continu
 
 ### Exact next action
 Check whether GitHub Actions has a successful smoke run for the latest runner/tests. Then run the manual Phase 2 workflow for BTCUSDT Spot 5m and USDⓈ-M Futures 5m and independently review both report JSON files before deciding whether the gate passes.
+
+## 2026-10-21 | Offline smoke CI result independently verified
+- Retrieved the GitHub Actions run metadata and job steps for [run 39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620), on commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
+- Conclusion: `success`. Python compilation, unittest discovery, CLI help and malformed-date preflight all completed successfully.
+- Evidence boundary: offline smoke checks only. No real archive/checksum/API comparison is implied.
+- The latest 100 repository workflow runs inspected did not show a manual Phase 2 audit run. Next: user dispatches Phase 2 workflow and shares both reports/artifact for review.
