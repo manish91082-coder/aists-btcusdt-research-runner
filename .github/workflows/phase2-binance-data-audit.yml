@@ -114,7 +114,7 @@ jobs:
           if (requested.year, requested.month) >= (today.year, today.month):
               first = requested.replace(day=1)
               prior_month_last = first - timedelta(days=1)
-              day = min(requested.day, (prior_month_last.replace(day=28) + timedelta(days=4)).replace(day=1).day - 1)
+              day = min(requested.day, prior_month_last.day)
               selected = prior_month_last.replace(day=day)
           else:
               selected = requested
