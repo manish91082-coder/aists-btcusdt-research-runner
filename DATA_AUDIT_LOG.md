@@ -49,3 +49,9 @@ If the daily candidate is unavailable, discover a real period from the official 
 - Bulk download: NOT AUTHORIZED by the phase sequence yet.
 - S-01 to S-04 preregistration: NEXT after the representative data audit is actually completed or a durable blocker decision is recorded.
 - Strategy backtests, model training, paper trading, live trading: NOT PERFORMED in this audit attempt.
+
+
+## Audit runner review update (2026-10-21)
+- Reviewed the committed runner after initial creation and identified that gap counting between observed rows alone would not detect missing first/last candles of a UTC day.
+- Added a UTC-day expected-open coverage check for intervals that tile a day; the JSON report now includes expected count and missing-open examples. First/last event timestamps now use minimum/maximum observed open time rather than row-order endpoints.
+- This is a code review/change, not a real-data test. No downloaded archive or audit PASS is claimed. The runner itself still needs execution in a network-enabled runtime and independent review of both market reports.
