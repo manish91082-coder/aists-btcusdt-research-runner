@@ -1,3 +1,6 @@
+## 2026-10-21 | D-015 | USER-CONFIRMED | Immediate research priority
+Defer taxation/jurisdiction research to a later stage; focus now on trading strategy hypotheses and Binance data required to test them. This is sequencing only, not permission to bypass later product/eligibility gates.
+
 # Decision Log
 
 Label each entry USER-CONFIRMED, RECOMMENDED-PENDING-APPROVAL or RESEARCH-OPEN. Append new entries at the top.
