@@ -73,6 +73,37 @@ class MultiTimeframeSelectorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "between 1 and 8"):
             select_multi_timeframe_candidate(snapshot, candidates, min_confirming_timeframes=9)
 
+    def test_unknown_candidate_action_fails_closed(self):
+        snapshot, candidates = inputs()
+        candidates["5m"]["selected_action"] = "BUY"
+        with self.assertRaisesRegex(ValueError, "unsupported candidate action"):
+            select_multi_timeframe_candidate(snapshot, candidates)
+
+    def test_unsupported_strategy_family_fails_closed(self):
+        snapshot, candidates = inputs()
+        candidates["5m"]["selected_strategy"] = "UNVALIDATED_MAGIC"
+        with self.assertRaisesRegex(ValueError, "unsupported or missing strategy"):
+            select_multi_timeframe_candidate(snapshot, candidates)
+
+    def test_no_trade_cannot_carry_a_selected_strategy(self):
+        snapshot, candidates = inputs()
+        candidates["5m"]["selected_action"] = "NO_TRADE"
+        candidates["5m"]["selected_strategy"] = "TREND_FOLLOWING"
+        with self.assertRaisesRegex(ValueError, "NO_TRADE candidate must not select a strategy"):
+            select_multi_timeframe_candidate(snapshot, candidates)
+
+    def test_non_boolean_order_flag_fails_closed(self):
+        snapshot, candidates = inputs()
+        candidates["5m"]["is_order_instruction"] = "false"
+        with self.assertRaisesRegex(ValueError, "explicitly remain non-order-instruction"):
+            select_multi_timeframe_candidate(snapshot, candidates)
+
+    def test_non_mapping_candidate_fails_closed(self):
+        snapshot, candidates = inputs()
+        candidates["5m"] = None
+        with self.assertRaisesRegex(ValueError, "must be a mapping"):
+            select_multi_timeframe_candidate(snapshot, candidates)
+
 
 if __name__ == "__main__":
     unittest.main()
