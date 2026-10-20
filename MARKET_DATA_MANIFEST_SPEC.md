@@ -71,3 +71,6 @@ A strategy experiment may not begin until all input datasets have a validated ma
 - split boundaries and holdout lock.
 
 The manifest records provenance and quality, not trading performance.
+
+## 7. Retrieval blocker checkpoint (2026-10-21)
+- The current runtime could not resolve `data.binance.vision` while attempting candidate BTCUSDT Spot 5m and USDⓈ-M Futures daily archive/checksum URLs. No artifact was downloaded, so no manifest row or audit PASS is valid. See [DATA_AUDIT_LOG.md](DATA_AUDIT_LOG.md) for exact URLs, error and next steps.
