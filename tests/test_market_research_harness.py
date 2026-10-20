@@ -76,6 +76,7 @@ class ResearchHarnessTests(unittest.TestCase):
                 "as_of_ms": as_of_ms,
                 "brain_version": brain_version,
                 "strategy_version": strategy_version,
+                "input_prefix_sha256": "d" * 64,
                 "feature_observations": [{
                     "feature_name": "test_close",
                     "timeframe": "5m",
