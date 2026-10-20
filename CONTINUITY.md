@@ -103,3 +103,9 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Verified smoke run [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620) succeeded on test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`; its job steps include compilation, unit tests, CLI help and invalid-date rejection.
 - This does not verify any real Binance archive, checksum or API spot-check.
 - The latest 100 workflow runs inspected did not show a Phase 2 manual audit run. Active gate remains Phase 2. Next action: user dispatches the manual workflow and shares both Spot/Futures JSON reports plus evidence artifact for independent review.
+
+## 2026-10-21 — Resume verification: no Phase 2 run found
+- Re-read live `main` and the locked plan/rules/status/continuity/runbook/audit log/runner/tests/workflow. Current main ref is `ba547c6e18db46d4032757dc3ee4af89099c40bd`.
+- Smoke CI success remains verified at [run 39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620).
+- Latest 100 workflow runs inspected: no Phase 2 Binance archive audit run. Current GitHub tool integration exposes no workflow-dispatch action, so manual dispatch is still a user-side dependency.
+- Active gate unchanged: Phase 2 representative real-data audit. Next: dispatch workflow manually, share both JSON reports/artifact, independently review before advancing. Do not backtest yet.
