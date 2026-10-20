@@ -126,3 +126,11 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - Added the comparator to offline Python compilation in the smoke workflow. Latest observed smoke runs for these commits are still queued/in progress at the time of this log entry; CI success is not yet claimed.
 - Rechecked Phase 2 run [39494153349](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39494153349): archive checksum/ZIP/schema/candle-quality checks passed, but official API comparison remains BLOCKED in this runner's network environment (Spot endpoints returned HTTP 451; Futures numbered endpoints returned HTTP 202, which is not accepted as a verified candle response). Therefore the audit workflow correctly failed its enforcement gate.
 - Evidence boundary: daily/monthly cross-cadence comparison has been implemented but has not yet produced a verified report. It is the same official publisher, not an independent source. Phase 2 remains BLOCKED; no backtest, training, paper trading, live order, or deployment has occurred.
+
+
+## 2026-10-21 — Archive cadence comparison hardening and execution
+- Hardened `tools/compare_binance_archive_cadences.py`: identical daily/monthly rows no longer pass if both archives are missing expected candles for a UTC day. For intervals that tile a day, the diagnostic now requires the expected full-day row count as well as exact daily/monthly equality.
+- Added offline tests for Spot microsecond timestamp normalization, Futures millisecond timestamps, duplicate timestamp rejection, and the 288-candle expectation for 5m data.
+- Smoke run [39495002077](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39495002077) passed for the coverage-hardening commit. The run for the newly added tests and the Phase 2 audit on the same code path were still running at the time of this entry.
+- Phase 2 workflow run [39495002145](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39495002145) has now been triggered by the comparator update. Its final outcome and cross-cadence reports must be checked before drawing any data conclusions.
+- No protocol substitution: daily/monthly comparison is diagnostic and cannot override a blocked REST API check. Phase 2 remains BLOCKED until reports are reviewed and the locked evidence gate is satisfied.
