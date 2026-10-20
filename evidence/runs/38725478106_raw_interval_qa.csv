@@ -1,8 +1,0 @@
-interval,archive_count,rows_scanned,anomaly_count,duplicate_open_times,out_of_order_open_times,gap_event_count,estimated_missing_intervals,invalid_archive_count
-5m,110,957865,1,0,0,33,1301,0
-15m,110,319294,1,0,0,32,430,0
-30m,110,159653,1,0,0,31,210,0
-1h,110,79837,1,0,0,28,96,0
-4h,110,19974,0,0,0,9,17,0
-1d,110,3332,0,0,0,0,0,0
-1mo,105,105,0,0,0,0,,0

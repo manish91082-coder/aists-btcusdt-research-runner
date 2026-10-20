@@ -1,4 +1,0 @@
-cluster_id,dates,unmatched_rows,daily_only_rows,monthly_only_rows,status,interpretation
-2017_SEP_ROW_COVERAGE_CLOSE_BOUNDARY_CANDIDATE,2017-09-06,5,5,0,OPEN_NO_SOURCE_SELECTED,Daily-only open at 16:00 UTC coincides with close_time-only differences on adjacent monthly rows; exact coverage disposition required.
-2018_FEB_TIMESTAMP_ALIGNMENT_DIVERGENCE_CANDIDATE,2018-02-09;2018-02-10;2018-02-11,897,447,450,OPEN_NO_SOURCE_SELECTED,"Concentrated two-sided daily/monthly unmatched opens with fractional/off-grid monthly timestamps in the adjacent Feb 2018 segment; investigate shift/alignment and gaps, not automatic authority."
-2020_DEC_COMMON_CONTENT_ANOMALY_CANDIDATE,2020-12-21,7,0,7,OPEN_NO_SOURCE_SELECTED,Unmatched rows occur in the same known date as flat/zero-volume monthly rows and bad close-time reports; inspect source rows and roll-up impacts.

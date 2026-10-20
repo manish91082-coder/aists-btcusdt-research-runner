@@ -1,9 +1,0 @@
-{
-  "blockers_path": "evidence/source_adjudication/CP0040_Run_38883792900/CP0040_NonRow_Blockers.csv",
-  "candidate_eligibility_blocked": true,
-  "manifest_path": "evidence/source_adjudication/CP0040_Run_38883792900/CP0040_ExactKey_Quarantine_Manifest.csv",
-  "manifest_sha256": "e5cd62a67685b4ff1bc32c2434b5e373fe2dd76d74e2424b67a4cc5aee7c720a",
-  "run_id": 38883792900,
-  "status": "PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN",
-  "summary_path": "evidence/source_adjudication/CP0040_Run_38883792900/CP0040_ExactKey_Quarantine_Manifest_Summary.json"
-}

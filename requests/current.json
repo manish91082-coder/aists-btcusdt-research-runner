@@ -1,7 +1,0 @@
-{
-  "request_id": "CP0118-MONTHLY-INTERNAL-ROLLUP-AUDIT-20261016-01",
-  "task": "cp0118_monthly_parent_child_internal_rollup_audit",
-  "purpose": "Compare exact parent rows against their own source child rollups for 11 frozen buckets using Decimal arithmetic. No source selection, data changes, candidate build or backtest.",
-  "created_at_utc": "2026-10-16T18:25:00Z",
-  "requested_commit_sha": "9eafda8ef96f7008e6b624f6d5a3be660f64a3e4"
-}
