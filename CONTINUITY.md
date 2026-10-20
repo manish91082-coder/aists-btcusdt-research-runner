@@ -75,3 +75,11 @@ No feature is complete because it was planned. No test is PASS without observed 
 ## 2026-10-21 — Audit runner coverage hardening
 - Runner now checks UTC-day expected opens for intervals that tile a day, detecting missing first/last candles in addition to gaps between observed rows. Reported first/last timestamps use min/max observed open times.
 - This improvement has not been exercised on real Binance archive bytes. Phase 2 remains BLOCKED until the documented Colab run produces reports and they are independently reviewed.
+
+## 2026-10-21 Phase 2 continuity checkpoint — audit runner hardening
+- Current focus remains the locked Phase 2 representative Binance archive audit, not strategy implementation or backtesting.
+- Latest changes: API sample mismatch -> FAIL; API/transport verification issue -> BLOCKED; overall proven FAIL takes precedence over BLOCKED; PASS requires every required check to PASS.
+- Seven classification unit tests are committed and included in the smoke workflow. Workflow path filters include `tests/**`.
+- Current CI result for the latest commits has not yet been independently verified. Do not describe these tests as passing until actual output is observed.
+- No real Spot or USDⓈ-M archive has been downloaded or checksum-verified. Phase 2 is BLOCKED.
+- Immediate next action: user must manually dispatch [Phase 2 Binance archive audit](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/workflows/phase2-binance-data-audit.yml), download the artifact, and provide both `.report.json` files for review. Do not proceed to S-01..S-04 backtesting before the gate is resolved.
