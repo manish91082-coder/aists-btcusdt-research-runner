@@ -83,3 +83,9 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - Added unit tests in `tests/test_audit_status_classification.py` and added them to the offline smoke workflow.
 - Commits: runner correction `eba227503489c201f99b3a5e6d3a8642b80ede50`; tests `ecf45484be7784aa5a0b044a7f0494396d1f6dcd`; CI test wiring `52b02b398c9fbaa350064fbd1606868c9a45e6e1`.
 - These changes require the triggered CI run to be observed and the tests reviewed. This is not a real archive audit. No checksum or dataset PASS is claimed; Phase 2 remains BLOCKED pending both actual market reports.
+
+## Follow-up audit-gate precedence correction (2026-10-21)
+- A second review found that a required `BLOCKED` API check could mask a separate, already-proven required-check `FAIL`. The overall status now prioritizes a proven failure, then a blocker, and returns PASS only when every required check is PASS.
+- Removed the now-unused API aggregate flag and added a regression test for mixed `FAIL` + `BLOCKED` results.
+- Commits: `1a393f1dce292b182f021607f202279acf6fc010` (runner); `c596fa9f242e97594aa32e34ae84ff5147f24b57` (regression test).
+- The repository CI result for these latest commits still needs to be observed. This is code/test hardening only; no real Binance archive was downloaded or audited, and Phase 2 remains BLOCKED.
