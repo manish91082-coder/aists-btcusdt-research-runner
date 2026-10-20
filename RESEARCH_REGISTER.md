@@ -32,15 +32,15 @@ Updated: 2026-10-21. A source found is not the same as a question fully resolved
 Taxation/jurisdiction research is deferred to a later stage. Immediate focus is strategy hypotheses and the Binance data needed to test them. This does not remove later live-execution gates or authorise bypassing restrictions.
 
 ## Suggested sequence
-1. R02: current product/jurisdiction rules and account availability.
-2. R03: exact archive coverage, checksums, timestamp units, rows and gaps per candidate symbol/market.
-3. R04: point-in-time top-10 ranking policy and observed candidates.
-4. R06: full fee/funding/BNB ledger.
-5. R07-R08: feature, indicator, chart-pattern and strategy research.
-6. R10: risk formulas and stress cases.
-7. R11: backtest method and acceptance gates before empirical comparisons.
-8. R09: choose model families based on data, evidence and measured compute; do not guess.
-9. R12-R14: cost, security and operations after earlier gates.
+The current binding order is PLAN_AND_PHASE_LOCK.md. Respect the user's 2026-10-21 priority override:
+1. Audit one real official Binance archive end-to-end (R03), including checksum, schema, timestamp unit and data-quality output.
+2. Freeze S-01 to S-04 experiment protocols and benchmarks before any backtest (R08/R11).
+3. Build the exact historical coverage inventory (R03/R05), then evidence-rank the top-10 universe (R04).
+4. Complete feature registry and leakage checks (R07), fee/funding/BNB ledger (R06), and risk/portfolio mathematics (R10).
+5. Validate the backtest/statistical framework (R11) before comparing strategy results.
+6. Choose model families from evidence and measured compute (R09), then evaluate resource feasibility (R12).
+7. Perform execution/security/operations and shadow/paper acceptance (R13-R14) only after prior gates.
+8. Complete current product/account/jurisdiction eligibility and applicable requirements before any live release (R02/R15). Tax/jurisdiction research is deferred from the current strategy/data stage, not waived.
 
 ## Stop conditions
 Stop and preserve a blocker when product access is unclear/prohibited, required data is missing, checksum/schema fails, leakage is unresolved, cost modelling is incomplete, compute cannot meet cadence, risk limits are undefined, or any AI role bypasses the Safety Kernel.
