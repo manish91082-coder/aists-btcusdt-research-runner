@@ -65,7 +65,7 @@ class MultiTimeframeSelectorTests(unittest.TestCase):
     def test_rejects_order_instruction_and_bad_schema(self):
         snapshot, candidates = inputs()
         candidates["5m"]["is_order_instruction"] = True
-        with self.assertRaisesRegex(ValueError, "must not be an order instruction"):
+        with self.assertRaisesRegex(ValueError, "non-order-instruction"):
             select_multi_timeframe_candidate(snapshot, candidates)
         with self.assertRaisesRegex(ValueError, "schema"):
             select_multi_timeframe_candidate({}, candidates)
