@@ -69,3 +69,20 @@ Start R02 product/jurisdiction/account eligibility and R03 exact per-symbol hist
 - Clean-slate commit f52bac573c9509c71143158a7f609bd55a6a76bb moved to main; GitHub Contents API returned an empty list at that point.
 - Initial governance/continuity documents were created and verified.
 - User deferred repository rename. No trading code/backtest/paper/live order was performed.
+
+## 2026-10-21 | User-requested master plan and phase lock
+### Action
+- Reviewed the current master blueprint, project memory, continuity protocol, rules/locks, strategy dossier, research register and current status.
+- Added PLAN_AND_PHASE_LOCK.md with the full dependency-ordered roadmap, explicit phase exit gates, change-control protocol and immediate work queue.
+- Locked this plan as the default project sequence in RULES_AND_LOCKS.md and updated status/continuity records.
+
+### Current truth
+- 12 strategy candidates are registered but not empirically tested.
+- Market-data manifest specification exists, but no representative archive download/checksum/audit has been verified.
+- No top-10 universe, trained model, backtest, paper run, trading engine, real order or deployment is claimed.
+- Live trading, credentials, withdrawals, production deployment and real capital remain locked.
+
+### Next action
+1. Audit a real official Binance archive end-to-end; do not claim PASS until the artifact and validation output are observed.
+2. Freeze S-01 to S-04 experiment protocols before backtesting.
+3. Continue the phase gates in PLAN_AND_PHASE_LOCK.md without silent skipping.
