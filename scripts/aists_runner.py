@@ -3,6 +3,7 @@
 from __future__ import annotations
 import argparse, ast, csv, hashlib, json, os, re, subprocess, sys
 from datetime import datetime, timezone
+from g0_execution_guard import is_g0_protected_task
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -114,6 +115,11 @@ def main():
     if task=="smoke":
         check("smoke_no_network",True,"No HTTP requests; standard library only.")
         child_status="SMOKE_ONLY"
+    elif is_g0_protected_task(task):
+        check("g0_execution_authorization", False,
+              "G0_EVIDENCE_NOT_AUTHENTICATED: protected historical simulation task was not started")
+        child_status="BLOCKED_G0_AUTHORIZATION"
+        child_rc=1
     elif task=="cp0040_candidate_builder_gate_tests":
         child=ROOT/"scripts"/"AISTS_CP0026_Research_Candidate_Builder.py"
         check("task_script_exists",child.exists(),str(child))
