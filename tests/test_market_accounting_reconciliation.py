@@ -5,7 +5,7 @@ import unittest
 from aists_brain.accounting_reconciliation import (
     ReconciliationError, reconcile_simulation_with_ledger,
 )
-from aists_brain.cost_aware_simulator import simulate_next_open
+from aists_brain.cost_aware_simulator import _simulate_next_open_test_only
 from aists_brain.paper_portfolio import create_ledger, append_paper_fill
 
 
@@ -20,7 +20,7 @@ class AccountingReconciliationTests(unittest.TestCase):
             {"decision_id": "buy-1", "as_of_ms": 299999, "action": "BUY_CANDIDATE"},
             {"decision_id": "sell-1", "as_of_ms": 599999, "action": "SELL_CANDIDATE"},
         ]
-        self.sim = simulate_next_open(
+        self.sim = _simulate_next_open_test_only(
             self.candles, self.decisions, interval_ms=300000,
             initial_cash_usdt=1000.0, allocation_fraction=0.25,
             fee_bps_per_side=10.0, slippage_bps_per_side=5.0,
@@ -161,7 +161,7 @@ class AccountingReconciliationTests(unittest.TestCase):
             reconcile_simulation_with_ledger(altered, self.ledger)
 
     def test_open_position_equity_and_inventory_reconcile(self):
-        sim = simulate_next_open(
+        sim = _simulate_next_open_test_only(
             self.candles, self.decisions[:1], interval_ms=300000,
             initial_cash_usdt=1000.0, allocation_fraction=0.25,
             fee_bps_per_side=10.0, slippage_bps_per_side=5.0,
