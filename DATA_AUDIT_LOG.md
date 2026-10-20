@@ -76,3 +76,10 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - Added [manual GitHub Actions workflow](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/workflows/phase2-binance-data-audit.yml) to run Spot and USDⓈ-M Futures audits together and upload reports/evidence artifacts for 14 days. No API keys are used; no trading orders are possible from this workflow.
 - The workflow has not been manually dispatched yet. Its default date `2026-10-15` is only a candidate input, not verified archive availability. Phase 2 remains BLOCKED until both reports are downloaded and reviewed.
 - A smoke workflow run was triggered to verify the repository changes, but at this log entry its latest status had not yet been confirmed.
+
+## Audit status classification correction (2026-10-21)
+- Code review found that a temporary public API verification error could be collapsed into a generic audit failure even when no data mismatch had been established.
+- Updated `tools/audit_binance_archive.py` so an actual API sample mismatch is `FAIL`, an API transport/availability problem is `BLOCKED`, and the overall audit is `BLOCKED` when a required check is blocked and no required check has established a failure.
+- Added unit tests in `tests/test_audit_status_classification.py` and added them to the offline smoke workflow.
+- Commits: runner correction `eba227503489c201f99b3a5e6d3a8642b80ede50`; tests `ecf45484be7784aa5a0b044a7f0494396d1f6dcd`; CI test wiring `52b02b398c9fbaa350064fbd1606868c9a45e6e1`.
+- These changes require the triggered CI run to be observed and the tests reviewed. This is not a real archive audit. No checksum or dataset PASS is claimed; Phase 2 remains BLOCKED pending both actual market reports.
