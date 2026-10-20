@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest implementation checkpoint: CP-0276 simulator contract integration (CI verification pending for the integration test on the exact updated HEAD). Latest empirical admissibility audit remains CP-0151; no empirical gate has cleared. Re-fetch current branch HEAD and exact-HEAD CI each session before claiming a terminal result.
+Latest implementation checkpoint: CP-0276 simulator contract integration (test commit CI verified; documentation-final HEAD CI verification pending). Latest empirical admissibility audit remains CP-0151; no empirical gate has cleared. Re-fetch current branch HEAD and exact-HEAD CI each session before claiming a terminal result.
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -337,3 +337,11 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Report: [CP-0276 Simulator Contract Integration](CP0276_Simulator_Contract_Integration_HI.md).
 - Prior CI run [39311740842](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39311740842) passed 212 tests on CP-0275 head `2f3557d7d4f490c4c442dd936d83230f648de9c1`, but the fetched log did not visibly list the CP-0276 test names. Do not count that run as CP-0276 test verification. Run and inspect CI on the exact head containing this checkpoint before closing CP-0276.
 - Gates unchanged: G0 `BLOCKED_GLOBAL`, canonical historical source `NONE`, G2 current 23 candidates FAIL, G3 blocked, G4 insufficient, G6 adaptive AI not built/validated, G7 live blocked. CP-0040 remains frozen; no real historical inputs, candidate build, backtest or paper session; PR #2 stays open/unmerged.
+
+
+### CP-0276 exact test verification — 2026-10-20
+- Added a negative integration test proving non-finite `capital_usdt` is rejected by the simulator even if a contract object is altered after construction.
+- Test commit `1c052b2b415a075d15fc25f821ec4586c4d1e4b4`; Actions run [39362322504](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39362322504) terminal SUCCESS. Compile and test steps passed; log confirms `test_non_finite_contract_capital_is_rejected_by_simulator` and `Ran 219 tests`, `OK`.
+- PR #2 head matched the test commit and remained OPEN, merged=false. Report updated at [CP-0276 Simulator Contract Integration](CP0276_Simulator_Contract_Integration_HI.md).
+- This is software-only verification. G0 remains `BLOCKED_GLOBAL`; G2 current 23 candidates FAIL; G3 blocked; G4 insufficient; G6 adaptive AI not built/validated; G7 live blocked. No real historical data, candidate build, backtest or paper session; no profitability claim. CP-0040 remains frozen; PR #2 remains unmerged.
+- Next: verify exact-head CI after this documentation update, then return to the actual external G0 dependency. Do not add more infrastructure without a concrete goal blocker it removes.
