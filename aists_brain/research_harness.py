@@ -15,6 +15,10 @@ from typing import Any, Mapping
 
 from aists_brain.accounting_reconciliation import reconcile_simulation_with_ledger
 from aists_brain.decision_lineage import DECISION_SCHEMA, DecisionLineageError, validate_causal_decision_artifact
+from aists_brain.source_feature_verifier import (
+    SourceFeatureVerificationError,
+    verify_features_against_source_candles,
+)
 from aists_brain.cost_aware_simulator import _simulate_next_open_test_only
 from aists_brain.paper_portfolio import append_paper_fill, create_ledger, verify_ledger
 from aists_brain.provenance_input import (
@@ -83,6 +87,14 @@ def _run_manifest_driven_simulation_test_only(
         )
     except DecisionLineageError as exc:
         raise ResearchHarnessError(f"causal decision lineage rejected input: {exc}") from exc
+    try:
+        source_feature_verification = verify_features_against_source_candles(
+            decision_artifact, candles=loaded["candles"]
+        )
+    except (SourceFeatureVerificationError, ValueError, TypeError) as exc:
+        raise ResearchHarnessError(
+            f"source-derived feature verification rejected input: {exc}"
+        ) from exc
     brain_version = lineage["brain_version"]
     strategy_version = lineage["strategy_version"]
     decisions = lineage["decisions"]
@@ -143,6 +155,7 @@ def _run_manifest_driven_simulation_test_only(
             "decision_count": len(decisions),
             "causal_lineage_status": lineage["status"],
             "lineage_limitations": lineage["limitations"],
+            "source_feature_verification": source_feature_verification,
             "external_status_claim": "PASS",
         },
         "simulation": simulation,
