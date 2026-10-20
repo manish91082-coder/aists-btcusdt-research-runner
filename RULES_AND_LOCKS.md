@@ -57,3 +57,9 @@ Mandatory until explicitly changed. Every change must be dated and logged.
 - ZIP BACKUP: not created; historical preservation uses Git history and backup branch.
 
 To unlock any lock, record a dated decision, evidence, risk review, user approval where needed and synchronise this file with SESSION_LOG.md.
+
+## 2026-10-21 — Master plan lock
+- R-026: Follow PLAN_AND_PHASE_LOCK.md as the default dependency-ordered roadmap. Do not skip phases or mark a phase passed without its documented evidence and exit gate. Any reprioritisation must be recorded and must not waive safety/data/live-approval gates.
+- MASTER EXECUTION PLAN: LOCKED as the default sequence; changes require the change-control protocol in PLAN_AND_PHASE_LOCK.md.
+- Immediate work queue: representative official Binance archive audit; then freeze S-01 through S-04 experiments before any backtest.
+- This plan lock does not unlock trading code, credentials, live orders, withdrawals, production deployment or real capital.
