@@ -38,6 +38,33 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Validate manual inputs
+        shell: bash
+        env:
+          AUDIT_DATE: ${{ inputs.archive_date }}
+          AUDIT_SYMBOL: ${{ inputs.symbol }}
+          AUDIT_INTERVAL: ${{ inputs.interval }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import re
+          from datetime import date
+
+          value = os.environ["AUDIT_DATE"]
+          try:
+              parsed = date.fromisoformat(value)
+          except ValueError as exc:
+              raise SystemExit(f"Invalid archive_date {value!r}: expected canonical YYYY-MM-DD") from exc
+          if parsed.isoformat() != value:
+              raise SystemExit(f"Invalid archive_date {value!r}: expected canonical YYYY-MM-DD")
+          symbol = os.environ["AUDIT_SYMBOL"]
+          if not re.fullmatch(r"[A-Za-z0-9]+", symbol):
+              raise SystemExit("Invalid symbol: use ASCII letters and digits only")
+          if os.environ["AUDIT_INTERVAL"] not in {"5m", "15m", "1h", "4h"}:
+              raise SystemExit("Invalid interval: choose 5m, 15m, 1h, or 4h")
+          print(f"Validated inputs: date={value}, symbol={symbol.upper()}, interval={os.environ['AUDIT_INTERVAL']}")
+          PY
       - name: Run official Spot archive audit
         id: spot
         shell: bash
