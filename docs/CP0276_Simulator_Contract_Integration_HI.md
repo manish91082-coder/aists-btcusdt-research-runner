@@ -19,7 +19,7 @@ CP-0275 के evidence-gated INR-to-USDT capital/cost contract को offline n
 - Logs में `test_non_finite_contract_capital_is_rejected_by_simulator` नाम से नया test स्पष्ट रूप से चला और पास हुआ। PR #2 HEAD भी इस test commit से मेल खाता है और PR OPEN/unmerged है।
 - Fixture FX 100 INR/USDT, fee/slippage और filters केवल test values हैं, वास्तविक FX rate, Binance fee terms या verified exchange snapshot नहीं।
 - कोई historical BTCUSDT data, candidate build, performance backtest या paper session नहीं चलाया गया। कोई profitability claim नहीं।
-- Roadmap/report के बाद आने वाले documentation-only commit के exact HEAD पर CI को फिर से verify करना आवश्यक है।
+- Documentation-final HEAD `d530f83382c5b5c0c616872615d71b8ffff82adc` पर Actions run [39362405611](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39362405611) भी terminal SUCCESS रहा; log में वही नया test और `Ran 219 tests`, `OK` पुष्टि हुई।
 
 ## Gate और सुरक्षा स्थिति
 - G0: `BLOCKED_GLOBAL`; canonical historical source: `NONE`.
