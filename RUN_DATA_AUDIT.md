@@ -49,17 +49,14 @@ Upload both JSON reports here, plus the exact error output if either run is BLOC
 - No archive was downloaded or audited by authoring these files.
 - No checksum PASS, dataset PASS, strategy result, backtest, model training, paper run, or live order is claimed.
 
-
 ## Coverage checks added
 The runner additionally checks expected UTC-day candle opens for intervals that divide a day, so missing leading or trailing candles cannot pass merely because there are no gaps between the rows that remain. The report records expected candle count and examples of missing opens. This check has been added to the script but has not yet been executed against a downloaded archive.
-
 
 ## Additional timestamp checks
 The runner also checks that parsed candle opens belong to the requested UTC archive date, that open timestamps align to the selected interval, and that inclusive close timestamps equal open + interval − 1 ms after the documented timestamp normalization. Alignment and close-time checks are marked not applicable for intervals that do not divide a UTC day. These checks are code-added; confirm the associated GitHub Actions run before treating the edited runner as smoke-tested, and still require real archive reports.
 
-
 ## Preferred execution path: GitHub Actions (no Colab setup)
-A manual workflow now runs both representative markets in a network-enabled GitHub-hosted runner and uploads the JSON reports plus downloaded audit evidence as a 14-day artifact:
+A manual workflow runs both representative markets in a network-enabled GitHub-hosted runner and uploads the JSON reports plus downloaded audit evidence as a 14-day artifact:
 - Workflow: [Phase 2 Binance archive audit](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/workflows/phase2-binance-data-audit.yml)
 - Workflow file: [phase2-binance-data-audit.yml](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/main/.github/workflows/phase2-binance-data-audit.yml)
 
@@ -70,4 +67,4 @@ Steps:
 4. Open that run, download the artifact named `phase2-binance-audit-...`, and provide the two `.report.json` files here.
 5. If a market is BLOCKED or FAIL, share its JSON report and workflow logs. Do not treat the overall workflow as a data-quality PASS unless both reports say `PASS` and the reports are reviewed.
 
-The workflow is manual-only, uses no exchange credentials and submits no orders. GitHub Actions smoke tests do not substitute for this real archive audit. Phase 2 stays BLOCKED until the two reports are reviewed.
+The workflow is manual-only, uses no exchange credentials and submits no orders. It now validates the date, symbol, and interval before starting either market audit. An invalid input stops at preflight and does not produce audit artifacts. GitHub Actions smoke tests do not substitute for this real archive audit. Phase 2 stays BLOCKED until the two reports are reviewed.
