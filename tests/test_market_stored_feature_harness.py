@@ -14,7 +14,7 @@ from aists_brain.feature_artifact_store import persist_feature_artifact
 from aists_brain.provenance_input import SCHEMA_VERSION
 from aists_brain.research_harness import (
     ResearchHarnessError,
-    run_manifest_driven_simulation_from_stored_features,
+    run_manifest_driven_simulation_from_stored_features,\n    _run_manifest_driven_simulation_from_stored_features_test_only,
 )
 
 
@@ -71,7 +71,7 @@ class StoredFeatureHarnessTests(unittest.TestCase):
         self.tmp.cleanup()
 
     def run_pipeline(self):
-        return run_manifest_driven_simulation_from_stored_features(
+        return _run_manifest_driven_simulation_from_stored_features_test_only(
             self.csv_path, self.manifest_path, self.features_path,
             expected_interval="5m", initial_cash_usdt=100.0,
             symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5},
