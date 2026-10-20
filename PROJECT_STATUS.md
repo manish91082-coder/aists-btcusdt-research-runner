@@ -81,3 +81,8 @@ Use live main ref as authority. After the current write, re-fetch main, root lis
 - Added `tools/audit_binance_archive.py` to download one official Binance kline archive and companion checksum, calculate SHA-256, inspect ZIP/CSV schema, timestamp conventions, row order/gaps, OHLC/volume invariants, and perform bounded official API candle comparisons.
 - Added `RUN_DATA_AUDIT.md` with a zero-cost Colab route and separate Spot/USDⓈ-M Futures commands. This is tooling preparation only: no archive has been downloaded or audited by this step.
 - Phase 2 remains BLOCKED until actual report JSON and artifacts/evidence are returned and independently reviewed. No PASS or strategy performance claim.
+
+
+## 2026-10-21 — Audit runner coverage hardening
+- Hardened `tools/audit_binance_archive.py` to detect missing leading/trailing candles by checking expected UTC-day open timestamps for intervals that divide a day; report first/last event times now use minimum/maximum observed opens.
+- This is a code change only. The script has not been executed against a downloaded Binance archive; Phase 2 remains BLOCKED until real artifacts and reports are reviewed.
