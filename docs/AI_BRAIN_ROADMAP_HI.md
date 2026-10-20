@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest checkpoint: CP-0152 scope proposal (not approved; no run). CP-0151 remains the latest empirical admissibility audit; no empirical gate has cleared. Re-fetch current branch HEAD and exact-HEAD CI each session before claiming a terminal result.
+Latest implementation checkpoint: CP-0276 simulator contract integration (CI verification pending for the integration test on the exact updated HEAD). Latest empirical admissibility audit remains CP-0151; no empirical gate has cleared. Re-fetch current branch HEAD and exact-HEAD CI each session before claiming a terminal result.
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -328,3 +328,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Gate boundary unchanged: G0 `BLOCKED_GLOBAL`, canonical source `NONE`, CP-0040 frozen, 23 current candidates G2 FAIL, G3 blocked, G4 insufficient, G6 not validated, G7 live blocked. No real historical input, candidate build, backtest or paper session was run. PR #2 stays open/unmerged.
 - Report: [CP-0275 Capital & Cost Contract](CP0275_Capital_Cost_Contract_HI.md).
 
+
+
+## CP-0276 — Capital/cost contract से simulator integration (2026-10-20)
+- Added `simulate_next_open_with_capital_cost_contract(...)` in `aists_brain/cost_aware_simulator.py` to bind initial USDT capital, allocation, fee, slippage and BTCUSDT symbol filters from CP-0275's contract.
+- Wrapper rejects unsupported schema, blocked/unverified contract status, missing source references, invalid G0/safety boundary, and any input scope other than `SYNTHETIC_SOFTWARE_FIXTURE_ONLY` while G0 is blocked. Output explicitly labels contract-bound synthetic-fixture mode and preserves no-order/no-SLTP/no-profitability flags.
+- Added `tests/test_market_simulator_contract_integration.py` with synthetic fixtures and negative tests for blocked contract, missing source ref, schema mismatch, historical input scope and altered gate boundary. Fixture references/values are software-test inputs only, not real FX, Binance fee terms, symbol-filter evidence or market performance.
+- Report: [CP-0276 Simulator Contract Integration](CP0276_Simulator_Contract_Integration_HI.md).
+- Prior CI run [39311740842](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39311740842) passed 212 tests on CP-0275 head `2f3557d7d4f490c4c442dd936d83230f648de9c1`, but the fetched log did not visibly list the CP-0276 test names. Do not count that run as CP-0276 test verification. Run and inspect CI on the exact head containing this checkpoint before closing CP-0276.
+- Gates unchanged: G0 `BLOCKED_GLOBAL`, canonical historical source `NONE`, G2 current 23 candidates FAIL, G3 blocked, G4 insufficient, G6 adaptive AI not built/validated, G7 live blocked. CP-0040 remains frozen; no real historical inputs, candidate build, backtest or paper session; PR #2 stays open/unmerged.
