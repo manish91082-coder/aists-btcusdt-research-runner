@@ -1,3 +1,8 @@
+## 2026-10-21 — Market-data manifest specification
+- Added MARKET_DATA_MANIFEST_SPEC.md defining dataset provenance, checksum, schema, timestamp, gap and sample-API comparison fields.
+- Specified BTCUSDT Spot 5m and matching USDⓈ-M Futures as the proposed representative audit target; no data download or checksum run is claimed.
+- Linked the new document from README.
+
 ## 2026-10-21 — Strategy research dossier and Binance data requirements
 - Added STRATEGY_RESEARCH.md with 12 falsifiable strategy hypotheses and a dependency-aware research order.
 - Recorded official API/archive sources for Spot exchangeInfo and rate limits, symbol filters, USDⓈ-M Futures klines, archive intervals, checksums and timestamp-unit handling.
