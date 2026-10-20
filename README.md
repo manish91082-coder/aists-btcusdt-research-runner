@@ -31,3 +31,7 @@ At each session, fetch the live GitHub main head and read the status/continuity/
 
 ## Mandatory execution order
 Read [PLAN_AND_PHASE_LOCK.md](PLAN_AND_PHASE_LOCK.md) before any new task. It contains the locked phase sequence, AI decision contract, logical brain roles, exit gates, change control and anti-drift protocol. [PROJECT_BLUEPRINT.md](PROJECT_BLUEPRINT.md) remains the full durable project specification. Documentation is not implementation evidence.
+
+
+## Current Phase 2 blocker (2026-10-21)
+- The representative archive audit is currently blocked because the execution container could not resolve `data.binance.vision`; no archive or checksum has been verified. See [DATA_AUDIT_LOG.md](DATA_AUDIT_LOG.md) for exact attempted URLs and the next reproducible route.
