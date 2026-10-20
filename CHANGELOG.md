@@ -44,3 +44,8 @@ Newest first. Repository change log is not a performance claim.
 - This proves a current-environment retrieval blocker only. It does not prove the candidate archives exist or do not exist, and no archive bytes, checksum, schema, timestamp, row count, gap result or data-quality PASS is claimed.
 - Created DATA_AUDIT_LOG.md with exact attempted URLs, observed errors, evidence boundaries and a reproducible zero-cost next route via a network-enabled user-owned runtime such as Colab.
 - Phase 2 remains BLOCKED pending actual retrieval. No bulk download, strategy backtest, model training, paper run or live order was performed. Next: retrieve one real official artifact and its checksum, audit it end-to-end, then freeze S-01 to S-04 before any backtest.
+
+
+## 2026-10-21 — Phase 2 audit runner and runbook
+- Added `tools/audit_binance_archive.py` and `RUN_DATA_AUDIT.md` to enable reproducible official archive/checksum and data-quality checks in a network-enabled zero-cost runtime.
+- Tooling creation is not an archive audit result. Phase 2 remains blocked until actual downloaded artifacts and report JSON are reviewed.
