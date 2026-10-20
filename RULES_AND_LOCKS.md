@@ -70,3 +70,10 @@ To unlock any lock, record a dated decision, evidence, risk review, user approva
 - R-028: AI may dynamically choose among validated features/strategies and propose entries, exits, size, SL/TP and trailing changes, but cannot introduce untested mathematics into execution or override the independent Safety Kernel.
 - R-029: Continuous scanning, dynamic decisions and full automation may be claimed only to the extent demonstrated by measured runtime and verified tests; a plan is not implementation.
 - R-030: Every material response/action must report actual changes, verification limits, unresolved blockers and the exact next task; do not claim zero error or persistent model-memory changes without evidence.
+
+
+## 2026-10-21 — Expanded anti-drift and AI decision contract
+- R-027: Before each substantive action, check the final goal, live GitHub head, active phase, acceptance gate, evidence and blockers. Work only on the next gate unless the user explicitly changes priority.
+- R-028: AI may dynamically choose among validated features/strategies and propose entries, exits, size, SL/TP and trailing changes, but cannot introduce untested mathematics into execution or override the independent Safety Kernel.
+- R-029: Continuous scanning, dynamic decisions and full automation may be claimed only to the extent demonstrated by measured runtime and verified tests; a plan is not implementation.
+- R-030: Every material response/action must report actual changes, verification limits, unresolved blockers and the exact next task. Do not claim zero error or persistent model-memory changes without evidence.
