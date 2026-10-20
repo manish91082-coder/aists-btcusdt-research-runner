@@ -80,3 +80,7 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 - The current runtime cannot resolve `data.binance.vision`; see `DATA_AUDIT_LOG.md`.
 - A stdlib audit runner and zero-cost Colab runbook are committed as `tools/audit_binance_archive.py` and `RUN_DATA_AUDIT.md`. They are prepared but not run against real archives here.
 - Current gate remains BLOCKED until Spot and USDⓈ-M reports show actual source/checksum/schema/timestamp/gap/API comparison evidence. Then independently review and freeze S-01 to S-04 before backtesting.
+
+
+## 2026-10-21 — Audit runner quality note
+- Added expected UTC-day candle-open coverage to the archive auditor so missing boundary candles are not missed by inter-row gap checks. This is code hardening only; no real archive audit or PASS exists yet.
