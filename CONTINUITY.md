@@ -70,3 +70,8 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Current environment could not resolve `data.binance.vision`; the blocker is recorded in `DATA_AUDIT_LOG.md`.
 - To move forward without inventing evidence, `tools/audit_binance_archive.py` and `RUN_DATA_AUDIT.md` provide a zero-cost, network-enabled Colab route. Fetch live `main`, review both files, run separate Spot and USDⓈ-M audits, then request the JSON reports and any failure output for independent review.
 - Phase 2 is still BLOCKED until real archive bytes, checksum results and data-quality outputs are observed. Do not start strategy backtests before the representative data gate and S-01 to S-04 preregistration.
+
+
+## 2026-10-21 — Audit runner coverage hardening
+- Runner now checks UTC-day expected opens for intervals that tile a day, detecting missing first/last candles in addition to gaps between observed rows. Reported first/last timestamps use min/max observed open times.
+- This improvement has not been exercised on real Binance archive bytes. Phase 2 remains BLOCKED until the documented Colab run produces reports and they are independently reviewed.
