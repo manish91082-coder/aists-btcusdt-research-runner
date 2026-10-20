@@ -58,3 +58,11 @@ Use live main ref as authority. After the current write, re-fetch main, root lis
 - Linked the expanded plan from PROJECT_BLUEPRINT.md. The master plan remains the default ordered roadmap; no phase is passed by documentation alone.
 - Verified strategy candidates remain hypotheses only. The representative archive audit is still not completed; no strategy/backtest/model/paper/live execution is claimed.
 - Next action remains Phase 2: obtain and validate an actual official Binance archive with observed checksum/schema/timestamp/gap output. If blocked, preserve the exact blocker and investigate a verifiable zero-cost path.
+
+
+## 2026-10-21 — Full requirement audit and anti-drift checkpoint
+- Re-read the detailed user requirement against the blueprint, master phase lock, strategy dossier, data manifest and governance records.
+- Expanded PLAN_AND_PHASE_LOCK.md with AI decision contract, ten logical AI roles plus independent Safety Kernel, multi-timeframe causality, dynamic position/exit rules, fee accounting, zero-cost feasibility and per-response anti-drift checks.
+- Linked the expanded plan from PROJECT_BLUEPRINT.md. The roadmap is locked as the default sequence; documentation alone does not pass any phase.
+- No representative archive audit, strategy/backtest/model/paper run or live order is newly claimed.
+- Next task: Phase 2, verify an actual official Binance archive and its checksum/schema/timestamp/gap results; record blockers honestly.
