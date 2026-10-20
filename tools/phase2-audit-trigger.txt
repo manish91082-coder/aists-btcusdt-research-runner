@@ -1,3 +1,3 @@
-One-time Phase 2 archive audit trigger. Invocation attempt 2 after confirming workflow path trigger.
+One-time Phase 2 archive audit trigger. Invocation attempt 3 after adding completed-month diagnostic fallback; main audit remains 2026-10-15.
 Default inputs: date=2026-10-15 UTC, symbol=BTCUSDT, interval=5m.
 This marker exists solely to invoke the existing audit workflow once via a push path filter.
