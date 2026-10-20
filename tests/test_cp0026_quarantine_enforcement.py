@@ -73,11 +73,11 @@ class CP0026QuarantineEnforcementTests(unittest.TestCase):
         blockers = root / "blockers.csv"
         summary = root / "summary.json"
         manifest.write_text(
-            "case_id,case_class,interval,open_time_ms,disposition,canonical_source,case_closed\\n"
-            "ROW-1,EXACT_KEY,5m,1518170294789,QUARANTINE,NONE,false\\n",
+            "case_id,case_class,interval,open_time_ms,disposition,canonical_source,case_closed\n"
+            "ROW-1,EXACT_KEY,5m,1518170294789,QUARANTINE,NONE,false\n",
             encoding="utf-8",
         )
-        blockers.write_text("case_id,record_type,disposition\\nAGG-1,AGG,UNRESOLVED\\n", encoding="utf-8")
+        blockers.write_text("case_id,record_type,disposition\nAGG-1,AGG,UNRESOLVED\n", encoding="utf-8")
         summary.write_text(json.dumps({
             "status": "PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN",
             "row_level_manifest": {
