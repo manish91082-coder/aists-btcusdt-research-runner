@@ -216,3 +216,10 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - Report: [CP-0292 Feature Lineage Input-Prefix Binding](evidence/checkpoints/CP0292_Feature_Lineage_Input_Prefix_Binding_HI.md).
 
 - CP-0292 verification addendum: report updated in commit `fa9466a27c917e01d9324d78b67277b98966070b` with the exact-head success for run 39391119850. Current status-file update commit is now being re-verified; do not assume its CI terminal result until fetched.
+
+
+## CP-0292 subsequent exact-head verification note — 2026-10-20
+- GitHub Actions run [39391222478](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39391222478) on then-current head `86bc46b682d117b33591e604c9885883de5ee81a` completed terminal `success`; log confirms compile passed, 233 brain tests passed, and 11 CP-0026 quarantine tests passed.
+- The source-hash/input-prefix regression checks are included in the 233 brain tests. This proves internal software-contract behavior only, not honest feature derivation or external market-source provenance.
+- PR #2 remained OPEN and unmerged. G0 blocked; G2 current 23 candidates FAIL/not promoted; G3 blocked; G4 insufficient; G6 not built/validated; G7 live blocked. No real-market run, candidate build, backtest, paper session, signing, broadcast, or exchange order was performed.
+- This status commit itself requires exact-head CI re-verification.
