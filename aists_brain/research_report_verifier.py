@@ -152,8 +152,15 @@ def verify_research_audit_report(
             raise ResearchReportVerificationError("BLOCKED_INPUT entrypoint inspection flags must be boolean")
         if attempted and not inspected:
             raise ResearchReportVerificationError("simulation attempted without input-artifact inspection")
-        if not attempted and (inspected or reason != "REQUIRED_INPUT_ARGUMENT_MISSING"):
-            raise ResearchReportVerificationError("missing-argument BLOCKED_INPUT telemetry mismatch")
+        if not attempted and (
+            inspected or reason not in {
+                "REQUIRED_INPUT_ARGUMENT_MISSING",
+                "G0_EVIDENCE_NOT_AUTHENTICATED",
+            }
+        ):
+            raise ResearchReportVerificationError("blocked-input no-execution telemetry mismatch")
+        if reason == "G0_EVIDENCE_NOT_AUTHENTICATED" and gates["G0"] != "PASS":
+            raise ResearchReportVerificationError("unauthenticated G0 reason requires supplied PASS claim")
     elif status == "READY_NO_RUN":
         if run is not None or not isinstance(input_hashes, Mapping) or input_hashes:
             raise ResearchReportVerificationError("READY_NO_RUN report must not contain run/input hashes")
