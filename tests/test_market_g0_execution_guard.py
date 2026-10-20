@@ -79,6 +79,25 @@ class G0ExecutionGuardTests(unittest.TestCase):
         guard_call = builder_main.body[guard_index].value
         self.assertEqual(ast.literal_eval(guard_call.args[0]), "cp0026_candidate_builder")
 
+        for helper_name in ("audit_and_write_interval", "create_monthly_from_daily"):
+            with self.subTest(helper_name=helper_name):
+                helper = next(
+                    node for node in builder_tree.body
+                    if isinstance(node, ast.FunctionDef) and node.name == helper_name
+                )
+                self.assertGreaterEqual(len(helper.body), 2)
+                self.assertIsInstance(helper.body[0], ast.ImportFrom)
+                self.assertEqual(helper.body[0].module, "g0_execution_guard")
+                guard_stmt = helper.body[1]
+                self.assertIsInstance(guard_stmt, ast.Expr)
+                self.assertIsInstance(guard_stmt.value, ast.Call)
+                self.assertIsInstance(guard_stmt.value.func, ast.Name)
+                self.assertEqual(guard_stmt.value.func.id, "require_authenticated_g0")
+                self.assertEqual(
+                    ast.literal_eval(guard_stmt.value.args[0]),
+                    "cp0026_candidate_builder",
+                )
+
         runner_source = (SCRIPTS / "aists_runner.py").read_text(encoding="utf-8")
         self.assertIn("elif is_g0_protected_task(task):", runner_source)
         self.assertIn('child_status="BLOCKED_G0_AUTHORIZATION"', runner_source)
