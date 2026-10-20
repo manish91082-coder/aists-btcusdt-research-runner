@@ -1,59 +1,59 @@
-# Rules, Locks, and Operating Constraints
+# Rules, Constitution, Locks and Operating Constraints
 
-These rules are mandatory until the user explicitly changes them. Any change must be recorded in this file and the session log.
+Mandatory until explicitly changed. Every change must be dated and logged.
 
-## R-001: Git is the source of truth
-Project status, durable memory, continuity, rules, locks, decisions, and session history must live in this repository. Chat context alone is not the authoritative checkpoint.
+## Constitution
+1. Evidence before assertion.
+2. Research before implementation.
+3. Planned, attempted, completed and verified are separate states.
+4. GitHub is the project source of truth.
+5. Independently verify important evidence, data, mathematics and Git writes.
+6. Tie every task to the final goal and current research gate; no silent drift.
+7. Fail closed when data, product eligibility, account/order state or risk is uncertain.
+8. Reproducibility for every experiment.
+9. Research never authorises moving funds or placing orders.
+10. Material actions, failures, decisions and next steps must be logged.
 
-## R-002: Direct repository workflow
-Make project changes directly in GitHub. Do not substitute external workspaces or cloud drives unless the user explicitly authorizes a change.
-
-## R-003: Verify before acting
-Fetch the live branch SHA and inspect relevant paths before edits. Use expected-SHA/lease protections when available. If the branch head unexpectedly changed, stop and re-review rather than overwrite.
-
-## R-004: Verify after acting
-After every repository write, verify the resulting branch head, commit, file contents, and test results relevant to the change. Distinguish attempted from completed and verified.
-
-## R-005: No fabricated state
-Never invent files, test results, data provenance, strategy performance, exchange status, or successful execution. Record uncertainty explicitly.
-
-## R-006: Secrets never enter Git
-Never commit API keys, private keys, passwords, access tokens, account identifiers, or other secrets. Use documented secret-management mechanisms only after a deployment design is agreed.
-
-## R-007: No live trading without explicit authorization
-Do not connect to a live exchange, submit real orders, enable withdrawals, or deploy an autonomous live trader without explicit user authorization for that exact stage and a reviewed risk-control plan.
-
-## R-008: Safe development progression
-Prefer staged development: requirements → architecture → data validation → deterministic tests → historical backtests with fees/slippage assumptions → paper trading → limited, explicitly approved live execution. Do not skip gates silently.
-
-## R-009: Risk controls are required before execution
-Before any order-execution implementation is enabled, define and test position sizing, maximum exposure, per-trade and daily loss limits, stale-data handling, order rejection handling, duplicate-order prevention, kill switch, and safe restart/reconciliation behavior.
-
-## R-010: Evidence and provenance
-Record the source, timestamp, timezone, symbol/market, data interval, transformation, and validation outcome for trading data and research claims. Separate raw data from derived results.
-
-## R-011: Reproducibility
-Record relevant code revision, configuration, data window, dependencies, and random seeds where applicable for experiments and backtests.
-
-## R-012: Least privilege
-Use the minimum required permissions. Trading credentials, if later needed, must not have withdrawal permission unless a separately justified and explicitly approved requirement exists. Never expose credentials in logs.
-
-## R-013: Preserve history and unrelated work
-Do not delete the repository, historical commits, backup branch, or unrelated branches/PRs unless the user explicitly instructs that specific action.
-
-## R-014: Continuity synchronization
-After substantive work, synchronize status, memory, continuity, session log, and changelog. Update rules/locks when they change. Verify all updates on GitHub.
-
-## R-015: Scope and approval
-When a change is destructive, financially consequential, externally visible, or irreversible, summarize the exact scope and obtain explicit confirmation before execution.
+## Rules
+- R-001 Git is the source of truth for status, memory, continuity, rules, evidence and logs.
+- R-002 Make project changes directly in GitHub unless user explicitly changes this instruction.
+- R-003 Verify live branch head before acting; stop and re-review unexpected changes.
+- R-004 Verify resulting commit and file contents after every substantive change.
+- R-005 Never fabricate data, provenance, tests, performance or exchange status.
+- R-006 Never commit keys, tokens, passwords, private keys or secrets.
+- R-007 No live orders or autonomous execution without explicit authorisation for that exact stage.
+- R-008 Stage progression: research, data validation, deterministic tests, historical analysis, shadow/paper, security review, then optional separately approved limited live stage.
+- R-009 Before execution, require sizing, max exposure/loss, stale-data handling, duplicate prevention, kill switch and restart reconciliation.
+- R-010 Store source, timestamp, timezone, symbol/market, interval, transforms and validation status for trading data.
+- R-011 Record code revision, config, data window, dependencies and random seeds where applicable.
+- R-012 Least privilege; withdrawals disabled by default; secrets never in logs.
+- R-013 Preserve history, backup and unrelated branches unless exact scoped approval says otherwise.
+- R-014 Synchronise status/memory/continuity/logs after substantive actions.
+- R-015 Obtain explicit confirmation for destructive, financially consequential, externally visible or irreversible actions.
+- R-016 No trading implementation until relevant research acceptance gates are satisfied and documented.
+- R-017 AI may propose; deterministic Safety Kernel has final veto and cannot be overridden.
+- R-018 Real archives/live feeds must be source-verified; missing values stay missing; replay/paper fills must be labelled as estimated/virtual.
+- R-019 Measure storage/compute/uptime and verify free-tier terms before relying on any free resource.
+- R-020 Verify current account/product eligibility and applicable requirements before Futures execution; never bypass restrictions.
+- R-021 Chronological splits, leakage checks, point-in-time universe and multiple-testing awareness are required for performance claims.
+- R-022 Include actual fees, BNB deductions, Futures funding and measurable execution costs in net PnL.
+- R-023 Protective stops/trailing must have tested monotonicity and reconciliation; AI cannot loosen hard caps.
+- R-024 Every substantive project task/response must leave a dated status/log checkpoint; record failure and unresolved issue.
+- R-025 An AI-generated formula or strategy requires dimensional review, independent tests and unseen-data validation before promotion.
 
 ## Lock register
+- LIVE TRADING: LOCKED. No real order/autonomous live execution authorised.
+- EXCHANGE CREDENTIALS: LOCKED. None configured; none may be committed.
+- WITHDRAWALS: LOCKED.
+- PRODUCTION DEPLOYMENT: LOCKED.
+- FUTURES ACCOUNT/JURISDICTION ELIGIBILITY: BLOCKED pending verification.
+- TRADING CODE: LOCKED until research gates complete.
+- REAL CAPITAL: LOCKED. 10,000 USDT is a paper/research assumption only.
+- STRATEGY AND LIVE RISK PARAMETERS: NOT APPROVED.
+- TOP-10 COINS: NOT SELECTED; evidence-backed ranking required.
+- BNB FEE CONFIG: NOT VERIFIED for an actual account.
+- COMPUTE/HOSTING: no paid service authorised; zero-cost feasibility must be measured.
+- REPOSITORY RENAME: pending user; keep current name.
+- ZIP BACKUP: not created; historical preservation uses Git history and backup branch.
 
-- **LIVE-TRADING LOCK: LOCKED.** No real orders or autonomous live execution authorized.
-- **EXCHANGE-CREDENTIALS LOCK: LOCKED.** No credentials configured or to be committed.
-- **WITHDRAWALS LOCK: LOCKED.** No withdrawal functionality authorized.
-- **PRODUCTION-DEPLOYMENT LOCK: LOCKED.** No production deployment authorized.
-- **STRATEGY/PARAMETER LOCK: UNDEFINED.** Strategy and parameters are not yet agreed; do not guess.
-- **REPOSITORY RENAME: PENDING USER.** Current repository name remains unchanged until the user performs or authorizes the rename.
-
-Unlocking a lock requires a dated decision, explicit scope, relevant safety review, and updated evidence in this repository.
+To unlock any lock, record a dated decision, evidence, risk review, user approval where needed and synchronise this file with SESSION_LOG.md.

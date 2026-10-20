@@ -1,31 +1,45 @@
 # Project Memory
 
-This file stores durable project facts and decisions. It is not a substitute for live GitHub verification.
+Durable project memory. Live GitHub state and verified evidence override old chat recollection if there is a conflict.
 
-## Identity
+## Identity and style
+- Requested project name: Full AI Crypto Trading Bot 21 OCT.
+- Current GitHub repository: manish91082-coder/aists-btcusdt-research-runner. User will rename it later.
+- GitHub holds project specification, status, memory, continuity, constitution/rules/locks, evidence, decisions and project/session logs.
+- Do project changes directly in GitHub. Do not substitute Colab or Drive without explicit user direction.
+- Respond primarily in Hindi, using standard technical terms where helpful.
+- Apply zero-trust verification; distinguish user-confirmed requirements, proposals, open research and verified completion.
+- After substantive work, synchronise applicable documents, commit, and verify the live GitHub result.
 
-- Project name requested by user: **Full AI Crypto Trading Bot 21 OCT**.
-- Current GitHub repository path: `manish91082-coder/aists-btcusdt-research-runner`.
-- User intends to rename the repository later; do not claim it has already been renamed.
-- User requires project work to happen directly in GitHub, with Git as the source of truth for status, memory, continuity, rules, locks, and logs.
+## User-confirmed requirements
+- Fully AI-assisted Binance crypto system across Spot and Futures; long and short exposure.
+- AI dynamically chooses strategy, algorithm, indicators/features, entry, exit, initial stop, take-profit, trailing/gain-locking logic, and position adjustments.
+- Requested horizons: 5m, 15m, 1h, 4h, 8h, 1d, 1w and 1M/monthly.
+- Scanner over a high-volume top-ten coin universe; exact coins are not yet selected and must be evidence-ranked.
+- Learn from longest verifiable historical data, with ten-year target only where data exists.
+- Stated initial capital: 10,000 USDT.
+- Use BNB for fees wherever actual Binance product/account rules support it.
+- Prefer zero-cost/open-source resources; no fake claim that all compute or 24/7 hosting is free.
+- Research first, then coding. No fake data/PnL or unverified assertion. Keep an audit trail.
 
-## Workflow preferences
+## Clean-slate state
+- Clean-slate main commit: f52bac573c9509c71143158a7f609bd55a6a76bb.
+- Previous snapshot: f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733.
+- Backup branch: backup/pre-cleanup-2026-10-21-main-f2fcc6f.
+- Repository and history were retained during reset.
 
-- At session start and whenever the chat thread changes, re-read project state from GitHub and verify the current branch head.
-- Use a zero-trust approach: verify evidence, paths, commit SHAs, and tool results. Do not assume that a previous assistant statement is proof.
-- Keep continuity records in the repository so a new chat can resume from Git.
-- Keep responses primarily in Hindi, retaining standard technical terms in English where useful.
-- Report what was actually changed and verified; explicitly distinguish planned, attempted, completed, and verified work.
-- Do not use Colab or Drive as a substitute for repository-based project work unless the user explicitly requests a change.
+## Architecture recommendation, not yet user-approved
+- Ten bounded AI roles are proposed in PROJECT_BLUEPRINT.md.
+- A deterministic Safety Kernel must always have veto authority.
+- Recommend researching USDⓈ-M perpetual Futures first for USDT-denominated long/short exposure; eligibility is unresolved and must be checked.
+- Treat 10,000 USDT as paper/research equity until live capital is explicitly authorised.
+- Decide whether BNB fee reserve is inside or outside the stated 10,000 USDT.
+- Ordinary Spot is long/flat. Short exposure should use an eligible Futures product unless Spot Margin is separately researched/approved.
 
-## Clean-slate decision
-
-- User explicitly confirmed deletion of all 692 tracked files from the then-current `main` snapshot to start fresh.
-- New clean-slate commit: `f52bac573c9509c71143158a7f609bd55a6a76bb`.
-- Parent / preserved prior snapshot: `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`.
-- Backup branch: `backup/pre-cleanup-2026-10-21-main-f2fcc6f`.
-- Repository itself and historical Git data were to be retained; other branches and PRs were not to be modified or deleted as part of the clean-slate operation.
-
-## Product scope still to be confirmed
-
-The high-level goal is a fully AI-assisted crypto trading bot. Specific exchanges, markets, strategies, timeframes, risk limits, execution mode, data sources, deployment target, and acceptance criteria have not yet been established in the current clean-slate checkpoint. Do not invent them; capture decisions when the user confirms them.
+## Verified facts and current gaps
+- Binance launched in July 2017, making full ten-year Binance-only venue history impossible as of 2026-10-21; individual instruments may have shorter history.
+- Official Binance data archive documentation describes daily/monthly archives and checksums; no symbol-level coverage has yet been audited.
+- Published BNB discounts differ for Spot and USDⓈ-M Futures. Real fees depend on account/product/configuration, and Futures funding is separate.
+- FIU registration alone does not establish account-specific Futures eligibility or answer all tax/legal questions. Eligibility is a mandatory gate.
+- No code, trained model, verified data inventory, coin list, backtest or paper run exists on this clean-slate work branch as of this checkpoint.
+- No credential, fund transfer or live trade has been authorised.

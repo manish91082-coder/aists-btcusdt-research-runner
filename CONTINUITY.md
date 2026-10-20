@@ -1,45 +1,36 @@
 # Session and Chat Continuity Protocol
 
-Use this document whenever resuming after a pause, context loss, or chat-thread change.
+Use after a pause, context loss, new thread or uncertain prior state.
 
 ## Mandatory resume sequence
+1. Fetch the live GitHub main ref and write down its current SHA.
+2. Read README, PROJECT_STATUS, PROJECT_MEMORY, CONTINUITY, RULES_AND_LOCKS, PROJECT_BLUEPRINT, RESEARCH_REGISTER, EVIDENCE_REGISTER, DECISION_LOG, QUALITY_AUDIT, SESSION_LOG and CHANGELOG.
+3. Compare branch/head and contents with the last checkpoint; an SHA in an old chat message is not proof of current state.
+4. Identify last verified research gate, remaining blockers and next safe action.
+5. If chat memory conflicts with GitHub, explain the difference and follow verified GitHub state plus the current user instruction; do not overwrite unexpected changes silently.
+6. Refresh official source pages if product terms, APIs, fees, availability or regulations may have changed.
 
-1. Fetch the live `main` branch ref from GitHub.
-2. Read `README.md`, `PROJECT_STATUS.md`, `PROJECT_MEMORY.md`, `CONTINUITY.md`, `RULES_AND_LOCKS.md`, `SESSION_LOG.md`, and `CHANGELOG.md`.
-3. Confirm the latest commit SHA and check whether the repository has changed since the last checkpoint.
-4. Inspect relevant code, tests, issue/PR state, and evidence from GitHub before continuing the specific task.
-5. Identify the last verified completed step, unresolved blockers, and the next safe action.
-6. If Git state contradicts the chat transcript, trust the verified Git state and explain the discrepancy. Never silently overwrite or discard unexpected changes.
+## End-of-substantive-work
+1. Record what actually changed and what remains unverified.
+2. Update PROJECT_STATUS, this file, SESSION_LOG and CHANGELOG; update PROJECT_MEMORY for new durable facts/decisions; update RULES_AND_LOCKS when a rule changes; update the blueprint/research/evidence/decision/audit files relevant to the task.
+3. Mark items USER-CONFIRMED, RECOMMENDED-PENDING-APPROVAL, RESEARCH-OPEN, BLOCKED or VERIFIED-PARTIAL as appropriate.
+4. Prefer one coherent checkpoint commit. Use expected-SHA/lease protection to avoid overwriting unexpected main changes.
+5. Re-fetch the new branch head, root listing and every changed path. Only then report completion.
+6. If a write or readback fails, disclose it clearly.
 
-## End-of-work checkpoint
+## Current checkpoint
+The clean-slate main is transitioning into a research-first architecture. Blueprint, research, source and audit records are being established. Research is incomplete and trading implementation has not begun. Fetch the live head next session.
 
-After each substantive project action:
-1. Update `PROJECT_STATUS.md` with what changed, what is verified, blockers, and the next action.
-2. Update `PROJECT_MEMORY.md` for durable decisions or new confirmed facts.
-3. Update this file with the latest resume point and any continuity risks.
-4. Update `RULES_AND_LOCKS.md` whenever a rule, constraint, or lock changes; otherwise preserve its rules.
-5. Append a concise dated entry to `SESSION_LOG.md`.
-6. Update `CHANGELOG.md` with repository changes.
-7. Commit changes directly to GitHub, then re-fetch and verify the resulting commit and file contents.
-8. In the user response, provide the commit link/SHA and state exactly what was verified. If any write or verification fails, say so and leave the status unambiguous.
-
-For purely conversational turns with no project-state change, do not manufacture a repository change. If the user explicitly requires a checkpoint for that turn, record it.
-
-## Current resume point
-
-As of 2026-10-21, the clean-slate reset has been verified. The current work is to establish the governance and continuity files. No trading implementation has been started on the clean-slate `main`.
+## Immediate next work
+R02: verify current official Binance product/jurisdiction/account eligibility and applicable requirements without bypassing restrictions.
+R03: inventory historic coverage, source paths, checksums, timestamp units, row counts and gaps per selected symbol/market.
+Then R04: evidence-based top-ten ranking. No trading code before applicable gates pass.
 
 ## Context priority
+1. Current verified GitHub state and primary evidence.
+2. Repository blueprint, rules, source register and decision log.
+3. Current user instructions.
+4. Earlier chat recollection only if consistent.
 
-1. Live GitHub state and verified repository evidence.
-2. The governance and continuity files in this repository.
-3. Current conversation instructions.
-4. Older conversation memory, only when consistent with the above.
-
-## Safety against drift
-
-- Never infer a feature exists because it was planned.
-- Never call a test passed unless its output was observed.
-- Never claim an exchange order was placed without direct verified execution evidence.
-- Preserve unresolved questions as unresolved.
-- Keep secrets out of Git.
+## Anti-drift locks
+No feature is complete because it was planned. No test is PASS without observed output. No paper/synthetic result may be represented as real execution. LLM output is not source evidence. Never commit secrets. Live trading stays locked until all gates and exact-scope authorisation are complete.

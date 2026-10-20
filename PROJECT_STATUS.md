@@ -1,39 +1,37 @@
 # Project Status
 
 Last updated: 2026-10-21
-Status type: initial verified checkpoint
+Status: RESEARCH-FIRST BLUEPRINT BASELINED; RESEARCH INCOMPLETE
 
-## Verified repository state
+## Current repository state
+- Repository: manish91082-coder/aists-btcusdt-research-runner (rename deferred by user).
+- Working/default branch: main.
+- Pre-change main head verified before this blueprint update: db6fb812d911ded08f75923a57f22ea39f0611c0.
+- Clean-slate commit: f52bac573c9509c71143158a7f609bd55a6a76bb.
+- Previous snapshot branch: backup/pre-cleanup-2026-10-21-main-f2fcc6f, originally at f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733.
+- This checkpoint adds the blueprint, research workstreams, evidence source register, decision log and quality-audit checklist, and synchronises governance and continuity records.
 
-- Repository currently named: `manish91082-coder/aists-btcusdt-research-runner`.
-- Default branch: `main`.
-- The `main` branch was verified empty immediately before this bootstrap.
-- The empty-tree commit that began the clean slate: `f52bac573c9509c71143158a7f609bd55a6a76bb`.
-- Previous snapshot commit: `f2fcc6f2e74dcd08e59cdcb811cd680d35fb1733`.
-- Backup branch: `backup/pre-cleanup-2026-10-21-main-f2fcc6f`, intended to preserve the previous snapshot.
-- Desired display/project name: **Full AI Crypto Trading Bot 21 OCT**.
-- GitHub repository rename is pending; it has not been performed.
+## User requirements captured
+Binance; Spot + Futures; long/short exposure; BNB fees wherever supported; AI-dynamic universe/strategy/indicator/entry/exit/stop/target/trailing choices; rolling high-volume top-ten universe; 5m/15m/1h/4h/8h/1d/1w/1M; longest verifiable historical data with ten-year target where possible; stated 10,000 USDT initial capital; zero-cost-first; evidence-based research before coding; no fake data, unsupported assertions or drift; GitHub is the project memory/continuity/log source.
 
-## Work completed
+## Work done in this update
+- Drafted PROJECT_BLUEPRINT.md with system scope, ten proposed AI roles, deterministic Safety Kernel, multi-timeframe cadence, research methods, data controls, BNB/fee accounting, risk mathematics, dynamic exits and staged release gates.
+- Added RESEARCH_REGISTER.md, EVIDENCE_REGISTER.md, DECISION_LOG.md and QUALITY_AUDIT.md.
+- Recorded initial official-source findings: archive/checksum documentation, interval naming, BNB discount differences, Futures funding/commission categories, Spot Testnet reset limits, July 2017 venue launch constraint and India-specific product/tax verification gates.
+- Updated README, status, memory, continuity, rules/locks, session log and changelog.
 
-1. Confirmed the prior main snapshot and its tracked-file count before clean-slate reset.
-2. Created the backup branch at the prior snapshot.
-3. Moved `main` to a new commit with the canonical empty Git tree.
-4. Re-verified `main` points to the clean-slate commit and the GitHub contents API returned an empty list.
-5. Began rebuilding repository governance and continuity files directly on `main`.
-
-## Not yet done / do not imply completion
-
-- No trading engine or strategy has been implemented on the new `main`.
-- No backtest, paper-trading, exchange integration, security audit, or live-trading test has been run as part of this clean-slate work.
-- No credentials or API keys have been configured.
-- Repository rename has not been completed.
-- The old snapshot has not been independently exported as a ZIP; preservation is via GitHub Git history and backup branch.
+## Not done / not to imply completion
+- No trading engine, strategy or model code written.
+- No selected symbol's data has been downloaded or checksum-verified.
+- No top-ten list chosen.
+- No feature/strategy candidate empirically validated; no model trained.
+- No backtest, walk-forward report, paper-trading report or exchange order test has run.
+- No credentials created, funds moved, account settings changed, real order submitted or deployment enabled.
+- User/account-specific Futures eligibility remains unresolved.
+- No free always-on runtime has been proven to meet uptime and safety requirements.
 
 ## Next action
+Work R02 and R03 first: current official Binance product/account/jurisdiction eligibility and applicable requirements; then exact per-symbol historic coverage, checksums, timestamp units and gap inventory. Do not start trading implementation until research and coverage gates pass.
 
-Complete and verify the initial governance/continuity file set. Then define the bot's requirements and architecture with the user before implementing trading logic.
-
-## Verification policy
-
-Before changing files, fetch the current `main` ref and read relevant GitHub content. After changes, verify the new commit and each updated file. Never report a task as complete without evidence from the repository.
+## Verification rule
+Use live main ref as authority. After the current write, re-fetch main, root listing and changed file contents. If a write/readback fails, record the failure rather than calling the update verified.
