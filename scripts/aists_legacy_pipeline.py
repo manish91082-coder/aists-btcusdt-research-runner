@@ -264,6 +264,8 @@ def copy_if_exists(src, zipobj, arcname, inventory):
 
 
 def main():
+    from g0_execution_guard import require_authenticated_g0
+    require_authenticated_g0("legacy_pipeline")
     ap=argparse.ArgumentParser()
     ap.add_argument("--output-dir",default="results/legacy_pipeline")
     ap.add_argument("--cache-dir",default=".cache/aists/binance-monthly-archives")
