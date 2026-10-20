@@ -228,3 +228,9 @@ The next action must address the actual blocker to useful strategy evaluation, n
 ## Latest documentation-head verification — 2026-10-20
 - Branch/PR head `14f5e4c8ecd30bdde066a2d837ff845bb3a16e64` was verified by Actions run [39391875141](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39391875141), terminal `success`. Job steps confirm compile PASS, 233 brain tests PASS, and 11 CP-0026 quarantine tests PASS; log summaries explicitly report `Ran 233 tests` and `Ran 11 tests`, both `OK`.
 - PR #2 matched this SHA, OPEN, unmerged, and mergeable at verification. This checkpoint/status update is documentation-only; recheck exact-head CI after these writes.
+
+
+## CP-0292 exact-HEAD confirmation — 2026-10-20
+- Head `efa52287a3f7955b9fcf1cdeb0fde30dc9cc962a` verified by push run [39391953169](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39391953169) and PR run [39391960946](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39391960946), both terminal SUCCESS; compile, 233 brain unit tests, and 11 CP-0026 quarantine tests passed.
+- PR #2 remains OPEN / unmerged. Gate states unchanged. No market data, candidate build, backtest, paper session or live operation was performed.
+- Next bounded review: establish whether any trusted producer computes `input_prefix_sha256` from actual causal prefix bytes/records; hash equality alone cannot prove derivation provenance. G3 remains blocked pending actual candidate-path evidence.
