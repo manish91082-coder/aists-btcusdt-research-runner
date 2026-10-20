@@ -5,6 +5,7 @@ on:
     paths:
       - 'tools/phase2-audit-trigger.txt'
       - 'tools/audit_binance_archive.py'
+      - 'tools/compare_binance_archive_cadences.py'
   workflow_dispatch:
     inputs:
       archive_date:
@@ -94,6 +95,32 @@ jobs:
           python tools/audit_binance_archive.py --market usdm --symbol "$AUDIT_SYMBOL" --interval "$AUDIT_INTERVAL" --date "$AUDIT_DATE" --api-samples 3 --out audit_output/usdm
           rc=$?
           echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Cross-check Spot daily archive against monthly archive (diagnostic only)
+        if: always()
+        shell: bash
+        env:
+          AUDIT_DATE: ${{ inputs.archive_date || '2026-10-15' }}
+          AUDIT_SYMBOL: ${{ inputs.symbol || 'BTCUSDT' }}
+          AUDIT_INTERVAL: ${{ inputs.interval || '5m' }}
+        run: |
+          set +e
+          python tools/compare_binance_archive_cadences.py --market spot --symbol "$AUDIT_SYMBOL" --interval "$AUDIT_INTERVAL" --date "$AUDIT_DATE" --out audit_output/cadence_spot
+          rc=$?
+          echo "Spot daily-monthly diagnostic exit code: $rc"
+          exit 0
+      - name: Cross-check USDⓈ-M Futures daily archive against monthly archive (diagnostic only)
+        if: always()
+        shell: bash
+        env:
+          AUDIT_DATE: ${{ inputs.archive_date || '2026-10-15' }}
+          AUDIT_SYMBOL: ${{ inputs.symbol || 'BTCUSDT' }}
+          AUDIT_INTERVAL: ${{ inputs.interval || '5m' }}
+        run: |
+          set +e
+          python tools/compare_binance_archive_cadences.py --market usdm --symbol "$AUDIT_SYMBOL" --interval "$AUDIT_INTERVAL" --date "$AUDIT_DATE" --out audit_output/cadence_usdm
+          rc=$?
+          echo "USDⓈ-M daily-monthly diagnostic exit code: $rc"
           exit 0
       - name: Upload reports and downloaded audit evidence
         if: always()
