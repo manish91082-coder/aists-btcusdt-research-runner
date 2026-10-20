@@ -56,3 +56,18 @@ The runner additionally checks expected UTC-day candle opens for intervals that 
 
 ## Additional timestamp checks
 The runner also checks that parsed candle opens belong to the requested UTC archive date, that open timestamps align to the selected interval, and that inclusive close timestamps equal open + interval − 1 ms after the documented timestamp normalization. Alignment and close-time checks are marked not applicable for intervals that do not divide a UTC day. These checks are code-added; confirm the associated GitHub Actions run before treating the edited runner as smoke-tested, and still require real archive reports.
+
+
+## Preferred execution path: GitHub Actions (no Colab setup)
+A manual workflow now runs both representative markets in a network-enabled GitHub-hosted runner and uploads the JSON reports plus downloaded audit evidence as a 14-day artifact:
+- Workflow: [Phase 2 Binance archive audit](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/workflows/phase2-binance-data-audit.yml)
+- Workflow file: [phase2-binance-data-audit.yml](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/main/.github/workflows/phase2-binance-data-audit.yml)
+
+Steps:
+1. Open the workflow link and select **Run workflow**.
+2. Keep the default representative inputs unless there is a documented reason to change them: date `2026-10-15` UTC, symbol `BTCUSDT`, interval `5m`. The chosen date is a candidate, not a claim that the archive exists.
+3. Start the workflow and wait for both market steps to finish.
+4. Open that run, download the artifact named `phase2-binance-audit-...`, and provide the two `.report.json` files here.
+5. If a market is BLOCKED or FAIL, share its JSON report and workflow logs. Do not treat the overall workflow as a data-quality PASS unless both reports say `PASS` and the reports are reviewed.
+
+The workflow is manual-only, uses no exchange credentials and submits no orders. GitHub Actions smoke tests do not substitute for this real archive audit. Phase 2 stays BLOCKED until the two reports are reviewed.
