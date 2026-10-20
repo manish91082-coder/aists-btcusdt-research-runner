@@ -83,6 +83,8 @@ def self_tests():
 
 
 def main():
+    from g0_execution_guard import require_authenticated_g0
+    require_authenticated_g0("monthly_derived_replay")
     ap=argparse.ArgumentParser()
     ap.add_argument("--output-dir",default="results/monthly_derived_replay")
     ap.add_argument("--cache-dir",default=".cache/aists/binance-monthly-archives")
