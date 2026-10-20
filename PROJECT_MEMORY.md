@@ -90,3 +90,8 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 - Operational interpretation: do not answer “next” with a generic status repeat. Re-read the complete current master plan and relevant live GitHub status/evidence each turn, identify the single next safe action, do useful work where possible, record material changes, verify readback, and clearly separate verified facts from assumptions and blockers.
 - The durable source of truth is GitHub main and the evidence registers. Chat memory alone is not proof of a repository change, test result, data audit, or phase completion.
 - Active gate remains Phase 2 actual Spot + USDⓈ-M representative archive audit; no strategy backtest or downstream gate may start early.
+
+## 2026-10-21 — Phase 2 optional-header parser hardening
+- During code review, addressed the risk of an optional header row in an official 12-column kline CSV being miscounted as malformed data. The runner recognises only the exact known 12-column header on the first non-empty record and records whether it was present.
+- Four offline tests were added. Runner commit: `5369263058971e14fcae4db438a1e205cbb2c7ce`; test commit: `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
+- These are code/test changes only. CI for the latest changes and actual archive/checksum/API checks remain unverified. Phase 2 stays blocked; do not start strategy backtests.
