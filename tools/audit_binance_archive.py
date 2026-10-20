@@ -71,17 +71,21 @@ def timestamp_ms(raw_value: str, unit: str) -> int:
 
 
 def is_kline_header(row: list[str]) -> bool:
-    """Recognize the documented 12-column kline header without mistaking data for a header."""
+    """Recognize documented verbose and abbreviated 12-column Binance kline headers."""
     if len(row) != EXPECTED_COLUMNS:
         return False
     normalise = lambda value: re.sub(r"[^a-z0-9]", "", value.strip().lower())
     observed = [normalise(value) for value in row]
-    expected = [
-        "opentime", "open", "high", "low", "close", "volume", "closetime",
-        "quoteassetvolume", "numberoftrades", "takerbuybaseassetvolume",
-        "takerbuyquoteassetvolume", "ignore",
+    # Binance archives use both verbose field names (e.g. quote_asset_volume)
+    # and abbreviated names (e.g. quote_volume, count, taker_buy_volume).
+    accepted = [
+        {"opentime"}, {"open"}, {"high"}, {"low"}, {"close"}, {"volume"},
+        {"closetime"}, {"quoteassetvolume", "quotevolume"},
+        {"numberoftrades", "count"},
+        {"takerbuybaseassetvolume", "takerbuyvolume"},
+        {"takerbuyquoteassetvolume", "takerbuyquotevolume"}, {"ignore"},
     ]
-    return observed == expected
+    return all(value in names for value, names in zip(observed, accepted))
 
 
 def classify_api_sample_results(sample_results: list[dict]) -> str:
