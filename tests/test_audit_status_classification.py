@@ -111,7 +111,7 @@ class OfficialApiCandidateTests(unittest.TestCase):
         candidates = audit_runner.official_api_candidates(audit_runner.SPOT_API)
         self.assertIn("https://api-gcp.binance.com/api/v3/klines", candidates)
         self.assertIn("https://data-api.binance.vision/api/v3/klines", candidates)
-        self.assertTrue(all("binance.com" in candidate for candidate in candidates))
+        self.assertTrue(all("binance.com" in candidate or "binance.vision" in candidate for candidate in candidates))
 
     def test_futures_candidates_remain_on_official_futures_hosts(self):
         candidates = audit_runner.official_api_candidates(audit_runner.UM_API)
