@@ -34,3 +34,9 @@ Then R04: evidence-based top-ten ranking. No trading code before applicable gate
 
 ## Anti-drift locks
 No feature is complete because it was planned. No test is PASS without observed output. No paper/synthetic result may be represented as real execution. LLM output is not source evidence. Never commit secrets. Live trading stays locked until all gates and exact-scope authorisation are complete.
+
+## 2026-10-21 next-session strategy checkpoint
+- Latest work focus: strategy hypotheses and Binance market-data needs, per user's explicit prioritisation. Tax/jurisdiction research deferred, not removed from later live-readiness gates.
+- Read STRATEGY_RESEARCH.md first, then fetch live main SHA and read status/register/evidence/log.
+- Immediate next task: design the market-data manifest and verify one representative archive end-to-end (source path, checksum, schema, timestamp unit, first/last timestamps, gaps). No bulk dataset claims until this passes.
+- Freeze S-01 through S-04 experiments before backtesting. No strategy is proven profitable or live-approved.
