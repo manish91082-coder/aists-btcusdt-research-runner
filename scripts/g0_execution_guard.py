@@ -13,6 +13,7 @@ G0_PROTECTED_TASKS = frozenset({
     "legacy_pipeline",
     "cp0027_baseline_backtest",
     "cp0040_quarantine_sensitivity_run",
+    "cp0026_candidate_builder",
 })
 
 
