@@ -70,11 +70,15 @@ def verify_features_against_source_candles(
     artifact: Mapping[str, Any],
     *,
     candles: Sequence[Mapping[str, Any]],
+    timeframe: str | None = None,
 ) -> dict[str, Any]:
     """Recompute each decision's exact candle prefix hash and numeric context features."""
-    timeframe = artifact.get("timeframe")
+    artifact_timeframe = artifact.get("timeframe")
+    if artifact_timeframe is not None and timeframe is not None and artifact_timeframe != timeframe:
+        raise SourceFeatureVerificationError("artifact timeframe does not match source timeframe")
+    timeframe = artifact_timeframe or timeframe
     if timeframe not in TIMEFRAMES:
-        raise SourceFeatureVerificationError("artifact timeframe is missing or unsupported")
+        raise SourceFeatureVerificationError("artifact/source timeframe is missing or unsupported")
     rows = _normalized_candles(candles, timeframe)
     closes = {row["close_time_ms"]: index for index, row in enumerate(rows)}
     decisions = artifact.get("decisions")
