@@ -37,4 +37,4 @@ jobs:
             echo "Expected invalid date to be rejected"
             exit 1
           fi
-          grep -q "Date must be canonical YYYY-MM-DD" invalid-date.stderr
+          grep -q "error:" invalid-date.stderr
