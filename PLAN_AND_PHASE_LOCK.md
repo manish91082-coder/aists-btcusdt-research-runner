@@ -142,3 +142,67 @@ A user may explicitly reprioritise a phase. A reprioritisation does not silently
 - Top-10 universe: not selected.
 - Trading code/model/backtest/paper run/live order: not performed in this checkpoint.
 - Live trading, credentials, withdrawals, deployment and real capital remain locked.
+
+ 
+## G. Full AI system requirements traceability (expanded 2026-10-21)
+
+This section makes the user's detailed scope explicit. It supplements, rather than silently replaces, the existing blueprint.
+
+### G1. Autonomous decision contract
+AI owns dynamic interpretation and selection among validated choices: eligible asset/universe proposal; timeframe context; feature/indicator subset; strategy/model selection; long/short/flat/no-trade proposal; entry timing and allowed order style; risk-bounded size proposal; initial stop, target, time stop, trailing/gain-lock exit and position adjustment proposal. Every proposal must include as-of timestamps, data/model/config versions, uncertainty, expected net return after costs, risk impact, rationale trace and required supporting evidence.
+
+AI may not invent unregistered features or formulas directly into production. A newly discovered strategy/formula is a research hypothesis, not an executable rule, until versioned, independently checked, tested on chronological unseen data and explicitly promoted. The system must permit NO TRADE when evidence, data quality, net expectancy or uncertainty fails its hurdle.
+
+### G2. Logical AI brain plan
+The ten logical roles below are architecture candidates, not a commitment to ten expensive LLMs or ten processes. Choose actual model families only after comparative research and measured resource needs.
+
+1. Universe & Liquidity Brain: ranks eligible candidates from point-in-time evidence; records inclusion/exclusion reasons.
+2. Data Quality & Anomaly Brain: interprets deterministic validator outputs; cannot waive hard data failures.
+3. Market Regime Brain: estimates trend/range/volatility/liquidity/funding regime with uncertainty.
+4. Multi-Timeframe Context Brain: reconciles completed 5m/15m/1h/4h/8h/1d/1w/monthly bars and conflicts.
+5. Feature/Indicator Selector Brain: chooses only registered features and tested feature bundles.
+6. Strategy Discovery/Tournament Brain: compares only eligible, preregistered, validated candidates with walk-forward evidence.
+7. Signal/Probability Brain: estimates directional and return/risk distributions; proposes long/short/flat/no-trade with calibration.
+8. Portfolio/Sizing Brain: proposes allocation using total equity, existing positions, correlated risk, available margin and hard limits.
+9. Execution/Cost Brain: proposes among permitted order types/timing using measured spread, impact, fees and rate limits; never bypasses exchange filters.
+10. Position Supervision/Learning Brain: proposes exits, monotonic trailing updates, alerts, drift reviews and retraining requests.
+
+The deterministic Safety Kernel is an independent mandatory control, not one of the predictive brains. It validates schemas and freshness, product/account eligibility, filters, exposure/loss caps, position/order reconciliation, protection coverage, kill switch and live-authorisation state. It can veto any AI output and cannot be overridden. An independent audit/test function challenges evidence and mathematics. Prefer deterministic/numerical inference for frequent market decisions; use LLMs for bounded research, explanation and hypothesis generation only where measured value justifies cost/latency.
+
+### G3. Timeframe and continuous scanner contract
+Required horizons are 5m, 15m, 1h, 4h, 8h, 1d, 1w and monthly (API/archive token may be 1mo). Each feature records its source horizon and last available timestamp. Use only completed bars for close-based signals; join slower horizons as-of, not from future closes. A signal cannot fill at a price that was only knowable after the decision. Fast safety/position monitoring is event-driven and independent from slow model inference. Scanner cadence, stale-data thresholds and resource budgets must be measured and pre-registered; "continuous" is not claimed until the runtime demonstrates it.
+
+### G4. Dynamic position and exit contract
+Every new entry and add-on recomputes aggregate worst-case risk across existing positions, pending orders, Spot inventory and Futures exposures. No martingale, unbounded averaging down, or unbounded pyramiding. Stops are not guaranteed execution prices; gaps, slippage, trigger source and liquidation sensitivity must be modelled. Long trailing stops may stay or rise, never loosen downward; short trailing stops may stay or fall, never loosen upward. Any change logs source price, timestamp, reason, model version, prior/new protection, cost and risk impact. No model may override hard caps.
+
+### G5. Data and learning claims
+The "past ten years" request is interpreted as the longest verifiable history per asset/product, not an invented uniform decade. Binance launched in 2017, and individual listings/contracts may have shorter histories. Current top-ten winners must not be back-projected into history. Other-venue data, if later approved, is labelled and evaluated separately. All indicators, candle patterns and line/OHLC chart structures need explicit numerical definitions; no vague visual labels or claim that every known pattern is profitable. AI-generated mathematics must pass dimensional checks, independent tests, ablations, leakage review and unseen-data evaluation.
+
+### G6. Fees and initial equity
+10,000 USDT is the initial research/paper accounting value until a separate live release. Record gross PnL, each entry/exit commission, actual fee asset and BNB amount/value when deducted, spread, slippage, impact, funding paid/received, rejected/missed/partial orders and other realised costs. Verify BNB deduction from account/fill evidence and current product support. Never assume funding, spread, slippage, impact or liquidation costs can be paid in BNB.
+
+### G7. Zero-cost feasibility contract
+Prefer public official data, open-source tools and free compute. Measure data volume, disk, RAM, CPU/GPU, runtime, bandwidth, model inference latency, persistence, scheduler limits and outage recovery. Do not commit huge raw archives to Git by default; preserve source paths, retrieval timestamps, checksums, manifest and audit reports. If reliable always-on operation cannot be proven at zero cost, report that limitation rather than quietly buying services or claiming full automation.
+
+### G8. Per-response and per-change anti-drift audit
+Before each substantive response/action:
+1. Re-read the user's final goal and current request.
+2. Fetch live GitHub main and compare with the last verified head.
+3. Identify the active phase, its entry criteria, current evidence and blockers.
+4. Check scope, dependency order, data/math quality, security and no-code/live locks.
+5. Work only on the next gate unless the user explicitly reprioritises.
+6. Log actual work, failures, changes and the exact next action.
+7. Read back every changed file and verify the new main head before saying it was saved.
+8. End the user-facing report with current mission status and what remains unverified.
+
+A response cannot literally prove zero error in advance; it must demonstrate checks performed and state their limits. Never claim persistent model memory was changed by a chat response. Durable project continuity is maintained in these GitHub files.
+
+### G9. Requirement-to-phase map
+- Binance Spot + Futures, long/short, BNB fees, 10,000 USDT, timeframes, dynamic management: Phases 0, 6, 9, 11, 12.
+- Historical learning and exact archive availability: Phases 2–3.
+- Evidence-ranked top ten: Phase 4.
+- All indicators/patterns/strategies as formal candidates: Phases 1 and 5.
+- AI selection/training/multiple verification: Phases 1, 7 and 8.
+- Dynamic entry/exit/stops/targets/trailing/multiple entries: Phases 6–9.
+- Zero-cost full automation: Phases 9–11, with measured limitations.
+- No fabrication, no drift, audit trail, GitHub log and continuity: all phases and the change-control protocol.
