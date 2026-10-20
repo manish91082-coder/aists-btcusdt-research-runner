@@ -357,3 +357,10 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Report: [CP-0292 Feature Lineage Input-Prefix Binding](../evidence/checkpoints/CP0292_Feature_Lineage_Input_Prefix_Binding_HI.md).
 - This is an internal lineage-consistency improvement only; it does not authenticate external source provenance, clear G0/G2/G3, or establish profitability. Exact-head CI verification must be based on the terminal Actions run and inspected logs, not assumed from commit creation.
 - No real market data, candidate build, backtest, paper session, signing, broadcast or exchange order was performed. PR #2 remains open/unmerged.
+
+
+## CP-0293 — Source-feature verifier boundary and G0 unblock (2026-10-20)
+- Current HEAD when checkpoint began: `473ef1e950d892801782aec71b89e4ae06bde9e9`. Exact-head push run [39402003605](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39402003605) and PR run [39402010103](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39402010103) both succeeded; compile, 236 brain tests, and 11 quarantine-enforcement tests passed.
+- Feature verifier now recomputes features from supplied causal source rows and rejects altered values/hashes even when payload hashes are recomputed. This strengthens software integrity only; it cannot prove archive provenance or historical-version admissibility.
+- Actual goal blocker remains G0: an independent, trusted, dated G0-A..G0-E adjudication bound to the frozen CP-0040 rulebook and evidence population, plus a named canonical source and verifiable archive/version/correction evidence. Minimum receipt contract is in [CP-0293](../evidence/checkpoints/CP0293_Source_Feature_Verification_and_G0_Unblock_HI.md).
+- Do not run a real-market backtest or promote candidates while G0 is BLOCKED_GLOBAL. Do not repeat the same provenance search absent new evidence; no more infrastructure-only changes unless they close a demonstrated blocker. PR #2 stays open/unmerged; no live signing, broadcast or orders.
