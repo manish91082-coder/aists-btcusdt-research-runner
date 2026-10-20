@@ -86,3 +86,18 @@ Start R02 product/jurisdiction/account eligibility and R03 exact per-symbol hist
 1. Audit a real official Binance archive end-to-end; do not claim PASS until the artifact and validation output are observed.
 2. Freeze S-01 to S-04 experiment protocols before backtesting.
 3. Continue the phase gates in PLAN_AND_PHASE_LOCK.md without silent skipping.
+
+
+## 2026-10-21 | Detailed user requirement audit and plan saturation
+### Full requirement
+Binance Spot + Futures; long/short; BNB commission where supported; 5m/15m/1h/4h/8h/1d/1w/monthly; evidence-selected top ten; longest verifiable history; dynamic strategy/indicator/algorithm, entries/exits/sizing/SL/TP/trailing and position changes; 10,000 USDT research equity; zero-cost-first; no fake evidence or drift; research before code.
+
+### Repository changes
+- Expanded PLAN_AND_PHASE_LOCK.md with AI decision contract, ten bounded logical roles, independent Safety Kernel, scanner/timeframe causality, dynamic position/exit rules, zero-cost measurement, fee accounting and requirement-to-phase traceability.
+- Linked the master plan from PROJECT_BLUEPRINT.md and synchronised status, governance and continuity.
+
+### Verification truth
+The documents were written and read back from GitHub. This verifies repository documentation only. No representative archive audit, backtest, model training, paper run or live order is newly claimed.
+
+### Next gate
+Phase 2: actual official Binance archive download/verification and data-quality audit. Preserve blockers; never fabricate PASS.
