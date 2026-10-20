@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-17
-Latest implementation checkpoint: CP-0276 simulator contract integration (test commit CI verified; documentation-final HEAD CI verification pending). Latest empirical admissibility audit remains CP-0151; no empirical gate has cleared. Re-fetch current branch HEAD and exact-HEAD CI each session before claiming a terminal result.
+Latest implementation checkpoint: CP-0276 simulator contract integration (test commit and documentation-final verification commit CI passed; re-check current HEAD at each session start). Latest empirical admissibility audit remains CP-0151; no empirical gate has cleared. Re-fetch current branch HEAD and exact-HEAD CI each session before claiming a terminal result.
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -345,3 +345,6 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - PR #2 head matched the test commit and remained OPEN, merged=false. Report updated at [CP-0276 Simulator Contract Integration](CP0276_Simulator_Contract_Integration_HI.md).
 - This is software-only verification. G0 remains `BLOCKED_GLOBAL`; G2 current 23 candidates FAIL; G3 blocked; G4 insufficient; G6 adaptive AI not built/validated; G7 live blocked. No real historical data, candidate build, backtest or paper session; no profitability claim. CP-0040 remains frozen; PR #2 remains unmerged.
 - Next: verify exact-head CI after this documentation update, then return to the actual external G0 dependency. Do not add more infrastructure without a concrete goal blocker it removes.
+
+
+- Follow-up exact-head CI: documentation-final checkpoint before this note, `d530f83382c5b5c0c616872615d71b8ffff82adc`, passed Actions run [39362405611](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39362405611). Compile and test steps succeeded; the log confirms the CP-0276 non-finite-capital test and 219 tests, `OK`. This remains software verification only.
