@@ -123,3 +123,9 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Verified GitHub Actions smoke run [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620) succeeded for test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`. It includes compilation, unit tests, CLI help and malformed-date preflight.
 - This is offline CI evidence only; it is not a real Binance archive audit.
 - Latest 100 repository workflow runs inspected did not show a `Phase 2 Binance archive audit` run. Phase 2 remains BLOCKED pending manual dispatch and independent review of both Spot and USDⓈ-M JSON reports.
+
+## 2026-10-21 — Revalidated current gate and workflow state
+- Re-fetched the live `main` ref: `ba547c6e18db46d4032757dc3ee4af89099c40bd`. Re-read the master phase plan, rules, continuity, audit runbook/log, runner, tests and both relevant workflows.
+- Latest verified offline smoke run remains successful: [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620), on test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
+- Inspected the latest 100 workflow runs; none matched the Phase 2 Binance archive audit workflow. Available GitHub connector actions are read-oriented for workflow state and do not expose workflow dispatch, so I did not claim or simulate a run.
+- Phase 2 remains BLOCKED. Exact next action remains manual dispatch of the existing workflow and review of both real Spot and USDⓈ-M JSON reports plus evidence artifact. No backtest or downstream gate is authorised.
