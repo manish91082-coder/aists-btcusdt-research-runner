@@ -98,3 +98,8 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Commits: runner `5369263058971e14fcae4db438a1e205cbb2c7ce`; tests `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
 - Status/log records are being synchronised. CI for the latest change remains unverified; do not treat code-write acknowledgement as test success.
 - Next: check current smoke CI evidence if available, then manually dispatch the Phase 2 workflow and inspect both Spot and USDⓈ-M reports. No backtest until the representative data gate and S-01..S-04 preregistration gate are satisfied.
+
+## 2026-10-21 — CI evidence checkpoint
+- Verified smoke run [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620) succeeded on test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`; its job steps include compilation, unit tests, CLI help and invalid-date rejection.
+- This does not verify any real Binance archive, checksum or API spot-check.
+- The latest 100 workflow runs inspected did not show a Phase 2 manual audit run. Active gate remains Phase 2. Next action: user dispatches the manual workflow and shares both Spot/Futures JSON reports plus evidence artifact for independent review.
