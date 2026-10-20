@@ -562,7 +562,7 @@ def main():
         print(json.dumps(summary,ensure_ascii=False))
     monthly_out=outdir/f"{SYMBOL}-1mo-research-candidate.csv.gz"
     daily_path=outdir/f"{SYMBOL}-1d-research-candidate.csv.gz"
-    monthly_summary=create_monthly_from_daily(root,daily_path,monthly_out)
+    monthly_summary=create_monthly_from_daily(root,daily_path,monthly_out,quarantine_keys,quarantine_cases,all_quarantined)
     monthly_summary["file"]=str(monthly_out);monthly_summary["sha256"]=sha256_file(monthly_out)
     summaries.append(monthly_summary)
     write_csv_path=reports/"cp0026_day_source_disposition.csv"
