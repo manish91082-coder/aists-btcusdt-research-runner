@@ -96,3 +96,11 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Added manual GitHub Actions workflow `.github/workflows/phase2-binance-data-audit.yml` to run official Spot and USDⓈ-M Futures archive audits for a user-selected UTC date, symbol, and interval, then upload JSON reports and evidence artifacts.
 - Runbook now points to this workflow as the preferred low-friction execution path.
 - Workflow has been committed but not yet dispatched. No archive audit result exists from this workflow. Phase 2 remains BLOCKED until both actual reports are reviewed.
+
+## 2026-10-21 — Audit status classification hardening
+- Reviewed the representative archive runner and corrected API verification classification: a real API sample mismatch is FAIL; a temporary API/network verification problem is BLOCKED.
+- Corrected overall gate precedence so a proven required-check FAIL cannot be hidden by another BLOCKED check. PASS is allowed only when every required check is PASS.
+- Added seven unit tests for status classification and wired them into the offline smoke workflow; changed workflow path filters so changes under tests/ trigger the smoke checks.
+- Re-fetched the runner, tests, workflow and audit log from main and confirmed the expected changes are present.
+- Latest CI result for these newest commits has not yet been independently observed. No real Binance archive has been downloaded or checksum-verified. Phase 2 remains BLOCKED.
+- Immediate next action remains: manually run the Phase 2 Spot + USDⓈ-M workflow, retrieve both reports, review evidence. Do not backtest or freeze S-01 to S-04 until this gate is resolved.
