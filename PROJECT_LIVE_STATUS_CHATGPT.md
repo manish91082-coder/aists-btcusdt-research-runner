@@ -239,3 +239,8 @@ The next action must address the actual blocker to useful strategy evaluation, n
 ## CP-0292 final documentation-head exact verification — 2026-10-20
 - HEAD `64964969843d6f087695bd8bb51342fa71c2586d` verified via exact-HEAD Actions run [39393790994](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39393790994), terminal `success`: compile PASS, 233 brain tests PASS, 11 CP-0026 quarantine tests PASS; both CP-0292 lineage regression tests passed.
 - PR #2 remains OPEN and unmerged. Gates unchanged; no empirical profitability claim or live action authorized.
+
+
+## CP-0292 final exact-head CI result — 2026-10-20
+- Documentation head `1a1cdde251d6125b6e32bc63560ecca4b7c7d179` verified by Actions run [39393866585](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39393866585), terminal `success` on exact SHA; compile, brain unit tests and CP-0026 quarantine test job completed successfully.
+- PR #2 OPEN / unmerged. Gates unchanged. No empirical profitability claim or live activity authorized.
