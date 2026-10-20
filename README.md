@@ -35,3 +35,7 @@ Read [PLAN_AND_PHASE_LOCK.md](PLAN_AND_PHASE_LOCK.md) before any new task. It co
 
 ## Current Phase 2 blocker (2026-10-21)
 - The representative archive audit is currently blocked because the execution container could not resolve `data.binance.vision`; no archive or checksum has been verified. See [DATA_AUDIT_LOG.md](DATA_AUDIT_LOG.md) for exact attempted URLs and the next reproducible route.
+
+
+## Phase 2 audit runner
+- A standard-library-only audit runner and Colab runbook are now available: [tools/audit_binance_archive.py](tools/audit_binance_archive.py) and [RUN_DATA_AUDIT.md](RUN_DATA_AUDIT.md). They prepare a reproducible route but do not mean an archive was downloaded or passed.
