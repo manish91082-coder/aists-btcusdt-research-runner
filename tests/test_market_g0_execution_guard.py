@@ -26,6 +26,7 @@ class G0ExecutionGuardTests(unittest.TestCase):
             "legacy_pipeline",
             "cp0027_baseline_backtest",
             "cp0040_quarantine_sensitivity_run",
+            "cp0026_candidate_builder",
         }
         self.assertEqual(G0_PROTECTED_TASKS, frozenset(expected))
         for task in expected:
@@ -54,6 +55,29 @@ class G0ExecutionGuardTests(unittest.TestCase):
                 self.assertIsInstance(call.value.func, ast.Name)
                 self.assertEqual(call.value.func.id, "require_authenticated_g0")
                 self.assertEqual(ast.literal_eval(call.value.args[0]), task)
+
+        builder_source = (SCRIPTS / "AISTS_CP0026_Research_Candidate_Builder.py").read_text(encoding="utf-8")
+        builder_tree = ast.parse(builder_source, filename="AISTS_CP0026_Research_Candidate_Builder.py")
+        builder_main = next(
+            node for node in builder_tree.body
+            if isinstance(node, ast.FunctionDef) and node.name == "main"
+        )
+        gate_self_test_index = next(
+            i for i, node in enumerate(builder_main.body)
+            if isinstance(node, ast.If)
+            and isinstance(node.test, ast.Attribute)
+            and node.test.attr == "gate_self_test"
+        )
+        guard_index = next(
+            i for i, node in enumerate(builder_main.body)
+            if isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Name)
+            and node.value.func.id == "require_authenticated_g0"
+        )
+        self.assertGreater(guard_index, gate_self_test_index)
+        guard_call = builder_main.body[guard_index].value
+        self.assertEqual(ast.literal_eval(guard_call.args[0]), "cp0026_candidate_builder")
 
         runner_source = (SCRIPTS / "aists_runner.py").read_text(encoding="utf-8")
         self.assertIn("elif is_g0_protected_task(task):", runner_source)
