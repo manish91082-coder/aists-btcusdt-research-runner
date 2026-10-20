@@ -24,3 +24,8 @@ Newest first. Repository change log is not a performance claim.
 - Created a clean-slate main commit while preserving Git history and the backup branch.
 - Added initial README, project status/memory/continuity, rules/locks, session log and changelog.
 - Repository rename remains pending; current name remains unchanged.
+
+## 2026-10-21 — Master execution plan and phase lock
+- Added PLAN_AND_PHASE_LOCK.md with the complete ordered phases 0–12, deliverables, exit gates, current work queue and change-control protocol.
+- Locked the default phase sequence in RULES_AND_LOCKS.md and synchronised status, continuity and session logs.
+- Next gate is a real representative Binance archive audit. No data audit, strategy result or trading readiness is claimed.
