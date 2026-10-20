@@ -215,6 +215,16 @@ def _run_manifest_driven_simulation_from_stored_features_test_only(
         ) from exc
     if stored["artifact"].get("source_csv_sha256") != loaded["csv_sha256"]:
         raise ResearchHarnessError("stored feature artifact is bound to a different candle CSV")
+    try:
+        source_feature_verification = verify_features_against_source_candles(
+            stored["artifact"],
+            candles=loaded["candles"],
+            timeframe=loaded["interval"],
+        )
+    except (SourceFeatureVerificationError, ValueError, TypeError) as exc:
+        raise ResearchHarnessError(
+            f"stored source-derived feature verification rejected input: {exc}"
+        ) from exc
     result = _run_manifest_driven_simulation_test_only(
         csv_path, manifest_path, stored_artifact_path,
         expected_interval=expected_interval,
@@ -228,8 +238,9 @@ def _run_manifest_driven_simulation_from_stored_features_test_only(
     result["decision_input"]["stored_artifact_payload_sha256"] = stored["payload_sha256"]
     result["decision_input"]["stored_artifact_file_sha256"] = stored["file_sha256"]
     result["decision_input"]["stored_artifact_store_schema"] = stored["schema_version"]
+    result["decision_input"]["source_feature_verification"] = source_feature_verification
     result["limitations"].append(
-        "stored-artifact wrapper validates hashes and causal contract, not independent source provenance"
+        "stored-artifact wrapper independently recomputes features from supplied candles but does not authenticate external source provenance"
     )
     return result
 
