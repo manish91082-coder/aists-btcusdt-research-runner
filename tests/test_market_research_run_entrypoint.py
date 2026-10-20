@@ -52,7 +52,7 @@ class ResearchRunEntryPointTests(unittest.TestCase):
             repository_head_sha=HEAD,
         )
         self.assertEqual(report["status"], "BLOCKED_INPUT")
-        self.assertEqual(report["entrypoint"]["blocked_reason"], "REQUIRED_INPUT_ARGUMENT_MISSING")
+        self.assertEqual(report["entrypoint"]["blocked_reason"], "G0_EVIDENCE_NOT_AUTHENTICATED")
         self.assertFalse(report["entrypoint"]["input_artifacts_inspected"])
         self.assertFalse(report["entrypoint"]["simulation_attempted"])
         self.assertIsNone(report["run"])
@@ -73,11 +73,45 @@ class ResearchRunEntryPointTests(unittest.TestCase):
             initial_cash_usdt=100.0,
         )
         self.assertEqual(report["status"], "BLOCKED_INPUT")
-        self.assertEqual(report["entrypoint"]["blocked_reason"], "REQUIRED_INPUT_ARGUMENT_MISSING")
+        self.assertEqual(report["entrypoint"]["blocked_reason"], "G0_EVIDENCE_NOT_AUTHENTICATED")
         self.assertFalse(report["entrypoint"]["input_artifacts_inspected"])
         self.assertFalse(report["entrypoint"]["simulation_attempted"])
         self.assertEqual(report["input_hashes"], {})
         self.assertIsNone(report["run"])
+
+    def test_supplied_g0_pass_never_inspects_inputs_or_attempts_simulation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            missing_csv = Path(temp) / "must-not-be-opened.csv"
+            missing_manifest = Path(temp) / "must-not-be-opened.json"
+            missing_features = Path(temp) / "must-not-be-opened-features.json"
+            with mock.patch(
+                "aists_brain.research_run_entrypoint.run_manifest_driven_simulation_from_stored_features",
+                side_effect=AssertionError("simulation harness must not be invoked"),
+            ) as harness:
+                report = run_research_entrypoint(
+                    gate_snapshot={**GATES_BLOCKED, "G0": "PASS"},
+                    run_id="cp0282-unauthenticated-g0-pass",
+                    repository_head_sha=HEAD,
+                    csv_path=missing_csv,
+                    manifest_path=missing_manifest,
+                    stored_artifact_path=missing_features,
+                    expected_interval="4h",
+                    initial_cash_usdt=100.0,
+                    symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5},
+                )
+            harness.assert_not_called()
+            self.assertEqual(report["status"], "BLOCKED_INPUT")
+            self.assertEqual(report["entrypoint"]["blocked_reason"], "G0_EVIDENCE_NOT_AUTHENTICATED")
+            self.assertFalse(report["entrypoint"]["input_artifacts_inspected"])
+            self.assertFalse(report["entrypoint"]["simulation_attempted"])
+            self.assertEqual(report["input_hashes"], {})
+            self.assertIsNone(report["run"])
+            self.assertFalse(missing_csv.exists())
+            self.assertFalse(missing_manifest.exists())
+            self.assertFalse(missing_features.exists())
+            verified = verify_research_audit_report(report)
+            self.assertEqual(verified["report_status"], "BLOCKED_INPUT")
+            self.assertEqual(verified["status"], "PASS_STRUCTURAL_INTEGRITY")
 
     def test_blocked_report_is_deterministic_for_same_inputs(self):
         kwargs = dict(
