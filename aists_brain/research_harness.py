@@ -89,7 +89,9 @@ def _run_manifest_driven_simulation_test_only(
         raise ResearchHarnessError(f"causal decision lineage rejected input: {exc}") from exc
     try:
         source_feature_verification = verify_features_against_source_candles(
-            decision_artifact, candles=loaded["candles"]
+            decision_artifact,
+            candles=loaded["candles"],
+            timeframe=loaded["interval"],
         )
     except (SourceFeatureVerificationError, ValueError, TypeError) as exc:
         raise ResearchHarnessError(
