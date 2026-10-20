@@ -70,6 +70,20 @@ def timestamp_ms(raw_value: str, unit: str) -> int:
     raise ValueError(f"Unsupported timestamp unit: {unit}")
 
 
+def is_kline_header(row: list[str]) -> bool:
+    """Recognize the documented 12-column kline header without mistaking data for a header."""
+    if len(row) != EXPECTED_COLUMNS:
+        return False
+    normalise = lambda value: re.sub(r"[^a-z0-9]", "", value.strip().lower())
+    observed = [normalise(value) for value in row]
+    expected = [
+        "opentime", "open", "high", "low", "close", "volume", "closetime",
+        "quoteassetvolume", "numberoftrades", "takerbuybaseassetvolume",
+        "takerbuyquoteassetvolume", "ignore",
+    ]
+    return observed == expected
+
+
 def classify_api_sample_results(sample_results: list[dict]) -> str:
     """Distinguish a real API/data mismatch from a temporary inability to verify."""
     statuses = {item.get("status") for item in sample_results}
@@ -149,6 +163,7 @@ def main() -> int:
         "timestamp_unit_rule": ts_rule,
         "status": "BLOCKED",
         "checks": {},
+        "csv_header_present": None,
         "errors": [],
         "limitations": [
             "Checksum validates bytes against the publisher's checksum, not economic correctness or completeness.",
@@ -188,10 +203,16 @@ def main() -> int:
 
         rows = []
         malformed = 0
+        first_nonempty_record = True
         with io.TextIOWrapper(io.BytesIO(csv_bytes), encoding="utf-8", newline="") as stream:
             for line_no, row in enumerate(csv.reader(stream), start=1):
                 if not row or all(not x.strip() for x in row):
                     continue
+                if first_nonempty_record:
+                    first_nonempty_record = False
+                    report["csv_header_present"] = is_kline_header(row)
+                    if report["csv_header_present"]:
+                        continue
                 if len(row) != EXPECTED_COLUMNS:
                     malformed += 1
                     continue
