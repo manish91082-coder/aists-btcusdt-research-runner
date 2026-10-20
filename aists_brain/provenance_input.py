@@ -64,7 +64,10 @@ def load_provenance_cleared_candles(
       expected_row_count, first_open_time_ms, last_open_time_ms,
       coverage_pct (>=99.5), all_missing_intervals_accounted=true,
       all_gap_events_accounted=true, completed_candles_only=true.
-    This validates claims and hashes, not the external adjudicator's authority.
+    If timestamp gaps exist, gap_events must exactly enumerate each observed
+    gap as {previous_open_time_ms, next_open_time_ms, first_missing_open_time_ms,
+    last_missing_open_time_ms, missing_count}. This validates claims and hashes,
+    not the external adjudicator's authority.
     """
     data_path, meta_path = Path(csv_path), Path(manifest_path)
     try:
@@ -118,6 +121,7 @@ def load_provenance_cleared_candles(
     _require(actual_hash == manifest["csv_sha256"], "CSV SHA-256 does not match manifest")
 
     candles: list[dict[str, Any]] = []
+    observed_gap_events: list[dict[str, int]] = []
     interval_ms = INTERVAL_MS[interval]
     try:
         with data_path.open("r", encoding="utf-8", newline="") as handle:
@@ -135,6 +139,19 @@ def load_provenance_cleared_candles(
                          f"invalid candle timestamps on CSV line {line_no}")
                 _require(previous_open is None or open_ms > previous_open,
                          f"timestamps not strictly increasing on CSV line {line_no}")
+                if previous_open is not None:
+                    delta_ms = open_ms - previous_open
+                    _require(delta_ms % interval_ms == 0,
+                             f"timestamp gap is off-grid on CSV line {line_no}")
+                    if delta_ms > interval_ms:
+                        missing_count = delta_ms // interval_ms - 1
+                        observed_gap_events.append({
+                            "previous_open_time_ms": previous_open,
+                            "next_open_time_ms": open_ms,
+                            "first_missing_open_time_ms": previous_open + interval_ms,
+                            "last_missing_open_time_ms": open_ms - interval_ms,
+                            "missing_count": missing_count,
+                        })
                 _require(all(math.isfinite(value) for value in values.values()),
                          f"non-finite OHLCV value on CSV line {line_no}")
                 o, h, low, c, volume = (values[k] for k in ("open", "high", "low", "close", "volume"))
@@ -154,6 +171,17 @@ def load_provenance_cleared_candles(
     _require(candles[-1]["open_time_ms"] == manifest["last_open_time_ms"],
              "last candle timestamp does not match manifest")
 
+    claimed_gap_events = manifest.get("gap_events")
+    if observed_gap_events:
+        _require(isinstance(claimed_gap_events, list),
+                 "observed candle gaps require an explicit gap_events manifest list")
+    else:
+        _require(claimed_gap_events is None or claimed_gap_events == [],
+                 "manifest gap_events do not match the contiguous candle series")
+    if claimed_gap_events is not None:
+        _require(claimed_gap_events == observed_gap_events,
+                 "manifest gap_events do not match observed candle timestamp gaps")
+
     return {
         "status": "LOADED_WITH_EXTERNAL_PASS_CLAIM",
         "symbol": expected_symbol,
@@ -165,6 +193,7 @@ def load_provenance_cleared_candles(
         "first_open_time_ms": candles[0]["open_time_ms"],
         "last_open_time_ms": candles[-1]["open_time_ms"],
         "coverage_pct_claimed": float(coverage),
+        "gap_events": observed_gap_events,
         "candles": candles,
         "limitations": [
             "manifest PASS claims and report hashes are not independently authenticated here",
