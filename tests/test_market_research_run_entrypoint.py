@@ -3,6 +3,7 @@ import hashlib
 import json
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from aists_brain.research_audit_report import serialize_research_audit_report
