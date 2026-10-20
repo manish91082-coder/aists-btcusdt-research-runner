@@ -12,6 +12,7 @@ from pathlib import Path
 from aists_brain.causal_feature_producer import produce_causal_feature_snapshots
 from aists_brain.feature_artifact_store import persist_feature_artifact
 from aists_brain.provenance_input import SCHEMA_VERSION
+from aists_brain.decision_lineage import canonical_sha256
 from aists_brain.research_harness import (
     ResearchHarnessError,
     run_manifest_driven_simulation_from_stored_features,
@@ -113,6 +114,20 @@ class StoredFeatureHarnessTests(unittest.TestCase):
         envelope["strategy_version"] = "tampered"
         self.features_path.write_text(json.dumps(envelope), encoding="utf-8")
         with self.assertRaisesRegex(ResearchHarnessError, "integrity gate rejected"):
+            self.run_pipeline()
+
+    def test_rehashed_stored_feature_tampering_is_rejected_against_source_candles(self):
+        envelope = json.loads(self.features_path.read_text(encoding="utf-8"))
+        envelope["decisions"][1]["snapshot"]["feature_observations"][0]["value"] += 0.5
+        envelope["decisions"][1]["snapshot_sha256"] = canonical_sha256(
+            envelope["decisions"][1]["snapshot"]
+        )
+        payload = dict(envelope)
+        metadata = payload.pop("artifact_store")
+        metadata["payload_sha256"] = canonical_sha256(payload)
+        envelope["artifact_store"] = metadata
+        self.features_path.write_text(json.dumps(envelope), encoding="utf-8")
+        with self.assertRaisesRegex(ResearchHarnessError, "stored source-derived feature verification rejected"):
             self.run_pipeline()
 
 
