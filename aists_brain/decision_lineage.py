@@ -91,6 +91,9 @@ def validate_causal_decision_artifact(
             raise DecisionLineageError(f"decision {decision_id} has invalid snapshot SHA-256")
         if canonical_sha256(snapshot) != claimed_snapshot_hash:
             raise DecisionLineageError(f"decision {decision_id} snapshot hash mismatch")
+        input_prefix_hash = snapshot.get("input_prefix_sha256")
+        if not isinstance(input_prefix_hash, str) or not _SHA256.fullmatch(input_prefix_hash):
+            raise DecisionLineageError(f"decision {decision_id} has invalid input prefix SHA-256")
         observations = snapshot.get("feature_observations")
         if not isinstance(observations, list) or not observations:
             raise DecisionLineageError(f"decision {decision_id} requires feature observations")
@@ -111,6 +114,10 @@ def validate_causal_decision_artifact(
                 raise DecisionLineageError(f"decision {decision_id} contains future feature data")
             if not isinstance(source_hash, str) or not _SHA256.fullmatch(source_hash):
                 raise DecisionLineageError(f"decision {decision_id} feature source hash invalid")
+            if source_hash != input_prefix_hash:
+                raise DecisionLineageError(
+                    f"decision {decision_id} feature source hash does not match input prefix hash"
+                )
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
                 raise DecisionLineageError(f"decision {decision_id} feature value must be finite numeric")
         validated.append({"decision_id": decision_id, "as_of_ms": as_of_ms, "action": action})
