@@ -560,6 +560,7 @@ def main():
         summary["sha256"]=sha256_file(out)
         summaries.append(summary);all_dispositions.extend(dispositions);all_issues.extend(issues);all_quarantined.extend(quarantined)
         print(json.dumps(summary,ensure_ascii=False))
+    base_source_quarantine_count=len(all_quarantined)
     monthly_out=outdir/f"{SYMBOL}-1mo-research-candidate.csv.gz"
     daily_path=outdir/f"{SYMBOL}-1d-research-candidate.csv.gz"
     monthly_summary=create_monthly_from_daily(root,daily_path,monthly_out,quarantine_keys,quarantine_cases,all_quarantined)
@@ -578,7 +579,7 @@ def main():
         "generated_at_utc":now_utc(),"symbol":SYMBOL,"market":"spot",
         "drive_root":str(root),"candidate_root":str(CANDIDATE_ROOT),
         "flagged_date_count":len(flagged_dates),"flagged_dates":sorted(flagged_dates),
-        "cp0040_quarantine_gate":{"status":"PASS","manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":len(quarantine_keys),"selected_source_rows_quarantined":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
+        "cp0040_quarantine_gate":{"status":"PASS","manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":len(quarantine_keys),"selected_source_rows_quarantined":base_source_quarantine_count,"derived_monthly_rows_quarantined":monthly_summary.get("quarantined_rows",0),"quarantine_audit_entries":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
         "source_policy":{
             "flagged_dates":"Select daily public archive only when its local SHA256 matches CP-0025's official SHA256 evidence.",
             "unflagged_dates":"Select monthly archive only when its local SHA256 matches the published official SHA256 sidecar recorded in CP-0023.",
