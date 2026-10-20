@@ -1,0 +1,376 @@
+# AISTS AI Brain Roadmap (Hindi)
+
+Updated: 2026-10-20
+Latest goal-directed checkpoint: CP-0294 candle gap accounting verification. Code/test HEAD `29af0007fc403dcb5b2dd473b9b00feafdd9bf92`; exact-head push and PR runs [39404393997](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404393997) and [39404398830](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404398830) succeeded. Documentation updates are recorded in the live status and CP-0294 checkpoint. No empirical gate has cleared; G0 remains BLOCKED_GLOBAL and profitability is not established.
+Implementation branch: `cp-0120-ai-brain-foundation`
+Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
+Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
+
+## Goal
+Build a BTCUSDT-first, long-only Binance Spot decision system for planning capital of INR 10,000 converted to USDT. It should combine multi-timeframe market context, technical/volume analysis, a strategy library, strategy selection, risk/capital controls, and a controlled learning loop. This roadmap does not promise profitability. Live signing, order placement, and public broadcast remain disabled.
+
+## Execution order
+1. **Brain contract and architecture** — stable inputs/outputs, completed-candle semantics, abstention, versioning, and no-order boundary.
+2. **Market context and regime** — trend, momentum, volatility, volume, support/resistance references, and data-quality flags for 5m, 15m, 30m, 1h, 4h, 1d, 1w, 1mo.
+3. **Strategy library** — established strategy families with explicit entry/exit rules, regime suitability, cost assumptions, and failure conditions.
+4. **Strategy selector / meta-brain** — compare eligible strategies for current regime/timeframe; allow NO_TRADE when evidence is weak or signals conflict.
+5. **Learning and discovery** — causal feature pipeline, versioned model training, search-trial ledger, benchmark comparison, calibration, and drift monitoring. No self-promotion without independent gates.
+6. **Risk and capital engine** — INR 10,000 planning capital converted to USDT, position sizing, exposure limits, fees/slippage, BNB discount economics. Do not silently change the user's no-automatic-SL/TP preference.
+7. **Historical validation** — preserve source lineage, chronological train/validation/OOS splits, leakage prevention, regime-wise net results.
+8. **Paper evaluation** — frozen version, append-only decisions and virtual portfolio ledger, observation coverage and acceptance gates.
+9. **Exchange readiness** — separate future review only. Live trading is not authorized by this roadmap.
+
+## Completion ledger
+- **Existing baseline code:** CP-0026 provenance-aware candidate builder; CP-0027 deterministic EMA/RSI/Donchian baseline with buy-and-hold and cash benchmarks. These are not adaptive AI.
+- **Existing audit infrastructure:** source manifests, checksum verification, source-conflict evidence and append-only checkpoints.
+- **Implemented in CP-0120 branch:** `aists_brain/market_context.py` computes EMA20/EMA50, RSI14, ATR14, 10-bar momentum, relative volume and prior-lookback support/resistance references; validates OHLC and timestamp ordering.
+- **Implemented in CP-0121 branch:** `aists_brain/market_regime.py` classifies descriptive trend/breakout/breakdown/mixed regimes and volume state. It abstains on limited history; high volatility requires a causal historical ATR percentile.
+- **Implemented in CP-0122 branch:** `aists_brain/strategy_candidates.py` evaluates three transparent strategy families (trend-following, breakout, mean reversion) and abstains on insufficient data, low-volume breakout, or strategy conflict. Candidate output is not an order.
+- **Unit tests added:** seven market-context tests, seven regime tests, and six strategy-candidate tests. CI compiles all three modules and discovers `test_market_*.py`. Do not call CI PASS until a successful Actions run is actually verified.
+- **Implemented CP-0123/CP-0124 (CI verification pending):** `aists_brain/multi_timeframe.py` joins all eight supported timeframes without filling missing frames; any missing/limited frame forces a non-trade readiness state. `aists_brain/causal_volatility.py` ranks current ATR% only against prior observations and returns unavailable when history is insufficient. These modules require upstream completed-candle, gap and provenance validation.
+- **Implemented CP-0125 (CI verification pending):** `aists_brain/multi_timeframe_selector.py` requires a ready eight-timeframe snapshot, bullish directional alignment, complete candidate evaluations, and at least three timeframes agreeing on one strategy family. It abstains on missing evidence, conflict or weak confirmation. Output remains a research candidate, not an order.
+- **Implemented CP-0126 (CI verified on prior head):** `aists_brain/historical_replay.py` replays timestamped, precomputed snapshots only when the caller supplies an explicit provenance PASS and a source manifest containing SHA-256 values. It enforces increasing decision timestamps and rejects snapshots timestamped after the decision. It deliberately reports `REPLAYED_NO_PNL`; it is not a market-data loader or profitability backtest. The caller-supplied provenance gate is not independently adjudicated by this module.
+- **Implemented CP-0127 (CI verified on prior head):** `aists_brain/capital_risk.py` calculates planning-only USDT conversion, allocation/position caps, and simple round-trip fee/slippage sensitivity. FX, fee, slippage, allocation and BNB-discount values are explicit assumptions, not live verified terms. It adds no automatic SL/TP and emits no order instruction.
+- **Implemented CP-0128 (CI verified on commit `9989def`):** `aists_brain/paper_portfolio.py` tracks caller-supplied simulated Spot fills in a hash-chained in-memory journal. It accounts for cash, BTC inventory, average-cost realized P&L and recorded fees; it rejects overspending, shorting, duplicate decision IDs, bad timestamps and tampering. Prices and fills are hypothetical caller inputs.
+- **NOT DONE:** source-gate adjudication, integration with verified historical candle files, fill-based fee/slippage portfolio backtest, trained/adaptive AI, verified account fee tier, paper acceptance, live readiness.
+- **Last known research gates:** G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. Code milestones do not override these gates.
+- Historical source-provenance blockers remain open. Independent brain modules can be developed and unit-tested, but historical performance claims remain blocked until applicable data gates pass.
+
+## CP-0127 source-gate inspection and next step
+- CP-0119 was inspected from the current repository tree: `BLOCKED_INPUTS_NOT_REPRODUCIBLE`; 11/11 aggregation blockers remain open, 0 source cases closed, no canonical source selected. Current daily/monthly archive identities are recorded, but historical version timeline links established = 0. Binance issue #504 remained open with zero comments in the recorded snapshot; no maintainer answer was observed.
+- This is an evidence gap, not proof that historical versions do not exist. No production candidate build, backtest, strategy promotion or data repair was performed as part of this inspection.
+- Keep G0 `BLOCKED_GLOBAL`, G2 `FAIL_CURRENT_23_CANDIDATES`, G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`, G4 `INSUFFICIENT_EVIDENCE`, G6 `NOT_BUILT`, and G7 `LIVE_BLOCKED` until their own evidence gates change.
+- **Implemented CP-0129 (CI verified on commit `15858c5`; 61/61 tests passed):** `paper_portfolio.py` now binds eligible research-candidate fills to a brain version, causal snapshot SHA-256, decision timestamp, selected strategy and confirming timeframes. It adds append-only JSONL persistence, reconstruction on restart, hash-chain verification, prefix-only append, rollback refusal and tamper/truncation checks. The JSONL writer is single-writer only; this is not tamper-proof external storage, and all fills remain hypothetical.
+- **CP-0129 verification and next step:** CI run [39017061105](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39017061105) completed successfully on exact commit `15858c57fbd67049b9b470288c5c039caee8a3aa`; Python compilation passed and 61/61 tests passed. The next goal-directed step is to resolve the historical data provenance gate before any performance run, then build a no-lookahead, cost-aware fill simulator using only provenance-cleared market data. Do not fabricate performance or bypass the blocked source gate.
+
+
+## CP-0130 — Cost-aware next-open simulator (2026-10-17)
+- Added `aists_brain/cost_aware_simulator.py`, a pure offline simulator that accepts caller-supplied candle bars and explicit research actions. It fills only at the immediately next contiguous bar open after the referenced candle close, applies configurable per-side fee and slippage assumptions, enforces one long position at a time, and logs gap-skipped decisions.
+- Added seven deterministic unit tests for cost-adjusted fill prices, gap skip behavior, no-trade/no-automatic-SL/TP behavior, open-position marking, timestamp contract, duplicate decisions, invalid allocation, and candle ordering.
+- The simulator does **not** generate signals, adjudicate source provenance, fetch data, or place orders. Test candles are synthetic fixtures solely for engine correctness. No historical performance was computed.
+- Updated CI compilation to include the new simulator. CP-0130 is not complete until GitHub Actions passes on the exact final branch HEAD.
+- Existing source gate remains unchanged: global G0 `BLOCKED_GLOBAL`; the frozen `MTF_BREAKOUT_4H_D1` diagnostic has candidate-specific quarantine eligibility only, but G2 remains FAIL/NOT PROMOTED and G3 remains blocked due material TRAIN sensitivity. No candidate or strategy is promoted.
+- Next: verify CI, then integrate only provenance-cleared historical candle inputs and independent accounting reconciliation. If the current data gate remains blocked, do not run a performance backtest or invent results.
+
+
+## CP-0131 — Provenance-bound historical candle input guard (2026-10-17)
+- Added `aists_brain/provenance_input.py`: offline CSV loader bound to a JSON manifest via SHA-256. It fails closed unless the manifest explicitly claims both adjudication PASS and global G0 PASS, identifies BTCUSDT Spot and a supported interval, supplies valid source/archive/report hashes, reports at least 99.5% coverage, accounts for all missing intervals and gap events, and certifies completed candles only.
+- The loader independently verifies the actual CSV hash, row count, first/last timestamps, timestamp order, candle interval duration, finite OHLCV, OHLC range and non-negative volume. It does not repair gaps or alter source data.
+- Important boundary: this code validates manifest claims and file integrity, but does not authenticate the adjudicator or prove the historical archive-version provenance itself. A manifest cannot legitimately claim PASS until external evidence independently supports it.
+- Added 10 unit tests for accepted contract, blocked global gate, tampering, interval mismatch, coverage, gap accounting, OHLC, row count and source hashes. CI compiles the new module and discovers the test file.
+- **No historical performance run was performed.** Current global G0 remains `BLOCKED_GLOBAL`, so real project data must continue to fail closed until the existing evidence gap is independently resolved. No source data, frozen acceptance rulebook, strategy gate, or live-trading control was changed.
+- Next: verify the complete test suite on the exact final branch HEAD and inspect CI logs; if green, move to a manifest-driven integration harness that refuses to run when G0 is blocked.
+
+
+## CP-0132 — Manifest-driven research integration harness (2026-10-17)
+- Added `aists_brain/research_harness.py` to join the provenance-bound candle loader with the offline next-open simulator. It requires the data manifest's explicit adjudication and global G0 PASS claims, and a separate decision artifact bound to the exact candle CSV SHA-256 with a non-empty brain version.
+- The harness rejects blocked/mismatched data, wrong timeframe, non-PASS decision artifacts, missing brain version and decisions that do not reference a supplied candle close. It emits a combined result with data, manifest and decision artifact hashes plus the simulator result.
+- Added seven integration tests covering successful wiring and fail-closed cases. CI compilation now includes the harness.
+- **Trust boundary remains explicit:** PASS labels and source report hashes are not authenticated by this harness. It does not generate decisions, validate the decision producer's causal lineage, resolve historical archive-version provenance, or establish strategy profitability. Current project G0 remains BLOCKED_GLOBAL; therefore the real unresolved data must not be relabelled PASS merely to run this harness.
+- No real-market performance run, source-data mutation, gate relaxation, SL/TP addition or live exchange action occurred.
+- Next: verify the complete CI suite on exact final HEAD; then build independent accounting reconciliation for simulator events versus paper portfolio ledger before any accepted paper run.
+
+
+## CP-0133 — Independent simulator / paper-ledger reconciliation (2026-10-17)
+- Added `aists_brain/accounting_reconciliation.py` to recompute cash flows, BTC inventory, recorded fees and exit-cost-adjusted marked equity from the simulator's ordered fill events, then compare the independent arithmetic with both the simulator output and hash-verified paper ledger.
+- Reconciler checks event counts, decision IDs, fill timestamps, sides, quantities, prices, fees, notionals, no-short inventory, ending cash, BTC quantity, cumulative fees and mark-to-market arithmetic. Any mismatch raises a reconciliation error rather than being silently tolerated.
+- Added six tests for successful reconciliation and deliberate cash, event-ID/hash, fee, equity and event-count mismatches. CI compilation now includes the reconciler.
+- This is accounting consistency only. It does not authenticate source provenance, verify Binance fee terms, validate decisions, establish profitability, or make hypothetical fills real.
+- Integrated the reconciler into `aists_brain/research_harness.py`: every successful harness simulation now builds a hypothetical paper ledger from the simulator fills, runs independent accounting reconciliation, and verifies the ledger hash chain. The harness returns both results; its integration test asserts both PASS statuses. This is not a real exchange ledger or a profitability gate.
+- Next: verify CI on the exact final HEAD. Preserve all current blocked research gates.
+
+## CP-0134 — End-to-end research audit report (2026-10-17)
+- Added `aists_brain/research_audit_report.py`: deterministic JSON audit report with report SHA-256, repository HEAD, explicit G0/G2/G3/G4/G6/G7 snapshot, input artifact hashes, run metadata, simulator events and skipped decisions, accounting reconciliation, paper-ledger integrity, limitations, and safety controls.
+- The report fails closed: if G0 is not PASS, a simulation result cannot be attached. It refuses any run result labelled as accepted/validated and requires accounting reconciliation and paper-ledger hash-chain checks to PASS before embedding a simulated run.
+- Added seven tests covering blocked reporting, input hash/event/skipped-decision retention, G0 enforcement, forbidden status promotion, accounting failures, report tampering, missing gates and invalid commit SHA.
+- CI compilation list now includes the audit report module. Test fixtures are synthetic software fixtures only; they are not BTCUSDT historical data and do not produce performance evidence.
+- **No real historical run was performed.** Current G0 remains `BLOCKED_GLOBAL`; the appropriate report today is a gate-blocked report with no simulation payload. The report hashes its own canonical content for tamper detection but does not authenticate gate claims, external adjudicators or historical archive provenance.
+- Live signing, public broadcast, exchange orders, automatic stop-loss and automatic take-profit remain blocked/not implemented. PR remains open and must not be merged.
+- Next: inspect exact final branch SHA and CI terminal result, correct any failures, then proceed to the next bounded research-engine component without weakening gates.
+
+## CP-0135 — Causal decision snapshot lineage guard (2026-10-17)
+- Added `aists_brain/decision_lineage.py` and integrated it into `research_harness.py`. The harness now requires schema `aists.causal_research_decisions.v1`, exact candle-CSV SHA binding, non-empty brain/strategy versions, unique ordered decision IDs, a known candle-close cutoff, snapshot SHA-256, feature source hashes, finite numeric feature values, and feature observation timestamps no later than the decision cutoff.
+- This closes a concrete gap in CP-0132: decisions are no longer accepted merely because their `as_of_ms` points to a candle close. A snapshot hash binds its contents; a future-dated feature is rejected even if its snapshot hash is recomputed.
+- Added seven direct lineage tests and updated integration fixtures to include causal snapshots. CI compilation includes the new module.
+- **Trust boundary:** timestamp and hash checks do not prove feature values were genuinely calculated from the declared source, and a SHA-256 does not authenticate source truth. No model signal generation or historical performance claim is added.
+- G0 remains `BLOCKED_GLOBAL`; no real historical run is permitted. All live signing, public broadcast, exchange orders and automatic SL/TP remain blocked/not implemented. PR #2 remains open and must not be merged.
+- Next: verify compile, all tests and exact final HEAD CI. If green, continue with a reproducible feature/snapshot producer that computes features only from source candles at or before each decision cutoff, while keeping G0 closed.
+
+## CP-0136 — Prefix-only causal feature/snapshot producer (2026-10-17)
+- Added `aists_brain/causal_feature_producer.py`. For every supplied completed candle, it computes market-context features from only the prefix ending at that candle, hashes the canonical prefix, binds the snapshot to brain/strategy versions, and emits a snapshot SHA-256. Later candles cannot change an earlier snapshot.
+- The producer emits `NO_TRADE` for every row by design: it is a feature producer, not a signal generator. It rejects malformed OHLCV, invalid timestamps, unsupported intervals and any gap; it never repairs or fills data.
+- Added a second entry point that loads candles through `load_provenance_cleared_candles` first. A blocked G0 manifest is rejected before feature generation. This does not authenticate the external adjudicator; an external PASS claim still needs independent evidence.
+- Added eight tests covering snapshot generation, no-trade-only output, earlier-snapshot invariance when later candles change, feature timestamp cutoffs, gaps, invalid OHLC, hash/version validation, interval duration and blocked-G0 refusal. CI compiles the new module.
+- **No real historical feature run or performance backtest was performed.** Synthetic candles exist only inside software tests. Current G0 remains `BLOCKED_GLOBAL`; do not create a manifest claiming PASS to bypass it. No live signing, public broadcast, exchange orders, automatic SL/TP, or PR merge.
+- Next: inspect exact final HEAD and CI terminal logs; fix any failures before proceeding. Following a green gate, the next step is to persist deterministic feature artifacts with exact source hashes and connect the producer to the offline research harness without relaxing G0.
+
+## CP-0137 — Deterministic, create-only feature artifact persistence (2026-10-17)
+- Added `aists_brain/feature_artifact_store.py` to validate causal decision lineage before storage, serialize deterministically, record the exact source CSV hash, brain/strategy versions, timeframe and decision count, and bind the payload to SHA-256 metadata.
+- Persistence uses a same-directory temporary file, flush/fsync, and atomic create-only hard-link publication. Existing destination paths are rejected rather than overwritten. The store reloads the saved artifact and verifies its payload hash and causal lineage before reporting success.
+- Added five tests for round-trip persistence and hashes, refusal to overwrite, payload tampering, mismatched candle-close evidence, and rejecting already wrapped artifacts. CI compile list includes the store.
+- Hashes prove identity/integrity only, not source truth, independent archive provenance, or feature correctness. Synthetic candles are software test fixtures only.
+- G0 remains `BLOCKED_GLOBAL`; no real historical run, strategy performance claim, candidate promotion, live signing, public broadcast, exchange orders, automatic SL/TP, or PR merge.
+- Next: verify exact final branch SHA, CI terminal result and PR state; then integrate persisted artifacts into a reproducible offline harness entry point that still refuses to run unless the independent G0/provenance gate is genuinely cleared.
+
+## CP-0138 — Stored feature artifacts integrated with offline harness (2026-10-17)
+- Added `run_manifest_driven_simulation_from_stored_features` to `aists_brain/research_harness.py`. It checks the provenance/G0 gate first, verifies the persisted artifact envelope and payload hashes against the exact loaded candle close times, checks the artifact's source CSV hash, and then delegates to the existing harness, which repeats the data and causal-lineage checks.
+- The harness result now records stored-artifact integrity status, payload SHA-256, file SHA-256 and store schema. The existing harness remains the final simulator/accounting boundary; the wrapper does not relax its checks.
+- Added three integration tests: stored-artifact round trip into the harness, G0-blocked refusal before artifact use, and tampered artifact rejection. All synthetic candles and PASS manifests in these tests are software fixtures only, not real provenance adjudication.
+- This verifies software wiring only. A manifest PASS claim remains unauthenticated, and real project G0 remains `BLOCKED_GLOBAL`; no real historical run or performance evidence is produced.
+- Live signing, public broadcast, exchange orders, automatic SL/TP, candidate promotion and PR merge remain prohibited.
+- Next: verify exact final branch SHA, terminal CI result and PR state. If green, build a fail-closed runner/report entry point that records the persisted artifact and audit hashes without inventing a G0 clearance.
+
+
+## CP-0139 — Fail-closed research runner and audit report entry point (2026-10-17)
+- Added `aists_brain/research_run_entrypoint.py` to orchestrate the existing stored-feature harness and deterministic audit report. Gate states are required explicitly; this component does not authenticate external gate claims.
+- If G0 is not exactly `PASS`, the entry point does not open or hash data/manifest/feature paths, does not invoke the simulator, and emits a `BLOCKED_GATE` report with no input hashes or simulation payload. The blocked reason is explicit.
+- If the supplied snapshot claims G0 `PASS`, the existing provenance loader, artifact integrity checks, causal lineage validator, simulator, accounting reconciliation and paper-ledger verifier remain mandatory. Failures are recorded as blocked input execution, not success. A successful harness result stays `SIMULATED_NOT_VALIDATED`.
+- Optional report publication is create-only using a same-directory temporary file, fsync and atomic hard-link; an existing destination is refused. The report SHA-256 is computed over the canonical report body; it does not authenticate gate evidence.
+- Added tests for blocked-G0 no-input-access behavior, deterministic report hashes, create-only publication/no-overwrite, and incomplete gate snapshots. CI compilation includes the new runner.
+- No real BTCUSDT historical run was performed. G0 remains `BLOCKED_GLOBAL`; all 23 current strategy candidates remain G2 FAIL. Live signing, public broadcast, exchange orders, automatic SL/TP, candidate promotion and PR merge remain prohibited.
+- Next: inspect exact branch HEAD, wait for CI terminal result, verify test count and PR state. Do not claim historical performance or treat synthetic fixtures as market evidence.
+
+
+## CP-0140 — Independent audit-report integrity verifier (2026-10-17)
+- Added `aists_brain/research_report_verifier.py` to re-check canonical report SHA-256, schema, repository-head/run-ID bindings, gate/status consistency, safety-control values, and required input-hash shapes plus accounting/ledger statuses for simulated reports.
+- The verifier rejects any report that claims simulation while G0 is not exactly `PASS`, rejects weakened live-control fields, and can read a serialized report from disk while returning its exact file SHA-256.
+- Added six tests for valid blocked report verification, tampering, expected-head/run-ID mismatch, blocked-G0 simulation claim, safety-control weakening, and serialized-file verification. CI compilation includes the new verifier.
+- **Trust boundary:** `PASS_STRUCTURAL_INTEGRITY` means internal report structure and hashes are consistent only. It does not authenticate G0 or external adjudication, prove archive provenance, re-hash the original input files unless separately supplied, or demonstrate strategy profitability.
+- G0 remains `BLOCKED_GLOBAL`; G2 remains FAIL for all 23 current candidates. No real historical simulation or performance claim. Live signing, public broadcast, exchange orders, automatic SL/TP, candidate promotion and PR merge remain prohibited.
+- Next: inspect exact final branch/PR SHA and terminal CI logs; if green, continue with a bound run-manifest/evidence index that links the report, persisted feature artifact and exact inputs without relaxing G0.
+
+
+## Goal-direction and continuity correction (2026-10-17)
+- Goal-direction review: CP-0137–CP-0140 improved reproducibility/audit integrity, but did not unblock real historical strategy evaluation. Further infrastructure-only work without removing G0 is at risk of drift.
+- Current direction: prioritize an evidence-backed resolution of global G0 and historical archive-version provenance. If the repository does not contain admissible evidence, record the exact missing evidence and smallest actionable request; do not invent a PASS claim and do not run real-market performance research while G0 is blocked.
+- Durable continuity status: `PROJECT_LIVE_STATUS_CHATGPT.md` is now the session-resume source. At each material project response/checkpoint, update it and this roadmap, then verify the actual branch/PR head and CI terminal outcome.
+- Verified checkpoint at time of update: CP-0140; branch/PR head `29bf1f101d81b478b040a8ae3182779bbf81bd5c`; CI run [39020923719](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39020923719) succeeded with 132 tests; PR #2 remains OPEN and must not be merged.
+- Research gates unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED.
+
+
+## CP-0141 — Offline strategy action engine (2026-10-17)
+- Added `aists_brain/strategy_action_engine.py` to convert existing strategy-family eligibility into explicit `BUY_CANDIDATE`, `SELL_CANDIDATE`, or `NO_TRADE` research actions for the offline next-contiguous-open simulator.
+- Entry eligibility reuses the existing `strategy_candidates.py` rules. Position exits are explicit rule exits: trend confirmation/momentum loss for trend-following, close below prior-lookback support for breakout, and RSI >= 55 or bearish regime for mean-reversion.
+- No automatic stop-loss/take-profit was added. Output is explicitly not an exchange order, and intended fill timing is next contiguous bar open only.
+- Added eight unit tests for entries, abstention, three strategy exits, incomplete data, position contract and safety flags. CI compile list now includes the new module. CI run [39021588923](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39021588923) passed on exact commit `f73fd7e3246d648d85a54be19d2c6f41f6531cfc`; terminal output: `Ran 140 tests in 0.076s`, `OK`. The later continuity-document commit triggers its own final CI check.
+- These are deterministic, unvalidated rules, not trained/calibrated AI and not evidence of profitability. The module does not bypass provenance or strategy gates and has not been run against real historical candles.
+- Goal-direction review of existing source evidence: CP-0119 still records 0 historical version-timeline links for 11 exact aggregation cases; Binance Public Data issue #504 was observed open with 0 comments/no maintainer answer in the recorded snapshot. CP-0118 shows monthly parent-child rollup mismatch in 11/11 buckets. Repeating the same provenance search without new official evidence is not productive.
+- The CP-0040 rulebook-bound diagnostic for `MTF_BREAKOUT_4H_D1` remains candidate-specific only: G2 FAIL/NOT PROMOTED, G3 blocked; full-manifest quarantine changes TRAIN net return by -15.891741 percentage points, and consumed OOS diagnostic was negative. This is not global G0 clearance or promotion authority.
+- Gates unchanged: G0 `BLOCKED_GLOBAL`; G2 `FAIL_CURRENT_23_CANDIDATES`; G3 `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`; G4 `INSUFFICIENT_EVIDENCE`; G6 `NOT_BUILT`; G7 `LIVE_BLOCKED`.
+- Next: verify the final documentation commit's compile/tests and exact PR head. After that verification, connect this action adapter to a strictly provenance-gated decision artifact producer, without running real-market performance research while G0 is blocked.
+
+
+## CP-0142 — Causal strategy decision artifact producer (2026-10-17)
+- Added `aists_brain/causal_decision_producer.py` to join the causal feature producer's prefix-only semantics with the existing market-regime classifier and strategy action engine. Each decision binds a completed-candle close cutoff, source CSV SHA-256, strategy/brain versions, per-feature prefix hash, snapshot hash, action, selected strategy and reason.
+- Output actions are `BUY_CANDIDATE`, `SELL_CANDIDATE`, or `NO_TRADE`; every record explicitly states it is not an order instruction. Live signing, public broadcast, exchange orders and automatic SL/TP remain disabled. Position state updates are hypothetical next-contiguous-open research assumptions only.
+- Added eight software tests for artifact lineage, candidate generation, abstention, future-candle invariance, future timestamps, duplicate decision IDs, gap rejection and invalid metadata. Synthetic candles are fixtures only, never market evidence. CI compile list updated.
+- The CSV entry point uses the existing provenance-gated loader. It cannot authenticate external adjudication; G0 remains BLOCKED_GLOBAL and no real historical run was performed.
+- Goal-direction review: this closes the strategy-to-artifact software integration gap, but does not unblock historical-source provenance or validate profitability. G2 remains FAIL for all 23 current candidates; all research gates remain unchanged.
+- Exact final branch/PR head and terminal CI/test count must be verified before calling CP-0142 complete. PR #2 remains OPEN and must not be merged.
+
+
+### CP-0142 exact-head CI verification
+- Implementation commit `9eb6fd94a210bc7976dd1dbafb0952e129c99f4a` passed GitHub Actions run [39021877488](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39021877488): terminal success, compile and test steps success, `Ran 148 tests in 0.180s`, `OK`.
+- At verification, branch and PR #2 head matched the implementation SHA; PR #2 remained OPEN and unmerged. This continuity-doc update creates a new head and triggers a new CI run, which must be verified separately.
+- Goal-direction decision: pause additional software scaffolding until a genuinely new admissible official evidence path for G0/source provenance is identified. Existing evidence already records 0 historical version-timeline links across 11 cases and the saved Binance issue #504 snapshot has no maintainer response; do not repeat that same search without a new signal. Do not fabricate G0 PASS, run real-market performance analysis, promote a candidate, or enable live controls.
+
+
+## CP-0143 — Fresh official-source provenance recheck (2026-10-17)
+- Read the current official Binance Public Data README and checked current issue metadata/comments for #504, #475 and #505. README acknowledges later archive updates and lists two dated update bundles, but inspected text does not establish prior ZIP-version retrieval or exact publication/replacement timestamps.
+- #504 remained OPEN with 0 comments; #475 remained OPEN with 1 contributor comment; #505 remained OPEN with 0 comments at this recheck. Reports in #475/#505 are not maintainer-confirmed and were not independently reproduced in this checkpoint.
+- Evidence report: `evidence/source_adjudication/CP0143_Official_Binance_Spot_Archive_Provenance_Recheck_HI.md`.
+- This is useful new provenance-tracker evidence, not a G0 clearance. Keep all research gates unchanged; no silent daily/monthly precedence, source repair, fake PASS manifest, real-market backtest or candidate promotion. Wait for a new official response or version record instead of repeating the same search or adding infrastructure-only modules.
+- The checkpoint commit's CI must be checked on its exact final head before claiming the repository state verified.
+
+
+### CP-0143 exact-head verification
+- Exact evidence/docs head `6eb292e88c0b5d7bb8d8430674ad9f937291b607` passed CI run [39022076178](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39022076178), terminal success, `Ran 148 tests in 0.352s`, `OK`.
+- Recheck of official issue tracker after writing the CP-0143 report found no new maintainer response or official version/correction record: #504 OPEN/0 comments, #475 OPEN/1 contributor comment, #505 OPEN/0 comments.
+- Therefore G0 remains BLOCKED_GLOBAL. No candidate promotion, real-market performance run, source mutation, silent daily/monthly precedence or live trading. Do not repeat this same provenance check or add infrastructure-only code absent a new evidence signal.
+- Status-file top metadata corrected to CP-0143; this correction creates a new commit and requires exact-head CI verification.
+
+
+### CP-0145 — Continuity decision (2026-10-17)
+- Rechecked branch/PR/CI at the start of this checkpoint: head `db835227eda2b631426885a0e80ce476f7f59244`, PR #2 OPEN/unmerged, latest run `39022396465` successful on that exact head. The status-only CP-0145 commit now updates the branch, so the final head and its CI must be verified after the roadmap update too.
+- Binance Public Data issues #504/#475/#505 show no new maintainer resolution. Latest repository merge PR #441 is an unrelated utility URL-encoding change, not archive provenance evidence.
+- No new code or backtest. Existing CP-0117/CP-0119 evidence still leaves 11 exact aggregation relationship blockers open; daily-value corroboration applies only to the 35 exact rows, and monthly data diverges on 14 keys/97 fields. Historical version provenance remains unestablished.
+- Next path: consider a formally frozen conservative quarantine policy only if candidate-specific final metrics can be generated without bypassing the current G0 fail-closed guard. Do not turn that policy into global canonical-source authority or G0 PASS.
+- All gates unchanged: G0 BLOCKED_GLOBAL; G2 all 23 candidates FAIL; G3 blocked; G4 insufficient evidence; G6 not built; G7 live blocked. No source mutation, fake PASS manifest, strategy promotion, live signing, public broadcast, Binance orders, automatic SL or TP.
+- Goal-direction: prevents redundant searching and unrelated work; it does not remove the provenance blocker. Require genuinely new official evidence or a valid rulebook-compatible candidate-specific evidence path before implementation.
+
+
+
+### CP-0146 — Quarantine diagnostic reuse and capital-basis guard (2026-10-17)
+- Re-verified the baseline branch/PR head and exact-head CI before the checkpoint: `d0b4ab3cc352a4584b1b48686d2795cc6a17d83e`, PR #2 OPEN/unmerged, run [39023546490](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39023546490) terminal success.
+- Existing CP-0040 quarantine sensitivity already supplies the bounded diagnostic. Exact-key omissions removed 6 4h rows and 3 daily rows without replacements; TRAIN net-return delta was -15.891740828 percentage points. Do not rerun this same diagnostic or treat it as fresh evidence; the consumed OOS diagnostic remains negative.
+- The frozen metric anchors use `initial_capital_usdt: 10000`, not ₹10,000 INR converted to USDT. These historical returns, P&L and equity values are not valid user-capital results and must not be scaled or relabelled without reproducible simulation and verified assumptions.
+- Decision: no new code, no new backtest, no strategy tuning/promotion, no production-builder bypass. The next candidate-specific run, if admissible, must use the actual INR-to-USDT capital basis and evidenced FX, fee, slippage and lot-size assumptions, frozen strategy rules, exact quarantine inputs, and full acceptance gates. If an input cannot be verified, mark the affected metric `NOT_COMPUTABLE`.
+- Gates unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. PR #2 remains OPEN and must not be merged.
+- This checkpoint is a decision/control record, not a profitability claim or a gate PASS. Verify the resulting final head, PR state and exact-head CI after this append.
+
+
+### CP-0147 — Mission Navigation Indicator and verified distance baseline (2026-10-17)
+- User-facing requirement: end each project response with a concise mission navigation indicator. Keep it evidence-based and update GitHub status/roadmap when material project state changes.
+- Baseline verified before this append: branch/PR head `c2fa0adfdbecab65902a600c7dcb224077720f68`; PR #2 OPEN and unmerged; exact-head CI run [39024464747](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39024464747) terminal SUCCESS.
+- Goal: independently validated, cost-aware BTCUSDT Spot long-only research/paper decision engine for ₹10,000 INR converted to USDT. Binance live signing, public broadcast, order placement, and automatic SL/TP remain disabled.
+- Distance is reported as verified blockers, not a made-up percent: 6/6 release gates unresolved: G0 BLOCKED_GLOBAL, G2 FAIL_CURRENT_23_CANDIDATES, G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT, G4 INSUFFICIENT_EVIDENCE, G6 NOT_BUILT, G7 LIVE_BLOCKED. Critical path starts at G0.
+- Paper acceptance requires >=180 calendar days AND >=30 closed round trips, whichever longer; at 365 days without sufficient observations, classify as insufficient evidence. Do not imply elapsed time or completed observations unless independently recorded.
+- Navigation decision: continuity/goal-tracking improved, but this documentation checkpoint does not clear a research gate. Next admissible action is genuinely new official archive-version evidence or a rulebook-compliant candidate-specific evidence path that preserves G0 fail-closed behavior. No duplicate provenance search, no rerun of consumed quarantine sensitivity, no candidate tuning/promotion, no infrastructure-only modules.
+- Standard response footer: `MISSION NAV: TOWARD GOAL / NO EMPIRICAL GATE CLEARED THIS TURN | VERIFIED OPEN GATES: 6/6 | CRITICAL BLOCKER: G0 archive provenance | PROFITABILITY: NOT ESTABLISHED | LIVE: BLOCKED`. Only change the gate count after verified evidence of a gate transition.
+
+
+### CP-0148 — Frozen candidate disposition and G2/G3 debt (2026-10-17)
+- Re-verified pre-change branch/PR head `fe4286c7e7f8aa35356bf9ac37e9f43482beaded`, PR #2 OPEN/unmerged, and exact-head CI run [39025449289](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39025449289) terminal SUCCESS.
+- Frozen CP-0040 evidence confirms the candidate-specific quarantine branch applies only to `MTF_BREAKOUT_4H_D1`; it is not global G0 approval or production-builder authorization.
+- Candidate remains FAIL / NOT PROMOTED: consumed OOS diagnostic net return `-1.384621431%`, PF `0.846407`, 24 closed round trips versus the frozen G2 screen's minimum 100. These periods are consumed diagnostics, not pristine OOS.
+- Full quarantine sensitivity removed 6 4h and 3 daily rows without replacements; TRAIN net-return delta was `-15.891740828` percentage points, which preserves the G3 material-sensitivity blocker.
+- Frozen metrics are based on `initial_capital_usdt: 10000`, not ₹10,000 INR converted to USDT. Do not scale/relabel them as user-capital results. No verified user-capital metrics are available.
+- Decision: no repeat run/tuning of this failed comparator. Next admissible path is new official archive-version evidence that materially changes G0, or an explicitly authorized, frozen candidate-specific evaluation with exact quarantine lineage and evidenced FX/fee/slippage/lot-size assumptions; production builder stays fail-closed. No fresh run is authorized by current evidence, and no G0 bypass is allowed.
+- No code, data download, candidate build, backtest, or source mutation in CP-0148. Gates unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED.
+- Mission navigation: this narrows the decision tree but clears no empirical gate; do not assign a completion percentage.
+
+
+### CP-0149 — Continuity metadata reconciliation and decision lock (2026-10-17)
+- Live state verified before writing: branch and PR #2 head `0e70898dc53132459c4ac606c579955d897fca33`; PR #2 OPEN/unmerged; exact-head CI run [39027219413](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39027219413) terminal SUCCESS (run [39027216920](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39027216920) also SUCCESS).
+- Corrected stale top-level status checkpoint metadata: status file previously said CP-0143 although CP-0148 was already appended. This is a continuity correction only.
+- No admissible new evidence presently clears G0. Do not repeat the same provenance search, repeat the consumed quarantine sensitivity, tune the failed comparator, or add infrastructure-only modules.
+- Next action is contingent on genuinely new official archive-version/publication evidence that can resolve the 11 open aggregation relationships, or explicit authorization of a frozen candidate-specific quarantine evaluation with exact lineage and verified INR→USDT/fee/slippage/lot-size assumptions. Production builder remains fail-closed.
+- All six tracked gates remain unresolved: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. No empirical gate cleared, no profitability claim, no candidate promotion, no live signing/broadcast/orders, no automatic SL/TP.
+
+
+### CP-0150 — Official issue-state recheck; no new adjudication (2026-10-17)
+- Before writing, live branch/PR #2 head was `839c3124b115a0066f4b8fcac379fdc78d33ccf7`; PR #2 OPEN/unmerged; exact-head CI runs [39027548596](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39027548596) and [39027545713](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39027545713) terminal SUCCESS.
+- Official Binance Public Data issue state: #504 OPEN/0 comments, #475 OPEN/1 contributor comment, #505 OPEN/0 comments. No new maintainer resolution or official archive-version/publication record was found; contributor comment is not authoritative adjudication.
+- No repeated backtest, tuning, new code module or G0 bypass. Do not repeat the same provenance search absent a new evidence signal. No real-market run is currently authorized.
+- Next admissible action remains contingent on genuinely new official archive-version evidence, or explicit authorization of a frozen candidate-specific quarantine evaluation with exact lineage and evidenced INR→USDT/fee/slippage/lot-size assumptions. Keep the production builder fail-closed.
+- Gates unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. Profitability NOT ESTABLISHED; live signing/broadcast/orders and automatic SL/TP remain blocked.
+
+
+### CP-0151 — Candidate-run admissibility audit; stop repeating failed work (2026-10-17)
+- Before writing, branch/PR #2 head `630823edb136b360de9677f450eae716bc4c4cbf`; PR #2 OPEN/unmerged; exact-head CI runs [39027977112](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39027977112) and [39027980805](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39027980805) SUCCESS.
+- Direct inspection of committed CP-0040 anchors/rulebook/decision/sensitivity confirms: candidate-specific quarantine exception is only for frozen `MTF_BREAKOUT_4H_D1` diagnostics, not global G0; canonical source NONE; 11 non-row blockers unresolved. Anchor basis is USDT 10,000, not ₹10,000 converted to USDT. Consumed OOS diagnostic remains negative with PF <1 and 24 round trips; quarantine sensitivity materially shifts TRAIN results.
+- Decision: do not repeat that failed comparator, scale old metrics, build a candidate through the unsafe existing builder, or add more infrastructure. Current evidence does not authorize a new real-market run. Keep all gates unchanged.
+- Smallest unblock: new official archive-version/publication evidence for exact-key adjudication, or separate explicit approval for a genuinely new frozen candidate-specific evaluation with exact quarantine lineage and verified INR→USDT, fees, slippage and lot-size assumptions; no G0/builder bypass.
+- G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. No profitability established and live trading remains blocked.
+
+
+## CP-0152 — New 4h candidate scope proposal (2026-10-17)
+- Re-verified branch/PR head before changes: `9883051893f0b6675a060bee21eede299bf80f21`; PR #2 OPEN/unmerged; exact-head Actions run `39035163301` terminal SUCCESS.
+- Created `evidence/research_scopes/CP0152_4H_EMA20_50_CAUSAL_ATR_SCOPE_PROPOSAL_HI.md`, proposing a genuinely new 4h EMA20/EMA50 crossover with a causal ATR% percentile filter using only the prior 252 completed 4h observations (20th–90th percentile eligibility band), next-contiguous-open hypothetical fills, and no automatic SL/TP or exchange actions.
+- This is a proposal only: approval is `PENDING_EXPLICIT_APPROVAL`; candidate build/backtest `NOT_RUN`. It does not change the frozen CP-0040 rulebook or bypass G0.
+- Scope records required verified inputs: exact-key quarantine lineage and actual row-exclusion proof, INR→USDT basis, fees/slippage, lot-size/min-notional constraints and frozen allocation/cash reserve. If any required basis is unavailable, affected capital/quantity metrics must be `NOT_COMPUTABLE`.
+- G0 remains `BLOCKED_GLOBAL`; 11 non-row aggregation blockers remain open. G2 remains `FAIL_CURRENT_23_CANDIDATES`; G3 blocked, G4 insufficient, G6 not built, G7 live blocked. The proposed candidate has no performance evidence and is not promoted.
+- Next: verify the proposal and this roadmap on the resulting exact branch/PR HEAD and exact-head CI; do not execute any market-data build/backtest until explicit scope approval and all rulebook data/capital gates permit it.
+
+
+## CP-0153 — CP-0152 exact-HEAD CI terminal verification (2026-10-17)
+- Re-fetched live branch, PR, scope proposal, roadmap and live status after CP-0152 documentation writes.
+- Branch `cp-0120-ai-brain-foundation` HEAD and PR #2 head both equal `4e1cf587122f831b916f5733500b6f99da2fcb6d`; PR #2 remains OPEN/unmerged.
+- Exact-head GitHub Actions run [39035650619](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39035650619) reached terminal SUCCESS. Job `brain-unit-tests`: compile brain modules PASS; brain unit tests PASS.
+- Re-read G0 eligibility summary and builder: status remains `BLOCKED_EXISTING_CP0026_BUILDER_LACKS_ROW_LEVEL_CP0107_QUARANTINE`; 909 unmatched exact-open key rows, 52 shared economic conflicts and 11 non-row blockers remain unresolved. Existing builder has no row-level CP0107 exclusion lookup and fails closed unless all non-row blockers are resolved.
+- Decision: CI validates documentation/code compilation/unit tests only; it does not validate market data, candidate performance, or G0. No candidate build/backtest and no gate change.
+- Next admissible action: obtain explicit approval of the exact CP-0152 proposal and separately satisfy all frozen rulebook prerequisites. Approval alone cannot override G0 or the builder guard.
+
+
+## CP-0154 — CP-0152 preflight readiness review (2026-10-17)
+- Performed a read-only check of CP-0040 G0 review summary, frozen exact-key manifest and its summary, non-row blocker ledger, CP-0119 archive-version provenance status, CP-0117 rulebook-bound blocker disposition and the existing CP-0026 builder.
+- Created `evidence/research_scopes/CP0154_CP0152_Preflight_Readiness_HI.md` as an evidence-linked readiness matrix. The existing 1,411-key manifest and 35 aggregation keys are not proof of production-path row exclusion. The current builder review says the required row-level CP0107 exclusion lookup is absent.
+- Approval of CP-0152 remains pending; a generic “next” is not explicit approval of exact candidate rules. No candidate build or backtest was run.
+- Capital basis (₹10,000 INR to USDT), applicable fee source, BTCUSDT lot-size/minimum notional, frozen allocation and cash reserve remain unverified/unfrozen for this proposed evaluation.
+- Gate state unchanged: G0 BLOCKED_GLOBAL; G2 FAIL_CURRENT_23_CANDIDATES; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G6 NOT_BUILT; G7 LIVE_BLOCKED. No profitability established.
+- Next: wait for explicit approval of the exact CP-0152 proposal, then re-check prerequisites. Approval alone cannot override G0 or builder safeguards.
+
+
+## CP-0155 — Correction: builder exact-key exclusion is integrated (2026-10-17)
+- Direct line-level inspection of the current `scripts/AISTS_CP0026_Research_Candidate_Builder.py` corrected the CP-0154 preflight statement that the required row-level exclusion lookup was absent. That statement was inaccurate and is superseded.
+- Current source has `load_candidate_gate()` at lines 135–180, exact-key `partition_candidate_rows()` at 182–190, production gate loading at 497, quarantine application in `audit_and_write_interval()` at line 368, and quarantined-row audit output at line 536. CP-0040 integration report also records builder gate integration and synthetic exact-key tests.
+- The real blocker is unchanged: the builder fails closed while 11 non-row blockers remain and current eligibility status is not `PASS_CANDIDATE_ELIGIBILITY_READY`. Therefore no real candidate build has reached market-row processing and production application of the current manifest is not proven.
+- Corrected preflight report: `evidence/research_scopes/CP0154_CP0152_Preflight_Readiness_HI.md` includes CP-0155 addendum.
+- Latest HEAD before this documentation correction: `af1da38f0aec95946211690940aed8d9c28002a4`; its exact-head CI run 39036029613 completed SUCCESS. This correction creates a new HEAD and requires its own exact-head CI verification.
+- CP-0152 approval remains pending; no build/backtest. G0 remains BLOCKED_GLOBAL; other release gates unchanged.
+
+
+## CP-0156 — CP-0152 candidate-specific 4h exposure audit (2026-10-17)
+- Exact-head CI for CP-0155 documentation correction: run `39036179330` on SHA `4de3fa6d8bdf03045bdd6a059c959cc69fc6230c`, terminal SUCCESS. PR #2 remains OPEN/unmerged at that SHA before CP-0156.
+- Read-only audit cross-checked CP-0152 scope, CP-0115 interval exposure crosswalk/current summary, CP-0117 blocker matrix, CP-0113 field-level corroboration, CP-0119 archive-version provenance and current builder guard.
+- Created `evidence/research_scopes/CP0156_CP0152_4H_Blocker_Exposure_Audit_HI.md`. Evidence shows 11 unresolved aggregation relationships only involve 5m→15m, 15m→30m and 30m→1h; CP-0115 shows 0 monthly-divergent keys in 4h. Therefore no direct interval overlap with the declared 4h-only signal inputs was identified.
+- This is not G0 PASS: CP-0152 actual input rows/hashes and production-path exclusion are not verified, provenance remains open, capital/cost/quantity assumptions remain unverified, and the global builder still fails closed. Historical candidate-scoped G0 results for existing 4h candidates do not automatically approve CP-0152.
+- CP-0152 explicit approval remains pending; no market data was read, no candidate built, no backtest run. All release gates unchanged.
+- Next: exact-head CI verification for CP-0156 docs, then wait for explicit CP-0152 approval; if approved, verify candidate-specific prerequisites before any build.
+
+## CP-0273 — Offline simulator decision-boundary hardening (2026-10-19)
+
+- Created the ordered goal execution plan at [CP-0273 onwards: Goal Execution Plan](CP0273_Goal_Execution_Plan_HI.md). It preserves G0 and orders the remaining work by prerequisites and exit evidence.
+- Code review found the offline simulator accepted optional decision flags such as `is_order_instruction=true`, `live_signing_enabled=true`, `public_broadcast_enabled=true`, `binance_orders_placed=true`, or automatic SL/TP flags without rejecting contradictory metadata.
+- Updated `aists_brain/cost_aware_simulator.py` to fail closed when any of these supplied flags is true, or when a supplied flag is not boolean. Added two regression tests covering all six forbidden flags and malformed flag values.
+- This is a software safety invariant only. It does not run market data, build candidates, backtest, approve a strategy, change CP-0040, or alter G0.
+- Exact-head CI is pending until the updated branch HEAD has a terminal result. G0 remains `BLOCKED_GLOBAL`; G2 23 candidates remain FAIL; profitability remains NOT ESTABLISHED; live signing/broadcast/orders and automatic SL/TP remain blocked.
+
+
+## CP-0274 — Synthetic-only decision-pipeline integration (2026-10-20)
+
+- Added `tests/test_market_synthetic_pipeline_integration.py` to connect the existing causal decision producer → offline next-open simulator → paper ledger → independent accounting reconciliation using deterministic synthetic software fixtures only.
+- Added a regression test that the producer rejects a timestamp gap instead of repairing it.
+- This checkpoint is software wiring only. The synthetic fixtures are not BTCUSDT market data, not a candidate build, not a backtest, and not profitability evidence.
+- First exact-head test run failed on a test assertion expecting a boolean from `verify_ledger`; assertion corrected to require `PASS_HASH_CHAIN`. Final test-code commit `8265776eb57b878004a40aaca73440859f8dafce` passed [run 39310290550](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39310290550): compile passed and all 203 tests passed (`OK`), including both new integration tests. CP-0274 is closed as software-integration verification only; this does not alter G0 or establish profitability.
+- G0 remains `BLOCKED_GLOBAL`; canonical historical source remains `NONE`; G2 remains FAIL for the current 23 candidates; G3 blocked; G4 insufficient; G6 not built/validated; G7 live blocked. CP-0040 remains frozen; PR #2 stays open and unmerged.
+- No real historical input was opened, no candidate/backtest/paper session was run, and no live signing, broadcast, exchange order, or automatic SL/TP path was enabled.
+- Report: [CP-0274 Synthetic Pipeline Integration](CP0274_Synthetic_Pipeline_Integration_HI.md).
+
+
+## CP-0275 — Evidence-gated INR capital and cost contract (2026-10-20)
+
+- Added `aists_brain/capital_cost_contract.py` and nine unit tests in `tests/test_market_capital_cost_contract.py`.
+- INR 10,000 remains the fixed source capital. No FX conversion is inferred unless the caller supplies an explicit verified source reference and rate.
+- Allocation, fee, slippage and BTCUSDT symbol filters are retained as unknown/unusable unless the value, explicit verification and source reference are all supplied.
+- BNB savings and conversion overhead are optional scenario inputs only; the code makes no claim about current Binance fee terms. Simple round-trip cost math is not a fill simulation or market-performance result.
+- Added the module to the CI compile list. Exact-head run [39311654371](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39311654371) on `a604748a5d8bb9580febb36536e6636d0a2f81c1` completed SUCCESS: compile passed and all 212 tests passed (`OK`), including nine CP-0275 tests. This is software-only verification and does not alter G0 or establish profitability.
+- Gate boundary unchanged: G0 `BLOCKED_GLOBAL`, canonical source `NONE`, CP-0040 frozen, 23 current candidates G2 FAIL, G3 blocked, G4 insufficient, G6 not validated, G7 live blocked. No real historical input, candidate build, backtest or paper session was run. PR #2 stays open/unmerged.
+- Report: [CP-0275 Capital & Cost Contract](CP0275_Capital_Cost_Contract_HI.md).
+
+
+
+## CP-0276 — Capital/cost contract से simulator integration (2026-10-20)
+- Added `simulate_next_open_with_capital_cost_contract(...)` in `aists_brain/cost_aware_simulator.py` to bind initial USDT capital, allocation, fee, slippage and BTCUSDT symbol filters from CP-0275's contract.
+- Wrapper rejects unsupported schema, blocked/unverified contract status, missing source references, invalid G0/safety boundary, and any input scope other than `SYNTHETIC_SOFTWARE_FIXTURE_ONLY` while G0 is blocked. Output explicitly labels contract-bound synthetic-fixture mode and preserves no-order/no-SLTP/no-profitability flags.
+- Added `tests/test_market_simulator_contract_integration.py` with synthetic fixtures and negative tests for blocked contract, missing source ref, schema mismatch, historical input scope and altered gate boundary. Fixture references/values are software-test inputs only, not real FX, Binance fee terms, symbol-filter evidence or market performance.
+- Report: [CP-0276 Simulator Contract Integration](CP0276_Simulator_Contract_Integration_HI.md).
+- Prior CI run [39311740842](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39311740842) passed 212 tests on CP-0275 head `2f3557d7d4f490c4c442dd936d83230f648de9c1`, but the fetched log did not visibly list the CP-0276 test names. Do not count that run as CP-0276 test verification. Run and inspect CI on the exact head containing this checkpoint before closing CP-0276.
+- Gates unchanged: G0 `BLOCKED_GLOBAL`, canonical historical source `NONE`, G2 current 23 candidates FAIL, G3 blocked, G4 insufficient, G6 adaptive AI not built/validated, G7 live blocked. CP-0040 remains frozen; no real historical inputs, candidate build, backtest or paper session; PR #2 stays open/unmerged.
+
+
+### CP-0276 exact test verification — 2026-10-20
+- Added a negative integration test proving non-finite `capital_usdt` is rejected by the simulator even if a contract object is altered after construction.
+- Test commit `1c052b2b415a075d15fc25f821ec4586c4d1e4b4`; Actions run [39362322504](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39362322504) terminal SUCCESS. Compile and test steps passed; log confirms `test_non_finite_contract_capital_is_rejected_by_simulator` and `Ran 219 tests`, `OK`.
+- PR #2 head matched the test commit and remained OPEN, merged=false. Report updated at [CP-0276 Simulator Contract Integration](CP0276_Simulator_Contract_Integration_HI.md).
+- This is software-only verification. G0 remains `BLOCKED_GLOBAL`; G2 current 23 candidates FAIL; G3 blocked; G4 insufficient; G6 adaptive AI not built/validated; G7 live blocked. No real historical data, candidate build, backtest or paper session; no profitability claim. CP-0040 remains frozen; PR #2 remains unmerged.
+- Next: verify exact-head CI after this documentation update, then return to the actual external G0 dependency. Do not add more infrastructure without a concrete goal blocker it removes.
+
+
+- Follow-up exact-head CI: documentation-final checkpoint before this note, `d530f83382c5b5c0c616872615d71b8ffff82adc`, passed Actions run [39362405611](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39362405611). Compile and test steps succeeded; the log confirms the CP-0276 non-finite-capital test and 219 tests, `OK`. This remains software verification only.
+
+
+## CP-0292 — Feature lineage input-prefix binding (2026-10-20)
+- Found a concrete internal consistency gap in `decision_lineage.py`: feature `source_sha256` values were format-checked but not required to equal the snapshot's declared `input_prefix_sha256`.
+- Validator now requires a valid input-prefix SHA-256 and exact equality for every feature observation source hash. Added regression tests for mismatch and missing prefix hash.
+- Code commit: `af0fd32d1b254634fd794566e1bc12ef357e5b14`; test commit: `b3ecf194a25e115739b8808f488d02bb4eed91b0`.
+- Report: [CP-0292 Feature Lineage Input-Prefix Binding](../evidence/checkpoints/CP0292_Feature_Lineage_Input_Prefix_Binding_HI.md).
+- This is an internal lineage-consistency improvement only; it does not authenticate external source provenance, clear G0/G2/G3, or establish profitability. Exact-head CI verification must be based on the terminal Actions run and inspected logs, not assumed from commit creation.
+- No real market data, candidate build, backtest, paper session, signing, broadcast or exchange order was performed. PR #2 remains open/unmerged.
+
+
+## CP-0293 — Source-feature verifier boundary and G0 unblock (2026-10-20)
+- Current HEAD when checkpoint began: `473ef1e950d892801782aec71b89e4ae06bde9e9`. Exact-head push run [39402003605](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39402003605) and PR run [39402010103](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39402010103) both succeeded; compile, 236 brain tests, and 11 quarantine-enforcement tests passed.
+- Feature verifier now recomputes features from supplied causal source rows and rejects altered values/hashes even when payload hashes are recomputed. This strengthens software integrity only; it cannot prove archive provenance or historical-version admissibility.
+- Actual goal blocker remains G0: an independent, trusted, dated G0-A..G0-E adjudication bound to the frozen CP-0040 rulebook and evidence population, plus a named canonical source and verifiable archive/version/correction evidence. Minimum receipt contract is in [CP-0293](../evidence/checkpoints/CP0293_Source_Feature_Verification_and_G0_Unblock_HI.md).
+- Do not run a real-market backtest or promote candidates while G0 is BLOCKED_GLOBAL. Do not repeat the same provenance search absent new evidence; no more infrastructure-only changes unless they close a demonstrated blocker. PR #2 stays open/unmerged; no live signing, broadcast or orders.
+
+
+## CP-0294: Candle gap accounting verification (2026-10-20)
+- Goal-directed audit found that the provenance loader checked manifest booleans for gap accounting but did not independently derive gaps from the candle timestamps.
+- `aists_brain/provenance_input.py` now derives each gap from consecutive observed open timestamps, rejects off-grid timestamp differences, and requires a matching explicit manifest `gap_events` list when gaps exist. Mismatched or missing gap records fail closed; derived events are returned to callers.
+- Added tests for missing gap records, exact matching gap records, and off-grid timestamps.
+- Code/test HEAD `29af0007fc403dcb5b2dd473b9b00feafdd9bf92`; exact-head push run [39404393997](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404393997) and PR run [39404398830](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404398830) both succeeded.
+- This change improves structural integrity only. It does not authenticate source authority or archive versions, and does not clear G0. The frozen CP-0040 rulebook remains unchanged.
+- G0 remains BLOCKED_GLOBAL; G2 current 23 candidates remain FAIL / NOT PROMOTED; G3 remains blocked; G4 evidence remains insufficient; G5 not run; G6 not validated; G7 live blocked; profitability not established. No real-market backtest, promotion, paper session, or exchange action is authorized.
+- Detailed evidence: [CP-0294 checkpoint](../evidence/checkpoints/CP0294_Candle_Gap_Accounting_HI.md).

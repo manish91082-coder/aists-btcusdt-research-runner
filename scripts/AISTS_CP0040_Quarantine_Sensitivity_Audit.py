@@ -494,6 +494,8 @@ def make_report(summary: dict, performance_rows: list[dict], signal_rows: list[d
 
 
 def main():
+    from g0_execution_guard import require_authenticated_g0
+    require_authenticated_g0("cp0040_quarantine_sensitivity_run")
     ap = argparse.ArgumentParser()
     ap.add_argument("--monthly-cache", default=".cache/aists/binance-monthly-archives")
     ap.add_argument("--daily-cache", default=".cache/aists/binance-daily-references")

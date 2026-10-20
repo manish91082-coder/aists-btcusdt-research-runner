@@ -132,8 +132,16 @@ def load_dict_csv(path):
     with path.open(newline="",encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
 
-def load_candidate_gate(manifest_path: Path, blockers_path: Path, summary_path: Path):
-    """Fail closed unless a validated row manifest exists and every non-row blocker is resolved."""
+FROZEN_CP0040_MANIFEST_SHA256 = "d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819"
+FROZEN_CP0040_BLOCKERS_SHA256 = "d0126152a58baecd8f61bcdcc21286ecffacba6427e7b09696ca63db33c1f0d0"
+
+
+def load_candidate_gate(manifest_path: Path, blockers_path: Path, summary_path: Path, *, require_frozen_hashes=False):
+    """Fail closed unless gate files match the frozen CP-0040 evidence and blockers are resolved.
+
+    Synthetic gate self-tests may omit frozen hashes; production entry must require them.
+    Any adjudicated replacement requires a reviewed code/evidence update, never a mutable summary-only change.
+    """
     for path in (manifest_path, blockers_path, summary_path):
         if not path.is_file():
             raise RuntimeError(f"G0_BLOCKED_MISSING_QUARANTINE_GATE_FILE: {path}")
@@ -141,6 +149,18 @@ def load_candidate_gate(manifest_path: Path, blockers_path: Path, summary_path: 
     if summary.get("status") not in {"PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN","PASS_CANDIDATE_ELIGIBILITY_READY"}:
         raise RuntimeError(f"G0_BLOCKED_UNRECOGNIZED_MANIFEST_STATUS: {summary.get('status')!r}")
     actual_manifest_sha=sha256_file(manifest_path)
+    if require_frozen_hashes and actual_manifest_sha != FROZEN_CP0040_MANIFEST_SHA256:
+        raise RuntimeError(f"G0_BLOCKED_FROZEN_MANIFEST_SHA256_MISMATCH: actual={actual_manifest_sha}; expected={FROZEN_CP0040_MANIFEST_SHA256}")
+    actual_blockers_sha=sha256_file(blockers_path)
+    if require_frozen_hashes and actual_blockers_sha != FROZEN_CP0040_BLOCKERS_SHA256:
+        raise RuntimeError(f"G0_BLOCKED_FROZEN_NONROW_BLOCKERS_SHA256_MISMATCH: actual={actual_blockers_sha}; expected={FROZEN_CP0040_BLOCKERS_SHA256}")
+    if require_frozen_hashes:
+        frozen_rows=summary.get("row_level_manifest",{})
+        frozen_blockers=summary.get("nonrow_blockers",{})
+        if frozen_rows.get("sha256") != FROZEN_CP0040_MANIFEST_SHA256:
+            raise RuntimeError("G0_BLOCKED_SUMMARY_MANIFEST_HASH_NOT_FROZEN")
+        if frozen_blockers.get("sha256") != FROZEN_CP0040_BLOCKERS_SHA256:
+            raise RuntimeError("G0_BLOCKED_SUMMARY_BLOCKER_HASH_NOT_FROZEN")
     expected_manifest_sha=summary.get("row_level_manifest",{}).get("sha256")
     if actual_manifest_sha != expected_manifest_sha:
         raise RuntimeError(f"G0_BLOCKED_MANIFEST_SHA256_MISMATCH: actual={actual_manifest_sha}; expected={expected_manifest_sha}")
@@ -285,6 +305,15 @@ def candidate_row(k, interval, source_type, source_interval, archive, source_sha
     }
 
 def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, monthly_checksums, out_path, quarantine_keys, quarantine_cases):
+    from g0_execution_guard import require_authenticated_g0
+    require_authenticated_g0("cp0026_candidate_builder")
+    return _audit_and_write_interval_test_only(
+        root, interval, flagged_dates, daily_manifest, monthly_checksums,
+        out_path, quarantine_keys, quarantine_cases
+    )
+
+
+def _audit_and_write_interval_test_only(root, interval, flagged_dates, daily_manifest, monthly_checksums, out_path, quarantine_keys, quarantine_cases):
     interval_dir = root / "klines" / interval
     paths = sorted(interval_dir.glob(f"{SYMBOL}-{interval}-????-??.zip"))
     month_paths = {}
@@ -422,25 +451,69 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
     summary["close_time_policy"]="Candidate output close_time is normalized to open_time + interval duration - 1ms. Original raw close-time token is retained."
     return summary, disposition, issues, quarantined
 
-def create_monthly_from_daily(root, daily_candidate_path, monthly_out):
-    """Create complete candidate 1mo candles from the candidate 1d series."""
+def create_monthly_from_daily(root, daily_candidate_path, monthly_out, quarantine_keys=None, quarantine_cases=None, quarantined_rows=None):
+    """Guarded production API for creating the derived 1mo candidate file."""
+    from g0_execution_guard import require_authenticated_g0
+    require_authenticated_g0("cp0026_candidate_builder")
+    return _create_monthly_from_daily_test_only(
+        root, daily_candidate_path, monthly_out, quarantine_keys, quarantine_cases, quarantined_rows
+    )
+
+
+def _create_monthly_from_daily_test_only(root, daily_candidate_path, monthly_out, quarantine_keys=None, quarantine_cases=None, quarantined_rows=None):
+    """Test-only implementation. Never use as G0 authorization."""
+    quarantine_keys = quarantine_keys or set()
+    quarantine_cases = quarantine_cases or {}
+    quarantined_rows = quarantined_rows if quarantined_rows is not None else []
     grouped={}
     with gzip.open(daily_candidate_path,"rt",newline="",encoding="utf-8") as f:
         for row in csv.DictReader(f):
             t=int(row["open_time_ms"]); dt=utc_dt(t); key=(dt.year,dt.month)
             grouped.setdefault(key,[]).append(row)
+    source_quarantine_by_month={}
+    for interval, token in quarantine_keys:
+        if interval != "1d":
+            continue
+        if not str(token).isdigit():
+            raise ValueError(f"quarantine open_time_ms must be an exact integer token: {token!r}")
+        dt=utc_dt(int(token))
+        source_quarantine_by_month.setdefault((dt.year,dt.month),[]).append(str(token))
     src_sha=sha256_file(daily_candidate_path)
-    rows_written=0
     summary={"interval":"1mo","source_type":"derived_from_candidate_1d","source_file":daily_candidate_path.name,
              "source_sha256":src_sha,"candidate_rows":0,"off_grid_open_rows":0,"ohlc_anomaly_rows":0,
-             "duplicate_open_times":0,"first_open_time_utc":None,"last_open_time_utc":None}
+             "duplicate_open_times":0,"first_open_time_utc":None,"last_open_time_utc":None,
+             "quarantined_rows":0,"quarantined_exact_key_rows":0,"quarantined_source_input_rows":0}
     previous=None
     with gzip.open(monthly_out,"wt",newline="",encoding="utf-8",compresslevel=6) as gz:
         w=csv.DictWriter(gz,fieldnames=OUTPUT_FIELDS,extrasaction="ignore");w.writeheader()
         for (year,month),bars in sorted(grouped.items()):
             bars.sort(key=lambda r:int(r["open_time_ms"]))
-            first,last=bars[0],bars[-1]
             start_ms=int(datetime(year,month,1,tzinfo=timezone.utc).timestamp()*1000)
+            exact_key=("1mo",str(start_ms))
+            source_keys=sorted(source_quarantine_by_month.get((year,month),[]),key=int)
+            reasons=[]
+            if exact_key in quarantine_keys:
+                reasons.append("CP-0040 exact 1mo interval + monthly open_time_ms key")
+            if source_keys:
+                reasons.append("Derived monthly candle depends on quarantined 1d source key(s)")
+            if reasons:
+                case_ids=[]
+                for key in ([exact_key] if exact_key in quarantine_keys else []):
+                    case_ids.extend(quarantine_cases.get(key,[]))
+                for token in source_keys:
+                    case_ids.extend(quarantine_cases.get(("1d",token),[]))
+                quarantined_rows.append({
+                    "interval":"1mo","open_time_ms":str(start_ms),"open_time_utc":utc_iso(start_ms),
+                    "source_type":"derived_from_candidate_1d","source_archive":daily_candidate_path.name,
+                    "source_sha256":src_sha,"quarantine_case_ids":";".join(sorted(set(case_ids))),
+                    "quarantine_reason":"; ".join(reasons),"source_quarantine_open_time_ms":";".join(source_keys),
+                    "aggregation_bar_count":len(bars),"derived_row_written":False
+                })
+                summary["quarantined_rows"]+=1
+                summary["quarantined_exact_key_rows"]+=int(exact_key in quarantine_keys)
+                summary["quarantined_source_input_rows"]+=int(bool(source_keys))
+                continue
+            first,last=bars[0],bars[-1]
             nxt=datetime(year+1,1,1,tzinfo=timezone.utc) if month==12 else datetime(year,month+1,1,tzinfo=timezone.utc)
             end_ms=int(nxt.timestamp()*1000)-1
             high=max(Decimal(b["high"]) for b in bars)
@@ -468,7 +541,7 @@ def create_monthly_from_daily(root, daily_candidate_path, monthly_out):
             if summary["first_open_time_utc"] is None: summary["first_open_time_utc"]=r["open_time_utc"]
             summary["last_open_time_utc"]=r["open_time_utc"]
             w.writerow(r)
-    summary["status"]="PASS_STRUCTURAL" if not any(summary[k] for k in ["off_grid_open_rows","ohlc_anomaly_rows","duplicate_open_times"]) else "BLOCKED_STRUCTURAL_ERRORS"
+    summary["status"]="BLOCKED_QUARANTINED_DERIVED_INPUTS" if summary["quarantined_rows"] else ("PASS_STRUCTURAL" if not any(summary[k] for k in ["off_grid_open_rows","ohlc_anomaly_rows","duplicate_open_times"]) else "BLOCKED_STRUCTURAL_ERRORS")
     return summary
 
 def main():
@@ -479,6 +552,8 @@ def main():
     ap.add_argument("--gate-summary")
     ap.add_argument("--gate-test-output")
     args=ap.parse_args()
+    if not args.gate_self_test and any((args.manifest, args.blockers, args.gate_summary, args.gate_test_output)):
+        ap.error("production mode rejects gate-file overrides; canonical CP-0040 paths are mandatory")
     if args.gate_self_test:
         if not (args.manifest and args.blockers and args.gate_summary):
             ap.error("--gate-self-test requires --manifest, --blockers, and --gate-summary")
@@ -488,13 +563,15 @@ def main():
             test_out=Path(args.gate_test_output); test_out.parent.mkdir(parents=True,exist_ok=True)
             test_out.write_text(json.dumps(result,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
         return
+    from g0_execution_guard import require_authenticated_g0
+    require_authenticated_g0("cp0026_candidate_builder")
     root=get_root()
     if not root.exists(): raise FileNotFoundError(f"Expected Drive data root not found: {root}")
     gate_dir=root/"reports"
     manifest_path=Path(args.manifest) if args.manifest else gate_dir/"CP0040_ExactKey_Quarantine_Manifest.csv"
     blockers_path=Path(args.blockers) if args.blockers else gate_dir/"CP0040_NonRow_Blockers.csv"
     gate_summary_path=Path(args.gate_summary) if args.gate_summary else gate_dir/"CP0040_ExactKey_Quarantine_Manifest_Summary.json"
-    quarantine_keys,quarantine_cases,gate_summary=load_candidate_gate(manifest_path,blockers_path,gate_summary_path)
+    quarantine_keys,quarantine_cases,gate_summary=load_candidate_gate(manifest_path,blockers_path,gate_summary_path,require_frozen_hashes=True)
     print("CP-0040 quarantine gate PASS; exact keys loaded:",len(quarantine_keys))
     dates_path=root/"reports"/"cp0025_reference_dates.json"
     if not dates_path.exists(): raise FileNotFoundError(f"Run CP-0025 first; not found: {dates_path}")
@@ -525,9 +602,10 @@ def main():
         summary["sha256"]=sha256_file(out)
         summaries.append(summary);all_dispositions.extend(dispositions);all_issues.extend(issues);all_quarantined.extend(quarantined)
         print(json.dumps(summary,ensure_ascii=False))
+    base_source_quarantine_count=len(all_quarantined)
     monthly_out=outdir/f"{SYMBOL}-1mo-research-candidate.csv.gz"
     daily_path=outdir/f"{SYMBOL}-1d-research-candidate.csv.gz"
-    monthly_summary=create_monthly_from_daily(root,daily_path,monthly_out)
+    monthly_summary=create_monthly_from_daily(root,daily_path,monthly_out,quarantine_keys,quarantine_cases,all_quarantined)
     monthly_summary["file"]=str(monthly_out);monthly_summary["sha256"]=sha256_file(monthly_out)
     summaries.append(monthly_summary)
     write_csv_path=reports/"cp0026_day_source_disposition.csv"
@@ -543,7 +621,7 @@ def main():
         "generated_at_utc":now_utc(),"symbol":SYMBOL,"market":"spot",
         "drive_root":str(root),"candidate_root":str(CANDIDATE_ROOT),
         "flagged_date_count":len(flagged_dates),"flagged_dates":sorted(flagged_dates),
-        "cp0040_quarantine_gate":{"status":"PASS","manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":len(quarantine_keys),"selected_source_rows_quarantined":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
+        "cp0040_quarantine_gate":{"status":"PASS","manifest_sha256":gate_summary["row_level_manifest"]["sha256"],"manifest_keys":len(quarantine_keys),"selected_source_rows_quarantined":base_source_quarantine_count,"derived_monthly_rows_quarantined":monthly_summary.get("quarantined_rows",0),"quarantine_audit_entries":len(all_quarantined),"quarantine_audit":"cp0026_quarantined_candidate_rows.csv"},
         "source_policy":{
             "flagged_dates":"Select daily public archive only when its local SHA256 matches CP-0025's official SHA256 evidence.",
             "unflagged_dates":"Select monthly archive only when its local SHA256 matches the published official SHA256 sidecar recorded in CP-0023.",

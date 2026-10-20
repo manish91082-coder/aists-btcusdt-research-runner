@@ -1,0 +1,443 @@
+import unittest
+
+from aists_brain.cost_aware_simulator import _simulate_next_open_test_only, simulate_next_open
+
+
+def bars(prices, interval_ms=1000, opens=None):
+    opens = opens or [i * interval_ms for i in range(len(prices))]
+    return [
+        {
+            "open_time_ms": open_ms,
+            "close_time_ms": open_ms + interval_ms - 1,
+            "open": prices[i],
+            "close": prices[i],
+        }
+        for i, open_ms in enumerate(opens)
+    ]
+
+
+class CostAwareSimulatorTests(unittest.TestCase):
+    def test_public_simulator_api_fails_closed_before_processing_inputs(self):
+        with self.assertRaisesRegex(ValueError, "G0_EVIDENCE_NOT_AUTHENTICATED"):
+            simulate_next_open(
+                [],
+                [],
+                interval_ms=1000,
+                initial_cash_usdt=1000,
+            )
+
+    def test_next_open_fill_models_fees_and_slippage(self):
+        candles = bars([100, 110, 120, 130])
+        result = _simulate_next_open_test_only(
+            candles,
+            [
+                {"decision_id": "buy-1", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "sell-1", "as_of_ms": 1999, "action": "SELL_CANDIDATE"},
+            ],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=10,
+            slippage_bps_per_side=5,
+        )
+        self.assertEqual(result["status"], "SIMULATED_NOT_VALIDATED")
+        self.assertEqual(result["event_count"], 2)
+        self.assertEqual(result["closed_round_trip_count"], 1)
+        self.assertEqual(result["events"][0]["fill_open_time_ms"], 1000)
+        self.assertEqual(result["events"][1]["fill_open_time_ms"], 2000)
+        self.assertGreater(result["events"][1]["fill_price_usdt"], 0)
+        self.assertAlmostEqual(result["events"][0]["fill_price_usdt"], 110 * 1.0005)
+        self.assertAlmostEqual(result["events"][1]["fill_price_usdt"], 120 * 0.9995)
+        self.assertFalse(result["events"][0]["is_order_instruction"])
+        self.assertFalse(result["events"][1]["is_order_instruction"])
+
+    def test_closed_round_trip_ids_and_net_pnl_reconcile_with_sell_event(self):
+        result = _simulate_next_open_test_only(
+            bars([100, 110, 120]),
+            [
+                {"decision_id": "entry-a", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "exit-a", "as_of_ms": 1999, "action": "SELL_CANDIDATE"},
+            ],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+        )
+
+        self.assertEqual(result["closed_round_trip_count"], 1)
+        trip = result["closed_round_trips"][0]
+        buy_event, sell_event = result["events"]
+        self.assertEqual(trip["entry_decision_id"], buy_event["decision_id"])
+        self.assertEqual(trip["exit_decision_id"], sell_event["decision_id"])
+        self.assertEqual(trip["exit_decision_id"], "exit-a")
+        self.assertAlmostEqual(trip["net_pnl_usdt"], sell_event["realized_net_pnl_usdt"])
+        self.assertAlmostEqual(trip["net_pnl_usdt"], 500 * (120 / 110 - 1))
+        self.assertAlmostEqual(result["cash_usdt"], 1000 + trip["net_pnl_usdt"])
+        self.assertAlmostEqual(result["btc_quantity"], 0.0)
+
+    def test_multiple_round_trips_keep_each_entry_exit_and_pnl_separate(self):
+        result = _simulate_next_open_test_only(
+            bars([100, 110, 120, 130, 140, 150]),
+            [
+                {"decision_id": "entry-1", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "exit-1", "as_of_ms": 1999, "action": "SELL_CANDIDATE"},
+                {"decision_id": "entry-2", "as_of_ms": 2999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "exit-2", "as_of_ms": 3999, "action": "SELL_CANDIDATE"},
+            ],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+        )
+
+        self.assertEqual(result["closed_round_trip_count"], 2)
+        self.assertEqual(
+            [(t["entry_decision_id"], t["exit_decision_id"])
+             for t in result["closed_round_trips"]],
+            [("entry-1", "exit-1"), ("entry-2", "exit-2")],
+        )
+        sell_events = [event for event in result["events"] if event["side"] == "SELL"]
+        self.assertEqual(len(sell_events), 2)
+        for trip, sell_event in zip(result["closed_round_trips"], sell_events):
+            self.assertEqual(trip["exit_decision_id"], sell_event["decision_id"])
+            self.assertAlmostEqual(trip["net_pnl_usdt"], sell_event["realized_net_pnl_usdt"])
+        total_realized = sum(trip["net_pnl_usdt"] for trip in result["closed_round_trips"])
+        self.assertAlmostEqual(result["cash_usdt"], 1000 + total_realized)
+        self.assertAlmostEqual(result["btc_quantity"], 0.0)
+
+    def test_closed_round_trip_reconciles_entry_fee_exit_fee_and_slippage(self):
+        fee_rate = 10 / 10000
+        slip_rate = 5 / 10000
+        entry_price = 110 * (1 + slip_rate)
+        exit_price = 120 * (1 - slip_rate)
+        entry_budget = 500.0
+        expected_qty = entry_budget / (entry_price * (1 + fee_rate))
+        expected_exit_notional = expected_qty * exit_price
+        expected_exit_fee = expected_exit_notional * fee_rate
+        expected_proceeds = expected_exit_notional - expected_exit_fee
+        expected_net_pnl = expected_proceeds - entry_budget
+
+        result = _simulate_next_open_test_only(
+            bars([100, 110, 120]),
+            [
+                {"decision_id": "entry-costs", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "exit-costs", "as_of_ms": 1999, "action": "SELL_CANDIDATE"},
+            ],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=10,
+            slippage_bps_per_side=5,
+        )
+
+        self.assertAlmostEqual(result["events"][0]["fill_price_usdt"], entry_price)
+        self.assertAlmostEqual(result["events"][0]["quantity_btc"], expected_qty)
+        self.assertAlmostEqual(result["events"][0]["fee_usdt"], entry_budget * fee_rate / (1 + fee_rate))
+        self.assertAlmostEqual(result["events"][1]["fill_price_usdt"], exit_price)
+        self.assertAlmostEqual(result["events"][1]["fee_usdt"], expected_exit_fee)
+        self.assertAlmostEqual(result["closed_round_trips"][0]["net_pnl_usdt"], expected_net_pnl)
+        self.assertAlmostEqual(result["cash_usdt"], 1000 - entry_budget + expected_proceeds)
+        self.assertAlmostEqual(result["equity_usdt_after_estimated_exit_costs"], result["cash_usdt"])
+
+    def test_open_position_mark_includes_estimated_exit_slippage_and_fee_once(self):
+        fee_rate = 10 / 10000
+        slip_rate = 5 / 10000
+        entry_price = 110 * (1 + slip_rate)
+        entry_budget = 250.0
+        expected_qty = entry_budget / (entry_price * (1 + fee_rate))
+        expected_cash = 1000 - entry_budget
+        expected_marked_exit = expected_qty * (120 * (1 - slip_rate)) * (1 - fee_rate)
+
+        result = _simulate_next_open_test_only(
+            bars([100, 110, 120]),
+            [{"decision_id": "entry-open-mark", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.25,
+            fee_bps_per_side=10,
+            slippage_bps_per_side=5,
+        )
+
+        self.assertAlmostEqual(result["cash_usdt"], expected_cash)
+        self.assertAlmostEqual(result["btc_quantity"], expected_qty)
+        self.assertAlmostEqual(result["equity_usdt_after_estimated_exit_costs"], expected_cash + expected_marked_exit)
+        self.assertAlmostEqual(
+            result["net_pnl_usdt_after_modeled_costs"],
+            expected_cash + expected_marked_exit - 1000,
+        )
+
+    def test_gap_does_not_get_filled_by_later_bar(self):
+        candles = bars([100, 130], opens=[0, 2000])
+        result = _simulate_next_open_test_only(
+            candles,
+            [{"decision_id": "buy-gap", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+        )
+        self.assertEqual(result["event_count"], 0)
+        self.assertEqual(result["skipped_decisions"][0]["reason"], "NO_NEXT_CONTIGUOUS_BAR")
+
+    def test_no_trade_and_no_automatic_stop_or_take_profit(self):
+        result = _simulate_next_open_test_only(
+            bars([100, 80, 120]),
+            [{"decision_id": "hold", "as_of_ms": 999, "action": "NO_TRADE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+        )
+        self.assertEqual(result["event_count"], 0)
+        self.assertEqual(result["closed_round_trip_count"], 0)
+        self.assertTrue(any("no automatic stop-loss/take-profit" in item for item in result["limitations"]))
+
+    def test_buy_without_exit_remains_open_and_marks_exit_costs(self):
+        result = _simulate_next_open_test_only(
+            bars([100, 110, 120]),
+            [{"decision_id": "buy", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.25,
+            fee_bps_per_side=10,
+            slippage_bps_per_side=5,
+        )
+        self.assertEqual(result["event_count"], 1)
+        self.assertEqual(result["closed_round_trip_count"], 0)
+        self.assertGreater(result["btc_quantity"], 0)
+        self.assertIn("equity_usdt_after_estimated_exit_costs", result)
+        self.assertGreater(result["equity_usdt_after_estimated_exit_costs"], 0)
+
+    def test_rejects_explicit_order_live_and_automatic_sl_tp_flags(self):
+        candles = bars([100, 110])
+        forbidden_flags = (
+            "is_order_instruction",
+            "live_signing_enabled",
+            "public_broadcast_enabled",
+            "binance_orders_placed",
+            "automatic_stop_loss",
+            "automatic_take_profit",
+        )
+        for flag in forbidden_flags:
+            with self.subTest(flag=flag):
+                with self.assertRaisesRegex(ValueError, f"cannot enable {flag}"):
+                    _simulate_next_open_test_only(
+                        candles,
+                        [{"decision_id": "unsafe", "as_of_ms": 999,
+                          "action": "BUY_CANDIDATE", flag: True}],
+                        interval_ms=1000,
+                        initial_cash_usdt=1000,
+                    )
+
+    def test_rejects_non_boolean_safety_flags(self):
+        for value in ("true", 1, None):
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(ValueError, "must be boolean"):
+                    _simulate_next_open_test_only(
+                        bars([100, 110]),
+                        [{"decision_id": "bad-flag", "as_of_ms": 999,
+                          "action": "NO_TRADE", "is_order_instruction": value}],
+                        interval_ms=1000,
+                        initial_cash_usdt=1000,
+                    )
+
+    def test_rejects_decision_that_does_not_reference_candle_close(self):
+        with self.assertRaisesRegex(ValueError, "reference a supplied candle close"):
+            _simulate_next_open_test_only(
+                bars([100, 110]),
+                [{"decision_id": "bad", "as_of_ms": 1000, "action": "BUY_CANDIDATE"}],
+                interval_ms=1000,
+                initial_cash_usdt=1000,
+            )
+
+    def test_rejects_duplicate_decision_ids_and_invalid_costs(self):
+        candles = bars([100, 110, 120])
+        duplicate = [
+            {"decision_id": "same", "as_of_ms": 999, "action": "NO_TRADE"},
+            {"decision_id": "same", "as_of_ms": 1999, "action": "NO_TRADE"},
+        ]
+        with self.assertRaisesRegex(ValueError, "unique"):
+            _simulate_next_open_test_only(candles, duplicate, interval_ms=1000, initial_cash_usdt=1000)
+        with self.assertRaisesRegex(ValueError, "allocation_fraction"):
+            _simulate_next_open_test_only(candles, [], interval_ms=1000, initial_cash_usdt=1000, allocation_fraction=1.1)
+
+    def test_symbol_filters_round_quantity_down_to_step_size(self):
+        result = _simulate_next_open_test_only(
+            bars([100, 100, 100]),
+            [{"decision_id": "buy-step", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5, "max_qty": 10},
+        )
+        qty = result["events"][0]["quantity_btc"]
+        self.assertAlmostEqual(qty / 0.001, round(qty / 0.001), places=8)
+        self.assertTrue(result["exchange_filters_applied"])
+        self.assertGreaterEqual(result["events"][0]["notional_usdt"], 5)
+
+    def test_step_rounding_preserves_cash_and_does_not_exceed_allocated_budget(self):
+        fee_rate = 10 / 10000
+        slip_rate = 5 / 10000
+        fill_price = 100 * (1 + slip_rate)
+        budget = 1000 * 0.5
+        raw_qty = budget / (fill_price * (1 + fee_rate))
+        expected_qty = float((__import__("decimal").Decimal(str(raw_qty)) /
+                              __import__("decimal").Decimal("0.1")).to_integral_value(
+                                  rounding=__import__("decimal").ROUND_DOWN) *
+                              __import__("decimal").Decimal("0.1"))
+        expected_notional = expected_qty * fill_price
+        expected_fee = expected_notional * fee_rate
+        expected_total = expected_notional + expected_fee
+
+        result = _simulate_next_open_test_only(
+            bars([100, 100]),
+            [{"decision_id": "buy-rounded-budget", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=10,
+            slippage_bps_per_side=5,
+            symbol_filters={"min_qty": 0.1, "step_size": 0.1, "min_notional": 5},
+        )
+
+        buy = result["events"][0]
+        self.assertAlmostEqual(buy["quantity_btc"], expected_qty)
+        self.assertAlmostEqual(buy["notional_usdt"], expected_notional)
+        self.assertAlmostEqual(buy["fee_usdt"], expected_fee)
+        self.assertLessEqual(expected_total, budget)
+        self.assertAlmostEqual(result["cash_usdt"], 1000 - expected_total)
+        self.assertGreaterEqual(result["cash_usdt"], 0)
+        self.assertAlmostEqual(result["cash_usdt"] + expected_total, 1000)
+        self.assertLessEqual(buy["quantity_btc"] * fill_price + buy["fee_usdt"], budget)
+
+    def test_symbol_filters_skip_above_max_quantity_without_spending_cash(self):
+        result = _simulate_next_open_test_only(
+            bars([100, 100]),
+            [{"decision_id": "buy-max-qty", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.5,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5, "max_qty": 2},
+        )
+
+        self.assertEqual(result["event_count"], 0)
+        self.assertEqual(result["btc_quantity"], 0.0)
+        self.assertEqual(result["cash_usdt"], 1000)
+        self.assertEqual(result["skipped_decisions"][0]["reason"], "ABOVE_MAX_QTY")
+        self.assertFalse(result["skipped_decisions"][0]["is_order_instruction"])
+
+    def test_step_rounding_below_min_qty_skips_without_spending_cash(self):
+        result = _simulate_next_open_test_only(
+            bars([1000, 1000]),
+            [{"decision_id": "buy-rounded-below-min", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.001,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.01, "min_notional": 5},
+        )
+
+        self.assertEqual(result["event_count"], 0)
+        self.assertEqual(result["btc_quantity"], 0.0)
+        self.assertEqual(result["cash_usdt"], 1000)
+        self.assertEqual(result["skipped_decisions"][0]["reason"], "BELOW_MIN_QTY")
+        self.assertFalse(result["skipped_decisions"][0]["is_order_instruction"])
+
+    def test_symbol_filters_skip_below_minimum_notional(self):
+        result = _simulate_next_open_test_only(
+            bars([100, 100]),
+            [{"decision_id": "buy-min-notional", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=100,
+            allocation_fraction=0.1,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 20},
+        )
+        self.assertEqual(result["event_count"], 0)
+        self.assertEqual(result["skipped_decisions"][0]["reason"], "BELOW_MIN_NOTIONAL")
+
+    def test_sell_below_min_notional_is_skipped_and_position_remains_open(self):
+        result = _simulate_next_open_test_only(
+            bars([100, 100, 1]),
+            [
+                {"decision_id": "buy", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
+                {"decision_id": "sell", "as_of_ms": 1999, "action": "SELL_CANDIDATE"},
+            ],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.1,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 20},
+        )
+        self.assertEqual(result["event_count"], 1)
+        self.assertEqual(result["closed_round_trip_count"], 0)
+        self.assertGreater(result["btc_quantity"], 0)
+        self.assertEqual(result["skipped_decisions"][0]["reason"], "SELL_BELOW_MIN_NOTIONAL")
+        self.assertIn("open position is marked using last close", " ".join(result["limitations"]))
+
+    def test_quantity_equal_to_min_qty_is_accepted(self):
+        result = _simulate_next_open_test_only(
+            bars([100, 100]),
+            [{"decision_id": "buy-at-min-qty", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
+            interval_ms=1000,
+            initial_cash_usdt=1000,
+            allocation_fraction=0.1,
+            fee_bps_per_side=0,
+            slippage_bps_per_side=0,
+            symbol_filters={
+                "min_qty": 1.0,
+                "step_size": 1.0,
+                "min_notional": 100.0,
+                "max_qty": 1.0,
+            },
+        )
+
+        self.assertEqual(result["event_count"], 1)
+        self.assertEqual(result["events"][0]["quantity_btc"], 1.0)
+        self.assertEqual(result["events"][0]["notional_usdt"], 100.0)
+        self.assertEqual(result["cash_usdt"], 900.0)
+        self.assertEqual(result["skipped_decisions"], [])
+        self.assertFalse(result["events"][0]["is_order_instruction"])
+
+    def test_symbol_filters_reject_max_qty_below_min_qty(self):
+        with self.assertRaisesRegex(ValueError, "max_qty must be >= min_qty"):
+            _simulate_next_open_test_only(
+                bars([100, 100]),
+                [],
+                interval_ms=1000,
+                initial_cash_usdt=1000,
+                symbol_filters={
+                    "min_qty": 0.01,
+                    "step_size": 0.001,
+                    "min_notional": 5,
+                    "max_qty": 0.009,
+                },
+            )
+
+    def test_symbol_filters_require_min_qty_step_and_min_notional(self):
+        with self.assertRaisesRegex(ValueError, "missing required fields"):
+            _simulate_next_open_test_only(
+                bars([100, 100]),
+                [],
+                interval_ms=1000,
+                initial_cash_usdt=1000,
+                symbol_filters={"step_size": 0.001, "min_notional": 5},
+            )
+
+    def test_rejects_nonmonotonic_candles(self):
+        with self.assertRaisesRegex(ValueError, "strictly increasing"):
+            _simulate_next_open_test_only(
+                bars([100, 110], opens=[1000, 0]),
+                [],
+                interval_ms=1000,
+                initial_cash_usdt=1000,
+            )
+
+
+if __name__ == "__main__":
+    unittest.main()

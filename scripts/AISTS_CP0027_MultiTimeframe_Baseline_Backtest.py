@@ -380,6 +380,8 @@ def summarize_data_quality(df, interval, meta):
     }
 
 def main():
+    from g0_execution_guard import require_authenticated_g0
+    require_authenticated_g0("cp0027_baseline_backtest")
     root=get_root()
     candidate_dir=root/"derived"/"research_candidate_v1"/SYMBOL/"intervals"
     result_dir=root/"derived"/"research_candidate_v1"/SYMBOL/"backtest_cp0027"
