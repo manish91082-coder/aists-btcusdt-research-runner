@@ -1,0 +1,51 @@
+# Representative Binance Archive Audit Log
+
+Updated: 2026-10-21
+Project phase: Phase 2 — representative archive audit
+Overall status: BLOCKED in the current execution environment; archive existence and contents are NOT VERIFIED.
+
+## 1. Purpose and target
+
+The locked first target is BTCUSDT Spot 5m, with a corresponding USDⓈ-M Futures kline artifact kept as a separate dataset. This attempt used candidate daily paths for 2026-10-20 only to test access. A candidate URL is not proof that the archive exists.
+
+- Spot candidate archive: https://data.binance.vision/data/spot/daily/klines/BTCUSDT/5m/BTCUSDT-5m-2026-10-20.zip
+- Spot candidate checksum: https://data.binance.vision/data/spot/daily/klines/BTCUSDT/5m/BTCUSDT-5m-2026-10-20.zip.CHECKSUM
+- USDⓈ-M Futures candidate archive: https://data.binance.vision/data/futures/um/daily/klines/BTCUSDT/5m/BTCUSDT-5m-2026-10-20.zip
+- USDⓈ-M Futures candidate checksum: https://data.binance.vision/data/futures/um/daily/klines/BTCUSDT/5m/BTCUSDT-5m-2026-10-20.zip.CHECKSUM
+
+## 2. Attempts and observed outcomes
+
+1. A HEAD request was attempted from the current container runtime against each of the four URLs above.
+2. All four attempts failed before an HTTP response with the runtime error: `URLError: <urlopen error [Errno -3] Temporary failure in name resolution>`.
+3. The web retrieval tool also reported the direct Spot and Futures checksum URLs as inaccessible.
+4. The official Binance Public Data README was accessible through web retrieval. It documents archive paths, daily/monthly availability, kline schemas, supported intervals, Spot timestamp microseconds from 2025-01-01 onward, and the use of companion `.CHECKSUM` files. Source: https://github.com/binance/binance-public-data/
+
+## 3. What this does and does not prove
+
+**Proven:** The current execution environment could not resolve/retrieve the tested data.binance.vision URLs. The official repository documentation is accessible and describes the expected archive/checksum workflow.
+
+**Not proven:** Whether any candidate archive URL exists; HTTP status or server response; downloaded bytes; file size; SHA-256; official checksum match; ZIP integrity; schema; row count; timestamp unit of the actual file; first/last candle; duplicates; gaps; OHLC validity; API cross-check; or Spot/Futures data quality.
+
+No manifest row is created for a downloaded artifact because no artifact was retrieved. Do not mark the archive audit PASS or FAIL based only on a DNS/access failure. Current audit outcome is BLOCKED.
+
+## 4. Next reproducible route
+
+Use a network-enabled, zero-cost environment already available to the user (for example, their own Google Colab session) to retrieve the exact official URLs and companion checksum files. Do not add credentials or exchange API keys. The first successful run must preserve:
+- exact URL and UTC retrieval time;
+- original ZIP bytes and byte count;
+- unmodified official checksum file and checksum verification output;
+- local SHA-256;
+- extracted CSV schema and row count;
+- raw and normalised timestamps with unit evidence;
+- first/last candle, cadence/gap/duplicate/out-of-order counts, malformed rows and OHLC/volume invariant results;
+- bounded comparison against the official public API;
+- exact runtime/tool versions and a machine-readable report.
+
+If the daily candidate is unavailable, discover a real period from the official directory/listing or use a clearly bounded monthly archive. Confirm existence before treating any path as a dataset. Keep Spot and Futures separate. Do not fabricate a file, checksum, audit output, or PASS.
+
+## 5. Gate status
+
+- Phase 2 archive audit: BLOCKED pending retrieval from a network-enabled environment.
+- Bulk download: NOT AUTHORIZED by the phase sequence yet.
+- S-01 to S-04 preregistration: NEXT after the representative data audit is actually completed or a durable blocker decision is recorded.
+- Strategy backtests, model training, paper trading, live trading: NOT PERFORMED in this audit attempt.
