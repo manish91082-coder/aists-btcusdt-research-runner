@@ -132,8 +132,16 @@ def load_dict_csv(path):
     with path.open(newline="",encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
 
-def load_candidate_gate(manifest_path: Path, blockers_path: Path, summary_path: Path):
-    """Fail closed unless a validated row manifest exists and every non-row blocker is resolved."""
+FROZEN_CP0040_MANIFEST_SHA256 = "d29a20e604ddfc3f2ba29ab07296b76f2ccc0b894f1cd8fb1a0b8ab001037819"
+FROZEN_CP0040_BLOCKERS_SHA256 = "d0126152a58baecd8f61bcdcc21286ecffacba6427e7b09696ca63db33c1f0d0"
+
+
+def load_candidate_gate(manifest_path: Path, blockers_path: Path, summary_path: Path, *, require_frozen_hashes=False):
+    """Fail closed unless gate files match the frozen CP-0040 evidence and blockers are resolved.
+
+    Synthetic gate self-tests may omit frozen hashes; production entry must require them.
+    Any adjudicated replacement requires a reviewed code/evidence update, never a mutable summary-only change.
+    """
     for path in (manifest_path, blockers_path, summary_path):
         if not path.is_file():
             raise RuntimeError(f"G0_BLOCKED_MISSING_QUARANTINE_GATE_FILE: {path}")
@@ -141,6 +149,18 @@ def load_candidate_gate(manifest_path: Path, blockers_path: Path, summary_path: 
     if summary.get("status") not in {"PASS_ROW_LEVEL_MANIFEST_NONROW_BLOCKERS_REMAIN","PASS_CANDIDATE_ELIGIBILITY_READY"}:
         raise RuntimeError(f"G0_BLOCKED_UNRECOGNIZED_MANIFEST_STATUS: {summary.get('status')!r}")
     actual_manifest_sha=sha256_file(manifest_path)
+    if require_frozen_hashes and actual_manifest_sha != FROZEN_CP0040_MANIFEST_SHA256:
+        raise RuntimeError(f"G0_BLOCKED_FROZEN_MANIFEST_SHA256_MISMATCH: actual={actual_manifest_sha}; expected={FROZEN_CP0040_MANIFEST_SHA256}")
+    actual_blockers_sha=sha256_file(blockers_path)
+    if require_frozen_hashes and actual_blockers_sha != FROZEN_CP0040_BLOCKERS_SHA256:
+        raise RuntimeError(f"G0_BLOCKED_FROZEN_NONROW_BLOCKERS_SHA256_MISMATCH: actual={actual_blockers_sha}; expected={FROZEN_CP0040_BLOCKERS_SHA256}")
+    if require_frozen_hashes:
+        frozen_rows=summary.get("row_level_manifest",{})
+        frozen_blockers=summary.get("nonrow_blockers",{})
+        if frozen_rows.get("sha256") != FROZEN_CP0040_MANIFEST_SHA256:
+            raise RuntimeError("G0_BLOCKED_SUMMARY_MANIFEST_HASH_NOT_FROZEN")
+        if frozen_blockers.get("sha256") != FROZEN_CP0040_BLOCKERS_SHA256:
+            raise RuntimeError("G0_BLOCKED_SUMMARY_BLOCKER_HASH_NOT_FROZEN")
     expected_manifest_sha=summary.get("row_level_manifest",{}).get("sha256")
     if actual_manifest_sha != expected_manifest_sha:
         raise RuntimeError(f"G0_BLOCKED_MANIFEST_SHA256_MISMATCH: actual={actual_manifest_sha}; expected={expected_manifest_sha}")
@@ -531,7 +551,7 @@ def main():
     manifest_path=Path(args.manifest) if args.manifest else gate_dir/"CP0040_ExactKey_Quarantine_Manifest.csv"
     blockers_path=Path(args.blockers) if args.blockers else gate_dir/"CP0040_NonRow_Blockers.csv"
     gate_summary_path=Path(args.gate_summary) if args.gate_summary else gate_dir/"CP0040_ExactKey_Quarantine_Manifest_Summary.json"
-    quarantine_keys,quarantine_cases,gate_summary=load_candidate_gate(manifest_path,blockers_path,gate_summary_path)
+    quarantine_keys,quarantine_cases,gate_summary=load_candidate_gate(manifest_path,blockers_path,gate_summary_path,require_frozen_hashes=True)
     print("CP-0040 quarantine gate PASS; exact keys loaded:",len(quarantine_keys))
     dates_path=root/"reports"/"cp0025_reference_dates.json"
     if not dates_path.exists(): raise FileNotFoundError(f"Run CP-0025 first; not found: {dates_path}")
