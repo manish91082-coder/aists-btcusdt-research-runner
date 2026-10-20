@@ -305,6 +305,8 @@ def candidate_row(k, interval, source_type, source_interval, archive, source_sha
     }
 
 def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, monthly_checksums, out_path, quarantine_keys, quarantine_cases):
+    from g0_execution_guard import require_authenticated_g0
+    require_authenticated_g0("cp0026_candidate_builder")
     interval_dir = root / "klines" / interval
     paths = sorted(interval_dir.glob(f"{SYMBOL}-{interval}-????-??.zip"))
     month_paths = {}
@@ -444,6 +446,8 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
 
 def create_monthly_from_daily(root, daily_candidate_path, monthly_out, quarantine_keys=None, quarantine_cases=None, quarantined_rows=None):
     """Create 1mo candles only when neither the monthly key nor any source 1d key is quarantined."""
+    from g0_execution_guard import require_authenticated_g0
+    require_authenticated_g0("cp0026_candidate_builder")
     quarantine_keys = quarantine_keys or set()
     quarantine_cases = quarantine_cases or {}
     quarantined_rows = quarantined_rows if quarantined_rows is not None else []
