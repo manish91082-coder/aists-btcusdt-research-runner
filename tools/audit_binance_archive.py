@@ -110,18 +110,28 @@ def classify_audit_status(checks: dict[str, str], required_checks: list[str]) ->
     return "FAIL"
 
 
+def official_api_candidates(base: str) -> list[str]:
+    """Return documented/official public endpoints only; never proxy or change venue."""
+    if base == SPOT_API:
+        # Binance documents api-gcp and api1-api4 as Spot alternatives, and
+        # explicitly recommends data-api.binance.vision for public market data.
+        return [
+            base,
+            "https://api-gcp.binance.com/api/v3/klines",
+            *[f"https://api{i}.binance.com/api/v3/klines" for i in (1, 2, 3, 4)],
+            "https://data-api.binance.vision/api/v3/klines",
+        ]
+    if base == UM_API:
+        # Keep the Futures path restricted to the known official Futures hosts.
+        return [base] + [f"https://fapi{i}.binance.com/fapi/v1/klines" for i in (1, 2, 3, 4)]
+    return [base]
+
+
 def api_candle(base: str, symbol: str, interval: str, open_time_ms: int) -> list:
     query = urllib.parse.urlencode({
         "symbol": symbol, "interval": interval, "startTime": open_time_ms, "limit": 1
     })
-    # Binance documents numbered API hosts as alternatives to the primary endpoint.
-    # Try the market's official alternatives, but never bypass an error by changing data source.
-    if base == SPOT_API:
-        bases = [base] + [f"https://api{i}.binance.com/api/v3/klines" for i in (1, 2, 3, 4)]
-    elif base == UM_API:
-        bases = [base] + [f"https://fapi{i}.binance.com/fapi/v1/klines" for i in (1, 2, 3, 4)]
-    else:
-        bases = [base]
+    bases = official_api_candidates(base)
     errors = []
     for candidate in bases:
         try:
