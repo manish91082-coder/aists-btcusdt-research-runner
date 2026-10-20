@@ -1,6 +1,6 @@
 # AISTS Project Live Status for ChatGPT
 
-Last updated: 2026-10-20
+Latest goal-directed checkpoint: CP-0292 feature-lineage input-prefix binding. Implementation commit `af0fd32d1b254634fd794566e1bc12ef357e5b14`; regression tests plus fixture correction at `97ce79ef6a7512e6839e340ff4818555808d77bc`. Exact-head CI for the current documentation head is not yet terminal-verified. Latest empirical admissibility audit remains CP-0151; no historical gate has cleared.
 Latest goal-directed checkpoint: CP-0291 multi-timeframe candidate contract hardening. Implementation/test HEAD: def8a9208cf2ae1bae9b6a5f0980e24be43abbfb; exact-HEAD CI run 39390227679 terminal SUCCESS (231 brain tests + 11 CP-0026 quarantine tests; compile passed). Append-only checkpoint/status documentation commits may follow this code head, so re-fetch the current branch HEAD and exact-HEAD CI before relying on the terminal state. Latest empirical admissibility audit remains CP-0151; no historical gate has cleared.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
@@ -204,3 +204,13 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - Created `evidence/research_scopes/CP0156_CP0152_4H_Blocker_Exposure_Audit_HI.md`. Read-only crosswalk: the 11 unresolved relationship blockers involve 5m→15m, 15m→30m and 30m→1h; CP-0115 records 0 monthly-divergent keys on 4h. No direct interval overlap with the proposed 4h-only EMA20/EMA50/ATR signal inputs was identified.
 - This bounded result does NOT clear G0. Candidate-specific exact rows/hashes, production-path row application, archive coverage/gaps and INR→USDT, fees, lot-size/min-notional and capital allocation assumptions remain unverified. CP-0119 provenance remains blocked and 11 relationship cases remain open.
 - CP-0152 explicit approval remains pending. No market data read, no candidate build/backtest, no source case closed, no strategy promoted. Global G0 remains BLOCKED; G2 FAIL_CURRENT_23_CANDIDATES; G3 blocked; G4 insufficient; G6 not built; G7 live blocked.
+
+
+## CP-0292 — Feature lineage input-prefix binding (2026-10-20)
+- Tightened `aists_brain/decision_lineage.py`: every snapshot must declare a valid lowercase `input_prefix_sha256`, and every feature observation's `source_sha256` must exactly equal it.
+- Added mismatch/missing-prefix regression tests in `tests/test_market_decision_lineage.py`; updated the existing synthetic harness fixture so its feature-source hash is internally consistent with its declared prefix hash.
+- Implementation commit: `af0fd32d1b254634fd794566e1bc12ef357e5b14`; test/fixture correction commit: `97ce79ef6a7512e6839e340ff4818555808d77bc`; checkpoint/report commit: `ff5c12ca649b9b672f153ed8625fb335ada2db62`.
+- Initial CI on prior docs head failed because the legacy synthetic harness fixture did not satisfy the strengthened contract. The exact failure and correction are recorded in the CP-0292 report. The current documentation head's Actions result is pending terminal verification; do not infer PASS.
+- This is a lineage-consistency safeguard only. It does not prove feature derivation truth or external provenance and does not clear G0/G2/G3 or establish profitability.
+- No real market data, candidate build, backtest, paper session, signing, broadcast, or exchange order was performed. PR #2 remains OPEN/unmerged; never merge.
+- Report: [CP-0292 Feature Lineage Input-Prefix Binding](evidence/checkpoints/CP0292_Feature_Lineage_Input_Prefix_Binding_HI.md).
