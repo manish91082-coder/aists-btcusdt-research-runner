@@ -90,3 +90,11 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Current active gate remains Phase 2: actual official BTCUSDT Spot 5m and corresponding USDⓈ-M Futures archive/checksum reports. The manual workflow is prepared and input-validated but has not been dispatched in the verified evidence available here. The default date is only a candidate.
 - Do not start backtesting, model training, paper trading, live trading, bulk data collection, or top-10 claims ahead of their dependency gates. S-01 to S-04 protocols must be frozen before any backtest, after the representative data gate is resolved.
 - Continuity source of truth is live GitHub state plus primary evidence, not a promise that chat memory alone is permanent.
+
+## 2026-10-21 — Resume checkpoint after optional-header hardening
+- Live main was re-read before work; the locked mission and full phase plan remain unchanged.
+- Active gate: Phase 2 representative official Binance archive audit. No real archive/checksum report has passed.
+- Code review added exact optional 12-column kline header detection on the first non-empty CSV record and a `csv_header_present` report field. Four unit tests cover supported header spellings, ordinary data, and invalid header width.
+- Commits: runner `5369263058971e14fcae4db438a1e205cbb2c7ce`; tests `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
+- Status/log records are being synchronised. CI for the latest change remains unverified; do not treat code-write acknowledgement as test success.
+- Next: check current smoke CI evidence if available, then manually dispatch the Phase 2 workflow and inspect both Spot and USDⓈ-M reports. No backtest until the representative data gate and S-01..S-04 preregistration gate are satisfied.
