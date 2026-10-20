@@ -307,6 +307,13 @@ def candidate_row(k, interval, source_type, source_interval, archive, source_sha
 def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, monthly_checksums, out_path, quarantine_keys, quarantine_cases):
     from g0_execution_guard import require_authenticated_g0
     require_authenticated_g0("cp0026_candidate_builder")
+    return _audit_and_write_interval_test_only(
+        root, interval, flagged_dates, daily_manifest, monthly_checksums,
+        out_path, quarantine_keys, quarantine_cases
+    )
+
+
+def _audit_and_write_interval_test_only(root, interval, flagged_dates, daily_manifest, monthly_checksums, out_path, quarantine_keys, quarantine_cases):
     interval_dir = root / "klines" / interval
     paths = sorted(interval_dir.glob(f"{SYMBOL}-{interval}-????-??.zip"))
     month_paths = {}
@@ -445,9 +452,16 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
     return summary, disposition, issues, quarantined
 
 def create_monthly_from_daily(root, daily_candidate_path, monthly_out, quarantine_keys=None, quarantine_cases=None, quarantined_rows=None):
-    """Create 1mo candles only when neither the monthly key nor any source 1d key is quarantined."""
+    """Guarded production API for creating the derived 1mo candidate file."""
     from g0_execution_guard import require_authenticated_g0
     require_authenticated_g0("cp0026_candidate_builder")
+    return _create_monthly_from_daily_test_only(
+        root, daily_candidate_path, monthly_out, quarantine_keys, quarantine_cases, quarantined_rows
+    )
+
+
+def _create_monthly_from_daily_test_only(root, daily_candidate_path, monthly_out, quarantine_keys=None, quarantine_cases=None, quarantined_rows=None):
+    """Test-only implementation. Never use as G0 authorization."""
     quarantine_keys = quarantine_keys or set()
     quarantine_cases = quarantine_cases or {}
     quarantined_rows = quarantined_rows if quarantined_rows is not None else []
