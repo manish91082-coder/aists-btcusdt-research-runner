@@ -1,3 +1,9 @@
+## 2026-10-21 — Strategy research dossier and Binance data requirements
+- Added STRATEGY_RESEARCH.md with 12 falsifiable strategy hypotheses and a dependency-aware research order.
+- Recorded official API/archive sources for Spot exchangeInfo and rate limits, symbol filters, USDⓈ-M Futures klines, archive intervals, checksums and timestamp-unit handling.
+- User priority recorded: strategy/data research now; tax/jurisdiction review deferred to later stage, not waived for eventual live execution.
+- No empirical strategy result, backtest, data download/checksum run, model training or live trade is claimed.
+
 # Changelog
 
 Newest first. Repository change log is not a performance claim.
