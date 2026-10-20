@@ -27,3 +27,7 @@ At each session, fetch the live GitHub main head and read the status/continuity/
 
 ## Master execution plan
 - [Master Execution Plan and Phase Lock](PLAN_AND_PHASE_LOCK.md) — binding default roadmap, numbered phases 0–12, phase exit gates, change control and the next verified action. A written plan is not evidence that any phase passed.
+
+
+## Mandatory execution order
+Read [PLAN_AND_PHASE_LOCK.md](PLAN_AND_PHASE_LOCK.md) before any new task. It contains the locked phase sequence, AI decision contract, logical brain roles, exit gates, change control and anti-drift protocol. [PROJECT_BLUEPRINT.md](PROJECT_BLUEPRINT.md) remains the full durable project specification. Documentation is not implementation evidence.
