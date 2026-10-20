@@ -41,3 +41,12 @@ Use live main ref as authority. After the current write, re-fetch main, root lis
 - Added STRATEGY_RESEARCH.md with 12 falsifiable strategy hypotheses, research order, minimum Binance data inventory, multi-timeframe causality rules, BNB commission accounting and test acceptance criteria.
 - Official docs reviewed: Spot exchange information/current symbol rules and rate limits, Spot filters, USDⓈ-M Futures kline/market-data reference, and Binance public archives/checksums/timestamp notes.
 - No strategy has been backtested, ranked by results, or approved. No data was downloaded or checksum-verified. Next task: data manifest and representative archive audit, then pre-register S-01 to S-04 experiments.
+
+
+## 2026-10-21 — Master execution plan locked
+- Added PLAN_AND_PHASE_LOCK.md as the binding default order of work, with 13 phases (0–12), exit gates, change control and immediate work queue.
+- The plan consolidates the original scope: Binance Spot + Futures; Spot long/flat and eligible Futures long/short; up to 10 evidence-ranked liquid coins; 5m/15m/1h/4h/8h/1d/1w/monthly; longest verifiable history; AI-selected strategies/features/entries/exits/stops/targets/trailing; BNB commission payment where genuinely supported; 10,000 USDT as research/paper equity; zero-cost-first; research before code.
+- Immediate next gate: download and validate a real representative official Binance archive (BTCUSDT Spot 5m plus matching Futures artifact where available), recording actual source, hashes, schema, timestamp units and data-quality findings. No audit pass is claimed yet.
+- After the data audit, freeze S-01 through S-04 experiment protocols before any backtest.
+- User's earlier instruction to defer tax/jurisdiction research remains active for the current strategy/data stage; it remains a mandatory later live-release gate, not waived.
+- No strategy/backtest/model/paper run/live order is newly claimed. All live/execution locks remain.
