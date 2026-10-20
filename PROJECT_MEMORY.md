@@ -84,3 +84,9 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 
 ## 2026-10-21 — Audit runner quality note
 - Added expected UTC-day candle-open coverage to the archive auditor so missing boundary candles are not missed by inter-row gap checks. This is code hardening only; no real archive audit or PASS exists yet.
+
+## 2026-10-21 — Durable anti-drift process lock
+- User explicitly requires every response to be checked against the entire locked plan, strict no-drift execution, and uninterrupted continuity.
+- Operational interpretation: do not answer “next” with a generic status repeat. Re-read the complete current master plan and relevant live GitHub status/evidence each turn, identify the single next safe action, do useful work where possible, record material changes, verify readback, and clearly separate verified facts from assumptions and blockers.
+- The durable source of truth is GitHub main and the evidence registers. Chat memory alone is not proof of a repository change, test result, data audit, or phase completion.
+- Active gate remains Phase 2 actual Spot + USDⓈ-M representative archive audit; no strategy backtest or downstream gate may start early.
