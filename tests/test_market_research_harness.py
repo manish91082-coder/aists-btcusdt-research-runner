@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 
 from aists_brain.research_harness import (
-    DECISION_SCHEMA, ResearchHarnessError, run_manifest_driven_simulation,
+    DECISION_SCHEMA, ResearchHarnessError, run_manifest_driven_simulation,\n    _run_manifest_driven_simulation_test_only,
 )
 from aists_brain.provenance_input import SCHEMA_VERSION
 from aists_brain.decision_lineage import canonical_sha256
@@ -105,7 +105,7 @@ class ResearchHarnessTests(unittest.TestCase):
         self.decisions_path.write_text(json.dumps(artifact), encoding="utf-8")
 
     def run_harness(self):
-        return run_manifest_driven_simulation(
+        return _run_manifest_driven_simulation_test_only(
             self.csv_path, self.manifest_path, self.decisions_path,
             expected_interval="5m", initial_cash_usdt=100.0,
             allocation_fraction=0.25, fee_bps_per_side=10, slippage_bps_per_side=5,
@@ -114,7 +114,7 @@ class ResearchHarnessTests(unittest.TestCase):
 
     def test_missing_symbol_filters_fail_closed_before_data_access(self):
         with self.assertRaisesRegex(ResearchHarnessError, "verified symbol_filters are required"):
-            run_manifest_driven_simulation(
+            _run_manifest_driven_simulation_test_only(
                 self.csv_path, self.manifest_path, self.decisions_path,
                 expected_interval="5m", initial_cash_usdt=100.0,
             )
