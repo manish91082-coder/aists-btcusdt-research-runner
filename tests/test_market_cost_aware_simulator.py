@@ -52,7 +52,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertFalse(result["events"][1]["is_order_instruction"])
 
     def test_closed_round_trip_ids_and_net_pnl_reconcile_with_sell_event(self):
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 110, 120]),
             [
                 {"decision_id": "entry-a", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
@@ -77,7 +77,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertAlmostEqual(result["btc_quantity"], 0.0)
 
     def test_multiple_round_trips_keep_each_entry_exit_and_pnl_separate(self):
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 110, 120, 130, 140, 150]),
             [
                 {"decision_id": "entry-1", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
@@ -119,7 +119,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         expected_proceeds = expected_exit_notional - expected_exit_fee
         expected_net_pnl = expected_proceeds - entry_budget
 
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 110, 120]),
             [
                 {"decision_id": "entry-costs", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
@@ -150,7 +150,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         expected_cash = 1000 - entry_budget
         expected_marked_exit = expected_qty * (120 * (1 - slip_rate)) * (1 - fee_rate)
 
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 110, 120]),
             [{"decision_id": "entry-open-mark", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
             interval_ms=1000,
@@ -170,7 +170,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
 
     def test_gap_does_not_get_filled_by_later_bar(self):
         candles = bars([100, 130], opens=[0, 2000])
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             candles,
             [{"decision_id": "buy-gap", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
             interval_ms=1000,
@@ -180,7 +180,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertEqual(result["skipped_decisions"][0]["reason"], "NO_NEXT_CONTIGUOUS_BAR")
 
     def test_no_trade_and_no_automatic_stop_or_take_profit(self):
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 80, 120]),
             [{"decision_id": "hold", "as_of_ms": 999, "action": "NO_TRADE"}],
             interval_ms=1000,
@@ -191,7 +191,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertTrue(any("no automatic stop-loss/take-profit" in item for item in result["limitations"]))
 
     def test_buy_without_exit_remains_open_and_marks_exit_costs(self):
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 110, 120]),
             [{"decision_id": "buy", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
             interval_ms=1000,
@@ -219,7 +219,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         for flag in forbidden_flags:
             with self.subTest(flag=flag):
                 with self.assertRaisesRegex(ValueError, f"cannot enable {flag}"):
-                    simulate_next_open(
+                    _simulate_next_open_test_only(
                         candles,
                         [{"decision_id": "unsafe", "as_of_ms": 999,
                           "action": "BUY_CANDIDATE", flag: True}],
@@ -231,7 +231,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         for value in ("true", 1, None):
             with self.subTest(value=value):
                 with self.assertRaisesRegex(ValueError, "must be boolean"):
-                    simulate_next_open(
+                    _simulate_next_open_test_only(
                         bars([100, 110]),
                         [{"decision_id": "bad-flag", "as_of_ms": 999,
                           "action": "NO_TRADE", "is_order_instruction": value}],
@@ -241,7 +241,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
 
     def test_rejects_decision_that_does_not_reference_candle_close(self):
         with self.assertRaisesRegex(ValueError, "reference a supplied candle close"):
-            simulate_next_open(
+            _simulate_next_open_test_only(
                 bars([100, 110]),
                 [{"decision_id": "bad", "as_of_ms": 1000, "action": "BUY_CANDIDATE"}],
                 interval_ms=1000,
@@ -255,12 +255,12 @@ class CostAwareSimulatorTests(unittest.TestCase):
             {"decision_id": "same", "as_of_ms": 1999, "action": "NO_TRADE"},
         ]
         with self.assertRaisesRegex(ValueError, "unique"):
-            simulate_next_open(candles, duplicate, interval_ms=1000, initial_cash_usdt=1000)
+            _simulate_next_open_test_only(candles, duplicate, interval_ms=1000, initial_cash_usdt=1000)
         with self.assertRaisesRegex(ValueError, "allocation_fraction"):
-            simulate_next_open(candles, [], interval_ms=1000, initial_cash_usdt=1000, allocation_fraction=1.1)
+            _simulate_next_open_test_only(candles, [], interval_ms=1000, initial_cash_usdt=1000, allocation_fraction=1.1)
 
     def test_symbol_filters_round_quantity_down_to_step_size(self):
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 100, 100]),
             [{"decision_id": "buy-step", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
             interval_ms=1000,
@@ -289,7 +289,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         expected_fee = expected_notional * fee_rate
         expected_total = expected_notional + expected_fee
 
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 100]),
             [{"decision_id": "buy-rounded-budget", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
             interval_ms=1000,
@@ -311,7 +311,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertLessEqual(buy["quantity_btc"] * fill_price + buy["fee_usdt"], budget)
 
     def test_symbol_filters_skip_above_max_quantity_without_spending_cash(self):
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 100]),
             [{"decision_id": "buy-max-qty", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
             interval_ms=1000,
@@ -329,7 +329,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertFalse(result["skipped_decisions"][0]["is_order_instruction"])
 
     def test_step_rounding_below_min_qty_skips_without_spending_cash(self):
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([1000, 1000]),
             [{"decision_id": "buy-rounded-below-min", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
             interval_ms=1000,
@@ -347,7 +347,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertFalse(result["skipped_decisions"][0]["is_order_instruction"])
 
     def test_symbol_filters_skip_below_minimum_notional(self):
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 100]),
             [{"decision_id": "buy-min-notional", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
             interval_ms=1000,
@@ -361,7 +361,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertEqual(result["skipped_decisions"][0]["reason"], "BELOW_MIN_NOTIONAL")
 
     def test_sell_below_min_notional_is_skipped_and_position_remains_open(self):
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 100, 1]),
             [
                 {"decision_id": "buy", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
@@ -381,7 +381,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
         self.assertIn("open position is marked using last close", " ".join(result["limitations"]))
 
     def test_quantity_equal_to_min_qty_is_accepted(self):
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             bars([100, 100]),
             [{"decision_id": "buy-at-min-qty", "as_of_ms": 999, "action": "BUY_CANDIDATE"}],
             interval_ms=1000,
@@ -406,7 +406,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
 
     def test_symbol_filters_reject_max_qty_below_min_qty(self):
         with self.assertRaisesRegex(ValueError, "max_qty must be >= min_qty"):
-            simulate_next_open(
+            _simulate_next_open_test_only(
                 bars([100, 100]),
                 [],
                 interval_ms=1000,
@@ -421,7 +421,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
 
     def test_symbol_filters_require_min_qty_step_and_min_notional(self):
         with self.assertRaisesRegex(ValueError, "missing required fields"):
-            simulate_next_open(
+            _simulate_next_open_test_only(
                 bars([100, 100]),
                 [],
                 interval_ms=1000,
@@ -431,7 +431,7 @@ class CostAwareSimulatorTests(unittest.TestCase):
 
     def test_rejects_nonmonotonic_candles(self):
         with self.assertRaisesRegex(ValueError, "strictly increasing"):
-            simulate_next_open(
+            _simulate_next_open_test_only(
                 bars([100, 110], opens=[1000, 0]),
                 [],
                 interval_ms=1000,
