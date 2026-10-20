@@ -24,3 +24,6 @@ This repository is the durable source of truth for requirements, research, evide
 ## Non-negotiable process
 
 At each session, fetch the live GitHub main head and read the status/continuity/governance documents. Research precedes code. After substantive work, synchronise applicable documents, commit the checkpoint and read back GitHub state to verify it. Finding a source is not proof of a broader claim; preserve evidence limits. AI cannot override the independent Safety Kernel. This document does not authorise live trading.
+
+## Master execution plan
+- [Master Execution Plan and Phase Lock](PLAN_AND_PHASE_LOCK.md) — binding default roadmap, numbered phases 0–12, phase exit gates, change control and the next verified action. A written plan is not evidence that any phase passed.
