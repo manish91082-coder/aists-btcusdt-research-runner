@@ -102,3 +102,9 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - The run's job steps confirm successful Python compilation, unittest discovery (including the new header tests), CLI help, and malformed-date rejection before network access.
 - This verifies the offline smoke suite for that commit only. It does not prove an actual archive download/checksum/API comparison or market-data quality. Phase 2 remains BLOCKED.
 - The latest 100 repository workflow runs inspected contained no run named `Phase 2 Binance archive audit`; manual dispatch is not evidenced by this check. The user must run that workflow and provide both market reports/artifact for independent review.
+
+## 2026-10-21 — Recheck of workflow state
+- Current `main` ref verified as `ba547c6e18db46d4032757dc3ee4af89099c40bd`.
+- Smoke CI success is verified for the offline test commit; it does not substitute for actual archive evidence.
+- The latest 100 repository workflow runs inspected contained no Phase 2 archive audit run. Workflow dispatch was not performed; the available GitHub action surface in this session does not provide a dispatch operation.
+- Status stays BLOCKED until the manual workflow produces both real market reports and they are reviewed.
