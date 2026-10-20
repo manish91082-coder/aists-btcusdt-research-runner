@@ -129,3 +129,12 @@ Run the documented audit for a completed candidate UTC date in Colab; preserve b
 - Code-reviewed the archive audit runner and found that row-to-row gap detection alone would miss absent first/last candles.
 - Added expected UTC-day open coverage checks for intervals that divide a day, included missing-open examples in JSON, and made reported first/last event timestamps order-independent.
 - Readback from GitHub is required; no market-data artifact was downloaded and this change does not pass Phase 2.
+
+## 2026-10-21 | Audit classification and CI regression tests
+- Reviewed `tools/audit_binance_archive.py` for fail-closed status semantics.
+- Added separate API-sample classification: mismatches are FAIL; inability to verify due to API/transport errors is BLOCKED.
+- Corrected overall status precedence: any proven required-check FAIL wins; otherwise a required BLOCKED check keeps the audit BLOCKED; PASS requires every required check to pass.
+- Added seven unit tests in `tests/test_audit_status_classification.py`; smoke workflow runs unittest discovery and now triggers on test-file changes.
+- Commits: runner `1a393f1dce292b182f021607f202279acf6fc010`; regression test `c596fa9f242e97594aa32e34ae84ff5147f24b57`; CI path-filter update `4908b2ac25ba9edee679475b69e60402fe8078b0`. Audit log also records these corrections.
+- Readback confirmed the latest code/test/workflow/docs are present. CI execution result still unverified, and no real market archive has been audited.
+- Phase 2 remains BLOCKED. Next: run the manual Spot + USDⓈ-M archive audit and review both reports before any strategy backtest.
