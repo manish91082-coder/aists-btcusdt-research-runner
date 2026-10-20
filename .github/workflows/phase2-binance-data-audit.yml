@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'tools/phase2-audit-trigger.txt'
+      - 'tools/audit_binance_archive.py'
   workflow_dispatch:
     inputs:
       archive_date:
