@@ -1,0 +1,87 @@
+name: Phase 2 Binance archive audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      archive_date:
+        description: "UTC archive date (YYYY-MM-DD), preferably a completed date several days in the past"
+        required: true
+        default: "2026-10-15"
+        type: string
+      symbol:
+        description: "Representative symbol"
+        required: true
+        default: "BTCUSDT"
+        type: string
+      interval:
+        description: "Kline interval"
+        required: true
+        default: "5m"
+        type: choice
+        options:
+          - 5m
+          - 15m
+          - 1h
+          - 4h
+
+permissions:
+  contents: read
+
+jobs:
+  audit-spot-and-usdm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run official Spot archive audit
+        id: spot
+        shell: bash
+        env:
+          AUDIT_DATE: ${{ inputs.archive_date }}
+          AUDIT_SYMBOL: ${{ inputs.symbol }}
+          AUDIT_INTERVAL: ${{ inputs.interval }}
+        run: |
+          set +e
+          python tools/audit_binance_archive.py --market spot --symbol "$AUDIT_SYMBOL" --interval "$AUDIT_INTERVAL" --date "$AUDIT_DATE" --api-samples 3 --out audit_output/spot
+          rc=$?
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Run official USDⓈ-M Futures archive audit
+        id: usdm
+        shell: bash
+        env:
+          AUDIT_DATE: ${{ inputs.archive_date }}
+          AUDIT_SYMBOL: ${{ inputs.symbol }}
+          AUDIT_INTERVAL: ${{ inputs.interval }}
+        run: |
+          set +e
+          python tools/audit_binance_archive.py --market usdm --symbol "$AUDIT_SYMBOL" --interval "$AUDIT_INTERVAL" --date "$AUDIT_DATE" --api-samples 3 --out audit_output/usdm
+          rc=$?
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload reports and downloaded audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-binance-audit-${{ inputs.archive_date }}-${{ inputs.symbol }}-${{ inputs.interval }}
+          path: audit_output/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce audit gate
+        if: always()
+        shell: bash
+        env:
+          SPOT_EXIT: ${{ steps.spot.outputs.exit_code }}
+          USDM_EXIT: ${{ steps.usdm.outputs.exit_code }}
+        run: |
+          echo "Spot audit exit code: ${SPOT_EXIT:-missing}"
+          echo "USDⓈ-M audit exit code: ${USDM_EXIT:-missing}"
+          if [ "${SPOT_EXIT:-99}" != "0" ] || [ "${USDM_EXIT:-99}" != "0" ]; then
+            echo "Phase 2 audit did not PASS for both markets. Review uploaded JSON reports; do not advance the research gate."
+            exit 1
+          fi
