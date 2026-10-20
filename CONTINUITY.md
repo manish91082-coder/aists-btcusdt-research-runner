@@ -109,3 +109,9 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Smoke CI success remains verified at [run 39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620).
 - Latest 100 workflow runs inspected: no Phase 2 Binance archive audit run. Current GitHub tool integration exposes no workflow-dispatch action, so manual dispatch is still a user-side dependency.
 - Active gate unchanged: Phase 2 representative real-data audit. Next: dispatch workflow manually, share both JSON reports/artifact, independently review before advancing. Do not backtest yet.
+
+## Current checkpoint — 2026-10-21
+- Main head before continuity sync: ed008bac70e7331e8b73d452fed08471b044d2a1.
+- S01_S04_PREREGISTRATION.md now freezes the first four BTCUSDT 5m pilot protocols under D-018, using the documented blocker contingency to avoid an idle loop.
+- Phase 2 remains BLOCKED. No real Spot/Futures archive audit has been verified and no backtest is authorised.
+- Next action: run the existing Phase 2 workflow once, provide the artifact, and independently review both reports. Do not run backtests until exact data and cost gates pass.

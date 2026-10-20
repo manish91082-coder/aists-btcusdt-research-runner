@@ -72,3 +72,7 @@ Newest first. Repository change log is not a performance claim.
 ## 2026-10-21 — Phase 2 state rechecked
 - Revalidated the live main ref and inspected the latest workflow runs; no manual Phase 2 archive audit run was present in the latest 100.
 - This is a status/evidence checkpoint only. The real-data audit remains blocked pending manual workflow dispatch and report review.
+
+## 2026-10-21 — S-01 to S-04 preregistration
+- Added S01_S04_PREREGISTRATION.md and D-018 under the documented Phase 2 blocker contingency.
+- This freezes research definitions only. No empirical result is claimed; the real-data audit remains BLOCKED.

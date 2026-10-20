@@ -104,3 +104,8 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 - Live main ref: `ba547c6e18db46d4032757dc3ee4af89099c40bd`. Offline smoke CI success remains verified.
 - Latest 100 workflow runs inspected show no Phase 2 archive audit run. The available GitHub connector does not expose workflow dispatch, so the workflow has not been run from this session.
 - Active blocker and next step unchanged: manually dispatch representative BTCUSDT Spot/Futures 5m audit; review both JSON reports and evidence. No backtest before the data gate and S-01..S-04 preregistration.
+
+## 2026-10-21 — S-01 to S-04 preregistration
+- S01_S04_PREREGISTRATION.md freezes four BTCUSDT 5m pilot protocols, causal timing, cost requirements, chronological splits and bounded parameter grids before any results.
+- D-018 permits protocol preparation under the documented blocker contingency only. It does not pass the data gate or authorise backtests.
+- No real Spot/Futures archive audit, backtest, model training, paper run or live order has been verified.

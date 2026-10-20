@@ -108,3 +108,8 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - Smoke CI success is verified for the offline test commit; it does not substitute for actual archive evidence.
 - The latest 100 repository workflow runs inspected contained no Phase 2 archive audit run. Workflow dispatch was not performed; the available GitHub action surface in this session does not provide a dispatch operation.
 - Status stays BLOCKED until the manual workflow produces both real market reports and they are reviewed.
+
+## 2026-10-21 — Durable blocker decision and protocol-only progress
+- The latest 100 Actions runs contained no Phase 2 audit run. The available GitHub connector has no workflow-dispatch action; this is a tool boundary, not evidence about archive existence or data quality.
+- D-018 records the blocker as RESEARCH-OPEN. S-01 to S-04 preregistration was frozen in S01_S04_PREREGISTRATION.md under the contingency already stated in this log.
+- Phase 2 remains BLOCKED. No archive/checksum/API result is verified. No backtest may run until exact datasets and cost inputs are audited and accepted.

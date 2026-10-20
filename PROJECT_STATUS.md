@@ -129,3 +129,8 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Latest verified offline smoke run remains successful: [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620), on test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
 - Inspected the latest 100 workflow runs; none matched the Phase 2 Binance archive audit workflow. Available GitHub connector actions are read-oriented for workflow state and do not expose workflow dispatch, so I did not claim or simulate a run.
 - Phase 2 remains BLOCKED. Exact next action remains manual dispatch of the existing workflow and review of both real Spot and USDⓈ-M JSON reports plus evidence artifact. No backtest or downstream gate is authorised.
+
+## 2026-10-21 — S-01 to S-04 protocol status
+- Added S01_S04_PREREGISTRATION.md; the first four BTCUSDT 5m pilot protocols and bounded sensitivity grids are frozen before any results.
+- D-018 records the workflow-dispatch limitation as RESEARCH-OPEN. Phase order is unchanged and the data gate is not waived.
+- Phase 2 remains BLOCKED: no real archive/checksum/API reports have been independently reviewed. No backtest, model training, paper run, live order or deployment has occurred.

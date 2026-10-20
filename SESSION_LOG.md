@@ -179,3 +179,9 @@ Check whether GitHub Actions has a successful smoke run for the latest runner/te
 - Confirmed the smoke CI run remains successful. Searched the latest 100 workflow runs; no Phase 2 Binance archive audit was found.
 - No dispatch was made because the available GitHub connector provides no workflow-dispatch action. This is a tool boundary, not evidence of archive availability or failure.
 - Next task: user manually dispatches the Phase 2 workflow and shares the Spot and USDⓈ-M JSON reports plus evidence artifact. Phase 2 stays BLOCKED; strategy backtests remain locked.
+
+## 2026-10-21 | S-01 to S-04 preregistration frozen under blocker contingency
+- Added S01_S04_PREREGISTRATION.md and D-018 after rechecking the live repository and workflow state.
+- This avoids an idle process loop while preserving the real-data gate. Phase 2 remains BLOCKED; no archive/checksum/API comparison has been verified.
+- Protocols freeze causal timing, next-bar entries, costs, chronological splits, benchmarks and bounded sensitivity grids. No backtest, model training, paper run or live execution has occurred.
+- Next dependency: existing Phase 2 workflow artifact and independent review of both Spot and USDⓈ-M reports.
