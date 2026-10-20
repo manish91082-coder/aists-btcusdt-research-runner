@@ -139,3 +139,10 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Existing Phase 2 workflow now includes a narrowly path-filtered push trigger and default input fallbacks; marker file `tools/phase2-audit-trigger.txt` was committed to main to attempt a one-time run.
 - After the marker commit, no Phase 2 audit run appeared in the latest 100 Actions runs. Automatic triggering is unverified; no audit artifact was produced/observed.
 - Phase 2 remains BLOCKED. Avoid further trigger commits. Next step is one manual dispatch of the existing workflow and independent review of both market reports.
+
+
+## 2026-10-21 — Phase 2 diagnostic result verified
+- Latest Phase 2 run reviewed: [39495863321](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39495863321); evidence artifact [12298865023](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39495863321/artifacts/12298865023).
+- Completed-month diagnostic selection is fixed. On 2026-09-15, Spot and USDⓈ-M Futures daily archives each matched their official monthly archive exactly after both CHECKSUM files passed; each daily 5m file had 288 candles. This is same-publisher consistency evidence only.
+- Main audit date remains 2026-10-15. Both markets' daily archive checksum/ZIP/schema/candle-quality checks passed, but Spot API checks returned HTTP 451 on all five official endpoints; Futures primary returned HTTP 451 and numbered endpoints HTTP 202. API checks are BLOCKED, so overall Phase 2 enforcement correctly failed.
+- Gate status: BLOCKED. No backtest, model training, paper trading, live order or deployment has occurred. Next research action is to resolve an accepted official API candle verification path within the allowed environment or explicitly document a protocol-approved alternative; do not waive the gate based solely on daily/monthly archive agreement.
