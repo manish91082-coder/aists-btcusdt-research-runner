@@ -6,7 +6,7 @@ import hashlib
 import unittest
 
 from aists_brain.causal_decision_producer import produce_causal_strategy_decisions
-from aists_brain.cost_aware_simulator import simulate_next_open
+from aists_brain.cost_aware_simulator import _simulate_next_open_test_only
 from aists_brain.accounting_reconciliation import reconcile_simulation_with_ledger
 from aists_brain.paper_portfolio import append_paper_fill, create_ledger, verify_ledger
 
@@ -72,7 +72,7 @@ class SyntheticDecisionPipelineIntegrationTests(unittest.TestCase):
         self.assertEqual(len({item["decision_id"] for item in decisions}), len(decisions))
         self.assertEqual([item["as_of_ms"] for item in decisions], sorted(item["as_of_ms"] for item in decisions))
 
-        simulation = simulate_next_open(
+        simulation = _simulate_next_open_test_only(
             candles,
             decisions,
             interval_ms=INTERVAL_MS,
