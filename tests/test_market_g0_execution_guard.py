@@ -85,10 +85,18 @@ class G0ExecutionGuardTests(unittest.TestCase):
                     node for node in builder_tree.body
                     if isinstance(node, ast.FunctionDef) and node.name == helper_name
                 )
-                self.assertGreaterEqual(len(helper.body), 2)
-                self.assertIsInstance(helper.body[0], ast.ImportFrom)
-                self.assertEqual(helper.body[0].module, "g0_execution_guard")
-                guard_stmt = helper.body[1]
+                statements = helper.body
+                if (
+                    statements
+                    and isinstance(statements[0], ast.Expr)
+                    and isinstance(statements[0].value, ast.Constant)
+                    and isinstance(statements[0].value.value, str)
+                ):
+                    statements = statements[1:]
+                self.assertGreaterEqual(len(statements), 2)
+                self.assertIsInstance(statements[0], ast.ImportFrom)
+                self.assertEqual(statements[0].module, "g0_execution_guard")
+                guard_stmt = statements[1]
                 self.assertIsInstance(guard_stmt, ast.Expr)
                 self.assertIsInstance(guard_stmt.value, ast.Call)
                 self.assertIsInstance(guard_stmt.value.func, ast.Name)
