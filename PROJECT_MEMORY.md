@@ -43,3 +43,9 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 - FIU registration alone does not establish account-specific Futures eligibility or answer all tax/legal questions. Eligibility is a mandatory gate.
 - No code, trained model, verified data inventory, coin list, backtest or paper run exists on this clean-slate work branch as of this checkpoint.
 - No credential, fund transfer or live trade has been authorised.
+
+## 2026-10-21 strategy-stage priority
+- User instruction: defer taxation/jurisdiction research to a later stage and focus current work on trading strategies and the Binance data they require.
+- This is a sequencing deferral, not permission to bypass restrictions or execute live orders. Eligibility remains a later release gate.
+- STRATEGY_RESEARCH.md registers 12 falsifiable candidates. None has empirical results yet.
+- Trading commission should be paid in BNB wherever product/account settings actually support deduction. Funding, spread, slippage, impact and liquidation are separate costs, not all BNB fees.
