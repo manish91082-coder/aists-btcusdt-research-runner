@@ -194,7 +194,7 @@ class CP0026QuarantineEnforcementTests(unittest.TestCase):
             self._write_daily_fixture(daily)
             jan = str(int(BUILDER.datetime(2020, 1, 1, tzinfo=BUILDER.timezone.utc).timestamp() * 1000))
             quarantined = []
-            summary = BUILDER.create_monthly_from_daily(
+            summary = BUILDER._create_monthly_from_daily_test_only(
                 root, daily, monthly, {("1mo", jan)}, {("1mo", jan): ["ROW-MONTH"]}, quarantined
             )
             with gzip.open(monthly, "rt", newline="", encoding="utf-8") as stream:
@@ -213,7 +213,7 @@ class CP0026QuarantineEnforcementTests(unittest.TestCase):
             self._write_daily_fixture(daily)
             jan15 = str(int(BUILDER.datetime(2020, 1, 15, tzinfo=BUILDER.timezone.utc).timestamp() * 1000))
             quarantined = []
-            summary = BUILDER.create_monthly_from_daily(
+            summary = BUILDER._create_monthly_from_daily_test_only(
                 root, daily, monthly, {("1d", jan15)}, {("1d", jan15): ["ROW-DAILY"]}, quarantined
             )
             with gzip.open(monthly, "rt", newline="", encoding="utf-8") as stream:
