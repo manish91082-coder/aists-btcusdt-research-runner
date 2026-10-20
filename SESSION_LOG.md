@@ -138,3 +138,18 @@ Run the documented audit for a completed candidate UTC date in Colab; preserve b
 - Commits: runner `1a393f1dce292b182f021607f202279acf6fc010`; regression test `c596fa9f242e97594aa32e34ae84ff5147f24b57`; CI path-filter update `4908b2ac25ba9edee679475b69e60402fe8078b0`. Audit log also records these corrections.
 - Readback confirmed the latest code/test/workflow/docs are present. CI execution result still unverified, and no real market archive has been audited.
 - Phase 2 remains BLOCKED. Next: run the manual Spot + USDⓈ-M archive audit and review both reports before any strategy backtest.
+
+## 2026-10-21 | Per-response end-to-end plan audit lock
+### User instruction
+Check the complete plan every response, prevent drift strictly, preserve continuity, and select the next step only after reviewing the whole plan and current evidence.
+
+### Durable action
+- Recorded the process lock in `RULES_AND_LOCKS.md`, `CONTINUITY.md`, `PROJECT_STATUS.md`, and `PROJECT_MEMORY.md`.
+- Required per-response review of the full `PLAN_AND_PHASE_LOCK.md`, current main state, active gate, evidence, blockers, and no-code/no-live locks.
+- Required actual next-step work where possible, durable logging, readback of changed files, and truthful separation of documentation, code, CI, data-audit, backtest, paper and live evidence.
+
+### State after this process lock
+- This lock does not mark Phase 2 complete.
+- Manual Phase 2 workflow is prepared with input validation but has not been verified as dispatched in this checkpoint.
+- No real archive/checksum audit, strategy backtest, model training, paper run or live order is claimed.
+- Next safe action remains running the manual Phase 2 audit and reviewing both actual market reports.
