@@ -29,3 +29,9 @@ Newest first. Repository change log is not a performance claim.
 - Added PLAN_AND_PHASE_LOCK.md with the complete ordered phases 0–12, deliverables, exit gates, current work queue and change-control protocol.
 - Locked the default phase sequence in RULES_AND_LOCKS.md and synchronised status, continuity and session logs.
 - Next gate is a real representative Binance archive audit. No data audit, strategy result or trading readiness is claimed.
+
+
+## 2026-10-21 — Full AI requirement and anti-drift expansion
+- Expanded PLAN_AND_PHASE_LOCK.md with AI autonomy, ten logical roles plus independent Safety Kernel, dynamic multi-timeframe and position management, zero-cost feasibility, phase traceability and per-response anti-drift audit.
+- Linked the locked roadmap from PROJECT_BLUEPRINT.md and synchronised status, continuity, governance and session history.
+- Documentation read-back is being verified; no archive audit or strategy performance is implied.
