@@ -74,3 +74,9 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 - This proves a current-environment retrieval blocker only. It does not prove the candidate archives exist or do not exist, and no archive bytes, checksum, schema, timestamp, row count, gap result or data-quality PASS is claimed.
 - Created DATA_AUDIT_LOG.md with exact attempted URLs, observed errors, evidence boundaries and a reproducible zero-cost next route via a network-enabled user-owned runtime such as Colab.
 - Phase 2 remains BLOCKED pending actual retrieval. No bulk download, strategy backtest, model training, paper run or live order was performed. Next: retrieve one real official artifact and its checksum, audit it end-to-end, then freeze S-01 to S-04 before any backtest.
+
+
+## 2026-10-21 — Phase 2 audit handoff
+- The current runtime cannot resolve `data.binance.vision`; see `DATA_AUDIT_LOG.md`.
+- A stdlib audit runner and zero-cost Colab runbook are committed as `tools/audit_binance_archive.py` and `RUN_DATA_AUDIT.md`. They are prepared but not run against real archives here.
+- Current gate remains BLOCKED until Spot and USDⓈ-M reports show actual source/checksum/schema/timestamp/gap/API comparison evidence. Then independently review and freeze S-01 to S-04 before backtesting.
