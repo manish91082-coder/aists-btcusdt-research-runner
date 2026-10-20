@@ -22,3 +22,7 @@ This tightens internal causal-lineage consistency. It does not independently pro
 - G3: `BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT`.
 - G4: `INSUFFICIENT_EVIDENCE`; G6: `NOT_BUILT / NOT_VALIDATED`; G7: `LIVE_BLOCKED`.
 - PR #2 must remain OPEN and unmerged.
+
+## Verification correction
+- Initial exact-head CI run [39390971344](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39390971344) failed: compile passed, but the legacy synthetic fixture in `tests/test_market_research_harness.py` lacked the now-required `input_prefix_sha256` and used an unrelated feature source hash. This was a test-fixture contract mismatch, not a market-data failure.
+- Updated that fixture to declare the same synthetic test hash for the input prefix and feature source. New test commit: `97ce79ef6a7512e6839e340ff4818555808d77bc`. Final exact-head CI remains to be rechecked.
