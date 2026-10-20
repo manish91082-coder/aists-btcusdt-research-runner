@@ -96,3 +96,9 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - Added four offline unit tests for space-separated and snake_case header names, a real-shaped data row, and wrong column count.
 - Commits: runner `5369263058971e14fcae4db438a1e205cbb2c7ce`; tests `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
 - Verification limit: GitHub file writes were acknowledged, but the updated smoke workflow result has not yet been observed and no real Spot/Futures archive was downloaded. This hardening does not pass Phase 2; both real JSON reports still must be reviewed.
+
+## Optional-header hardening CI verified (2026-10-21)
+- GitHub Actions run [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620) completed with conclusion `success` on test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
+- The run's job steps confirm successful Python compilation, unittest discovery (including the new header tests), CLI help, and malformed-date rejection before network access.
+- This verifies the offline smoke suite for that commit only. It does not prove an actual archive download/checksum/API comparison or market-data quality. Phase 2 remains BLOCKED.
+- The latest 100 repository workflow runs inspected contained no run named `Phase 2 Binance archive audit`; manual dispatch is not evidenced by this check. The user must run that workflow and provide both market reports/artifact for independent review.
