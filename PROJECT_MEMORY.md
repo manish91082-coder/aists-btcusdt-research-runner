@@ -49,3 +49,10 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 - This is a sequencing deferral, not permission to bypass restrictions or execute live orders. Eligibility remains a later release gate.
 - STRATEGY_RESEARCH.md registers 12 falsifiable candidates. None has empirical results yet.
 - Trading commission should be paid in BNB wherever product/account settings actually support deduction. Funding, spread, slippage, impact and liquidation are separate costs, not all BNB fees.
+
+
+## 2026-10-21 — User-requested roadmap lock
+- PLAN_AND_PHASE_LOCK.md is the default dependency-ordered execution plan (phases 0–12) and must be read before choosing the next task.
+- Current immediate priority is strategy/data: audit one real official Binance archive end-to-end, then freeze S-01 to S-04 experiment protocols before backtesting.
+- Tax/jurisdiction research is deferred for the current stage per the user's instruction, but is still required before any live execution. No restrictions are bypassed.
+- The plan does not imply that any gate has passed. No data audit, top-ten selection, model training, backtest, paper run, real order or deployment is claimed unless separately evidenced.
