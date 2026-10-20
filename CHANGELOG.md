@@ -64,3 +64,7 @@ Newest first. Repository change log is not a performance claim.
 - Added four offline unit tests for supported header forms and false-positive rejection.
 - Commits: runner `5369263058971e14fcae4db438a1e205cbb2c7ce`; tests `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
 - CI and real Spot/Futures archive audit remain unverified; Phase 2 is still blocked.
+
+## 2026-10-21 — Offline smoke CI verified for optional-header tests
+- GitHub Actions run [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620) succeeded on test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
+- Verified checks: Python compilation, unit tests, CLI help and malformed-date rejection. Real Binance archive audit remains unverified and Phase 2 remains blocked.
