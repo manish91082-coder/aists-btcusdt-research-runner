@@ -422,25 +422,60 @@ def audit_and_write_interval(root, interval, flagged_dates, daily_manifest, mont
     summary["close_time_policy"]="Candidate output close_time is normalized to open_time + interval duration - 1ms. Original raw close-time token is retained."
     return summary, disposition, issues, quarantined
 
-def create_monthly_from_daily(root, daily_candidate_path, monthly_out):
-    """Create complete candidate 1mo candles from the candidate 1d series."""
+def create_monthly_from_daily(root, daily_candidate_path, monthly_out, quarantine_keys=None, quarantine_cases=None, quarantined_rows=None):
+    """Create 1mo candles only when neither the monthly key nor any source 1d key is quarantined."""
+    quarantine_keys = quarantine_keys or set()
+    quarantine_cases = quarantine_cases or {}
+    quarantined_rows = quarantined_rows if quarantined_rows is not None else []
     grouped={}
     with gzip.open(daily_candidate_path,"rt",newline="",encoding="utf-8") as f:
         for row in csv.DictReader(f):
             t=int(row["open_time_ms"]); dt=utc_dt(t); key=(dt.year,dt.month)
             grouped.setdefault(key,[]).append(row)
+    source_quarantine_by_month={}
+    for interval, token in quarantine_keys:
+        if interval != "1d":
+            continue
+        if not str(token).isdigit():
+            raise ValueError(f"quarantine open_time_ms must be an exact integer token: {token!r}")
+        dt=utc_dt(int(token))
+        source_quarantine_by_month.setdefault((dt.year,dt.month),[]).append(str(token))
     src_sha=sha256_file(daily_candidate_path)
-    rows_written=0
     summary={"interval":"1mo","source_type":"derived_from_candidate_1d","source_file":daily_candidate_path.name,
              "source_sha256":src_sha,"candidate_rows":0,"off_grid_open_rows":0,"ohlc_anomaly_rows":0,
-             "duplicate_open_times":0,"first_open_time_utc":None,"last_open_time_utc":None}
+             "duplicate_open_times":0,"first_open_time_utc":None,"last_open_time_utc":None,
+             "quarantined_rows":0,"quarantined_exact_key_rows":0,"quarantined_source_input_rows":0}
     previous=None
     with gzip.open(monthly_out,"wt",newline="",encoding="utf-8",compresslevel=6) as gz:
         w=csv.DictWriter(gz,fieldnames=OUTPUT_FIELDS,extrasaction="ignore");w.writeheader()
         for (year,month),bars in sorted(grouped.items()):
             bars.sort(key=lambda r:int(r["open_time_ms"]))
-            first,last=bars[0],bars[-1]
             start_ms=int(datetime(year,month,1,tzinfo=timezone.utc).timestamp()*1000)
+            exact_key=("1mo",str(start_ms))
+            source_keys=sorted(source_quarantine_by_month.get((year,month),[]),key=int)
+            reasons=[]
+            if exact_key in quarantine_keys:
+                reasons.append("CP-0040 exact 1mo interval + monthly open_time_ms key")
+            if source_keys:
+                reasons.append("Derived monthly candle depends on quarantined 1d source key(s)")
+            if reasons:
+                case_ids=[]
+                for key in ([exact_key] if exact_key in quarantine_keys else []):
+                    case_ids.extend(quarantine_cases.get(key,[]))
+                for token in source_keys:
+                    case_ids.extend(quarantine_cases.get(("1d",token),[]))
+                quarantined_rows.append({
+                    "interval":"1mo","open_time_ms":str(start_ms),"open_time_utc":utc_iso(start_ms),
+                    "source_type":"derived_from_candidate_1d","source_archive":daily_candidate_path.name,
+                    "source_sha256":src_sha,"quarantine_case_ids":";".join(sorted(set(case_ids))),
+                    "quarantine_reason":"; ".join(reasons),"source_quarantine_open_time_ms":";".join(source_keys),
+                    "aggregation_bar_count":len(bars),"derived_row_written":False
+                })
+                summary["quarantined_rows"]+=1
+                summary["quarantined_exact_key_rows"]+=int(exact_key in quarantine_keys)
+                summary["quarantined_source_input_rows"]+=int(bool(source_keys))
+                continue
+            first,last=bars[0],bars[-1]
             nxt=datetime(year+1,1,1,tzinfo=timezone.utc) if month==12 else datetime(year,month+1,1,tzinfo=timezone.utc)
             end_ms=int(nxt.timestamp()*1000)-1
             high=max(Decimal(b["high"]) for b in bars)
@@ -468,7 +503,7 @@ def create_monthly_from_daily(root, daily_candidate_path, monthly_out):
             if summary["first_open_time_utc"] is None: summary["first_open_time_utc"]=r["open_time_utc"]
             summary["last_open_time_utc"]=r["open_time_utc"]
             w.writerow(r)
-    summary["status"]="PASS_STRUCTURAL" if not any(summary[k] for k in ["off_grid_open_rows","ohlc_anomaly_rows","duplicate_open_times"]) else "BLOCKED_STRUCTURAL_ERRORS"
+    summary["status"]="BLOCKED_QUARANTINED_DERIVED_INPUTS" if summary["quarantined_rows"] else ("PASS_STRUCTURAL" if not any(summary[k] for k in ["off_grid_open_rows","ohlc_anomaly_rows","duplicate_open_times"]) else "BLOCKED_STRUCTURAL_ERRORS")
     return summary
 
 def main():
