@@ -34,7 +34,7 @@ def _sha256(path: str | Path) -> str:
     return digest.hexdigest()
 
 
-def run_manifest_driven_simulation(
+def _run_manifest_driven_simulation_test_only(
     csv_path: str | Path,
     manifest_path: str | Path,
     decisions_path: str | Path,
@@ -158,7 +158,7 @@ def run_manifest_driven_simulation(
         ],
     }
 
-def run_manifest_driven_simulation_from_stored_features(
+def _run_manifest_driven_simulation_from_stored_features_test_only(
     csv_path: str | Path,
     manifest_path: str | Path,
     stored_artifact_path: str | Path,
@@ -200,7 +200,7 @@ def run_manifest_driven_simulation_from_stored_features(
         ) from exc
     if stored["artifact"].get("source_csv_sha256") != loaded["csv_sha256"]:
         raise ResearchHarnessError("stored feature artifact is bound to a different candle CSV")
-    result = run_manifest_driven_simulation(
+    result = _run_manifest_driven_simulation_test_only(
         csv_path, manifest_path, stored_artifact_path,
         expected_interval=expected_interval,
         initial_cash_usdt=initial_cash_usdt,
@@ -217,3 +217,42 @@ def run_manifest_driven_simulation_from_stored_features(
         "stored-artifact wrapper validates hashes and causal contract, not independent source provenance"
     )
     return result
+
+
+# Public execution APIs remain disabled until a trusted, independently verified
+# G0 authorization receipt is implemented. Synthetic fixtures may exercise the
+# private implementation helpers above, but must never be treated as authority.
+def run_manifest_driven_simulation(
+    csv_path: str | Path,
+    manifest_path: str | Path,
+    decisions_path: str | Path,
+    *,
+    expected_interval: str,
+    initial_cash_usdt: float,
+    allocation_fraction: float = 0.25,
+    fee_bps_per_side: float = 10.0,
+    slippage_bps_per_side: float = 5.0,
+    symbol_filters: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Fail closed: no authenticated G0 receipt verifier is available yet."""
+    raise ResearchHarnessError(
+        "G0_EVIDENCE_NOT_AUTHENTICATED: public simulation API is disabled until a trusted G0 receipt verifier is integrated"
+    )
+
+
+def run_manifest_driven_simulation_from_stored_features(
+    csv_path: str | Path,
+    manifest_path: str | Path,
+    stored_artifact_path: str | Path,
+    *,
+    expected_interval: str,
+    initial_cash_usdt: float,
+    allocation_fraction: float = 0.25,
+    fee_bps_per_side: float = 10.0,
+    slippage_bps_per_side: float = 5.0,
+    symbol_filters: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Fail closed before touching paths until trusted G0 authorization exists."""
+    raise ResearchHarnessError(
+        "G0_EVIDENCE_NOT_AUTHENTICATED: public stored-feature simulation API is disabled until a trusted G0 receipt verifier is integrated"
+    )
