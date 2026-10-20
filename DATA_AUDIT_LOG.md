@@ -70,3 +70,9 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - GitHub Actions run [39485863361](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39485863361) completed with `success` for auditor commit `d7478dfb4e2b64b309b4640ceee76b18f20b600b`.
 - Verified steps: Python compilation, CLI help, and malformed-date rejection. The runner now also contains archive-date membership, interval-aligned open-time, and inclusive close-time checks.
 - These are offline/smoke checks only. No archive was downloaded; checksum and real market-data quality remain unverified, and Phase 2 stays BLOCKED.
+
+
+## Manual Phase 2 workflow added (2026-10-21)
+- Added [manual GitHub Actions workflow](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/workflows/phase2-binance-data-audit.yml) to run Spot and USDⓈ-M Futures audits together and upload reports/evidence artifacts for 14 days. No API keys are used; no trading orders are possible from this workflow.
+- The workflow has not been manually dispatched yet. Its default date `2026-10-15` is only a candidate input, not verified archive availability. Phase 2 remains BLOCKED until both reports are downloaded and reviewed.
+- A smoke workflow run was triggered to verify the repository changes, but at this log entry its latest status had not yet been confirmed.
