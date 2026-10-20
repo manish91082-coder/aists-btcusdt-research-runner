@@ -1,6 +1,6 @@
 import unittest
 
-from aists_brain.cost_aware_simulator import simulate_next_open
+from aists_brain.cost_aware_simulator import _simulate_next_open_test_only, simulate_next_open
 
 
 def bars(prices, interval_ms=1000, opens=None):
@@ -17,9 +17,18 @@ def bars(prices, interval_ms=1000, opens=None):
 
 
 class CostAwareSimulatorTests(unittest.TestCase):
+    def test_public_simulator_api_fails_closed_before_processing_inputs(self):
+        with self.assertRaisesRegex(ValueError, "G0_EVIDENCE_NOT_AUTHENTICATED"):
+            simulate_next_open(
+                [],
+                [],
+                interval_ms=1000,
+                initial_cash_usdt=1000,
+            )
+
     def test_next_open_fill_models_fees_and_slippage(self):
         candles = bars([100, 110, 120, 130])
-        result = simulate_next_open(
+        result = _simulate_next_open_test_only(
             candles,
             [
                 {"decision_id": "buy-1", "as_of_ms": 999, "action": "BUY_CANDIDATE"},
