@@ -146,3 +146,9 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Completed-month diagnostic selection is fixed. On 2026-09-15, Spot and USDⓈ-M Futures daily archives each matched their official monthly archive exactly after both CHECKSUM files passed; each daily 5m file had 288 candles. This is same-publisher consistency evidence only.
 - Main audit date remains 2026-10-15. Both markets' daily archive checksum/ZIP/schema/candle-quality checks passed, but Spot API checks returned HTTP 451 on all five official endpoints; Futures primary returned HTTP 451 and numbered endpoints HTTP 202. API checks are BLOCKED, so overall Phase 2 enforcement correctly failed.
 - Gate status: BLOCKED. No backtest, model training, paper trading, live order or deployment has occurred. Next research action is to resolve an accepted official API candle verification path within the allowed environment or explicitly document a protocol-approved alternative; do not waive the gate based solely on daily/monthly archive agreement.
+
+## 2026-10-21 — Official Spot API endpoint coverage extended
+- Added documented Binance Spot alternatives `api-gcp.binance.com` and `data-api.binance.vision/api/v3/klines` to the representative audit runner's API candidates; added offline unit tests for candidate policy.
+- Commits: `5354bc1cc0f6df19a1b5ec63b5dc49b87771d986` (runner), `707b294c8d5279b40d44c1119795b8909013072c` (tests), audit-log checkpoint `a0d6ffe33832b27662f5f984c7ee4d88b143062a`.
+- The latest observed smoke run `39496780166` was QUEUED when checked, so tests are not yet verified passing. Check both the smoke run and the push-triggered Phase 2 run before interpreting results.
+- This is a code/test path improvement only. It does not override HTTP 451, does not bypass regional restrictions, and does not change the required gate. Phase 2 remains BLOCKED pending valid official API candle responses for both Spot and USDⓈ-M Futures.
