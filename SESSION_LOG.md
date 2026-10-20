@@ -173,3 +173,9 @@ Check whether GitHub Actions has a successful smoke run for the latest runner/te
 - Conclusion: `success`. Python compilation, unittest discovery, CLI help and malformed-date preflight all completed successfully.
 - Evidence boundary: offline smoke checks only. No real archive/checksum/API comparison is implied.
 - The latest 100 repository workflow runs inspected did not show a manual Phase 2 audit run. Next: user dispatches Phase 2 workflow and shares both reports/artifact for review.
+
+## 2026-10-21 | Phase 2 workflow-state recheck
+- Revalidated live main ref and the master plan/current gate. Main: `ba547c6e18db46d4032757dc3ee4af89099c40bd`.
+- Confirmed the smoke CI run remains successful. Searched the latest 100 workflow runs; no Phase 2 Binance archive audit was found.
+- No dispatch was made because the available GitHub connector provides no workflow-dispatch action. This is a tool boundary, not evidence of archive availability or failure.
+- Next task: user manually dispatches the Phase 2 workflow and shares the Spot and USDⓈ-M JSON reports plus evidence artifact. Phase 2 stays BLOCKED; strategy backtests remain locked.
