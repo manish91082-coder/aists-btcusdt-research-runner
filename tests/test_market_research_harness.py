@@ -7,7 +7,8 @@ import unittest
 from pathlib import Path
 
 from aists_brain.research_harness import (
-    DECISION_SCHEMA, ResearchHarnessError, run_manifest_driven_simulation,\n    _run_manifest_driven_simulation_test_only,
+    DECISION_SCHEMA, ResearchHarnessError, run_manifest_driven_simulation,
+    _run_manifest_driven_simulation_test_only,
 )
 from aists_brain.provenance_input import SCHEMA_VERSION
 from aists_brain.decision_lineage import canonical_sha256
@@ -131,6 +132,15 @@ class ResearchHarnessTests(unittest.TestCase):
         self.assertEqual(result["accounting_reconciliation"]["status"], "PASS_ACCOUNTING_RECONCILIATION")
         self.assertEqual(result["paper_ledger_integrity"]["status"], "PASS_HASH_CHAIN")
         self.assertFalse(result["simulation"]["events"][0]["is_order_instruction"])
+
+    def test_public_api_blocks_unauthenticated_direct_call_before_path_access(self):
+        with self.assertRaisesRegex(ResearchHarnessError, "G0_EVIDENCE_NOT_AUTHENTICATED"):
+            run_manifest_driven_simulation(
+                self.root / "missing.csv", self.root / "missing-manifest.json",
+                self.root / "missing-decisions.json",
+                expected_interval="5m", initial_cash_usdt=100.0,
+                symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5},
+            )
 
     def test_global_g0_blocked_refuses_run(self):
         self.write_manifest(global_g0_status="BLOCKED_GLOBAL")
