@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
-Updated: 2026-10-17
-Latest implementation checkpoint: CP-0276 simulator contract integration (test commit and documentation-final verification commit CI passed; re-check current HEAD at each session start). Latest empirical admissibility audit remains CP-0151; no empirical gate has cleared. Re-fetch current branch HEAD and exact-HEAD CI each session before claiming a terminal result.
+Updated: 2026-10-20
+Latest goal-directed checkpoint: CP-0293 source-feature verification boundary and G0 unblock contract. Latest verified pre-correction HEAD `e2697f855109f54cc61d6ad2fdcdcf57bf46b57d` was created by the live-status metadata correction; rerun exact-HEAD CI after this roadmap metadata update. The latest verified source-feature code head is `473ef1e950d892801782aec71b89e4ae06bde9e9`; no empirical gate has cleared, G0 remains BLOCKED_GLOBAL, and profitability is not established.
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
