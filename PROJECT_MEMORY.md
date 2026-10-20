@@ -65,3 +65,12 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 - BNB commission is used only where current product/account rules support it and actual records verify deduction. Funding/spread/slippage/impact remain distinct costs.
 - At each substantive task, check live GitHub head, active phase, acceptance gate, evidence and blockers. Log real changes and read them back. Do not claim unverified tests, persistent model-memory changes, full uptime or zero error.
 - Current next gate: representative official Binance archive audit. No data audit, backtest, model training, paper run or live trade is claimed.
+
+
+## 2026-10-21 — Phase 2 blocker checkpoint
+## 2026-10-21 — Phase 2 archive retrieval blocker
+- Attempted HEAD requests from the current execution container for candidate BTCUSDT Spot 5m and USDⓈ-M Futures daily archive URLs and companion `.CHECKSUM` URLs for 2026-10-20.
+- All four attempts failed before receiving an HTTP response with `Temporary failure in name resolution`; the web retrieval tool also could not access the direct checksum URLs.
+- This proves a current-environment retrieval blocker only. It does not prove the candidate archives exist or do not exist, and no archive bytes, checksum, schema, timestamp, row count, gap result or data-quality PASS is claimed.
+- Created DATA_AUDIT_LOG.md with exact attempted URLs, observed errors, evidence boundaries and a reproducible zero-cost next route via a network-enabled user-owned runtime such as Colab.
+- Phase 2 remains BLOCKED pending actual retrieval. No bulk download, strategy backtest, model training, paper run or live order was performed. Next: retrieve one real official artifact and its checksum, audit it end-to-end, then freeze S-01 to S-04 before any backtest.
