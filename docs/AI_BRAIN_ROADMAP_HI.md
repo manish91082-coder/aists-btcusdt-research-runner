@@ -1,7 +1,7 @@
 # AISTS AI Brain Roadmap (Hindi)
 
 Updated: 2026-10-20
-Latest goal-directed checkpoint: CP-0293 source-feature verification boundary and G0 unblock contract. Latest verified pre-correction HEAD `e2697f855109f54cc61d6ad2fdcdcf57bf46b57d` was created by the live-status metadata correction; rerun exact-HEAD CI after this roadmap metadata update. The latest verified source-feature code head is `473ef1e950d892801782aec71b89e4ae06bde9e9`; no empirical gate has cleared, G0 remains BLOCKED_GLOBAL, and profitability is not established.
+Latest goal-directed checkpoint: CP-0294 candle gap accounting verification. Code/test HEAD `29af0007fc403dcb5b2dd473b9b00feafdd9bf92`; exact-head push and PR runs [39404393997](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404393997) and [39404398830](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404398830) succeeded. Documentation updates are recorded in the live status and CP-0294 checkpoint. No empirical gate has cleared; G0 remains BLOCKED_GLOBAL and profitability is not established.
 Implementation branch: `cp-0120-ai-brain-foundation`
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2
@@ -364,3 +364,13 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 - Feature verifier now recomputes features from supplied causal source rows and rejects altered values/hashes even when payload hashes are recomputed. This strengthens software integrity only; it cannot prove archive provenance or historical-version admissibility.
 - Actual goal blocker remains G0: an independent, trusted, dated G0-A..G0-E adjudication bound to the frozen CP-0040 rulebook and evidence population, plus a named canonical source and verifiable archive/version/correction evidence. Minimum receipt contract is in [CP-0293](../evidence/checkpoints/CP0293_Source_Feature_Verification_and_G0_Unblock_HI.md).
 - Do not run a real-market backtest or promote candidates while G0 is BLOCKED_GLOBAL. Do not repeat the same provenance search absent new evidence; no more infrastructure-only changes unless they close a demonstrated blocker. PR #2 stays open/unmerged; no live signing, broadcast or orders.
+
+
+## CP-0294: Candle gap accounting verification (2026-10-20)
+- Goal-directed audit found that the provenance loader checked manifest booleans for gap accounting but did not independently derive gaps from the candle timestamps.
+- `aists_brain/provenance_input.py` now derives each gap from consecutive observed open timestamps, rejects off-grid timestamp differences, and requires a matching explicit manifest `gap_events` list when gaps exist. Mismatched or missing gap records fail closed; derived events are returned to callers.
+- Added tests for missing gap records, exact matching gap records, and off-grid timestamps.
+- Code/test HEAD `29af0007fc403dcb5b2dd473b9b00feafdd9bf92`; exact-head push run [39404393997](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404393997) and PR run [39404398830](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404398830) both succeeded.
+- This change improves structural integrity only. It does not authenticate source authority or archive versions, and does not clear G0. The frozen CP-0040 rulebook remains unchanged.
+- G0 remains BLOCKED_GLOBAL; G2 current 23 candidates remain FAIL / NOT PROMOTED; G3 remains blocked; G4 evidence remains insufficient; G5 not run; G6 not validated; G7 live blocked; profitability not established. No real-market backtest, promotion, paper session, or exchange action is authorized.
+- Detailed evidence: [CP-0294 checkpoint](../evidence/checkpoints/CP0294_Candle_Gap_Accounting_HI.md).
