@@ -7,6 +7,7 @@ This repository is the durable source of truth for requirements, research, evide
 **Research first. No trading implementation is authorised yet.** The target is an AI-assisted Binance Spot + Futures system with long/short exposure, dynamic multi-timeframe decisions, BNB fee payment where supported, and evidence-backed portfolio risk controls. There is no claim of trading performance or live readiness.
 
 ## Start here
+- [Strategy Research Dossier](STRATEGY_RESEARCH.md) — falsifiable strategy hypotheses, Binance data requirements, cost accounting and test protocol. None is claimed profitable until tested.
 - [Master Project Blueprint](PROJECT_BLUEPRINT.md) — full requirements, proposed ten AI roles, risk math, data, testing and staged implementation.
 - [Project Status](PROJECT_STATUS.md) — last verified state and next action.
 - [Project Memory](PROJECT_MEMORY.md) — durable user requirements and confirmed facts.
