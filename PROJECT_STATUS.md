@@ -66,3 +66,12 @@ Use live main ref as authority. After the current write, re-fetch main, root lis
 - Linked the expanded plan from PROJECT_BLUEPRINT.md. The roadmap is locked as the default sequence; documentation alone does not pass any phase.
 - No representative archive audit, strategy/backtest/model/paper run or live order is newly claimed.
 - Next task: Phase 2, verify an actual official Binance archive and its checksum/schema/timestamp/gap results; record blockers honestly.
+
+
+## 2026-10-21 — Phase 2 archive retrieval attempt
+## 2026-10-21 — Phase 2 archive retrieval blocker
+- Attempted HEAD requests from the current execution container for candidate BTCUSDT Spot 5m and USDⓈ-M Futures daily archive URLs and companion `.CHECKSUM` URLs for 2026-10-20.
+- All four attempts failed before receiving an HTTP response with `Temporary failure in name resolution`; the web retrieval tool also could not access the direct checksum URLs.
+- This proves a current-environment retrieval blocker only. It does not prove the candidate archives exist or do not exist, and no archive bytes, checksum, schema, timestamp, row count, gap result or data-quality PASS is claimed.
+- Created DATA_AUDIT_LOG.md with exact attempted URLs, observed errors, evidence boundaries and a reproducible zero-cost next route via a network-enabled user-owned runtime such as Colab.
+- Phase 2 remains BLOCKED pending actual retrieval. No bulk download, strategy backtest, model training, paper run or live order was performed. Next: retrieve one real official artifact and its checksum, audit it end-to-end, then freeze S-01 to S-04 before any backtest.
