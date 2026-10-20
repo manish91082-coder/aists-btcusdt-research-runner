@@ -89,3 +89,10 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - Added an explicit preflight step to the manual Phase 2 workflow. It rejects non-canonical/invalid dates, symbols outside ASCII letters/digits, and intervals outside the declared options before either archive audit starts.
 - Read back the committed workflow and confirmed the new validation step is present. Commit: `37526d0640bf20793274543f4106be7b5d87be15`.
 - This prevents a typo from reaching the auditor's early argparse exit without reports. It does not establish that the candidate archive exists, does not verify CI status, and does not change the Phase 2 gate. The workflow still needs to be manually run and both JSON reports reviewed.
+
+## Optional kline CSV header hardening (2026-10-21)
+- During the end-to-end Phase 2 code review, identified a format-compatibility risk: the parser treated every non-empty 12-column row as data, so an archive that starts with a column-name row would be counted as malformed.
+- Updated `tools/audit_binance_archive.py` to recognise only the exact documented 12-column kline header on the first non-empty record, skip that header when present, and record `csv_header_present` in the JSON report. Header-like text elsewhere is not silently skipped.
+- Added four offline unit tests for space-separated and snake_case header names, a real-shaped data row, and wrong column count.
+- Commits: runner `5369263058971e14fcae4db438a1e205cbb2c7ce`; tests `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
+- Verification limit: GitHub file writes were acknowledged, but the updated smoke workflow result has not yet been observed and no real Spot/Futures archive was downloaded. This hardening does not pass Phase 2; both real JSON reports still must be reviewed.
