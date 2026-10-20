@@ -81,11 +81,14 @@ def classify_api_sample_results(sample_results: list[dict]) -> str:
 
 
 def classify_audit_status(checks: dict[str, str], required_checks: list[str]) -> str:
-    """PASS only when every required check passes; preserve blockers separately from failures."""
-    if all(checks.get(key) == "PASS" for key in required_checks):
-        return "PASS"
-    if any(checks.get(key) == "BLOCKED" for key in required_checks):
+    """A proven required-check failure outranks blockers; otherwise preserve blocked status."""
+    statuses = [checks.get(key) for key in required_checks]
+    if any(status == "FAIL" or status == "FAIL_OR_BLOCKED" for status in statuses):
+        return "FAIL"
+    if any(status == "BLOCKED" for status in statuses):
         return "BLOCKED"
+    if all(status == "PASS" for status in statuses):
+        return "PASS"
     return "FAIL"
 
 
@@ -311,7 +314,6 @@ def main() -> int:
         sample_results = []
         if args.api_samples:
             positions = sorted(set([0, len(rows) // 2, len(rows) - 1]))[:args.api_samples]
-            api_ok = True
             for pos in positions:
                 r = rows[pos]
                 try:
@@ -326,7 +328,6 @@ def main() -> int:
                         "volume": Decimal(str(candle[5])) == r["volume"],
                     }
                     passed = all(checks.values())
-                    api_ok = api_ok and passed
                     sample_results.append({"row_index": pos, "checks": checks, "status": "PASS" if passed else "FAIL"})
                 except Exception as exc:
                     api_ok = False
