@@ -53,3 +53,8 @@ Newest first. Repository change log is not a performance claim.
 
 ## 2026-10-21 — Audit runner coverage hardening
 - Added UTC-day expected-open coverage checks to detect missing leading/trailing candles and made first/last event timestamps independent of row order. This is unexecuted tooling, not a data audit result.
+
+## 2026-10-21 — Per-response plan audit lock
+- Recorded the user's strict requirement to review the complete master plan and live project state before every response/action.
+- Synchronized anti-drift and continuity instructions across rules, continuity, project status, memory and session log.
+- This is a process/governance update only. It does not pass Phase 2 or establish a data audit, CI result, backtest, model training, paper run or live-trading readiness.
