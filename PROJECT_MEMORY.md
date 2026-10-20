@@ -95,3 +95,7 @@ Durable project memory. Live GitHub state and verified evidence override old cha
 - During code review, addressed the risk of an optional header row in an official 12-column kline CSV being miscounted as malformed data. The runner recognises only the exact known 12-column header on the first non-empty record and records whether it was present.
 - Four offline tests were added. Runner commit: `5369263058971e14fcae4db438a1e205cbb2c7ce`; test commit: `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
 - These are code/test changes only. CI for the latest changes and actual archive/checksum/API checks remain unverified. Phase 2 stays blocked; do not start strategy backtests.
+
+## 2026-10-21 — Smoke CI verified; real-data gate still open
+- GitHub Actions smoke run [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620) succeeded for test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`, including the unit tests for the optional kline header change.
+- This is not evidence of a real archive download or market-data audit. The latest 100 workflow runs inspected did not show a Phase 2 manual audit run. Keep Phase 2 BLOCKED until both Spot and USDⓈ-M reports are independently reviewed.
