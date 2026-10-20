@@ -84,11 +84,11 @@ def run_research_entrypoint(
 ) -> dict[str, Any]:
     """Run only with explicit gate snapshot and produce a hash-bound audit report.
 
-    Gate states are supplied evidence, not authenticated here. If G0 is not PASS,
-    the runner does not inspect data/manifest/artifact paths and emits no input
-    hashes or simulation payload. If G0 says PASS, the existing provenance gate
-    and stored-artifact harness remain mandatory. Any failure is recorded as a
-    blocked entrypoint report, never as a successful simulation.
+    Gate states are supplied evidence, not authenticated here. The entrypoint
+    never treats a caller-supplied G0 PASS as authorization: until a trusted,
+    independently verified gate receipt is integrated, it does not inspect data
+    paths or invoke the simulation harness for any supplied gate snapshot.
+    Reports remain blocked and contain no input hashes or simulation payload.
     """
     if not isinstance(gate_snapshot, Mapping):
         raise ResearchRunEntryPointError("gate_snapshot must be a mapping")
@@ -110,33 +110,15 @@ def run_research_entrypoint(
     }
 
     if gate_snapshot["G0"] == "PASS":
+        # A caller-supplied PASS is not authenticated authority. Until a trusted,
+        # independently verified gate receipt is integrated, never inspect inputs
+        # or invoke the simulation harness from this orchestration entrypoint.
         entrypoint.update({
             "status": "BLOCKED_INPUT",
-            "blocked_reason": "REQUIRED_INPUT_MISSING_OR_REJECTED",
+            "blocked_reason": "G0_EVIDENCE_NOT_AUTHENTICATED",
             "input_artifacts_inspected": False,
+            "simulation_attempted": False,
         })
-        if (csv_path is None or manifest_path is None or stored_artifact_path is None
-                or not expected_interval or initial_cash_usdt is None or symbol_filters is None):
-            entrypoint["blocked_reason"] = "REQUIRED_INPUT_ARGUMENT_MISSING"
-        else:
-            entrypoint["input_artifacts_inspected"] = True
-            entrypoint["simulation_attempted"] = True
-            try:
-                run_result = run_manifest_driven_simulation_from_stored_features(
-                    csv_path, manifest_path, stored_artifact_path,
-                    expected_interval=expected_interval,
-                    initial_cash_usdt=initial_cash_usdt,
-                    allocation_fraction=allocation_fraction,
-                    fee_bps_per_side=fee_bps_per_side,
-                    slippage_bps_per_side=slippage_bps_per_side,
-                    symbol_filters=symbol_filters,
-                )
-                entrypoint.update({
-                    "status": "SIMULATED_NOT_VALIDATED",
-                    "blocked_reason": None,
-                })
-            except (ResearchHarnessError, OSError, ValueError, TypeError) as exc:
-                entrypoint["blocked_reason"] = f"{type(exc).__name__}: {exc}"
 
     report = build_research_audit_report(
         gate_snapshot=gate_snapshot,
