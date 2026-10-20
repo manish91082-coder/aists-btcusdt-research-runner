@@ -64,3 +64,9 @@ No feature is complete because it was planned. No test is PASS without observed 
 - This proves a current-environment retrieval blocker only. It does not prove the candidate archives exist or do not exist, and no archive bytes, checksum, schema, timestamp, row count, gap result or data-quality PASS is claimed.
 - Created DATA_AUDIT_LOG.md with exact attempted URLs, observed errors, evidence boundaries and a reproducible zero-cost next route via a network-enabled user-owned runtime such as Colab.
 - Phase 2 remains BLOCKED pending actual retrieval. No bulk download, strategy backtest, model training, paper run or live order was performed. Next: retrieve one real official artifact and its checksum, audit it end-to-end, then freeze S-01 to S-04 before any backtest.
+
+
+## 2026-10-21 — Audit runner handoff
+- Current environment could not resolve `data.binance.vision`; the blocker is recorded in `DATA_AUDIT_LOG.md`.
+- To move forward without inventing evidence, `tools/audit_binance_archive.py` and `RUN_DATA_AUDIT.md` provide a zero-cost, network-enabled Colab route. Fetch live `main`, review both files, run separate Spot and USDⓈ-M audits, then request the JSON reports and any failure output for independent review.
+- Phase 2 is still BLOCKED until real archive bytes, checksum results and data-quality outputs are observed. Do not start strategy backtests before the representative data gate and S-01 to S-04 preregistration.
