@@ -14,7 +14,8 @@ from aists_brain.feature_artifact_store import persist_feature_artifact
 from aists_brain.provenance_input import SCHEMA_VERSION
 from aists_brain.research_harness import (
     ResearchHarnessError,
-    run_manifest_driven_simulation_from_stored_features,\n    _run_manifest_driven_simulation_from_stored_features_test_only,
+    run_manifest_driven_simulation_from_stored_features,
+    _run_manifest_driven_simulation_from_stored_features_test_only,
 )
 
 
@@ -90,6 +91,15 @@ class StoredFeatureHarnessTests(unittest.TestCase):
             result["accounting_reconciliation"]["status"],
             "PASS_ACCOUNTING_RECONCILIATION",
         )
+
+    def test_public_stored_feature_api_blocks_before_path_access(self):
+        with self.assertRaisesRegex(ResearchHarnessError, "G0_EVIDENCE_NOT_AUTHENTICATED"):
+            run_manifest_driven_simulation_from_stored_features(
+                self.root / "missing.csv", self.root / "missing-manifest.json",
+                self.root / "missing-features.json",
+                expected_interval="5m", initial_cash_usdt=100.0,
+                symbol_filters={"min_qty": 0.001, "step_size": 0.001, "min_notional": 5},
+            )
 
     def test_blocked_g0_rejects_before_stored_artifact_use(self):
         manifest = json.loads(self.manifest_path.read_text(encoding="utf-8"))
