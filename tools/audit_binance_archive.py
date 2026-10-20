@@ -127,7 +127,7 @@ def official_api_candidates(base: str) -> list[str]:
     return [base]
 
 
-def api_candle(base: str, symbol: str, interval: str, open_time_ms: int) -> list:
+def api_candle(base: str, symbol: str, interval: str, open_time_ms: int) -> tuple[list, str]:
     query = urllib.parse.urlencode({
         "symbol": symbol, "interval": interval, "startTime": open_time_ms, "limit": 1
     })
@@ -138,7 +138,7 @@ def api_candle(base: str, symbol: str, interval: str, open_time_ms: int) -> list
             payload = json.loads(fetch(f"{candidate}?{query}").decode("utf-8"))
             if not isinstance(payload, list) or not payload:
                 raise RuntimeError(f"API returned no candle for open time {open_time_ms}: {payload!r}")
-            return payload[0]
+            return payload[0], candidate
         except Exception as exc:
             errors.append(f"{candidate}: {type(exc).__name__}: {exc}")
     raise RuntimeError("All official Binance API endpoints failed: " + " | ".join(errors))
@@ -366,7 +366,8 @@ def main() -> int:
             for pos in positions:
                 r = rows[pos]
                 try:
-                    candle = api_candle(api_base, symbol, args.interval, r["open_ms"])
+                    candle, api_endpoint = api_candle(api_base, symbol, args.interval, r["open_ms"])
+                    # Record the exact official host used so source provenance is auditable.
                     # API times are milliseconds; compare timestamp and OHLCV fields using Decimal.
                     checks = {
                         "open_time": int(candle[0]) == r["open_ms"],
@@ -377,7 +378,7 @@ def main() -> int:
                         "volume": Decimal(str(candle[5])) == r["volume"],
                     }
                     passed = all(checks.values())
-                    sample_results.append({"row_index": pos, "checks": checks, "status": "PASS" if passed else "FAIL"})
+                    sample_results.append({"row_index": pos, "api_endpoint": api_endpoint, "checks": checks, "status": "PASS" if passed else "FAIL"})
                 except Exception as exc:
                     api_ok = False
                     sample_results.append({"row_index": pos, "status": "BLOCKED", "error": str(exc)})
