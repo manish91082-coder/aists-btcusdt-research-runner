@@ -348,3 +348,12 @@ Build a BTCUSDT-first, long-only Binance Spot decision system for planning capit
 
 
 - Follow-up exact-head CI: documentation-final checkpoint before this note, `d530f83382c5b5c0c616872615d71b8ffff82adc`, passed Actions run [39362405611](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39362405611). Compile and test steps succeeded; the log confirms the CP-0276 non-finite-capital test and 219 tests, `OK`. This remains software verification only.
+
+
+## CP-0292 — Feature lineage input-prefix binding (2026-10-20)
+- Found a concrete internal consistency gap in `decision_lineage.py`: feature `source_sha256` values were format-checked but not required to equal the snapshot's declared `input_prefix_sha256`.
+- Validator now requires a valid input-prefix SHA-256 and exact equality for every feature observation source hash. Added regression tests for mismatch and missing prefix hash.
+- Code commit: `af0fd32d1b254634fd794566e1bc12ef357e5b14`; test commit: `b3ecf194a25e115739b8808f488d02bb4eed91b0`.
+- Report: [CP-0292 Feature Lineage Input-Prefix Binding](../evidence/checkpoints/CP0292_Feature_Lineage_Input_Prefix_Binding_HI.md).
+- This is an internal lineage-consistency improvement only; it does not authenticate external source provenance, clear G0/G2/G3, or establish profitability. Exact-head CI verification must be based on the terminal Actions run and inspected logs, not assumed from commit creation.
+- No real market data, candidate build, backtest, paper session, signing, broadcast or exchange order was performed. PR #2 remains open/unmerged.
