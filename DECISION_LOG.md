@@ -1,3 +1,6 @@
+## 2026-10-21 | D-016 | USER-CONFIRMED | Master plan and phase sequence lock
+Follow PLAN_AND_PHASE_LOCK.md as the default ordered roadmap. Do not skip a phase or mark its gate passed without recorded evidence. The immediate work is the representative Binance archive audit, followed by preregistration of S-01 to S-04. Tax/jurisdiction research stays deferred during this strategy/data stage but remains a mandatory later live-release gate.
+
 ## 2026-10-21 | D-015 | USER-CONFIRMED | Immediate research priority
 Defer taxation/jurisdiction research to a later stage; focus now on trading strategy hypotheses and Binance data required to test them. This is sequencing only, not permission to bypass later product/eligibility gates.
 
