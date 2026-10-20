@@ -1,3 +1,6 @@
+## 2026-10-21 | D-017 | USER-CONFIRMED | Full AI trading system scope and anti-drift
+User restated and reaffirmed the full Binance Spot + Futures AI system: long/short exposure, BNB commission where supported, eight horizons, evidence-ranked top ten, longest verifiable history, dynamic AI-selected strategies/features/entries/exits/SL/TP/trailing/position sizing, 10,000 USDT starting research equity, zero-cost-first resources, research before coding, evidence verification and no drift. PLAN_AND_PHASE_LOCK.md and PROJECT_BLUEPRINT.md are the durable specifications. This confirms scope; it does not approve untested strategies or live trading.
+
 ## 2026-10-21 | D-016 | USER-CONFIRMED | Master plan and phase sequence lock
 Follow PLAN_AND_PHASE_LOCK.md as the default ordered roadmap. Do not skip a phase or mark its gate passed without recorded evidence. The immediate work is the representative Binance archive audit, followed by preregistration of S-01 to S-04. Tax/jurisdiction research stays deferred during this strategy/data stage but remains a mandatory later live-release gate.
 
