@@ -114,10 +114,24 @@ def api_candle(base: str, symbol: str, interval: str, open_time_ms: int) -> list
     query = urllib.parse.urlencode({
         "symbol": symbol, "interval": interval, "startTime": open_time_ms, "limit": 1
     })
-    payload = json.loads(fetch(f"{base}?{query}").decode("utf-8"))
-    if not isinstance(payload, list) or not payload:
-        raise RuntimeError(f"API returned no candle for open time {open_time_ms}: {payload!r}")
-    return payload[0]
+    # Binance documents numbered API hosts as alternatives to the primary endpoint.
+    # Try the market's official alternatives, but never bypass an error by changing data source.
+    if base == SPOT_API:
+        bases = [base] + [f"https://api{i}.binance.com/api/v3/klines" for i in (1, 2, 3, 4)]
+    elif base == UM_API:
+        bases = [base] + [f"https://fapi{i}.binance.com/fapi/v1/klines" for i in (1, 2, 3, 4)]
+    else:
+        bases = [base]
+    errors = []
+    for candidate in bases:
+        try:
+            payload = json.loads(fetch(f"{candidate}?{query}").decode("utf-8"))
+            if not isinstance(payload, list) or not payload:
+                raise RuntimeError(f"API returned no candle for open time {open_time_ms}: {payload!r}")
+            return payload[0]
+        except Exception as exc:
+            errors.append(f"{candidate}: {type(exc).__name__}: {exc}")
+    raise RuntimeError("All official Binance API endpoints failed: " + " | ".join(errors))
 
 
 def main() -> int:
