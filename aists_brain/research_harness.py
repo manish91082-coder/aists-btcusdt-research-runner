@@ -15,7 +15,7 @@ from typing import Any, Mapping
 
 from aists_brain.accounting_reconciliation import reconcile_simulation_with_ledger
 from aists_brain.decision_lineage import DECISION_SCHEMA, DecisionLineageError, validate_causal_decision_artifact
-from aists_brain.cost_aware_simulator import simulate_next_open
+from aists_brain.cost_aware_simulator import _simulate_next_open_test_only
 from aists_brain.paper_portfolio import append_paper_fill, create_ledger, verify_ledger
 from aists_brain.provenance_input import (
     ProvenanceGateError,
@@ -88,7 +88,7 @@ def _run_manifest_driven_simulation_test_only(
     decisions = lineage["decisions"]
 
     try:
-        simulation = simulate_next_open(
+        simulation = _simulate_next_open_test_only(
             loaded["candles"], decisions,
             interval_ms=loaded["interval_ms"],
             initial_cash_usdt=initial_cash_usdt,
