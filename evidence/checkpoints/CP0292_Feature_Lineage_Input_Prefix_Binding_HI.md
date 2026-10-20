@@ -32,3 +32,9 @@ This tightens internal causal-lineage consistency. It does not independently pro
 - GitHub Actions run [39391119850](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39391119850) completed `success` on that exact head. Compile passed; all 233 brain tests passed (`OK`); all 11 CP-0026 exact-key quarantine tests passed (`OK`). The two new lineage regression tests and the updated research-harness fixture passed.
 - An earlier run failed because a legacy test fixture did not declare the newly required prefix hash; the fixture was corrected and the subsequent exact-head runs passed. The failure and fix are retained here rather than hidden.
 - These results verify software behavior only, not market-data provenance, candidate eligibility, or profitability.
+
+
+## Subsequent exact-head re-verification
+- The later documentation head `86bc46b682d117b33591e604c9885883de5ee81a` was associated with GitHub Actions run [39391222478](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39391222478), terminal `success`. Its job log confirms Python compile passed, all 233 brain unit tests passed (`OK`), and all 11 CP-0026 quarantine tests passed (`OK`). The CP-0292 source-hash consistency tests are included in the 233 brain tests.
+- PR #2 was re-fetched and remained OPEN, `merged=false`; its head matched `86bc46b682d117b33591e604c9885883de5ee81a` before this report update. Because this report update creates a newer head, final verification must be repeated for the resulting head.
+- Gates unchanged: G0 blocked; G2 23 candidates fail/not promoted; G3 blocked; G4 insufficient; G6 not built/validated; G7 live blocked. No real-market research was run.
