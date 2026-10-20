@@ -55,3 +55,7 @@ If the daily candidate is unavailable, discover a real period from the official 
 - Reviewed the committed runner after initial creation and identified that gap counting between observed rows alone would not detect missing first/last candles of a UTC day.
 - Added a UTC-day expected-open coverage check for intervals that tile a day; the JSON report now includes expected count and missing-open examples. First/last event timestamps now use minimum/maximum observed open time rather than row-order endpoints.
 - This is a code review/change, not a real-data test. No downloaded archive or audit PASS is claimed. The runner itself still needs execution in a network-enabled runtime and independent review of both market reports.
+
+
+## Offline CI smoke checks added (2026-10-21)
+Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull requests it checks Python compilation, CLI help, and that a malformed date exits with an argparse error before any archive/network request. This workflow has been committed but its run result has not yet been observed; do not treat it as passed. It does not download or validate market data.
