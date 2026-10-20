@@ -21,7 +21,7 @@ def _number(name: str, value: Any, *, positive: bool = False, non_negative: bool
     return result
 
 
-def simulate_next_open(
+def _simulate_next_open_test_only(
     candles: Sequence[Mapping[str, Any]],
     decisions: Sequence[Mapping[str, Any]],
     *,
@@ -266,6 +266,14 @@ def simulate_next_open(
         ],
     }
 
+def simulate_next_open(*args: Any, **kwargs: Any) -> dict[str, Any]:
+    """Public simulator API remains disabled while trusted G0 receipt verification is absent."""
+    raise ValueError(
+        "G0_EVIDENCE_NOT_AUTHENTICATED: direct simulator API is disabled; "
+        "only synthetic software fixtures may use the private test-only helper"
+    )
+
+
 def simulate_next_open_with_capital_cost_contract(
     candles: Sequence[Mapping[str, Any]],
     decisions: Sequence[Mapping[str, Any]],
@@ -331,7 +339,7 @@ def simulate_next_open_with_capital_cost_contract(
     if not isinstance(capital_cost_contract.get("symbol_filters"), Mapping):
         raise ValueError("capital_cost_contract symbol_filters must be a mapping")
 
-    result = simulate_next_open(
+    result = _simulate_next_open_test_only(
         candles,
         decisions,
         interval_ms=interval_ms,
