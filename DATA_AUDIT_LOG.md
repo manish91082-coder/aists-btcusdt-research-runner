@@ -50,32 +50,27 @@ If the daily candidate is unavailable, discover a real period from the official 
 - S-01 to S-04 preregistration: NEXT after the representative data audit is actually completed or a durable blocker decision is recorded.
 - Strategy backtests, model training, paper trading, live trading: NOT PERFORMED in this audit attempt.
 
-
 ## Audit runner review update (2026-10-21)
 - Reviewed the committed runner after initial creation and identified that gap counting between observed rows alone would not detect missing first/last candles of a UTC day.
 - Added a UTC-day expected-open coverage check for intervals that tile a day; the JSON report now includes expected count and missing-open examples. First/last event timestamps now use minimum/maximum observed open time rather than row-order endpoints.
 - This is a code review/change, not a real-data test. No downloaded archive or audit PASS is claimed. The runner itself still needs execution in a network-enabled runtime and independent review of both market reports.
 
-
 ## Offline CI smoke checks added (2026-10-21)
 Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull requests it checks Python compilation, CLI help, and that a malformed date exits with an argparse error before any archive/network request. This workflow has been committed but its run result has not yet been observed; do not treat it as passed. It does not download or validate market data.
-
 
 ## Offline CI smoke run verified (2026-10-21)
 - GitHub Actions run [39485541588](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39485541588) completed with conclusion `success` for commit `e61aab2ec8fd77d345d6652ea2205c562dfe4a90`.
 - This verifies the offline smoke checks (Python compile, CLI help, malformed-date rejection) only. It does not download or validate Binance market data, so Phase 2 remains BLOCKED.
-
 
 ## Timestamp validation smoke run verified (2026-10-21)
 - GitHub Actions run [39485863361](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39485863361) completed with `success` for auditor commit `d7478dfb4e2b64b309b4640ceee76b18f20b600b`.
 - Verified steps: Python compilation, CLI help, and malformed-date rejection. The runner now also contains archive-date membership, interval-aligned open-time, and inclusive close-time checks.
 - These are offline/smoke checks only. No archive was downloaded; checksum and real market-data quality remain unverified, and Phase 2 stays BLOCKED.
 
-
 ## Manual Phase 2 workflow added (2026-10-21)
-- Added [manual GitHub Actions workflow](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/workflows/phase2-binance-data-audit.yml) to run Spot and USDⓈ-M Futures audits together and upload reports/evidence artifacts for 14 days. No API keys are used; no trading orders are possible from this workflow.
+- Added [manual GitHub Actions workflow](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/workflows/phase2-binance-data-audit.yml) to run Spot and USDⓈ-M Futures audits together and upload reports/evidence artifacts for 14 days. No API keys are used; no trading action is performed.
 - The workflow has not been manually dispatched yet. Its default date `2026-10-15` is only a candidate input, not verified archive availability. Phase 2 remains BLOCKED until both reports are downloaded and reviewed.
-- A smoke workflow run was triggered to verify the repository changes, but at this log entry its latest status had not yet been confirmed.
+- A smoke workflow run was triggered to verify the repository changes, but at that log entry its latest status had not yet been confirmed.
 
 ## Audit status classification correction (2026-10-21)
 - Code review found that a temporary public API verification error could be collapsed into a generic audit failure even when no data mismatch had been established.
@@ -89,3 +84,8 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - Removed the now-unused API aggregate flag and added a regression test for mixed `FAIL` + `BLOCKED` results.
 - Commits: `1a393f1dce292b182f021607f202279acf6fc010` (runner); `c596fa9f242e97594aa32e34ae84ff5147f24b57` (regression test).
 - The repository CI result for these latest commits still needs to be observed. This is code/test hardening only; no real Binance archive was downloaded or audited, and Phase 2 remains BLOCKED.
+
+## Workflow input validation hardening (2026-10-21)
+- Added an explicit preflight step to the manual Phase 2 workflow. It rejects non-canonical/invalid dates, symbols outside ASCII letters/digits, and intervals outside the declared options before either archive audit starts.
+- Read back the committed workflow and confirmed the new validation step is present. Commit: `37526d0640bf20793274543f4106be7b5d87be15`.
+- This prevents a typo from reaching the auditor's early argparse exit without reports. It does not establish that the candidate archive exists, does not verify CI status, and does not change the Phase 2 gate. The workflow still needs to be manually run and both JSON reports reviewed.
