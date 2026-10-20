@@ -104,3 +104,10 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Re-fetched the runner, tests, workflow and audit log from main and confirmed the expected changes are present.
 - Latest CI result for these newest commits has not yet been independently observed. No real Binance archive has been downloaded or checksum-verified. Phase 2 remains BLOCKED.
 - Immediate next action remains: manually run the Phase 2 Spot + USDⓈ-M workflow, retrieve both reports, review evidence. Do not backtest or freeze S-01 to S-04 until this gate is resolved.
+
+## 2026-10-21 — Per-response plan audit and continuity lock
+- User instruction: check the complete locked plan every response, preserve continuity, and prevent scope drift.
+- Process lock recorded in `RULES_AND_LOCKS.md` and `CONTINUITY.md`: inspect live repository state and the full master plan before selecting the next action; verify the active phase, exit gate, evidence, blockers, and downstream locks; execute only the next safe step; log material work; read back all changed files; report verification limits honestly.
+- Current phase: Phase 2 representative Binance archive audit. The manual Spot + USDⓈ-M workflow has input preflight validation, but no verified dispatch or actual archive reports are present in this checkpoint. Latest CI result is also not independently verified here.
+- No phase advancement. No data-quality PASS, backtest, model training, paper run, live order, or deployment is claimed.
+- Exact next action: execute the manual Phase 2 workflow, retrieve both market JSON reports/evidence, independently review them, and only then decide whether the gate passes or needs blocker remediation.
