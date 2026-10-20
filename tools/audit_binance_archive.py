@@ -214,6 +214,26 @@ def main() -> int:
             if b > a + interval_ms:
                 gaps.append({"after_open_ms": a, "before_open_ms": b,
                              "missing_interval_count": max(0, (b - a) // interval_ms - 1)})
+
+        # For intervals that tile a UTC day, validate the day boundaries as well as
+        # gaps between observed rows. Otherwise a missing first/last candle would be invisible.
+        expected_opens = None
+        boundary_missing = []
+        if interval_ms <= 86_400_000 and 86_400_000 % interval_ms == 0:
+            day_start = int(datetime.combine(archive_date, datetime.min.time(), tzinfo=timezone.utc).timestamp() * 1000)
+            expected_opens = list(range(day_start, day_start + 86_400_000, interval_ms))
+            observed = set(opens)
+            boundary_missing = [t for t in expected_opens if t not in observed]
+        report["expected_candle_count_for_utc_day"] = len(expected_opens) if expected_opens is not None else None
+        report["missing_expected_open_count_for_utc_day"] = len(boundary_missing)
+        report["missing_expected_open_examples_utc"] = [
+            datetime.fromtimestamp(t / 1000, timezone.utc).isoformat() for t in boundary_missing[:25]
+        ]
+        report["checks"]["utc_day_coverage"] = (
+            "PASS" if expected_opens is not None and not boundary_missing else
+            "FAIL" if expected_opens is not None else "NOT_APPLICABLE"
+        )
+
         bad_ohlc = sum(1 for r in rows if not (
             r["low"] <= r["open"] <= r["high"] and
             r["low"] <= r["close"] <= r["high"] and r["low"] <= r["high"]
@@ -223,8 +243,8 @@ def main() -> int:
             r["taker_base"] < 0 or r["taker_quote"] < 0
         ))
         report.update({
-            "first_event_time_utc": datetime.fromtimestamp(rows[0]["open_ms"] / 1000, timezone.utc).isoformat(),
-            "last_event_time_utc": datetime.fromtimestamp(rows[-1]["open_ms"] / 1000, timezone.utc).isoformat(),
+            "first_event_time_utc": datetime.fromtimestamp(min(opens) / 1000, timezone.utc).isoformat(),
+            "last_event_time_utc": datetime.fromtimestamp(max(opens) / 1000, timezone.utc).isoformat(),
             "duplicate_rows": duplicates,
             "out_of_order_rows": out_of_order,
             "missing_interval_count": sum(g["missing_interval_count"] for g in gaps),
@@ -270,7 +290,7 @@ def main() -> int:
 
         required_checks = [
             "archive_download", "official_checksum_match", "zip_integrity", "row_schema",
-            "duplicates", "ordering", "gaps", "ohlc_invariants",
+            "duplicates", "ordering", "gaps", "utc_day_coverage", "ohlc_invariants",
             "nonnegative_volume_counts", "official_api_spot_check"
         ]
         if all(report["checks"].get(k) == "PASS" for k in required_checks):
