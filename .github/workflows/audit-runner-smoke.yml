@@ -7,10 +7,12 @@ on:
       - "tools/audit_binance_archive.py"
       - ".github/workflows/audit-runner-smoke.yml"
       - ".github/workflows/phase2-binance-data-audit.yml"
+      - "tests/**"
   pull_request:
     paths:
       - "tools/audit_binance_archive.py"
       - ".github/workflows/audit-runner-smoke.yml"
+      - "tests/**"
   workflow_dispatch:
 
 permissions:
