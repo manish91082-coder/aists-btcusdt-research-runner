@@ -90,3 +90,9 @@ Use live main ref as authority. After the current write, re-fetch main, root lis
 
 ## 2026-10-21 — Offline smoke-check workflow
 Added GitHub Actions smoke checks for Python compilation, CLI help, and malformed-date rejection before network access. Workflow commit exists, but no successful run has been verified yet. These checks do not unblock Phase 2, which still requires real Spot and USDⓈ-M archive reports.
+
+
+## 2026-10-21 — Phase 2 execution path
+- Added manual GitHub Actions workflow `.github/workflows/phase2-binance-data-audit.yml` to run official Spot and USDⓈ-M Futures archive audits for a user-selected UTC date, symbol, and interval, then upload JSON reports and evidence artifacts.
+- Runbook now points to this workflow as the preferred low-friction execution path.
+- Workflow has been committed but not yet dispatched. No archive audit result exists from this workflow. Phase 2 remains BLOCKED until both actual reports are reviewed.
