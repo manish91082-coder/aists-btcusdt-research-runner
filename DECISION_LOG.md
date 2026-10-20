@@ -52,3 +52,6 @@ Keep current GitHub repository name for now. Display name is Full AI Crypto Trad
 
 ## 2026-10-21 | D-001 | USER-CONFIRMED | GitHub source of truth
 Status, memory, continuity, constitution/rules/locks, blueprint, evidence, research register and project log must live in GitHub. After substantive work, commit and verify.
+
+## 2026-10-21 | D-018 | RESEARCH-OPEN | Phase 2 retrieval blocker and limited protocol progress
+The existing Phase 2 manual audit workflow has not been observed running in the latest 100 runs, and the available GitHub connector exposes no workflow-dispatch action. This is a tooling/access blocker, not evidence that a Binance archive exists, is missing, or fails quality checks. Freeze S-01 to S-04 in S01_S04_PREREGISTRATION.md under the blocker contingency already documented in DATA_AUDIT_LOG.md. This does not change the phase order or pass Phase 2. No backtest, model training, paper run, bulk download, live order or deployment is authorised by this decision.
