@@ -33,21 +33,28 @@ def select_multi_timeframe_candidate(
         return _abstain("ABSTAIN_MISSING_CANDIDATE_EVALUATIONS",
                         "candidate evaluations are missing for: " + ", ".join(missing))
 
+    supported_strategies = {"TREND_FOLLOWING", "BREAKOUT", "MEAN_REVERSION"}
     eligible: list[tuple[str, str]] = []
     for timeframe in TIMEFRAMES:
         candidate = candidates_by_timeframe[timeframe]
-        if candidate.get("is_order_instruction", False):
-            raise ValueError("candidate evaluation must not be an order instruction")
-        if candidate.get("selected_action") == "NO_TRADE":
+        if not isinstance(candidate, Mapping):
+            raise ValueError(f"candidate evaluation for {timeframe} must be a mapping")
+        if candidate.get("is_order_instruction", False) is not False:
+            raise ValueError("candidate evaluation must explicitly remain non-order-instruction")
+        action = candidate.get("selected_action")
+        strategy = candidate.get("selected_strategy")
+        if action == "NO_TRADE":
+            if strategy is not None:
+                raise ValueError(f"NO_TRADE candidate must not select a strategy for {timeframe}")
             if candidate.get("status") == "CONFLICT_ABSTAIN":
                 return _abstain("ABSTAIN_STRATEGY_CONFLICT",
                                 f"strategy-family conflict at {timeframe}")
             continue
-        if candidate.get("selected_action") == "LONG_CANDIDATE":
-            strategy = candidate.get("selected_strategy")
-            if not isinstance(strategy, str) or not strategy:
-                raise ValueError(f"selected strategy missing for {timeframe}")
-            eligible.append((timeframe, strategy))
+        if action != "LONG_CANDIDATE":
+            raise ValueError(f"unsupported candidate action for {timeframe}: {action!r}")
+        if strategy not in supported_strategies:
+            raise ValueError(f"unsupported or missing strategy for {timeframe}: {strategy!r}")
+        eligible.append((timeframe, strategy))
 
     if not eligible:
         return _abstain("NO_ELIGIBLE_MULTI_TIMEFRAME_CANDIDATE", "no timeframe supplied an eligible long candidate")
