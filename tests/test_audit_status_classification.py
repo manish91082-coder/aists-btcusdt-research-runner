@@ -105,5 +105,20 @@ class AuditStatusClassificationTests(unittest.TestCase):
         )
 
 
+
+class OfficialApiCandidateTests(unittest.TestCase):
+    def test_spot_candidates_include_documented_market_data_endpoint(self):
+        candidates = audit_runner.official_api_candidates(audit_runner.SPOT_API)
+        self.assertIn("https://api-gcp.binance.com/api/v3/klines", candidates)
+        self.assertIn("https://data-api.binance.vision/api/v3/klines", candidates)
+        self.assertTrue(all("binance.com" in candidate for candidate in candidates))
+
+    def test_futures_candidates_remain_on_official_futures_hosts(self):
+        candidates = audit_runner.official_api_candidates(audit_runner.UM_API)
+        self.assertEqual(candidates[0], audit_runner.UM_API)
+        self.assertTrue(all("fapi" in candidate and "binance.com" in candidate for candidate in candidates))
+        self.assertFalse(any("data-api.binance.vision" in candidate for candidate in candidates))
+
+
 if __name__ == "__main__":
     unittest.main()
