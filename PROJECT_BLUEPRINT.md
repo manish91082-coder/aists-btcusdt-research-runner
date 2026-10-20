@@ -282,3 +282,10 @@ This is a research specification, not trading software. Preliminary source revie
 The authoritative numbered roadmap, phase exit gates, full AI decision contract, ten logical brain roles, continuous-scanner rules, dynamic position/exit rules, zero-cost feasibility contract and per-response anti-drift audit are maintained in [PLAN_AND_PHASE_LOCK.md](PLAN_AND_PHASE_LOCK.md). Read that file before selecting any new task. Keep this Blueprint as the enduring complete project specification and update it when requirements, architecture or verified constraints change. A plan or role description is not evidence of implementation.
 
 User's AI-autonomy requirement means AI dynamically selects among evidence-validated options and can abstain; it does not mean an untested model can bypass deterministic risk, product, data-quality or execution controls. All eight requested horizons, Spot/Futures distinctions, BNB commission verification, point-in-time top-ten membership, full net-cost accounting and 10,000 USDT paper-equity semantics remain mandatory.
+
+
+## 15. Binding execution plan and expanded AI requirements
+
+The authoritative numbered roadmap, phase exit gates, full AI decision contract, ten logical brain roles, continuous-scanner rules, dynamic position/exit rules, zero-cost feasibility contract and per-response anti-drift audit are maintained in [PLAN_AND_PHASE_LOCK.md](PLAN_AND_PHASE_LOCK.md). Read that file before selecting any new task. Keep this Blueprint as the enduring complete project specification and update it when requirements, architecture or verified constraints change. A plan or role description is not evidence of implementation.
+
+User's AI-autonomy requirement means AI dynamically selects among evidence-validated options and can abstain; it does not mean an untested model can bypass deterministic risk, product, data-quality or execution controls. All eight requested horizons, Spot/Futures distinctions, BNB commission verification, point-in-time top-ten membership, full net-cost accounting and 10,000 USDT paper-equity semantics remain mandatory.
