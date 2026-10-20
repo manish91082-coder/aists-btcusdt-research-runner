@@ -52,3 +52,7 @@ Stop and preserve a blocker when product access is unclear/prohibited, required 
 ## Phase 2 tooling handoff (2026-10-21)
 - Added a standard-library archive auditor and a Colab runbook to support R03 using a network-enabled zero-cost runtime. This improves reproducibility but does not change R03 to PASS: no artifact was downloaded or validated in the current environment.
 - Required next evidence: Spot and USDⓈ-M report JSON, official checksum match, schema/timestamp/gap checks, and bounded official API spot-check results.
+
+
+## R03 code-review note (2026-10-21)
+- Archive auditor now checks missing expected UTC-day candle opens for day-dividing intervals and reports boundary omissions. This improves the audit design but does not change R03 status from BLOCKED until real downloaded data and reports are reviewed.
