@@ -41,9 +41,9 @@ jobs:
       - name: Validate manual inputs
         shell: bash
         env:
-          AUDIT_DATE: ${{ inputs.archive_date }}
-          AUDIT_SYMBOL: ${{ inputs.symbol }}
-          AUDIT_INTERVAL: ${{ inputs.interval }}
+          AUDIT_DATE: ${{ inputs.archive_date || '2026-10-15' }}
+          AUDIT_SYMBOL: ${{ inputs.symbol || 'BTCUSDT' }}
+          AUDIT_INTERVAL: ${{ inputs.interval || '5m' }}
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -69,9 +69,9 @@ jobs:
         id: spot
         shell: bash
         env:
-          AUDIT_DATE: ${{ inputs.archive_date }}
-          AUDIT_SYMBOL: ${{ inputs.symbol }}
-          AUDIT_INTERVAL: ${{ inputs.interval }}
+          AUDIT_DATE: ${{ inputs.archive_date || '2026-10-15' }}
+          AUDIT_SYMBOL: ${{ inputs.symbol || 'BTCUSDT' }}
+          AUDIT_INTERVAL: ${{ inputs.interval || '5m' }}
         run: |
           set +e
           python tools/audit_binance_archive.py --market spot --symbol "$AUDIT_SYMBOL" --interval "$AUDIT_INTERVAL" --date "$AUDIT_DATE" --api-samples 3 --out audit_output/spot
@@ -82,9 +82,9 @@ jobs:
         id: usdm
         shell: bash
         env:
-          AUDIT_DATE: ${{ inputs.archive_date }}
-          AUDIT_SYMBOL: ${{ inputs.symbol }}
-          AUDIT_INTERVAL: ${{ inputs.interval }}
+          AUDIT_DATE: ${{ inputs.archive_date || '2026-10-15' }}
+          AUDIT_SYMBOL: ${{ inputs.symbol || 'BTCUSDT' }}
+          AUDIT_INTERVAL: ${{ inputs.interval || '5m' }}
         run: |
           set +e
           python tools/audit_binance_archive.py --market usdm --symbol "$AUDIT_SYMBOL" --interval "$AUDIT_INTERVAL" --date "$AUDIT_DATE" --api-samples 3 --out audit_output/usdm
@@ -95,7 +95,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase2-binance-audit-${{ inputs.archive_date }}-${{ inputs.symbol }}-${{ inputs.interval }}
+          name: phase2-binance-audit-${{ inputs.archive_date || '2026-10-15' }}-${{ inputs.symbol || 'BTCUSDT' }}-${{ inputs.interval || '5m' }}
           path: audit_output/
           if-no-files-found: error
           retention-days: 14
