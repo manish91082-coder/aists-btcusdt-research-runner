@@ -40,3 +40,11 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Read STRATEGY_RESEARCH.md first, then fetch live main SHA and read status/register/evidence/log.
 - Immediate next task: design the market-data manifest and verify one representative archive end-to-end (source path, checksum, schema, timestamp unit, first/last timestamps, gaps). No bulk dataset claims until this passes.
 - Freeze S-01 through S-04 experiments before backtesting. No strategy is proven profitable or live-approved.
+
+
+## 2026-10-21 — Locked master plan checkpoint
+- Read PLAN_AND_PHASE_LOCK.md before selecting the next task. It is the default dependency-ordered roadmap; it does not mark any gate passed.
+- Current immediate action: representative official Binance archive audit (BTCUSDT Spot 5m and matching USDⓈ-M Futures data if the exact artifact is available), with actual checksum/schema/timestamp/gap verification. If blocked, document the observed blocker and a verifiable zero-cost alternative.
+- After the archive audit, freeze S-01 to S-04 preregistered experiments before any backtest.
+- Continue respecting the current user priority: strategy/data now; tax/jurisdiction review later as a mandatory live gate. Never bypass product eligibility.
+- At resume, fetch current main head and read back PLAN_AND_PHASE_LOCK.md, PROJECT_STATUS.md, RULES_AND_LOCKS.md, STRATEGY_RESEARCH.md, MARKET_DATA_MANIFEST_SPEC.md, SESSION_LOG.md and CHANGELOG.md.
