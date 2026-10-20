@@ -48,3 +48,10 @@ No feature is complete because it was planned. No test is PASS without observed 
 - After the archive audit, freeze S-01 to S-04 preregistered experiments before any backtest.
 - Continue respecting the current user priority: strategy/data now; tax/jurisdiction review later as a mandatory live gate. Never bypass product eligibility.
 - At resume, fetch current main head and read back PLAN_AND_PHASE_LOCK.md, PROJECT_STATUS.md, RULES_AND_LOCKS.md, STRATEGY_RESEARCH.md, MARKET_DATA_MANIFEST_SPEC.md, SESSION_LOG.md and CHANGELOG.md.
+
+
+## 2026-10-21 — Full AI requirements saturation checkpoint
+- Read PLAN_AND_PHASE_LOCK.md as the master roadmap and PROJECT_BLUEPRINT.md as the enduring project specification.
+- The plan now makes explicit: ten logical AI roles plus independent Safety Kernel; model selection after data and benchmark evidence; dynamic entries/exits/stops/targets/trailing and multiple entries bounded by aggregate risk; eight horizons; point-in-time top ten; BNB commission only when verified; zero-cost feasibility measured.
+- At each substantive response, re-fetch live main, identify active phase/gate, check evidence and locks, do only the next safe task, then log and read back repository changes.
+- Current phase: Phase 2 representative archive audit. No actual archive checksum/audit is verified. Do not jump to code or backtest.
