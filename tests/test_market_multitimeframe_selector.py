@@ -44,7 +44,9 @@ class MultiTimeframeSelectorTests(unittest.TestCase):
     def test_too_few_confirmations_abstains(self):
         snapshot, candidates = inputs()
         candidates["15m"]["selected_action"] = "NO_TRADE"
+        candidates["15m"]["selected_strategy"] = None
         candidates["30m"]["selected_action"] = "NO_TRADE"
+        candidates["30m"]["selected_strategy"] = None
         result = select_multi_timeframe_candidate(snapshot, candidates)
         self.assertEqual(result["status"], "ABSTAIN_WEAK_TIMEFRAME_CONFIRMATION")
 
