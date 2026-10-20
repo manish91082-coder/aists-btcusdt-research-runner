@@ -52,3 +52,7 @@ Upload both JSON reports here, plus the exact error output if either run is BLOC
 
 ## Coverage checks added
 The runner additionally checks expected UTC-day candle opens for intervals that divide a day, so missing leading or trailing candles cannot pass merely because there are no gaps between the rows that remain. The report records expected candle count and examples of missing opens. This check has been added to the script but has not yet been executed against a downloaded archive.
+
+
+## Additional timestamp checks
+The runner also checks that parsed candle opens belong to the requested UTC archive date, that open timestamps align to the selected interval, and that inclusive close timestamps equal open + interval − 1 ms after the documented timestamp normalization. Alignment and close-time checks are marked not applicable for intervals that do not divide a UTC day. These checks are code-added; confirm the associated GitHub Actions run before treating the edited runner as smoke-tested, and still require real archive reports.
