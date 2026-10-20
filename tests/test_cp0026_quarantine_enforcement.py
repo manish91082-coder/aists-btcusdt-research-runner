@@ -131,7 +131,7 @@ class CP0026QuarantineEnforcementTests(unittest.TestCase):
             )
             with gzip.open(monthly, "rt", newline="", encoding="utf-8") as stream:
                 output = list(csv.DictReader(stream))
-            self.assertEqual([row["open_time_utc"] for row in output], ["2020-02-01T00:00:00Z"])
+            self.assertEqual([row["open_time_utc"] for row in output], ["2020-02-01T00:00:00+00:00"])
             self.assertEqual(summary["quarantined_exact_key_rows"], 1)
             self.assertEqual(summary["status"], "BLOCKED_QUARANTINED_DERIVED_INPUTS")
             self.assertEqual(quarantined[0]["quarantine_case_ids"], "ROW-MONTH")
@@ -150,7 +150,7 @@ class CP0026QuarantineEnforcementTests(unittest.TestCase):
             )
             with gzip.open(monthly, "rt", newline="", encoding="utf-8") as stream:
                 output = list(csv.DictReader(stream))
-            self.assertEqual([row["open_time_utc"] for row in output], ["2020-02-01T00:00:00Z"])
+            self.assertEqual([row["open_time_utc"] for row in output], ["2020-02-01T00:00:00+00:00"])
             self.assertEqual(summary["quarantined_source_input_rows"], 1)
             self.assertEqual(summary["status"], "BLOCKED_QUARANTINED_DERIVED_INPUTS")
             self.assertIn(jan15, quarantined[0]["source_quarantine_open_time_ms"])
