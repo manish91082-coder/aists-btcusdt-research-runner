@@ -64,3 +64,9 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 ## Offline CI smoke run verified (2026-10-21)
 - GitHub Actions run [39485541588](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39485541588) completed with conclusion `success` for commit `e61aab2ec8fd77d345d6652ea2205c562dfe4a90`.
 - This verifies the offline smoke checks (Python compile, CLI help, malformed-date rejection) only. It does not download or validate Binance market data, so Phase 2 remains BLOCKED.
+
+
+## Timestamp validation smoke run verified (2026-10-21)
+- GitHub Actions run [39485863361](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39485863361) completed with `success` for auditor commit `d7478dfb4e2b64b309b4640ceee76b18f20b600b`.
+- Verified steps: Python compilation, CLI help, and malformed-date rejection. The runner now also contains archive-date membership, interval-aligned open-time, and inclusive close-time checks.
+- These are offline/smoke checks only. No archive was downloaded; checksum and real market-data quality remain unverified, and Phase 2 stays BLOCKED.
