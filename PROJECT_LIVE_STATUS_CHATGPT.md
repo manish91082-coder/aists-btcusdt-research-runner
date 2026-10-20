@@ -1,7 +1,8 @@
 # AISTS Project Live Status for ChatGPT
 
-Latest goal-directed checkpoint: CP-0293 source-feature verification boundary and G0 unblock contract (2026-10-20). Latest verified documentation HEAD before this metadata correction: `6a786bd60db379c50ee1fe391562bb3379f07c58`; exact-HEAD push run [39402431129](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39402431129) and PR run [39402436806](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39402436806) both succeeded. Compile PASS, 236 brain tests PASS, 11 CP-0026 quarantine tests PASS. G0 remains BLOCKED_GLOBAL; no historical gate cleared and profitability is not established.
-Latest source-feature implementation HEAD: `473ef1e950d892801782aec71b89e4ae06bde9e9`; source-feature verification is software-integrity evidence only, not external archive provenance or strategy validation. See `evidence/checkpoints/CP0293_Source_Feature_Verification_and_G0_Unblock_HI.md` for the exact independent G0 evidence contract.
+Latest goal-directed checkpoint: CP-0294 candle gap accounting verification (2026-10-20). Code/test HEAD `29af0007fc403dcb5b2dd473b9b00feafdd9bf92`; exact-HEAD push run [39404393997](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404393997) and PR run [39404398830](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404398830) both terminal SUCCESS. Compile, brain unit tests, and CP-0026 quarantine enforcement steps passed. G0 remains BLOCKED_GLOBAL; no historical gate cleared and profitability is not established.
+CP-0294 implementation: observed candle timestamp gaps are now derived from CSV and must exactly match explicit manifest gap_events; off-grid gaps fail closed. This is structural validation only, not external source authentication. Report: `evidence/checkpoints/CP0294_Candle_Gap_Accounting_HI.md`.
+Previous CP-0293 source-feature verification remains software-integrity evidence only, not external archive provenance or strategy validation. See `evidence/checkpoints/CP0293_Source_Feature_Verification_and_G0_Unblock_HI.md`.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2 (must remain OPEN; do not merge)
@@ -258,3 +259,11 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - G0 remains BLOCKED_GLOBAL because independent G0-A..G0-E adjudication / admissible archive-version evidence is absent. Exact minimum receipt requirements and gate limitations are recorded in [CP-0293](evidence/checkpoints/CP0293_Source_Feature_Verification_and_G0_Unblock_HI.md).
 - Gate state unchanged: G1 PARTIAL_SYSTEM_LEVEL; G2 FAIL / NOT PROMOTED; G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT; G4 INSUFFICIENT_EVIDENCE; G5 NOT_RUN; G6 NOT_BUILT / NOT_VALIDATED; G7 LIVE_BLOCKED; profitability NOT ESTABLISHED.
 - No market backtest, candidate promotion, paper session, external issue comment, signing, broadcast or exchange order was performed. PR #2 must remain open/unmerged.
+
+
+## CP-0294 work performed (2026-10-20)
+- Audited the provenance loader and found that it trusted `all_gap_events_accounted=true` without deriving actual timestamp gaps from candle rows.
+- Updated `aists_brain/provenance_input.py` to derive observed gap ranges, reject off-grid gaps, require exact manifest `gap_events` for gapped series, reject mismatched claims, and return derived gap metadata.
+- Added adversarial tests for unrecorded gaps, exact gap records, and off-grid timestamps.
+- Code/test HEAD `29af0007fc403dcb5b2dd473b9b00feafdd9bf92`; exact-head push run [39404393997](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404393997) and PR run [39404398830](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39404398830) both succeeded. This is software-integrity progress only.
+- G0 remains BLOCKED_GLOBAL; no independent G0-A..G0-E adjudication was created or authenticated. No real-market backtest, promotion, paper session, external reviewer request, or trading action occurred. PR #2 remains open/unmerged.
