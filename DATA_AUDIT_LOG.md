@@ -113,3 +113,8 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - The latest 100 Actions runs contained no Phase 2 audit run. The available GitHub connector has no workflow-dispatch action; this is a tool boundary, not evidence about archive existence or data quality.
 - D-018 records the blocker as RESEARCH-OPEN. S-01 to S-04 preregistration was frozen in S01_S04_PREREGISTRATION.md under the contingency already stated in this log.
 - Phase 2 remains BLOCKED. No archive/checksum/API result is verified. No backtest may run until exact datasets and cost inputs are audited and accepted.
+
+## 2026-10-21 — Attempted automatic Phase 2 workflow trigger
+- To remove the repeated manual step, added a narrowly path-filtered `push` trigger to the existing Phase 2 workflow and set explicit default inputs for push events. Then committed the one-time marker `tools/phase2-audit-trigger.txt` to main.
+- Rechecked the latest 100 repository Actions runs after the marker commit. No Phase 2 archive-audit run appeared; the marker-triggered run is therefore NOT VERIFIED and must not be treated as executed.
+- No data-quality inference follows from the missing run. Phase 2 remains BLOCKED. Do not create more marker commits or repeat trigger attempts blindly; use the existing workflow's manual Run workflow action once, then inspect its artifact.

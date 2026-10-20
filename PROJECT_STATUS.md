@@ -134,3 +134,8 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Added S01_S04_PREREGISTRATION.md; the first four BTCUSDT 5m pilot protocols and bounded sensitivity grids are frozen before any results.
 - D-018 records the workflow-dispatch limitation as RESEARCH-OPEN. Phase order is unchanged and the data gate is not waived.
 - Phase 2 remains BLOCKED: no real archive/checksum/API reports have been independently reviewed. No backtest, model training, paper run, live order or deployment has occurred.
+
+## 2026-10-21 — Automated audit-trigger attempt
+- Existing Phase 2 workflow now includes a narrowly path-filtered push trigger and default input fallbacks; marker file `tools/phase2-audit-trigger.txt` was committed to main to attempt a one-time run.
+- After the marker commit, no Phase 2 audit run appeared in the latest 100 Actions runs. Automatic triggering is unverified; no audit artifact was produced/observed.
+- Phase 2 remains BLOCKED. Avoid further trigger commits. Next step is one manual dispatch of the existing workflow and independent review of both market reports.

@@ -115,3 +115,8 @@ No feature is complete because it was planned. No test is PASS without observed 
 - S01_S04_PREREGISTRATION.md now freezes the first four BTCUSDT 5m pilot protocols under D-018, using the documented blocker contingency to avoid an idle loop.
 - Phase 2 remains BLOCKED. No real Spot/Futures archive audit has been verified and no backtest is authorised.
 - Next action: run the existing Phase 2 workflow once, provide the artifact, and independently review both reports. Do not run backtests until exact data and cost gates pass.
+
+## 2026-10-21 — Latest audit-trigger checkpoint
+- Main includes the push-trigger workflow adjustment and marker `tools/phase2-audit-trigger.txt`, but the latest Actions query showed no Phase 2 audit run after the marker commit.
+- Automatic dispatch is unverified. Do not treat this as an audit result; Phase 2 remains BLOCKED.
+- Next: manually dispatch the existing Phase 2 workflow once and inspect the Spot/Futures artifact. Avoid more marker commits or repeated trigger experiments.

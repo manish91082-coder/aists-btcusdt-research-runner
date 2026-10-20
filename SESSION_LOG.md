@@ -185,3 +185,8 @@ Check whether GitHub Actions has a successful smoke run for the latest runner/te
 - This avoids an idle process loop while preserving the real-data gate. Phase 2 remains BLOCKED; no archive/checksum/API comparison has been verified.
 - Protocols freeze causal timing, next-bar entries, costs, chronological splits, benchmarks and bounded sensitivity grids. No backtest, model training, paper run or live execution has occurred.
 - Next dependency: existing Phase 2 workflow artifact and independent review of both Spot and USDⓈ-M reports.
+
+## 2026-10-21 | Automatic Phase 2 trigger attempt
+- Modified the existing audit workflow to accept a path-filtered push trigger for `tools/phase2-audit-trigger.txt`, with defaults `2026-10-15`, `BTCUSDT`, `5m`, and committed the marker.
+- Rechecked Actions after the marker commit: no Phase 2 audit run appeared in the latest 100 runs. The automatic trigger attempt is unverified and did not provide audit output.
+- Do not claim a run or data pass. Avoid further trigger commits; next dependency is one manual dispatch of the existing workflow and review of its artifact.
