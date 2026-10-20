@@ -1,7 +1,7 @@
 # AISTS Project Live Status for ChatGPT
 
-Last updated: 2026-10-17
-Latest checkpoint: CP-0152 candidate scope proposal (not approved; no run). Latest empirical admissibility audit remains CP-0151. Always re-fetch current branch/PR and exact-HEAD CI before relying on state.
+Last updated: 2026-10-20
+Latest goal-directed checkpoint: CP-0291 multi-timeframe candidate contract hardening. Implementation/test HEAD: def8a9208cf2ae1bae9b6a5f0980e24be43abbfb; exact-HEAD CI run 39390227679 terminal SUCCESS (231 brain tests + 11 CP-0026 quarantine tests; compile passed). Append-only checkpoint/status documentation commits may follow this code head, so re-fetch the current branch HEAD and exact-HEAD CI before relying on the terminal state. Latest empirical admissibility audit remains CP-0151; no historical gate has cleared.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
 Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/2 (must remain OPEN; do not merge)
@@ -17,12 +17,13 @@ Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 - Never merge PR #2. Keep updates append-only except narrowly necessary corrections to status metadata.
 
 ## Latest verified GitHub state
-- Latest research checkpoint: CP-0151 candidate-run admissibility audit. The two documentation-only metadata commits after CP-0151 do not represent empirical research progress.
-- Current branch HEAD, PR #2 HEAD, and exact-head CI must be re-fetched at each session start. Historical run [39030054762](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39030054762) was SUCCESS on CP-0151 HEAD `9572c1c6d5285c0d23525209ad790bffa7041e6e`, not on any later documentation-only commit.
-- PR #2 must remain OPEN and unmerged.
-- This section intentionally avoids claiming a terminal result for any later head until its own workflow run is verified.
-- Historical checkpoint records remain append-only below.
-
+- Canonical implementation branch: `cp-0120-ai-brain-foundation`; PR #2 remains OPEN and unmerged.
+- Latest code/test HEAD: `def8a9208cf2ae1bae9b6a5f0980e24be43abbfb`; exact-HEAD Actions run [39390227679](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39390227679) terminal SUCCESS.
+- Verified run: Python compile PASS; 231 brain unit tests PASS; 11 CP-0026 exact-key quarantine enforcement tests PASS.
+- CP-0291 hardens `select_multi_timeframe_candidate`: malformed candidate records, unknown actions, unsupported strategy labels, inconsistent NO_TRADE records, and non-boolean order flags now fail closed.
+- CP-0291 is software-contract progress only. It does not clear any historical gate or establish profitability. The report is `evidence/checkpoints/CP0291_MultiTimeframe_Candidate_Contract_Hardening_HI.md`.
+- Re-fetch current branch HEAD, PR #2 HEAD, and exact-head CI each session. Never merge PR #2.
+- Prior documentation-only or code commits are not empirical market research progress. No market-performance claim may be inferred from a green CI run.
 ## Research gates (must not be inferred from code/test progress)
 - G0: BLOCKED_GLOBAL.
 - G2: FAIL_CURRENT_23_CANDIDATES; all 23 candidates failed the recorded G2 screen, none promoted.
