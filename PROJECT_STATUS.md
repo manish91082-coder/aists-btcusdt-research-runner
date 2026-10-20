@@ -86,3 +86,7 @@ Use live main ref as authority. After the current write, re-fetch main, root lis
 ## 2026-10-21 — Audit runner coverage hardening
 - Hardened `tools/audit_binance_archive.py` to detect missing leading/trailing candles by checking expected UTC-day open timestamps for intervals that divide a day; report first/last event times now use minimum/maximum observed opens.
 - This is a code change only. The script has not been executed against a downloaded Binance archive; Phase 2 remains BLOCKED until real artifacts and reports are reviewed.
+
+
+## 2026-10-21 — Offline smoke-check workflow
+Added GitHub Actions smoke checks for Python compilation, CLI help, and malformed-date rejection before network access. Workflow commit exists, but no successful run has been verified yet. These checks do not unblock Phase 2, which still requires real Spot and USDⓈ-M archive reports.
