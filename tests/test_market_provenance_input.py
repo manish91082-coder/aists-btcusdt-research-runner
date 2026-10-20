@@ -98,6 +98,43 @@ class ProvenanceInputTests(unittest.TestCase):
         with self.assertRaisesRegex(ProvenanceGateError, "gap events"):
             load_provenance_cleared_candles(self.csv_path, self.manifest_path)
 
+    def test_observed_gap_without_exact_manifest_gap_event_fails(self):
+        gapped = [dict(row) for row in self.rows]
+        gapped[1]["open_time_ms"] = 600000
+        gapped[1]["close_time_ms"] = 899999
+        self.rows = gapped
+        self.write_rows(gapped)
+        self.write_manifest(coverage_pct=99.5)
+        with self.assertRaisesRegex(ProvenanceGateError, "explicit gap_events"):
+            load_provenance_cleared_candles(self.csv_path, self.manifest_path)
+
+    def test_observed_gap_with_exact_manifest_gap_event_is_reported(self):
+        gapped = [dict(row) for row in self.rows]
+        gapped[1]["open_time_ms"] = 600000
+        gapped[1]["close_time_ms"] = 899999
+        self.rows = gapped
+        self.write_rows(gapped)
+        event = {
+            "previous_open_time_ms": 0,
+            "next_open_time_ms": 600000,
+            "first_missing_open_time_ms": 300000,
+            "last_missing_open_time_ms": 300000,
+            "missing_count": 1,
+        }
+        self.write_manifest(coverage_pct=99.5, gap_events=[event])
+        result = load_provenance_cleared_candles(self.csv_path, self.manifest_path)
+        self.assertEqual(result["gap_events"], [event])
+
+    def test_off_grid_timestamp_gap_fails(self):
+        gapped = [dict(row) for row in self.rows]
+        gapped[1]["open_time_ms"] = 450000
+        gapped[1]["close_time_ms"] = 749999
+        self.rows = gapped
+        self.write_rows(gapped)
+        self.write_manifest(coverage_pct=99.5)
+        with self.assertRaisesRegex(ProvenanceGateError, "off-grid"):
+            load_provenance_cleared_candles(self.csv_path, self.manifest_path)
+
     def test_bad_ohlc_fails(self):
         bad = [dict(row) for row in self.rows]
         bad[0]["high"] = 98
