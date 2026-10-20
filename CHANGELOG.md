@@ -49,3 +49,7 @@ Newest first. Repository change log is not a performance claim.
 ## 2026-10-21 — Phase 2 audit runner and runbook
 - Added `tools/audit_binance_archive.py` and `RUN_DATA_AUDIT.md` to enable reproducible official archive/checksum and data-quality checks in a network-enabled zero-cost runtime.
 - Tooling creation is not an archive audit result. Phase 2 remains blocked until actual downloaded artifacts and report JSON are reviewed.
+
+
+## 2026-10-21 — Audit runner coverage hardening
+- Added UTC-day expected-open coverage checks to detect missing leading/trailing candles and made first/last event timestamps independent of row order. This is unexecuted tooling, not a data audit result.
