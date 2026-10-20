@@ -123,3 +123,9 @@ The current execution environment still cannot resolve the Binance archive host.
 
 ### Next action
 Run the documented audit for a completed candidate UTC date in Colab; preserve both market reports and any failure output. Independently review the evidence. Only after the representative data gate is resolved, freeze S-01 to S-04 protocols before any backtest.
+
+
+## 2026-10-21 | Audit runner coverage hardening
+- Code-reviewed the archive audit runner and found that row-to-row gap detection alone would miss absent first/last candles.
+- Added expected UTC-day open coverage checks for intervals that divide a day, included missing-open examples in JSON, and made reported first/last event timestamps order-independent.
+- Readback from GitHub is required; no market-data artifact was downloaded and this change does not pass Phase 2.
