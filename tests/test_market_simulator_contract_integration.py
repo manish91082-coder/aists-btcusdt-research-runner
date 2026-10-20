@@ -120,6 +120,12 @@ class CapitalCostSimulatorIntegrationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "cannot authorize backtest or paper activity"):
             self.run_fixture(contract)
 
+    def test_non_finite_contract_capital_is_rejected_by_simulator(self):
+        contract = fixture_contract()
+        contract["capital_usdt"] = float("nan")
+        with self.assertRaisesRegex(ValueError, "initial_cash_usdt must be finite numeric"):
+            self.run_fixture(contract)
+
 
 if __name__ == "__main__":
     unittest.main()
