@@ -111,3 +111,10 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Current phase: Phase 2 representative Binance archive audit. The manual Spot + USDⓈ-M workflow has input preflight validation, but no verified dispatch or actual archive reports are present in this checkpoint. Latest CI result is also not independently verified here.
 - No phase advancement. No data-quality PASS, backtest, model training, paper run, live order, or deployment is claimed.
 - Exact next action: execute the manual Phase 2 workflow, retrieve both market JSON reports/evidence, independently review them, and only then decide whether the gate passes or needs blocker remediation.
+
+## 2026-10-21 — Phase 2 parser compatibility hardening
+- Code review identified that a 12-column header row, if present in an archive, would be misclassified as malformed data.
+- Added exact first-nonempty-row header recognition and a `csv_header_present` report field; added four offline unit tests.
+- Commits: runner `5369263058971e14fcae4db438a1e205cbb2c7ce`; tests `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
+- Verification state: repository writes acknowledged; CI for these changes not yet independently verified. No real archive report/checksum audit exists. Phase 2 remains BLOCKED; strategy backtesting and downstream gates remain locked.
+- Exact next action: verify the smoke CI result, then run the manual Phase 2 workflow for BTCUSDT Spot 5m and USDⓈ-M Futures 5m, preserve both reports/artifacts, and independently review them.
