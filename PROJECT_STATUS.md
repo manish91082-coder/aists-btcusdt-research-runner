@@ -75,3 +75,9 @@ Use live main ref as authority. After the current write, re-fetch main, root lis
 - This proves a current-environment retrieval blocker only. It does not prove the candidate archives exist or do not exist, and no archive bytes, checksum, schema, timestamp, row count, gap result or data-quality PASS is claimed.
 - Created DATA_AUDIT_LOG.md with exact attempted URLs, observed errors, evidence boundaries and a reproducible zero-cost next route via a network-enabled user-owned runtime such as Colab.
 - Phase 2 remains BLOCKED pending actual retrieval. No bulk download, strategy backtest, model training, paper run or live order was performed. Next: retrieve one real official artifact and its checksum, audit it end-to-end, then freeze S-01 to S-04 before any backtest.
+
+
+## 2026-10-21 — Phase 2 audit runner prepared
+- Added `tools/audit_binance_archive.py` to download one official Binance kline archive and companion checksum, calculate SHA-256, inspect ZIP/CSV schema, timestamp conventions, row order/gaps, OHLC/volume invariants, and perform bounded official API candle comparisons.
+- Added `RUN_DATA_AUDIT.md` with a zero-cost Colab route and separate Spot/USDⓈ-M Futures commands. This is tooling preparation only: no archive has been downloaded or audited by this step.
+- Phase 2 remains BLOCKED until actual report JSON and artifacts/evidence are returned and independently reviewed. No PASS or strategy performance claim.
