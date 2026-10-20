@@ -153,3 +153,17 @@ Check the complete plan every response, prevent drift strictly, preserve continu
 - Manual Phase 2 workflow is prepared with input validation but has not been verified as dispatched in this checkpoint.
 - No real archive/checksum audit, strategy backtest, model training, paper run or live order is claimed.
 - Next safe action remains running the manual Phase 2 audit and reviewing both actual market reports.
+
+## 2026-10-21 | Phase 2 optional CSV-header compatibility hardening
+### Review finding and change
+- Reviewed the live audit runner against the locked Phase 2 gate and official kline schema. A potential archive-compatibility issue was that any leading 12-column header would be parsed as malformed data.
+- Added exact 12-column header recognition on the first non-empty record; records `csv_header_present` in each report. Added four unit tests covering space-separated labels, snake_case labels, normal data and wrong-width rows.
+- Runner commit: `5369263058971e14fcae4db438a1e205cbb2c7ce`; test commit: `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
+
+### Verification limits
+- GitHub acknowledged both file writes. The resulting smoke CI run has not yet been independently checked.
+- No official archive was downloaded or checksum/API/data-quality audited. Phase 2 remains BLOCKED.
+- No strategy backtest, model training, paper run, real order or deployment occurred.
+
+### Exact next action
+Check whether GitHub Actions has a successful smoke run for the latest runner/tests. Then run the manual Phase 2 workflow for BTCUSDT Spot 5m and USDⓈ-M Futures 5m and independently review both report JSON files before deciding whether the gate passes.
