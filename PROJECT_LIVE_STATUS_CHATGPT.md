@@ -1,6 +1,6 @@
 # AISTS Project Live Status for ChatGPT
 
-Latest goal-directed checkpoint: CP-0292 feature-lineage input-prefix binding. Implementation commit `af0fd32d1b254634fd794566e1bc12ef357e5b14`; regression tests plus fixture correction at `97ce79ef6a7512e6839e340ff4818555808d77bc`. Exact-head CI for the current documentation head is not yet terminal-verified. Latest empirical admissibility audit remains CP-0151; no historical gate has cleared.
+Latest goal-directed checkpoint: CP-0292 feature-lineage input-prefix binding. Implementation commit `af0fd32d1b254634fd794566e1bc12ef357e5b14`; regression tests/fixture correction at `97ce79ef6a7512e6839e340ff4818555808d77bc`. Exact-head verification recorded in CP-0292 report: run 39391119850 succeeded on HEAD `9a9d4df818a190723401134320403ac73445e246` (233 brain tests + 11 CP-0026 quarantine tests; compile passed). Later documentation commits require fresh exact-head verification. Latest empirical admissibility audit remains CP-0151; no historical gate has cleared.
 Latest goal-directed checkpoint: CP-0291 multi-timeframe candidate contract hardening. Implementation/test HEAD: def8a9208cf2ae1bae9b6a5f0980e24be43abbfb; exact-HEAD CI run 39390227679 terminal SUCCESS (231 brain tests + 11 CP-0026 quarantine tests; compile passed). Append-only checkpoint/status documentation commits may follow this code head, so re-fetch the current branch HEAD and exact-HEAD CI before relying on the terminal state. Latest empirical admissibility audit remains CP-0151; no historical gate has cleared.
 Canonical repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
 Implementation branch: cp-0120-ai-brain-foundation
@@ -214,3 +214,5 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - This is a lineage-consistency safeguard only. It does not prove feature derivation truth or external provenance and does not clear G0/G2/G3 or establish profitability.
 - No real market data, candidate build, backtest, paper session, signing, broadcast, or exchange order was performed. PR #2 remains OPEN/unmerged; never merge.
 - Report: [CP-0292 Feature Lineage Input-Prefix Binding](evidence/checkpoints/CP0292_Feature_Lineage_Input_Prefix_Binding_HI.md).
+
+- CP-0292 verification addendum: report updated in commit `fa9466a27c917e01d9324d78b67277b98966070b` with the exact-head success for run 39391119850. Current status-file update commit is now being re-verified; do not assume its CI terminal result until fetched.
