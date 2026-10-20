@@ -68,3 +68,7 @@ Newest first. Repository change log is not a performance claim.
 ## 2026-10-21 — Offline smoke CI verified for optional-header tests
 - GitHub Actions run [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620) succeeded on test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
 - Verified checks: Python compilation, unit tests, CLI help and malformed-date rejection. Real Binance archive audit remains unverified and Phase 2 remains blocked.
+
+## 2026-10-21 — Phase 2 state rechecked
+- Revalidated the live main ref and inspected the latest workflow runs; no manual Phase 2 archive audit run was present in the latest 100.
+- This is a status/evidence checkpoint only. The real-data audit remains blocked pending manual workflow dispatch and report review.
