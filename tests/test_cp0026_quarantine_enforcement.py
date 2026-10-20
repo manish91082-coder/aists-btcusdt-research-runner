@@ -4,6 +4,7 @@ import hashlib
 import importlib.util
 import json
 import tempfile
+from unittest.mock import patch
 import unittest
 from pathlib import Path
 
@@ -94,6 +95,18 @@ class CP0026QuarantineEnforcementTests(unittest.TestCase):
             }), encoding="utf-8")
             with self.assertRaisesRegex(RuntimeError, "NONROW_BLOCKERS_REMAIN"):
                 BUILDER.load_candidate_gate(manifest, blockers, summary)
+
+
+    def test_production_entrypoint_rejects_gate_path_overrides(self):
+        with patch("sys.argv", [
+            "AISTS_CP0026_Research_Candidate_Builder.py",
+            "--manifest", "/tmp/fake-manifest.csv",
+            "--blockers", "/tmp/fake-blockers.csv",
+            "--gate-summary", "/tmp/fake-summary.json",
+        ]):
+            with self.assertRaises(SystemExit) as caught:
+                BUILDER.main()
+        self.assertEqual(caught.exception.code, 2)
 
 
     def _write_daily_fixture(self, path):
