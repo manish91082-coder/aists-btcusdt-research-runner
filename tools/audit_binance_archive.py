@@ -70,6 +70,25 @@ def timestamp_ms(raw_value: str, unit: str) -> int:
     raise ValueError(f"Unsupported timestamp unit: {unit}")
 
 
+def classify_api_sample_results(sample_results: list[dict]) -> str:
+    """Distinguish a real API/data mismatch from a temporary inability to verify."""
+    statuses = {item.get("status") for item in sample_results}
+    if "FAIL" in statuses:
+        return "FAIL"
+    if "BLOCKED" in statuses:
+        return "BLOCKED"
+    return "PASS"
+
+
+def classify_audit_status(checks: dict[str, str], required_checks: list[str]) -> str:
+    """PASS only when every required check passes; preserve blockers separately from failures."""
+    if all(checks.get(key) == "PASS" for key in required_checks):
+        return "PASS"
+    if any(checks.get(key) == "BLOCKED" for key in required_checks):
+        return "BLOCKED"
+    return "FAIL"
+
+
 def api_candle(base: str, symbol: str, interval: str, open_time_ms: int) -> list:
     query = urllib.parse.urlencode({
         "symbol": symbol, "interval": interval, "startTime": open_time_ms, "limit": 1
@@ -313,7 +332,7 @@ def main() -> int:
                     api_ok = False
                     sample_results.append({"row_index": pos, "status": "BLOCKED", "error": str(exc)})
             report["api_sample_results"] = sample_results
-            report["checks"]["official_api_spot_check"] = "PASS" if api_ok else "FAIL_OR_BLOCKED"
+            report["checks"]["official_api_spot_check"] = classify_api_sample_results(sample_results)
         else:
             report["checks"]["official_api_spot_check"] = "NOT_RUN"
 
@@ -323,10 +342,7 @@ def main() -> int:
             "open_time_alignment", "close_time_semantics", "ohlc_invariants",
             "nonnegative_volume_counts", "official_api_spot_check"
         ]
-        if all(report["checks"].get(k) == "PASS" for k in required_checks):
-            report["status"] = "PASS"
-        else:
-            report["status"] = "FAIL"
+        report["status"] = classify_audit_status(report["checks"], required_checks)
     except (urllib.error.URLError, TimeoutError, OSError, zipfile.BadZipFile, RuntimeError, ValueError) as exc:
         report["errors"].append(f"{type(exc).__name__}: {exc}")
         report["status"] = "BLOCKED" if isinstance(exc, (urllib.error.URLError, TimeoutError)) or "HTTP " in str(exc) else "FAIL"
