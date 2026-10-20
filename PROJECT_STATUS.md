@@ -118,3 +118,8 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Commits: runner `5369263058971e14fcae4db438a1e205cbb2c7ce`; tests `d0ec62150078b6cf210609dfff24bc6bbdbff579`.
 - Verification state: repository writes acknowledged; CI for these changes not yet independently verified. No real archive report/checksum audit exists. Phase 2 remains BLOCKED; strategy backtesting and downstream gates remain locked.
 - Exact next action: verify the smoke CI result, then run the manual Phase 2 workflow for BTCUSDT Spot 5m and USDⓈ-M Futures 5m, preserve both reports/artifacts, and independently review them.
+
+## 2026-10-21 — Smoke CI verified after parser hardening
+- Verified GitHub Actions smoke run [39488166620](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39488166620) succeeded for test commit `d0ec62150078b6cf210609dfff24bc6bbdbff579`. It includes compilation, unit tests, CLI help and malformed-date preflight.
+- This is offline CI evidence only; it is not a real Binance archive audit.
+- Latest 100 repository workflow runs inspected did not show a `Phase 2 Binance archive audit` run. Phase 2 remains BLOCKED pending manual dispatch and independent review of both Spot and USDⓈ-M JSON reports.
