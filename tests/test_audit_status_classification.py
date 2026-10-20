@@ -25,6 +25,13 @@ class KlineHeaderDetectionTests(unittest.TestCase):
         ]
         self.assertTrue(audit_runner.is_kline_header(row))
 
+    def test_recognises_abbreviated_official_futures_header(self):
+        row = [
+            "open_time", "open", "high", "low", "close", "volume", "close_time",
+            "quote_volume", "count", "taker_buy_volume", "taker_buy_quote_volume", "ignore",
+        ]
+        self.assertTrue(audit_runner.is_kline_header(row))
+
     def test_does_not_mistake_a_data_row_for_header(self):
         row = [
             "1792022400000", "100", "101", "99", "100.5", "12",
