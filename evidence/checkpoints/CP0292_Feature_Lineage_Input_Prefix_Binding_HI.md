@@ -66,3 +66,10 @@ This tightens internal causal-lineage consistency. It does not independently pro
 - PR #2 remains OPEN and unmerged. No merge performed.
 - Software validation only. G0 remains BLOCKED_GLOBAL, G2 current 23 candidates FAIL / NOT PROMOTED, G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT, G4 INSUFFICIENT_EVIDENCE, G5 NOT_RUN, G6 NOT_BUILT / NOT_VALIDATED, G7 LIVE_BLOCKED, profitability NOT ESTABLISHED. No real-market research, candidate build, backtest, paper session, signing, broadcast or order performed.
 - Next bounded review: establish whether a trusted feature producer computes `input_prefix_sha256` from the actual causal prefix bytes/records. Hash equality alone cannot establish derivation authenticity. Do not repeat exhausted G0 source searches.
+
+
+## CP-0292 final report/status head verification — 2026-10-20
+- Verified live branch/PR HEAD `1aff8d3b2ee6f764504b92c6bb222bdf8ffd633b`. Exact-HEAD Actions run [39393936726](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39393936726) completed terminal `success` for the identical SHA. All job steps passed: compile brain modules, brain unit tests, and CP-0026 exact-key quarantine enforcement tests. The same workflow logs on the preceding feature/code HEADs explicitly reported 233 brain tests and 11 quarantine tests as `OK`, with both CP-0292 tests listed as passed.
+- PR #2 is OPEN, `merged=false`, mergeable=true. No merge occurred.
+- Software validation only; G0 remains BLOCKED_GLOBAL, G1 PARTIAL_SYSTEM_LEVEL, G2 current 23 candidates FAIL / NOT PROMOTED, G3 BLOCKED_PARTIAL_MATERIAL_QUARANTINE_EFFECT, G4 INSUFFICIENT_EVIDENCE, G5 NOT_RUN, G6 NOT_BUILT / NOT_VALIDATED, G7 LIVE_BLOCKED, profitability NOT ESTABLISHED. No market data, production candidate build, backtest, paper session, signing, broadcast or exchange order occurred.
+- Next bounded step: verify whether a trusted producer computes `input_prefix_sha256` from actual causal prefix bytes/records. Equality with feature `source_sha256` is consistency, not derivation authenticity. Do not repeat exhausted G0 searches.
