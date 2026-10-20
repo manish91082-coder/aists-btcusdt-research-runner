@@ -29,6 +29,8 @@ jobs:
           python-version: "3.12"
       - name: Compile without executing network requests
         run: python -m py_compile tools/audit_binance_archive.py
+      - name: Test audit PASS/BLOCKED/FAIL classification
+        run: python -m unittest discover -s tests -v
       - name: Verify CLI help
         run: python tools/audit_binance_archive.py --help
       - name: Verify invalid date is rejected before network access
