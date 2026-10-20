@@ -223,3 +223,8 @@ The next action must address the actual blocker to useful strategy evaluation, n
 - The source-hash/input-prefix regression checks are included in the 233 brain tests. This proves internal software-contract behavior only, not honest feature derivation or external market-source provenance.
 - PR #2 remained OPEN and unmerged. G0 blocked; G2 current 23 candidates FAIL/not promoted; G3 blocked; G4 insufficient; G6 not built/validated; G7 live blocked. No real-market run, candidate build, backtest, paper session, signing, broadcast, or exchange order was performed.
 - This status commit itself requires exact-head CI re-verification.
+
+
+## Latest documentation-head verification — 2026-10-20
+- Branch/PR head `14f5e4c8ecd30bdde066a2d837ff845bb3a16e64` was verified by Actions run [39391875141](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39391875141), terminal `success`. Job steps confirm compile PASS, 233 brain tests PASS, and 11 CP-0026 quarantine tests PASS; log summaries explicitly report `Ran 233 tests` and `Ran 11 tests`, both `OK`.
+- PR #2 matched this SHA, OPEN, unmerged, and mergeable at verification. This checkpoint/status update is documentation-only; recheck exact-head CI after these writes.
