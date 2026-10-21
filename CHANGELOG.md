@@ -80,3 +80,7 @@ Newest first. Repository change log is not a performance claim.
 
 ## 2026-10-21 — Correct execution path: GitHub Actions only
 - Corrected the handoff: use the existing Phase 2 GitHub Actions workflow, not Colab/Google Drive. The current connector lacks workflow-dispatch capability; no run is claimed. Phase 2 remains BLOCKED pending the workflow artifact and independent report review.
+
+
+## 2026-10-21 — Removed marker-based Phase 2 triggering
+- Made the Phase 2 archive workflow manual-dispatch-only and removed the obsolete marker file. This aligns execution with the runbook and anti-loop protocol; no audit was launched by this documentation/configuration change. Phase 2 remains BLOCKED.

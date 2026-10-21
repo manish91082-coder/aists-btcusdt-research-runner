@@ -1,11 +1,6 @@
 name: Phase 2 Binance archive audit
 
 on:
-  push:
-    paths:
-      - 'tools/phase2-audit-trigger.txt'
-      - 'tools/audit_binance_archive.py'
-      - 'tools/compare_binance_archive_cadences.py'
   workflow_dispatch:
     inputs:
       archive_date:

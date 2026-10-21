@@ -176,3 +176,8 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Repository audit confirmed the existing manual GitHub Actions workflow and GitHub-only artifact path. The session's GitHub connector is read-only for workflow dispatch, so the workflow cannot be started from this chat; this is a specific tool boundary, not a reason to move execution to Colab.
 - Corrected RUN_DATA_AUDIT.md to make GitHub Actions the sole supported runbook and clarified the README reference. No data audit was run and Phase 2 remains BLOCKED.
 - Next action: start the existing Phase 2 workflow once from GitHub Actions UI, then review both reports and artifact. No marker commits, repeated audits, Colab or Drive steps.
+
+
+## 2026-10-21 — Manual-only Phase 2 workflow lock
+- Repository audit found a stale push-path trigger and marker file alongside the documented manual-dispatch procedure. Removed the marker-based/push-trigger route to prevent unintended or repetitive real-data audits on code pushes.
+- Phase 2 workflow now starts only through its existing GitHub Actions `workflow_dispatch` input form. This session cannot dispatch it through the available connector. No archive audit was run; Phase 2 remains BLOCKED.

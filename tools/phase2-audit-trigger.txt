@@ -1,3 +1,0 @@
-One-time Phase 2 archive audit trigger. Invocation attempt 4 after fixing previous-month day clamp; main audit remains 2026-10-15.
-Default inputs: date=2026-10-15 UTC, symbol=BTCUSDT, interval=5m.
-This marker exists solely to invoke the existing audit workflow once via a push path filter.
