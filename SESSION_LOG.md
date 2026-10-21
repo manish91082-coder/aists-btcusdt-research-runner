@@ -226,3 +226,9 @@ Check whether GitHub Actions has a successful smoke run for the latest runner/te
 ## 2026-10-21 — Workflow safety fix smoke result
 - Observed GitHub Actions run [39567909921](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39567909921): conclusion `success`, head commit `7b8a21ea4759fa381e8847a3ae9a0657ba522df1`. This verifies configured smoke CI after the monthly workflow input-safety fix only.
 - No monthly archive pilot has been dispatched or reviewed. HD-03 remains BLOCKED. Next action: manual dispatch for `2026-09`, `5m`, BTCUSDT and inspect Spot + USDⓈ-M Futures reports and artifact.
+
+
+## 2026-10-21 — Independent evidence artifact review
+- Downloaded prior Phase 2 artifact ID `12297349529` from run [39496937998](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39496937998); local SHA-256 matched GitHub's reported artifact digest.
+- Reviewed embedded reports: 2026-10-15 Spot 5m daily archive PASS including bounded official Spot API sample; USDⓈ-M Futures archive integrity/schema/daily candle checks PASS but API sample remains BLOCKED. The 2026-09-15 daily-vs-monthly diagnostic matched all 288 candles for each market with zero mismatches and valid publisher checksums; this is same-publisher consistency only.
+- Active HD-03 is still the separate September 2026 full-month archive pilot. No dispatch was possible through the current connector, no HD-03 pass is claimed, and no backtest/trading gate is unlocked.
