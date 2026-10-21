@@ -138,3 +138,11 @@ No feature is complete because it was planned. No test is PASS without observed 
 - The repository already has a manual GitHub Actions Phase 2 workflow. The current chat GitHub connector can read repository state and workflow evidence but has no workflow-dispatch action, so I must not claim to have started the workflow from this session.
 - The previous assistant's Colab/Drive JSON-job route was unnecessary and is withdrawn. The authoritative next step is one manual dispatch of the existing Phase 2 workflow from GitHub Actions UI, then review the Spot/Futures reports and artifact.
 - No new audit was run; Phase 2 remains BLOCKED until actual reports satisfy the gate. Do not add marker commits or repeat unchanged checks.
+
+
+## 2026-10-21 — Archive-first ingestion checkpoint
+- Adopted official monthly Spot and USDⓈ-M Futures archives as the primary historical-data source. REST API access is optional diagnostic evidence, not a prerequisite for archive validation.
+- Read `HISTORICAL_DATA_INGESTION_SUBTASKS.md` for HD-01 through HD-10.
+- Pilot: BTCUSDT, 2026-09, 5m; expected 8,640 candles per market if full month. Validator, tests, manual workflow and runbook are committed.
+- Next: run the workflow in GitHub Actions UI and inspect both JSON reports/artifact. The chat connector cannot dispatch workflows. Until then Phase 2 remains BLOCKED.
+- Raw data is not committed to Git; Actions artifacts expire after 14 days. Binance-only history does not reach 10 years as of 2026-10.
