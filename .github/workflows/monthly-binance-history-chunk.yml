@@ -42,12 +42,18 @@ jobs:
           PY
       - name: Audit official monthly Spot archive
         continue-on-error: true
+        env:
+          AUDIT_MONTH: ${{ inputs.month }}
+          AUDIT_INTERVAL: ${{ inputs.interval }}
         run: |
-          python tools/audit_binance_monthly_archive.py --market spot --symbol BTCUSDT --interval "${{ inputs.interval }}" --month "${{ inputs.month }}" --require-full-month --out monthly-output
+          python tools/audit_binance_monthly_archive.py --market spot --symbol BTCUSDT --interval "$AUDIT_INTERVAL" --month "$AUDIT_MONTH" --require-full-month --out monthly-output
       - name: Audit official monthly USD-M Futures archive
         continue-on-error: true
+        env:
+          AUDIT_MONTH: ${{ inputs.month }}
+          AUDIT_INTERVAL: ${{ inputs.interval }}
         run: |
-          python tools/audit_binance_monthly_archive.py --market usdm --symbol BTCUSDT --interval "${{ inputs.interval }}" --month "${{ inputs.month }}" --require-full-month --out monthly-output
+          python tools/audit_binance_monthly_archive.py --market usdm --symbol BTCUSDT --interval "$AUDIT_INTERVAL" --month "$AUDIT_MONTH" --require-full-month --out monthly-output
       - name: Enforce archive gate
         if: always()
         run: |
