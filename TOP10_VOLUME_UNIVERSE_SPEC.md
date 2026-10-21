@@ -15,7 +15,8 @@ Do not mix Spot turnover with Futures turnover. Report overlap between the two l
 ## Ranking rule
 - Primary metric: daily USDT quote turnover from completed 1d klines (quote-asset volume / equivalent verified notional field).
 - At each monthly rebalance timestamp, calculate each eligible symbol's median daily quote turnover across the preceding 30 completed UTC daily candles. Use only candles fully closed before the ranking timestamp.
-- Rank descending by this metric; use symbol ascending as deterministic tie-breaker.
+- Sensitivity checks must compare 7-day, 30-day and 90-day completed-candle turnover windows when history permits. The 30-day median is the preregistered primary rule; sensitivity results must not be used to select the best-looking backtest after seeing outcomes.
+- Rank descending by this metric; use symbol ascending as deterministic tie-breaker. Document a ranking buffer/hysteresis rule before historical simulation so small rank fluctuations do not silently churn membership.
 - Select the first 10 eligible symbols per product. If fewer than 10 pass the eligibility and history rules, return fewer and explicitly report why. Never pad with guessed symbols.
 - The latest 24h ticker volume may be used for current operational discovery only, not substituted into historical backtests as if it were known in the past.
 - Save the exact input candle timestamps, per-symbol volume observations, metric, rank, selection timestamp, source URL/hash, exclusions and reason in an immutable point-in-time manifest.
@@ -43,7 +44,7 @@ Do not mix Spot turnover with Futures turnover. Report overlap between the two l
 - Delisted symbols and historical membership must be represented where official evidence permits; current survivors-only universe is not an acceptable substitute for a historical universe.
 
 ## Implementation tasks
-- U-01: verify daily kline quote-volume semantics for Spot and USDⓈ-M Futures against official Binance documentation.
+- U-01: verify daily kline quote-volume semantics for Spot and USDⓈ-M Futures against official Binance documentation, including whether the Futures quote-volume field is directly comparable in USDT notional terms.
 - U-02: build eligible-symbol/product inventory and verified USDT/product-type filters.
 - U-03: derive daily quote turnover and calculate 30-day median ranks with point-in-time cutoff and deterministic ties.
 - U-04: emit separate Spot/Futures Top-10 manifests plus overlap/exclusion reports.
