@@ -178,3 +178,11 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - A single bounded official-documentation search for a USDⓈ-M Futures WebSocket API kline request did not establish a documented historical-candle request that can reproduce the same 2026-10-15 sample required by this audit. Results surfaced the Futures API catalog and user-data WebSocket endpoints, not a verified historical kline replacement. Sources checked: https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/Introduction and https://developers.binance.com/en/docs/catalog.
 - Decision: do not change the REST-based gate or implement an unverified substitute. Do not repeat the same search or audit unless new official documentation or a material environment change appears.
 - Phase 2 remains BLOCKED on Futures API verification. The only next valid change is new primary evidence (a documented permitted historical-candle endpoint/verification method or a compliant environment that returns official Futures API candles), followed by one targeted audit. No bypasses and no downstream trading work.
+
+
+## 2026-10-21 — Historical gate decision changed to monthly archive-first
+- Earlier entries accurately describe the former API-comparison gate and its Futures access blocker at that time. New decision: official monthly Spot and USDⓈ-M Futures archives, publisher checksums, local SHA-256, ZIP/schema/candle validation and chunk-boundary checks are primary historical acceptance evidence. API comparison is optional diagnostics.
+- Official publisher documentation: https://github.com/binance/binance-public-data. Publisher checksums prove byte agreement with the publisher's digest, not independent economic truth.
+- Added monthly validator, tests, manual GitHub Actions pilot and `HISTORICAL_DATA_INGESTION_SUBTASKS.md`.
+- Pilot BTCUSDT, 2026-09, 5m is IMPLEMENTED but NOT RUN from chat. Phase 2 remains BLOCKED until both real market reports pass and are inspected.
+- Artifacts expire after 14 days; raw ZIP/CSV files are not committed to Git. Binance-only history cannot cover 10–15 years as of October 2026.
