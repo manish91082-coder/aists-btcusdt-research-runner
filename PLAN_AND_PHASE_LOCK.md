@@ -206,3 +206,6 @@ A response cannot literally prove zero error in advance; it must demonstrate che
 - Dynamic entry/exit/stops/targets/trailing/multiple entries: Phases 6–9.
 - Zero-cost full automation: Phases 9–11, with measured limitations.
 - No fabrication, no drift, audit trail, GitHub log and continuity: all phases and the change-control protocol.
+
+### G10. Efficiency, bounded verification and anti-loop protocol (active 2026-10-21)
+Follow EFFICIENCY_NO_DRIFT_PROTOCOL.md. Every response must check mission, live main SHA, active phase/gate, latest decisive evidence, blockers and next permitted action. Avoid unnecessary repeat reads by reusing the last verified full-plan checkpoint unless the plan/head/phase/scope/gate/continuity changed. Resolve one decision per tool pass. Do not rerun completed audits without a material code/config/input/protocol change, a correctable committed defect, an incomplete required run, or a documented decision-relevant environment change. For HTTP 451/access restrictions, test only official documented permitted options; never bypass restrictions. If the same blocker persists without a material change, stop endpoint cycling and log the blocker and exact next decision. Update durable records only when there is new evidence, a material change, a changed blocker, or a changed next action. This protocol does not waive any phase exit gate.
