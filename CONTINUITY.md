@@ -154,3 +154,10 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Separate Spot USDT and USDⓈ-M USDT perpetual universes; rank eligible symbols monthly using median turnover from the prior 30 completed UTC daily candles, with point-in-time membership and no future-volume leakage.
 - Use real official market data and realistic costs. 10,000 USDT remains research/paper equity only; user has not authorized live-money execution.
 - Next: the monthly archive pilot remains the immediate gate. After pilot and older-month check, implement/verify daily quote-turnover semantics and build the eligible-symbol inventory before calculating Top 10. No Top-10 results claimed yet.
+
+
+## 2026-10-21 — New-thread continuity checkpoint
+- Added `NEW_CHAT_CONTINUITY_PROMPT.md`, a copy-ready handoff with mission locks, verified checkpoint, repository links, dependency order, no-drift protocol, and required response format.
+- Monthly archive regression-test change is on main at commit `9ff54223401c20cb4e923650a3d1f4f4f41e986a`; smoke run `39565549581` succeeded. This is code/test CI evidence only, not proof that real market archives pass.
+- Active gate remains HD-03: run and review the official monthly BTCUSDT 5m Spot + USDⓈ-M Futures archive pilot for 2026-09. No market-data pass or backtest is claimed.
+- New thread must verify live main and current reports rather than trusting this checkpoint blindly. See `NEW_CHAT_CONTINUITY_PROMPT.md`.
