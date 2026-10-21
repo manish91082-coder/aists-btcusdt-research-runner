@@ -16,11 +16,13 @@ Each ZIP is checked against its adjacent `.CHECKSUM` file and local SHA-256.
 Binance launched in 2017. As of October 2026, Binance-only data cannot provide 10-15 years of history. Use the longest verified history actually available for each symbol/product; never invent pre-listing candles or silently splice another venue. Spot and Futures listing dates may differ.
 
 ## Subtasks
+- HD-00 [POLICY FROZEN]: Build a dynamic, point-in-time Top-10 by volume separately for Spot USDT pairs and USDⓈ-M USDT perpetuals. See [TOP10_VOLUME_UNIVERSE_SPEC.md](TOP10_VOLUME_UNIVERSE_SPEC.md). BTCUSDT is a pipeline test fixture, not the final universe.
 - HD-01 [IMPLEMENTED, NOT RUN]: Single-month validator for official archive download, publisher checksum, local SHA-256, ZIP integrity, 12-column schema, timestamps, month membership, interval alignment, duplicates, ordering, gaps, close-time semantics, OHLC invariants and nonnegative volume/counts.
 - HD-02 [IMPLEMENTED, NOT RUN]: Manual GitHub Actions pilot for BTCUSDT Spot and USDⓈ-M Futures, one month and one interval, uploading JSON reports and source evidence as a 14-day artifact.
 - HD-03 [NEXT]: Run September 2026, 5m pilot. Both market reports must PASS and be inspected. Expected count is 8,640 candles per market for a complete month.
 - HD-04 [GATED]: Verify one older completed month to check archive path and timestamp-unit conventions.
 - HD-05 [GATED]: Build coverage manifest per symbol/product/interval/month: source URL, archive checksum, local hash, row count, first/last timestamps, gaps, listing start, and status.
+- HD-05a [GATED]: Verify daily kline quote-volume semantics, build the eligible symbol/product inventory, then calculate point-in-time 30-day median daily USDT turnover ranks. Emit separate Spot and Futures Top-10 manifests with exclusions and overlap. No hardcoded coin list and no future-volume leakage.
 - HD-06 [GATED]: Add bounded resumable multi-month chunks (initial maximum three months per job), idempotent chunk IDs and explicit transient retry policy.
 - HD-07 [GATED]: Process chunks chronologically, verify boundaries between adjacent months, keep Spot/Futures separate, and persist derived outputs plus provenance.
 - HD-08 [GATED]: Verify official Futures mark-price, index-price, premium-index and funding-history archives before modelling these costs. Contract klines alone do not establish funding.
@@ -34,6 +36,10 @@ Binance launched in 2017. As of October 2026, Binance-only data cannot provide 1
 - Later jobs may re-download official chunks as needed unless a separate durable storage design is justified and approved.
 - Measure archive sizes, runtime, output size and runner limits before scaling. Zero-cost does not mean unlimited Actions capacity.
 - No credentials, trading, paper run, training, live orders or deployment are part of this ingestion pilot.
+
+## Capital and market-universe lock
+- “Real capital market” means real official market data and realistic fees/liquidity/cost constraints; it does not authorize live-money execution.
+- Research equity remains 10,000 USDT as a paper/research assumption only. Live orders, credentials and deployment remain explicitly locked.
 
 ## Pilot acceptance
 Both Spot and USDⓈ-M Futures must have: successful archive download; matching official checksum; exactly one valid CSV in ZIP; valid schema; all timestamps inside requested month; correct interval alignment and close times; no duplicates, out-of-order rows or internal gaps; valid OHLC; nonnegative volumes/counts; and exact full-month row count for BTCUSDT. Two JSON reports and source evidence must be attached to the same workflow run. Until an actual artifact is reviewed, the pilot is NOT PASS and Phase 2 stays BLOCKED.
