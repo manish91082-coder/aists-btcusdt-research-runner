@@ -177,3 +177,8 @@ No feature is complete because it was planned. No test is PASS without observed 
 ## 2026-10-21 — Workflow safety fix CI verified
 - Smoke run [39567909921](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39567909921) completed successfully on `7b8a21ea4759fa381e8847a3ae9a0657ba522df1`, verifying the configured offline smoke checks after the workflow input-safety fix. It does not establish archive validity.
 - Active gate is still HD-03; no real monthly Spot/Futures report has passed review. Next: manually dispatch the monthly archive workflow once and inspect both reports plus the evidence artifact.
+
+
+## 2026-10-21 — Prior archive artifact independently reviewed
+- Retrieved and SHA-256 verified the retained evidence artifact for run [39496937998](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39496937998). The 2026-10-15 Spot daily report is PASS including bounded Spot API sample; the USDⓈ-M Futures daily report is BLOCKED at API sample access despite archive/checksum/schema/candle checks passing. Separate 2026-09-15 daily-vs-monthly archive comparisons pass row-for-row for both markets, but are same-publisher consistency checks, not independent-source validation.
+- Do not confuse this prior diagnostic with the current HD-03 monthly pilot for all of September 2026. HD-03 remains BLOCKED until the monthly workflow is manually dispatched and both full-month reports are independently reviewed. No downstream strategy test is unlocked.
