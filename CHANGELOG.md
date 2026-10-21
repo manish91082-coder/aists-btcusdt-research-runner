@@ -96,3 +96,9 @@ Newest first. Repository change log is not a performance claim.
 - Added HD-01–HD-10 subtask plan and updated Phase 2 to accept validated official monthly archives without requiring REST API access.
 - Updated smoke CI to compile and check CLI help for the new validator.
 - Pilot has not been run from chat; Phase 2 remains BLOCKED and no backtests are unlocked.
+
+
+## 2026-10-21 — New-thread continuity handoff
+- Added `NEW_CHAT_CONTINUITY_PROMPT.md` as the canonical copy-ready prompt for a fresh thread.
+- Monthly archive test hardening committed at `9ff54223401c20cb4e923650a3d1f4f4f41e986a`; smoke run `39565549581` succeeded. No real archive result is inferred from CI.
+- HD-03 remains blocked pending actual 2026-09 BTCUSDT 5m Spot and USDⓈ-M Futures archive reports.
