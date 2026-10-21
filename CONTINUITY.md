@@ -196,3 +196,9 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Evidence boundary: checksums verify publisher byte integrity, not independent economic truth. These are archive validation reports; report policy says REST API was not called. Artifacts are temporary and expire 2026-11-04.
 - HD-03 monthly archive pilot is ACCEPTED for this bounded BTCUSDT 5m month under archive-first policy. This does not pass the whole Phase 2 historical coverage/cost gate and does not authorize backtesting yet.
 - Next allowed step: validate an older month’s archive path/timestamp/schema conventions for Spot and USDⓈ-M Futures (recommended 2024-01 BTCUSDT 5m, subject to published archive availability), then proceed to coverage inventory and volume semantics. No backtest, model training, paper trading, credentials, live orders or deployment occurred.
+
+
+## 2026-10-21 — HD-03 accepted; older-month validation next
+- User dispatched [monthly audit run 39594637570](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39594637570). Both embedded reports were inspected from artifact 12343236522 and passed September 2026 BTCUSDT 5m full-month coverage (8,640 each), official publisher checksums, ZIP/schema/timestamp/OHLC/volume checks, and no gaps, duplicates or malformed rows. Downloaded artifact SHA-256 matched GitHub digest.
+- HD-03 is accepted for this bounded pilot. Archive checksums prove publisher byte integrity, not independent economic truth. The workflow is archive-only and does not call REST API.
+- Next allowed action: HD-04 older completed month check for Spot + USDⓈ-M Futures, recommended 2024-01 BTCUSDT 5m subject to verified archive availability; then build coverage manifest and verify volume semantics before any backtest. No trading-related execution is authorised.
