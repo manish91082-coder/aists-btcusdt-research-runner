@@ -30,6 +30,18 @@ class MonthlyArchiveTests(unittest.TestCase):
         self.assertEqual(report["row_count"], 1)
         self.assertTrue(all(v == "PASS" for v in report["checks"].values()))
 
+    def test_non_positive_prices_fail_quality_gate(self):
+        start, _, _ = audit.month_bounds("2026-09")
+        rows = [
+            f"{start},-100,-99,-101,-100.5,10,{start + 299999},1000,5,4,400,0",
+            f"{start + 300000},1,2,0,1,10,{start + 599999},1000,5,4,400,0",
+        ]
+        for row in rows:
+            with self.subTest(row=row):
+                report = audit.validate_csv((row + "\\n").encode(), "usdm", "2026-09", "5m", False)
+                self.assertEqual(report["checks"]["ohlc_invariants"], "PASS")
+                self.assertEqual(report["checks"]["positive_prices"], "FAIL")
+
     def test_full_month_coverage_detects_missing_rows(self):
         start, _, _ = audit.month_bounds("2026-09")
         rows = []
