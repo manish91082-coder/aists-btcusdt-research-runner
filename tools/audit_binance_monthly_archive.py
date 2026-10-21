@@ -94,7 +94,9 @@ def main():
             csvs=[n for n in z.namelist() if n.lower().endswith(".csv")]
             if len(csvs)!=1: raise ValueError(f"expected exactly one CSV, found {csvs!r}")
             raw=z.read(csvs[0]); report["checks"]["zip_integrity"]="PASS"; (out/Path(csvs[0]).name).write_bytes(raw)
-        details=validate_csv(raw,a.market,a.month,a.interval,a.require_full_month)\n        report.update({k:v for k,v in details.items() if k!="checks"})\n        report["checks"].update(details["checks"])
+        details=validate_csv(raw,a.market,a.month,a.interval,a.require_full_month)
+        report.update({k:v for k,v in details.items() if k!="checks"})
+        report["checks"].update(details["checks"])
         report["status"]="PASS" if all(v=="PASS" for v in report["checks"].values()) else "FAIL"
     except Exception as e:
         report["errors"]=[f"{type(e).__name__}: {e}"]
