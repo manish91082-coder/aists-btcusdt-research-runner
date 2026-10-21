@@ -189,3 +189,12 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Pilot parameters: BTCUSDT, September 2026, 5m; expected 8,640 rows per product for full-month coverage.
 - IMPLEMENTED, NOT RUN from this chat. The available connector cannot dispatch workflows. Phase 2 remains BLOCKED until both real reports pass and are inspected.
 - Raw files stay out of Git history; Actions artifact retention is 14 days. Binance launched in 2017, so Binance-only data cannot provide 10–15 years as of 2026.
+
+
+## 2026-10-21 — Dynamic Top-10 volume requirement locked
+- User clarified the final research target must use the Top 10 coins/contracts by real trading volume and real market capital conditions, not an arbitrary hardcoded list.
+- Added `TOP10_VOLUME_UNIVERSE_SPEC.md`: separate Spot USDT pairs and USDⓈ-M USDT perpetual rankings, using the median quote turnover across 30 completed daily candles at each monthly point-in-time rebalance. This prevents a single noisy 24h spike and avoids future-volume leakage.
+- Eligibility requires verified product semantics, 30 completed observations, listing/status evidence, and documented exclusions. Stablecoin-to-stablecoin, leveraged and synthetic/tokenized products are excluded from the initial universe.
+- BTCUSDT remains only the archive pipeline pilot, not the assumed final Top-10 member.
+- Capital clarification: use real official exchange data and realistic costs, but 10,000 USDT remains research/paper equity only. This is not permission for live orders or credentials.
+- Next gate order: pass archive pilot, validate older-month conventions, then verify volume-field semantics and build the eligible inventory before generating any Top-10 ranks. No current or historical Top-10 result is claimed yet.
