@@ -186,3 +186,11 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - Added monthly validator, tests, manual GitHub Actions pilot and `HISTORICAL_DATA_INGESTION_SUBTASKS.md`.
 - Pilot BTCUSDT, 2026-09, 5m is IMPLEMENTED but NOT RUN from chat. Phase 2 remains BLOCKED until both real market reports pass and are inspected.
 - Artifacts expire after 14 days; raw ZIP/CSV files are not committed to Git. Binance-only history cannot cover 10–15 years as of October 2026.
+
+
+## 2026-10-21 — Independent review of retained Phase 2 artifact
+- Retrieved GitHub Actions artifact from failed run [39496937998](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39496937998), artifact ID `12297349529`. GitHub reported 929,273 bytes and digest `sha256:3e5e607637eaa9ef9763bb82c62c17fe3c2e67fc01853dc9605b3ca54d630eb4`; the downloaded ZIP's independently computed SHA-256 matched that digest exactly.
+- The archived 2026-10-15 BTCUSDT Spot 5m report is `PASS`: archive download, official checksum, ZIP, schema, 288-row UTC-day coverage, timestamp alignment/semantics, ordering, duplicate/gap, OHLC/volume checks, and bounded official Spot API sample all passed. Source ZIP SHA-256: `f2d23d23a8b84991ed737e236a5a4d00a0f06dc8550ef05a4baea797f8807069`.
+- The archived 2026-10-15 BTCUSDT USDⓈ-M Futures 5m report is `BLOCKED`, not a data-quality failure: archive download, publisher checksum, ZIP, schema, 288-row UTC-day coverage and candle-quality checks passed, but the bounded official API sample check is `BLOCKED`. Source ZIP SHA-256: `def03b137860740b184bb113fce1149e3a1e77f70fcd2153a3715bef787b2b65`.
+- A separate 2026-09-15 daily-vs-monthly archive diagnostic passed for both Spot and USDⓈ-M Futures: each daily archive had 288 rows; each matched the corresponding monthly archive row-for-row with zero missing/extra opens and zero value mismatches, and both publisher checksums matched. This is consistency evidence from the same publisher, not independent-source validation.
+- Scope boundary: these findings are from the prior daily/API diagnostic workflow and do not substitute for the active HD-03 monthly pilot for the full month `2026-09` (8,640 5m candles per market). HD-03 remains BLOCKED until that workflow is run and both monthly reports are reviewed. No backtest or trading stage is unlocked.
