@@ -232,3 +232,8 @@ Check whether GitHub Actions has a successful smoke run for the latest runner/te
 - Downloaded prior Phase 2 artifact ID `12297349529` from run [39496937998](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39496937998); local SHA-256 matched GitHub's reported artifact digest.
 - Reviewed embedded reports: 2026-10-15 Spot 5m daily archive PASS including bounded official Spot API sample; USDⓈ-M Futures archive integrity/schema/daily candle checks PASS but API sample remains BLOCKED. The 2026-09-15 daily-vs-monthly diagnostic matched all 288 candles for each market with zero mismatches and valid publisher checksums; this is same-publisher consistency only.
 - Active HD-03 is still the separate September 2026 full-month archive pilot. No dispatch was possible through the current connector, no HD-03 pass is claimed, and no backtest/trading gate is unlocked.
+
+## 2026-10-21 — Positive-price validator fix and CI verification
+- Added `positive_prices` to the monthly archive quality checks because OHLC ordering alone does not reject zero/negative prices. Added regression cases for both invalid-price classes.
+- CI run [39584538161](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39584538161) completed successfully on test commit `0200cf024c0b4db0e3add7d696db19391ce1b1b2`; compile, unittest discovery, CLI help and invalid-date preflight passed.
+- This was code/test hardening, not market-data acceptance. HD-03 remains BLOCKED pending actual September monthly Spot + USDⓈ-M Futures reports.
