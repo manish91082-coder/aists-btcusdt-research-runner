@@ -182,3 +182,8 @@ No feature is complete because it was planned. No test is PASS without observed 
 ## 2026-10-21 — Prior archive artifact independently reviewed
 - Retrieved and SHA-256 verified the retained evidence artifact for run [39496937998](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39496937998). The 2026-10-15 Spot daily report is PASS including bounded Spot API sample; the USDⓈ-M Futures daily report is BLOCKED at API sample access despite archive/checksum/schema/candle checks passing. Separate 2026-09-15 daily-vs-monthly archive comparisons pass row-for-row for both markets, but are same-publisher consistency checks, not independent-source validation.
 - Do not confuse this prior diagnostic with the current HD-03 monthly pilot for all of September 2026. HD-03 remains BLOCKED until the monthly workflow is manually dispatched and both full-month reports are independently reviewed. No downstream strategy test is unlocked.
+
+## 2026-10-21 — Monthly validator positive-price invariant
+- Code review identified that OHLC ordering alone could accept zero/negative prices. The monthly validator now requires every OHLC price to be strictly positive, with regression tests for negative and zero-price candles.
+- Test commit `0200cf024c0b4db0e3add7d696db19391ce1b1b2` passed smoke CI run [39584538161](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39584538161). No real archive was downloaded by this CI.
+- Continue at HD-03: manually dispatch the September 2026 BTCUSDT 5m monthly pilot and inspect both full-month reports plus artifact. Do not start backtests before the required data gate passes.
