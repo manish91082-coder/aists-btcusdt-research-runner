@@ -202,3 +202,10 @@ Check whether GitHub Actions has a successful smoke run for the latest runner/te
 ## 2026-10-21 — Manual-only Phase 2 workflow lock
 - Repository audit found a stale push-path trigger and marker file alongside the documented manual-dispatch procedure. Removed the marker-based/push-trigger route to prevent unintended or repetitive real-data audits on code pushes.
 - Phase 2 workflow now starts only through its existing GitHub Actions `workflow_dispatch` input form. This session cannot dispatch it through the available connector. No archive audit was run; Phase 2 remains BLOCKED.
+
+
+## 2026-10-21 — New-chat handoff and monthly test regression
+- Added `NEW_CHAT_CONTINUITY_PROMPT.md` with the locked mission, dependency roadmap, safety constraints, anti-drift rules, current gate and verification requirements.
+- Updated `tests/test_audit_binance_monthly_archive.py` at commit `9ff54223401c20cb4e923650a3d1f4f4f41e986a`: corrected the newline fixture and added a regression test for missing candles/gaps under full-month coverage.
+- Verified GitHub Actions smoke run `39565549581` completed successfully for that commit. This is CI evidence only.
+- Monthly real-data pilot has not yet been run/reviewed; Phase 2 remains BLOCKED. No backtest, training, paper trading, live order or deployment has occurred.
