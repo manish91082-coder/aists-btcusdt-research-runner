@@ -111,3 +111,6 @@ Newest first. Repository change log is not a performance claim.
 ## 2026-10-21 — Monthly workflow input-safety hardening
 - Removed direct shell-command interpolation of manually supplied month/interval inputs in the monthly archive workflow; passed values via environment variables and quoted shell expansions.
 - Smoke CI is expected from the existing workflow path filter but has not yet been verified. No real archive audit or Phase 2 gate pass is claimed.
+
+## 2026-10-21 — Workflow safety smoke CI
+- Smoke run 39567909921 succeeded on workflow-fix commit 7b8a21ea4759fa381e8847a3ae9a0657ba522df1. This is offline CI evidence only; the real monthly archive pilot remains unrun/unreviewed.
