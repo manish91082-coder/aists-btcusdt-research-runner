@@ -67,7 +67,7 @@ def validate_csv(raw,market,month,interval,full):
       "ohlc_invariants":"PASS" if all(r[4]<=r[2]<=r[3] and r[4]<=r[5]<=r[3] and r[4]<=r[3] for r in rows) else "FAIL",
       "nonnegative_volume_counts":"PASS" if all(min(r[6],r[7],r[9],r[10])>=0 and r[8]>=0 for r in rows) else "FAIL"})
     expected=(end-start)//step
-    missing=[t for t in range(start,end,step) if t not in set(ts)] if full else []
+    observed=set(ts)\n    missing=[t for t in range(start,end,step) if t not in observed] if full else []
     if full: checks["full_month_coverage"]="PASS" if len(rows)==expected and not missing else "FAIL"
     return {"checks":checks,"row_count":len(rows),"malformed_rows":malformed,"csv_header_present":header,"timestamp_unit":unit,
       "expected_rows_if_full_month":expected,"first_open_time_utc":datetime.fromtimestamp(min(ts)/1000,timezone.utc).isoformat(),
