@@ -2,7 +2,7 @@
 
 Updated: 2026-10-21
 Project phase: Phase 2 — representative archive audit
-Overall status: BLOCKED in the current execution environment; archive existence and contents are NOT VERIFIED.
+Overall status: BLOCKED. The later GitHub Actions run 39496937998 verified the 2026-10-15 Spot and USDⓈ-M archive checksum/ZIP/schema/candle-quality checks; Spot API samples PASS; Futures API verification remains BLOCKED (HTTP 451 primary, HTTP 202 numbered hosts). Earlier DNS failures below are historical attempts, not the latest archive state.
 
 ## 1. Purpose and target
 

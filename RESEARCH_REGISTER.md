@@ -46,7 +46,7 @@ The current binding order is PLAN_AND_PHASE_LOCK.md. Respect the user's 2026-10-
 Stop and preserve a blocker when product access is unclear/prohibited, required data is missing, checksum/schema fails, leakage is unresolved, cost modelling is incomplete, compute cannot meet cadence, risk limits are undefined, or any AI role bypasses the Safety Kernel.
 
 ## Phase 2 latest attempt (2026-10-21)
-- R03 remains BLOCKED for the representative archive run: the current runtime failed DNS resolution for the candidate official archive/checksum URLs. Official archive documentation is available, but documentation is not a downloaded/validated artifact. See [DATA_AUDIT_LOG.md](DATA_AUDIT_LOG.md).
+- R03 remains BLOCKED for the full representative gate. Later GitHub Actions run [39496937998](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39496937998) verified archive checksum/ZIP/schema/candle-quality checks and Spot API samples, but Futures API verification remains BLOCKED (HTTP 451 primary, HTTP 202 numbered hosts). The earlier DNS error is historical, not the latest state. See [DATA_AUDIT_LOG.md](DATA_AUDIT_LOG.md).
 
 
 ## Phase 2 tooling handoff (2026-10-21)

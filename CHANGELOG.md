@@ -84,3 +84,8 @@ Newest first. Repository change log is not a performance claim.
 
 ## 2026-10-21 — Removed marker-based Phase 2 triggering
 - Made the Phase 2 archive workflow manual-dispatch-only and removed the obsolete marker file. This aligns execution with the runbook and anti-loop protocol; no audit was launched by this documentation/configuration change. Phase 2 remains BLOCKED.
+
+
+## 2026-10-21 — Reconciled stale phase-status summaries with latest evidence
+- Updated the master plan and research register to distinguish frozen S-01 to S-04 protocols from unrun backtests, and to reflect the latest Phase 2 run: archive-integrity/candle-quality checks pass, Spot API samples pass, Futures API verification remains blocked.
+- This is a documentation consistency correction only. It does not pass Phase 2 or authorise backtesting.

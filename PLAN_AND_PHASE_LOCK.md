@@ -49,7 +49,7 @@ Success means robust, reproducible, net-of-cost out-of-sample evidence and fail-
 **Order:** (1) no-trade and simple benchmark baselines; (2) S-01 trend and S-02 regime-filtered mean reversion; (3) S-03 volatility breakout and S-04 momentum continuation; (4) formally defined candle/price-structure features; (5) regime selector; (6) Futures funding/basis only after source coverage passes; (7) liquidity/execution filters only with observed data; (8) cross-asset context and portfolio allocation; (9) supervised return-distribution models; (10) exit-policy tournament; RL/hypothesis-generating AI only after credible baselines.
 **Deliverables per experiment:** hypothesis, rationale, exact formulas/units, parameters and bounded search grid, inputs and required history, baseline, cost assumptions, causal signal/fill timing, train/validation/test windows, metrics, failure criteria, leakage checks and reproducible experiment ID.
 **Exit gate:** S-01 to S-04 protocols frozen before backtests; no tuning against the final holdout; no strategy is called profitable before audited results.
-**Current status:** 12 hypotheses are registered; exact experiment protocols and tests are not yet frozen.
+**Current status:** 12 hypotheses are registered. S-01 through S-04 protocols are frozen in `S01_S04_PREREGISTRATION.md` under the documented Phase 2 blocker contingency; none has been backtested. Remaining hypothesis protocols and tests are not yet frozen.
 
 ### Phase 2 — Representative Binance data audit
 **Purpose:** prove the end-to-end ingestion and validation path on real official files before bulk collection.
@@ -57,7 +57,7 @@ Success means robust, reproducible, net-of-cost out-of-sample evidence and fail-
 **Checks:** official checksum when supplied; local SHA-256; byte size; schema/column types; timestamp units/timezone; first/last event; expected interval cadence; duplicates; gaps; out-of-order rows; malformed records; OHLC invariants; volume validity; partial final candle; and a bounded comparison with official API responses.
 **Deliverables:** source-linked manifest row, validator code/specification as permitted by the research gate, machine-readable audit output, exceptions and pass/fail decision.
 **Exit gate:** the selected artifact passes documented checks or the failure is preserved as a blocker. No bulk-data or data-quality claim before this.
-**Current status:** manifest specification exists; no archive download/checksum/audit is yet verified.
+**Current status (latest evidence):** GitHub Actions run [39496937998](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39496937998) verified the 2026-10-15 BTCUSDT Spot and USDⓈ-M Futures archive checksum/ZIP/schema/candle-quality checks; Spot API samples PASS. Futures API verification remains BLOCKED (HTTP 451 primary, HTTP 202 numbered hosts). Therefore the overall Phase 2 gate is still BLOCKED and its exit gate has not passed.
 
 ### Phase 3 — Historical coverage and dataset inventory
 **Purpose:** establish exactly what history is available, per symbol/product/interval, before choosing the universe or claiming a 10-year sample.
