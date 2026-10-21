@@ -132,3 +132,9 @@ Newest first. Repository change log is not a performance claim.
 - Each report has 8,640 complete 5m candles for September 2026, official publisher checksum matched, and zero malformed rows, duplicates or gaps. Spot timestamps are microseconds; USDⓈ-M timestamps are milliseconds.
 - Artifact digest independently verified: `sha256:b951e65f8d35ae2a79eb8afbaec78a1923b7362bb814d9bb0d7e99e6e557f7e5`.
 - This passes only the bounded HD-03 monthly archive pilot; full historical coverage/cost gates remain open. No backtest or trading activity is authorised.
+
+
+## 2026-10-21 — HD-03 September monthly archive pilot accepted
+- Run [39594637570](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39594637570) produced independently reviewed Spot and USDⓈ-M Futures reports. Both passed official checksum/ZIP/schema/timestamp/OHLC/volume/full-month checks at 8,640 5m candles with zero gaps, duplicates, malformed or missing rows.
+- Artifact SHA-256 verified against GitHub digest. This accepts the bounded monthly archive pilot only; full coverage/cost gates and all backtests remain locked.
+- Next gate: older-month URL/schema/timestamp convention validation for both products.
