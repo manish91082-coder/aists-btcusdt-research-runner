@@ -138,3 +138,7 @@ Newest first. Repository change log is not a performance claim.
 - Run [39594637570](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39594637570) produced independently reviewed Spot and USDⓈ-M Futures reports. Both passed official checksum/ZIP/schema/timestamp/OHLC/volume/full-month checks at 8,640 5m candles with zero gaps, duplicates, malformed or missing rows.
 - Artifact SHA-256 verified against GitHub digest. This accepts the bounded monthly archive pilot only; full coverage/cost gates and all backtests remain locked.
 - Next gate: older-month URL/schema/timestamp convention validation for both products.
+
+## 2026-10-21 — HD-03 pilot evidence reviewed
+- Reviewed monthly archive audit [39594637570](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39594637570) and artifact [12343236522](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39594637570/artifacts/12343236522); both Spot and USDⓈ-M Futures September 2026 BTCUSDT 5m reports passed the required archive-integrity and candle-quality checks. Artifact digest matched locally calculated SHA-256.
+- Accepted HD-03 only for this bounded sample. HD-04 older-month URL/schema/timestamp check is next; full Phase 2 readiness remains open. No trading/backtest gate was unlocked.
