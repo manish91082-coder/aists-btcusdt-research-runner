@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - "tools/audit_binance_archive.py"
-      - "tools/compare_binance_archive_cadences.py"
+      - "tools/compare_binance_archive_cadences.py"\n      - "tools/audit_binance_monthly_archive.py"
       - ".github/workflows/audit-runner-smoke.yml"
       - ".github/workflows/phase2-binance-data-audit.yml"
       - "tests/**"
@@ -32,7 +32,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile without executing network requests
-        run: python -m py_compile tools/audit_binance_archive.py tools/compare_binance_archive_cadences.py
+        run: python -m py_compile tools/audit_binance_archive.py tools/compare_binance_archive_cadences.py tools/audit_binance_monthly_archive.py
       - name: Test audit PASS/BLOCKED/FAIL classification
         run: python -m unittest discover -s tests -v
       - name: Verify CLI help
