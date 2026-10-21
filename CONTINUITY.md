@@ -126,3 +126,8 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Bounded official-documentation review did not establish a separate documented public USDⓈ-M Futures REST base for klines. No repeat audit was launched because no material code/input/environment change occurred.
 - Durable process lock created: `EFFICIENCY_NO_DRIFT_PROTOCOL.md`; `RULES_AND_LOCKS.md` R-035–R-037; `PLAN_AND_PHASE_LOCK.md` G10. Every response checks mission/phase/gate and live main; evidence collection is targeted; repeated audits require a material reason; no access restriction bypass; unchanged long files are not repeatedly fetched without cause.
 - Phase 2 remains BLOCKED. Next decision only: whether an official Futures WebSocket market-data candle check is allowed to substitute for the locked REST comparison. Do not implement that substitution without an explicit protocol decision. No backtest, training, paper trading, live order or deployment.
+
+## 2026-10-21 — Checkpoint after one-pass alternative review
+- Official-documentation search did not establish a supported historical USDⓈ-M Futures WebSocket kline request suitable to verify the same 2026-10-15 sample. REST gate remains locked; no substitution or repeat audit.
+- Active Phase 2 blocker: Futures official API returns HTTP 451 on primary and HTTP 202 on numbered hosts. Spot passes through official Binance market-data API.
+- Resume condition: new official documentation or a materially different compliant execution environment. Then perform one targeted check only. Until then, do not cycle endpoints, rerun unchanged audits, or start downstream backtests/training/paper trading/live deployment.
