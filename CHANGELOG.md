@@ -107,3 +107,7 @@ Newest first. Repository change log is not a performance claim.
 - Clarified the current authoritative gate in status, continuity and session records: HD-03 monthly archive pilot for September 2026 BTCUSDT 5m Spot + USDⓈ-M Futures. Older daily/API-required and Colab/Drive notes remain historical and are superseded by the monthly-archive-first GitHub Actions route.
 - Reconfirmed smoke run 39565549581 is CI-only, not market-data acceptance. The pilot remains unrun/unreviewed from this chat; no backtest or downstream execution is unlocked.
 - No workflow dispatch is claimed because the available connector does not expose that action. The exact next step remains manual dispatch of the existing workflow and review of both reports and the artifact.
+
+## 2026-10-21 — Monthly workflow input-safety hardening
+- Removed direct shell-command interpolation of manually supplied month/interval inputs in the monthly archive workflow; passed values via environment variables and quoted shell expansions.
+- Smoke CI is expected from the existing workflow path filter but has not yet been verified. No real archive audit or Phase 2 gate pass is claimed.
