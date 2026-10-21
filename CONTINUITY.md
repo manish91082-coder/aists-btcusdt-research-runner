@@ -146,3 +146,11 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Pilot: BTCUSDT, 2026-09, 5m; expected 8,640 candles per market if full month. Validator, tests, manual workflow and runbook are committed.
 - Next: run the workflow in GitHub Actions UI and inspect both JSON reports/artifact. The chat connector cannot dispatch workflows. Until then Phase 2 remains BLOCKED.
 - Raw data is not committed to Git; Actions artifacts expire after 14 days. Binance-only history does not reach 10 years as of 2026-10.
+
+
+## 2026-10-21 — User clarified final universe and capital realism
+- Target: dynamically selected Top 10 by verified real trading volume, not a hardcoded list. BTCUSDT is only the archive pipeline pilot.
+- Added `TOP10_VOLUME_UNIVERSE_SPEC.md` and linked its requirements into the historical ingestion plan.
+- Separate Spot USDT and USDⓈ-M USDT perpetual universes; rank eligible symbols monthly using median turnover from the prior 30 completed UTC daily candles, with point-in-time membership and no future-volume leakage.
+- Use real official market data and realistic costs. 10,000 USDT remains research/paper equity only; user has not authorized live-money execution.
+- Next: the monthly archive pilot remains the immediate gate. After pilot and older-month check, implement/verify daily quote-turnover semantics and build the eligible-symbol inventory before calculating Top 10. No Top-10 results claimed yet.
