@@ -222,3 +222,7 @@ Check whether GitHub Actions has a successful smoke run for the latest runner/te
 - Fixed the two archive steps to pass those inputs through step environment variables and quote shell expansions. Commit: `7b8a21ea4759fa381e8847a3ae9a0657ba522df1`.
 - The smoke workflow path filter includes `.github/workflows/monthly-binance-history-chunk.yml`; the resulting CI status has not yet been observed. No workflow dispatch or market-data report is claimed. HD-03 remains BLOCKED.
 - Next action: inspect the targeted smoke CI result once; if successful, manually dispatch the September 2026 BTCUSDT 5m monthly pilot and review both market reports plus the evidence artifact.
+
+## 2026-10-21 — Workflow safety fix smoke result
+- Observed GitHub Actions run [39567909921](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39567909921): conclusion `success`, head commit `7b8a21ea4759fa381e8847a3ae9a0657ba522df1`. This verifies configured smoke CI after the monthly workflow input-safety fix only.
+- No monthly archive pilot has been dispatched or reviewed. HD-03 remains BLOCKED. Next action: manual dispatch for `2026-09`, `5m`, BTCUSDT and inspect Spot + USDⓈ-M Futures reports and artifact.
