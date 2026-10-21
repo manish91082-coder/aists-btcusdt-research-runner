@@ -6,7 +6,7 @@ on:
       month:
         description: "Completed UTC month (YYYY-MM)"
         required: true
-        default: "2026-09"
+        default: "2024-01"
         type: string
       interval:
         description: "Interval for Spot and USD-M Futures"
