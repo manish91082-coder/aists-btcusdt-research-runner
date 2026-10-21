@@ -216,3 +216,9 @@ Check whether GitHub Actions has a successful smoke run for the latest runner/te
 - Latest observed smoke CI [39565549581](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39565549581) succeeded on `9ff54223401c20cb4e923650a3d1f4f4f41e986a`; no real monthly archive PASS is inferred.
 - Workflow-dispatch action is not available in this connector, so no dispatch is claimed. Active gate remains HD-03, `2026-09` BTCUSDT `5m`, both Spot and USDⓈ-M Futures monthly archive reports required. Exact next action: manually dispatch the existing GitHub Actions workflow and independently inspect both reports plus the evidence artifact.
 - No backtest, model training, paper run, live order or deployment was performed or unlocked. After writing, read back all changed files and verify the resulting main SHA.
+
+## 2026-10-21 — Monthly workflow shell-input hardening
+- Audited the active monthly archive workflow before the next data-gate attempt. Found direct `inputs.month` and `inputs.interval` interpolation inside shell command text.
+- Fixed the two archive steps to pass those inputs through step environment variables and quote shell expansions. Commit: `7b8a21ea4759fa381e8847a3ae9a0657ba522df1`.
+- The smoke workflow path filter includes `.github/workflows/monthly-binance-history-chunk.yml`; the resulting CI status has not yet been observed. No workflow dispatch or market-data report is claimed. HD-03 remains BLOCKED.
+- Next action: inspect the targeted smoke CI result once; if successful, manually dispatch the September 2026 BTCUSDT 5m monthly pilot and review both market reports plus the evidence artifact.
