@@ -1,6 +1,6 @@
 # Historical Binance Data Ingestion: Subtask Plan
 Date: 2026-10-21
-Status: pilot IMPLEMENTED; real data run NOT YET VERIFIED
+Status: HD-03 September 2026 pilot ACCEPTED; HD-04 older-month validation NEXT
 Workspace: GitHub repository + GitHub Actions only
 
 ## Decision
@@ -17,10 +17,10 @@ Binance launched in 2017. As of October 2026, Binance-only data cannot provide 1
 
 ## Subtasks
 - HD-00 [POLICY FROZEN]: Build a dynamic, point-in-time Top-10 by volume separately for Spot USDT pairs and USDⓈ-M USDT perpetuals. See [TOP10_VOLUME_UNIVERSE_SPEC.md](TOP10_VOLUME_UNIVERSE_SPEC.md). BTCUSDT is a pipeline test fixture, not the final universe.
-- HD-01 [IMPLEMENTED, NOT RUN]: Single-month validator for official archive download, publisher checksum, local SHA-256, ZIP integrity, 12-column schema, timestamps, month membership, interval alignment, duplicates, ordering, gaps, close-time semantics, OHLC invariants and nonnegative volume/counts.
-- HD-02 [IMPLEMENTED, NOT RUN]: Manual GitHub Actions pilot for BTCUSDT Spot and USDⓈ-M Futures, one month and one interval, uploading JSON reports and source evidence as a 14-day artifact.
-- HD-03 [NEXT]: Run September 2026, 5m pilot. Both market reports must PASS and be inspected. Expected count is 8,640 candles per market for a complete month.
-- HD-04 [GATED]: Verify one older completed month to check archive path and timestamp-unit conventions.
+- HD-01 [IMPLEMENTED; validated on HD-03 sample]: Single-month validator for official archive download, publisher checksum, local SHA-256, ZIP integrity, 12-column schema, timestamps, month membership, interval alignment, duplicates, ordering, gaps, close-time semantics, OHLC invariants and nonnegative volume/counts.
+- HD-02 [IMPLEMENTED; run 39594637570 completed]: Manual GitHub Actions pilot for BTCUSDT Spot and USDⓈ-M Futures, one month and one interval, uploading JSON reports and source evidence as a 14-day artifact.
+- HD-03 [ACCEPTED FOR BOUNDED PILOT]: September 2026 BTCUSDT 5m monthly run 39594637570 reviewed; both Spot and USDⓈ-M reports PASS at 8,640 candles each with matching official checksum/local SHA-256 and zero gaps, duplicates, malformed rows or missing expected candles. Artifact digest verified. Archive checks prove publisher byte integrity, not independent economic truth.
+- HD-04 [NEXT/GATED]: Verify one older completed month in Spot + USDⓈ-M Futures to check archive path, schema and timestamp-unit conventions. Recommended 2024-01 BTCUSDT 5m, but official archive existence must be observed in the workflow reports, not assumed.
 - HD-05 [GATED]: Build coverage manifest per symbol/product/interval/month: source URL, archive checksum, local hash, row count, first/last timestamps, gaps, listing start, and status.
 - HD-05a [GATED]: Verify daily kline quote-volume semantics, build the eligible symbol/product inventory, then calculate point-in-time 30-day median daily USDT turnover ranks. Emit separate Spot and Futures Top-10 manifests with exclusions and overlap. No hardcoded coin list and no future-volume leakage.
 - HD-06 [GATED]: Add bounded resumable multi-month chunks (initial maximum three months per job), idempotent chunk IDs and explicit transient retry policy.
@@ -42,4 +42,4 @@ Binance launched in 2017. As of October 2026, Binance-only data cannot provide 1
 - Research equity remains 10,000 USDT as a paper/research assumption only. Live orders, credentials and deployment remain explicitly locked.
 
 ## Pilot acceptance
-Both Spot and USDⓈ-M Futures must have: successful archive download; matching official checksum; exactly one valid CSV in ZIP; valid schema; all timestamps inside requested month; correct interval alignment and close times; no duplicates, out-of-order rows or internal gaps; valid OHLC; nonnegative volumes/counts; and exact full-month row count for BTCUSDT. Two JSON reports and source evidence must be attached to the same workflow run. Until an actual artifact is reviewed, the pilot is NOT PASS and Phase 2 stays BLOCKED.
+Both Spot and USDⓈ-M Futures must have: successful archive download; matching official checksum; exactly one valid CSV in ZIP; valid schema; all timestamps inside requested month; correct interval alignment and close times; no duplicates, out-of-order rows or internal gaps; valid OHLC; nonnegative volumes/counts; and exact full-month row count for BTCUSDT. Two JSON reports and source evidence must be attached to the same workflow run. HD-03's artifact has now been reviewed and this bounded pilot is accepted. The wider Phase 2 coverage/cost gate remains open until HD-04 and subsequent required subtasks pass.
