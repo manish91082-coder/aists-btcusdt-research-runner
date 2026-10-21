@@ -222,3 +222,9 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 ## 2026-10-21 — Workflow safety fix CI verified
 - Targeted smoke workflow [39567909921](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39567909921) completed with `success` on workflow-fix commit `7b8a21ea4759fa381e8847a3ae9a0657ba522df1`. The run validates the repository's configured smoke steps; it is not a real archive audit.
 - HD-03 remains BLOCKED because no September 2026 Spot/Futures archive reports have been produced and reviewed. Next action is the one manual dispatch of the monthly archive workflow, followed by artifact review.
+
+
+## 2026-10-21 — Independent review of prior Phase 2 evidence artifact
+- Independently downloaded retained artifact from run [39496937998](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39496937998); downloaded artifact SHA-256 matched GitHub's artifact digest.
+- Prior 2026-10-15 BTCUSDT Spot 5m daily report: `PASS`, including publisher checksum, schema/candle checks and bounded Spot API sample. Prior USDⓈ-M Futures 5m report: `BLOCKED` only at the bounded official API sample check; archive checksum, ZIP, schema and 288-candle daily quality checks passed. The 2026-09-15 daily-vs-monthly archive diagnostic matched row-for-row for both markets, using the same publisher.
+- This evidence improves the prior diagnostic record but does not pass the active HD-03 full-month pilot (`2026-09`, `5m`, 8,640 candles per market). No backtest, training, paper trading or live execution is unlocked.
