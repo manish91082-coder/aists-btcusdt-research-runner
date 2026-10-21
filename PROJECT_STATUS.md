@@ -198,3 +198,10 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - BTCUSDT remains only the archive pipeline pilot, not the assumed final Top-10 member.
 - Capital clarification: use real official exchange data and realistic costs, but 10,000 USDT remains research/paper equity only. This is not permission for live orders or credentials.
 - Next gate order: pass archive pilot, validate older-month conventions, then verify volume-field semantics and build the eligible inventory before generating any Top-10 ranks. No current or historical Top-10 result is claimed yet.
+
+
+## 2026-10-21 — Continuity prompt and test CI checkpoint
+- Added `NEW_CHAT_CONTINUITY_PROMPT.md` for a no-drift handoff to a fresh ChatGPT thread.
+- Commit `9ff54223401c20cb4e923650a3d1f4f4f41e986a` corrected the monthly archive test fixture and added a missing-row/gap regression test. GitHub Actions smoke run `39565549581` succeeded.
+- CI success verifies the test workflow only. The official September 2026 BTCUSDT 5m monthly archive pilot remains NOT RUN/REVIEWED from chat; Phase 2 / HD-03 remains BLOCKED until both Spot and USDⓈ-M Futures reports are reviewed and pass.
+- Next action: verify live GitHub state, then obtain and review the monthly archive workflow artifact. Do not backtest before the data and cost gates pass.
