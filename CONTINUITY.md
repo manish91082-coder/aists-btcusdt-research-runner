@@ -173,3 +173,7 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Review of `.github/workflows/monthly-binance-history-chunk.yml` found direct interpolation of `workflow_dispatch` inputs into shell commands. Fixed both archive audit steps to receive `month` and `interval` through environment variables and quoted shell expansions. Commit: `7b8a21ea4759fa381e8847a3ae9a0657ba522df1`.
 - The smoke workflow is configured to run on changes to the monthly workflow; CI result is not yet verified. No monthly archive run is claimed. HD-03 remains blocked until the real Spot and USDⓈ-M Futures reports pass and are reviewed.
 - Next: verify the targeted smoke run once; then manual dispatch of the existing monthly archive workflow and review the artifact. No backtest or downstream stage is unlocked.
+
+## 2026-10-21 — Workflow safety fix CI verified
+- Smoke run [39567909921](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39567909921) completed successfully on `7b8a21ea4759fa381e8847a3ae9a0657ba522df1`, verifying the configured offline smoke checks after the workflow input-safety fix. It does not establish archive validity.
+- Active gate is still HD-03; no real monthly Spot/Futures report has passed review. Next: manually dispatch the monthly archive workflow once and inspect both reports plus the evidence artifact.
