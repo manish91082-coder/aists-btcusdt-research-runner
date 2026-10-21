@@ -209,3 +209,10 @@ Check whether GitHub Actions has a successful smoke run for the latest runner/te
 - Updated `tests/test_audit_binance_monthly_archive.py` at commit `9ff54223401c20cb4e923650a3d1f4f4f41e986a`: corrected the newline fixture and added a regression test for missing candles/gaps under full-month coverage.
 - Verified GitHub Actions smoke run `39565549581` completed successfully for that commit. This is CI evidence only.
 - Monthly real-data pilot has not yet been run/reviewed; Phase 2 remains BLOCKED. No backtest, training, paper trading, live order or deployment has occurred.
+
+## 2026-10-21 — Continuity reconciliation and next action
+- Revalidated live `main` at `e5bc11161e4392de3f84c7e1652fdcd6119714ae` before this documentation reconciliation. Read the current status/continuity records, locked master plan, rules, efficiency protocol and canonical new-thread handoff.
+- Reconciled the authoritative next action in `PROJECT_STATUS.md`, `CONTINUITY.md` and this log: the latest monthly-archive-first HD-03 decision supersedes older historical notes about the daily/API-required route, Colab/Drive, stale main SHAs and the former Futures REST blocker. Historical notes were not deleted.
+- Latest observed smoke CI [39565549581](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39565549581) succeeded on `9ff54223401c20cb4e923650a3d1f4f4f41e986a`; no real monthly archive PASS is inferred.
+- Workflow-dispatch action is not available in this connector, so no dispatch is claimed. Active gate remains HD-03, `2026-09` BTCUSDT `5m`, both Spot and USDⓈ-M Futures monthly archive reports required. Exact next action: manually dispatch the existing GitHub Actions workflow and independently inspect both reports plus the evidence artifact.
+- No backtest, model training, paper run, live order or deployment was performed or unlocked. After writing, read back all changed files and verify the resulting main SHA.
