@@ -131,3 +131,10 @@ No feature is complete because it was planned. No test is PASS without observed 
 - Official-documentation search did not establish a supported historical USDⓈ-M Futures WebSocket kline request suitable to verify the same 2026-10-15 sample. REST gate remains locked; no substitution or repeat audit.
 - Active Phase 2 blocker: Futures official API returns HTTP 451 on primary and HTTP 202 on numbered hosts. Spot passes through official Binance market-data API.
 - Resume condition: new official documentation or a materially different compliant execution environment. Then perform one targeted check only. Until then, do not cycle endpoints, rerun unchanged audits, or start downstream backtests/training/paper trading/live deployment.
+
+
+## 2026-10-21 — GitHub-only execution route reaffirmed
+- User explicitly instructed that project work and execution remain on GitHub, without Colab or Google Drive.
+- The repository already has a manual GitHub Actions Phase 2 workflow. The current chat GitHub connector can read repository state and workflow evidence but has no workflow-dispatch action, so I must not claim to have started the workflow from this session.
+- The previous assistant's Colab/Drive JSON-job route was unnecessary and is withdrawn. The authoritative next step is one manual dispatch of the existing Phase 2 workflow from GitHub Actions UI, then review the Spot/Futures reports and artifact.
+- No new audit was run; Phase 2 remains BLOCKED until actual reports satisfy the gate. Do not add marker commits or repeat unchanged checks.

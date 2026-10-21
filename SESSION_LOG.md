@@ -190,3 +190,10 @@ Check whether GitHub Actions has a successful smoke run for the latest runner/te
 - Modified the existing audit workflow to accept a path-filtered push trigger for `tools/phase2-audit-trigger.txt`, with defaults `2026-10-15`, `BTCUSDT`, `5m`, and committed the marker.
 - Rechecked Actions after the marker commit: no Phase 2 audit run appeared in the latest 100 runs. The automatic trigger attempt is unverified and did not provide audit output.
 - Do not claim a run or data pass. Avoid further trigger commits; next dependency is one manual dispatch of the existing workflow and review of its artifact.
+
+
+## 2026-10-21 — GitHub-only execution route reaffirmed
+- User explicitly instructed that project work and execution remain on GitHub, without Colab or Google Drive.
+- The repository already has a manual GitHub Actions Phase 2 workflow. The current chat GitHub connector can read repository state and workflow evidence but has no workflow-dispatch action, so I must not claim to have started the workflow from this session.
+- The previous assistant's Colab/Drive JSON-job route was unnecessary and is withdrawn. The authoritative next step is one manual dispatch of the existing Phase 2 workflow from GitHub Actions UI, then review the Spot/Futures reports and artifact.
+- No new audit was run; Phase 2 remains BLOCKED until actual reports satisfy the gate. Do not add marker commits or repeat unchanged checks.

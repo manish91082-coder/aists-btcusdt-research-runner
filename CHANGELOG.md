@@ -76,3 +76,7 @@ Newest first. Repository change log is not a performance claim.
 ## 2026-10-21 — S-01 to S-04 preregistration
 - Added S01_S04_PREREGISTRATION.md and D-018 under the documented Phase 2 blocker contingency.
 - This freezes research definitions only. No empirical result is claimed; the real-data audit remains BLOCKED.
+
+
+## 2026-10-21 — Correct execution path: GitHub Actions only
+- Corrected the handoff: use the existing Phase 2 GitHub Actions workflow, not Colab/Google Drive. The current connector lacks workflow-dispatch capability; no run is claimed. Phase 2 remains BLOCKED pending the workflow artifact and independent report review.

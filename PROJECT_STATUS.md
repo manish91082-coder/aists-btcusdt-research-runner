@@ -169,3 +169,10 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - One bounded official-doc search did not establish a documented historical USDⓈ-M Futures WebSocket kline request that reproduces the audit's 2026-10-15 samples. The REST gate is unchanged; no speculative substitute was implemented.
 - Phase 2 remains BLOCKED: Spot official API check passes; Futures official API verification remains blocked (HTTP 451 primary, HTTP 202 numbered hosts).
 - Next action is event-driven, not another loop: resume only if new official documentation for a permitted historical candle endpoint or a compliant runtime/environment becomes available. Then run one targeted verification. No backtest, training, paper trading, live order or deployment.
+
+
+## 2026-10-21 — Execution route corrected to GitHub-only
+- User explicitly reaffirmed that project work must stay on GitHub; Colab/Google Drive are not to be used for the next execution step.
+- Repository audit confirmed the existing manual GitHub Actions workflow and GitHub-only artifact path. The session's GitHub connector is read-only for workflow dispatch, so the workflow cannot be started from this chat; this is a specific tool boundary, not a reason to move execution to Colab.
+- Corrected RUN_DATA_AUDIT.md to make GitHub Actions the sole supported runbook and clarified the README reference. No data audit was run and Phase 2 remains BLOCKED.
+- Next action: start the existing Phase 2 workflow once from GitHub Actions UI, then review both reports and artifact. No marker commits, repeated audits, Colab or Drive steps.

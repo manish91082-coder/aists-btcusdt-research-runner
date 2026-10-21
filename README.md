@@ -38,7 +38,7 @@ Read [PLAN_AND_PHASE_LOCK.md](PLAN_AND_PHASE_LOCK.md) before any new task. It co
 
 
 ## Phase 2 audit runner
-- A standard-library-only audit runner and Colab runbook are now available: [tools/audit_binance_archive.py](tools/audit_binance_archive.py) and [RUN_DATA_AUDIT.md](RUN_DATA_AUDIT.md). They prepare a reproducible route but do not mean an archive was downloaded or passed.
+- A standard-library-only audit runner and Colab runbook are now available: [tools/audit_binance_archive.py](tools/audit_binance_archive.py) and [RUN_DATA_AUDIT.md](RUN_DATA_AUDIT.md). The runbook uses the existing GitHub Actions workflow; it does not mean an archive was downloaded or passed.
 
 ## Preregistered strategy protocols
 - [S-01 to S-04 Experiment Preregistration](S01_S04_PREREGISTRATION.md) freezes the first four research pilots before performance results. It is not a backtest report.
