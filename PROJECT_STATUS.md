@@ -218,3 +218,7 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - Reviewed the live monthly archive workflow and found its manually supplied `month` and `interval` values were interpolated directly into shell command text. Changed both audit steps to receive inputs through environment variables and use quoted shell expansions, avoiding direct expression interpolation in shell code.
 - Workflow change commit: `7b8a21ea4759fa381e8847a3ae9a0657ba522df1`. The existing `audit-runner-smoke.yml` includes this workflow path in its push filters, so CI should run; its result has not yet been verified here.
 - This is workflow-input safety hardening only. No archive workflow was dispatched, no Spot/Futures report was produced or accepted, and HD-03 / Phase 2 remains BLOCKED. Next action remains manual HD-03 dispatch after the workflow change's CI result is checked.
+
+## 2026-10-21 — Workflow safety fix CI verified
+- Targeted smoke workflow [39567909921](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39567909921) completed with `success` on workflow-fix commit `7b8a21ea4759fa381e8847a3ae9a0657ba522df1`. The run validates the repository's configured smoke steps; it is not a real archive audit.
+- HD-03 remains BLOCKED because no September 2026 Spot/Futures archive reports have been produced and reviewed. Next action is the one manual dispatch of the monthly archive workflow, followed by artifact review.
