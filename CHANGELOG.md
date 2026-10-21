@@ -89,3 +89,10 @@ Newest first. Repository change log is not a performance claim.
 ## 2026-10-21 — Reconciled stale phase-status summaries with latest evidence
 - Updated the master plan and research register to distinguish frozen S-01 to S-04 protocols from unrun backtests, and to reflect the latest Phase 2 run: archive-integrity/candle-quality checks pass, Spot API samples pass, Futures API verification remains blocked.
 - This is a documentation consistency correction only. It does not pass Phase 2 or authorise backtesting.
+
+
+## 2026-10-21 — Monthly archive-first historical data pilot
+- Added monthly archive validator, unit tests, and manual GitHub Actions workflow for one bounded month of BTCUSDT Spot + USDⓈ-M Futures.
+- Added HD-01–HD-10 subtask plan and updated Phase 2 to accept validated official monthly archives without requiring REST API access.
+- Updated smoke CI to compile and check CLI help for the new validator.
+- Pilot has not been run from chat; Phase 2 remains BLOCKED and no backtests are unlocked.
