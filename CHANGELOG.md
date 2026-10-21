@@ -102,3 +102,8 @@ Newest first. Repository change log is not a performance claim.
 - Added `NEW_CHAT_CONTINUITY_PROMPT.md` as the canonical copy-ready prompt for a fresh thread.
 - Monthly archive test hardening committed at `9ff54223401c20cb4e923650a3d1f4f4f41e986a`; smoke run `39565549581` succeeded. No real archive result is inferred from CI.
 - HD-03 remains blocked pending actual 2026-09 BTCUSDT 5m Spot and USDⓈ-M Futures archive reports.
+
+## 2026-10-21 — Continuity reconciliation
+- Clarified the current authoritative gate in status, continuity and session records: HD-03 monthly archive pilot for September 2026 BTCUSDT 5m Spot + USDⓈ-M Futures. Older daily/API-required and Colab/Drive notes remain historical and are superseded by the monthly-archive-first GitHub Actions route.
+- Reconfirmed smoke run 39565549581 is CI-only, not market-data acceptance. The pilot remains unrun/unreviewed from this chat; no backtest or downstream execution is unlocked.
+- No workflow dispatch is claimed because the available connector does not expose that action. The exact next step remains manual dispatch of the existing workflow and review of both reports and the artifact.
