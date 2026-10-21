@@ -33,12 +33,15 @@ At each session, fetch the live GitHub main head and read the status/continuity/
 Read [PLAN_AND_PHASE_LOCK.md](PLAN_AND_PHASE_LOCK.md) before any new task. It contains the locked phase sequence, AI decision contract, logical brain roles, exit gates, change control and anti-drift protocol. [PROJECT_BLUEPRINT.md](PROJECT_BLUEPRINT.md) remains the full durable project specification. Documentation is not implementation evidence.
 
 
-## Current Phase 2 blocker (2026-10-21)
-- The representative archive audit is currently blocked because the execution container could not resolve `data.binance.vision`; no archive or checksum has been verified. See [DATA_AUDIT_LOG.md](DATA_AUDIT_LOG.md) for exact attempted URLs and the next reproducible route.
+## Current phase status (2026-10-21)
+- Official daily archive integrity/candle checks and Spot API sample checks passed in a prior GitHub Actions run. The former Futures REST comparison was blocked, but the historical-data gate has since been redesigned to use official monthly archives as primary evidence.
+- The monthly archive validator and manual GitHub Actions pilot are implemented, but the September 2026 BTCUSDT 5m pilot has NOT been run/reviewed from this chat. Phase 2 remains BLOCKED until both Spot and USDⓈ-M Futures reports pass.
+- See [Historical Data Ingestion Subtasks](HISTORICAL_DATA_INGESTION_SUBTASKS.md), [Monthly archive runbook](RUN_DATA_AUDIT.md), and [Data Audit Log](DATA_AUDIT_LOG.md). No Colab or Drive workflow is part of the project.
 
-
-## Phase 2 audit runner
-- A standard-library-only audit runner and Colab runbook are now available: [tools/audit_binance_archive.py](tools/audit_binance_archive.py) and [RUN_DATA_AUDIT.md](RUN_DATA_AUDIT.md). The runbook uses the existing GitHub Actions workflow; it does not mean an archive was downloaded or passed.
+## Dynamic Top-10 universe
+- [Top-10 Volume Universe Specification](TOP10_VOLUME_UNIVERSE_SPEC.md) freezes a dynamic, point-in-time selection policy using verified volume data. Spot USDT pairs and USDⓈ-M USDT perpetuals are ranked separately.
+- BTCUSDT is a pipeline pilot only, not a hardcoded final universe. No Top-10 ranking has been calculated or claimed yet.
+- Research capital remains 10,000 USDT paper equity only. Real data and realistic costs are required, but live orders/credentials/deployment remain locked.
 
 ## Preregistered strategy protocols
 - [S-01 to S-04 Experiment Preregistration](S01_S04_PREREGISTRATION.md) freezes the first four research pilots before performance results. It is not a backtest report.
