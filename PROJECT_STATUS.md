@@ -181,3 +181,11 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 ## 2026-10-21 — Manual-only Phase 2 workflow lock
 - Repository audit found a stale push-path trigger and marker file alongside the documented manual-dispatch procedure. Removed the marker-based/push-trigger route to prevent unintended or repetitive real-data audits on code pushes.
 - Phase 2 workflow now starts only through its existing GitHub Actions `workflow_dispatch` input form. This session cannot dispatch it through the available connector. No archive audit was run; Phase 2 remains BLOCKED.
+
+
+## 2026-10-21 — Monthly archive-first ingestion
+- User suggested Binance monthly archives processed in GitHub chunks; adopted official monthly Spot and USDⓈ-M Futures archives as the primary historical source. API access is not a prerequisite for historical archive validation.
+- Added `tools/audit_binance_monthly_archive.py`, unit tests, manual workflow `.github/workflows/monthly-binance-history-chunk.yml`, and HD-01–HD-10 in `HISTORICAL_DATA_INGESTION_SUBTASKS.md`.
+- Pilot parameters: BTCUSDT, September 2026, 5m; expected 8,640 rows per product for full-month coverage.
+- IMPLEMENTED, NOT RUN from this chat. The available connector cannot dispatch workflows. Phase 2 remains BLOCKED until both real reports pass and are inspected.
+- Raw files stay out of Git history; Actions artifact retention is 14 days. Binance launched in 2017, so Binance-only data cannot provide 10–15 years as of 2026.
