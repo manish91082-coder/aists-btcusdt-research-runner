@@ -120,3 +120,8 @@ Newest first. Repository change log is not a performance claim.
 - Downloaded and verified the retained artifact digest for run 39496937998. Prior Spot daily archive report passed, including bounded Spot API sample; Futures archive integrity and daily candle checks passed while API sampling remained BLOCKED.
 - Both markets' 2026-09-15 daily-vs-monthly archive diagnostics matched row-for-row with valid publisher checksums. Same-publisher consistency is not independent-source validation.
 - Active HD-03 September full-month monthly pilot remains BLOCKED and separate; no backtest or execution stage is unlocked.
+
+## 2026-10-21 — Monthly positive-price invariant
+- Monthly archive validator now rejects any candle with a zero or negative OHLC price even if OHLC ordering is otherwise valid; regression tests cover both cases.
+- Smoke CI run 39584538161 passed on test commit 0200cf024c0b4db0e3add7d696db19391ce1b1b2. This does not pass the real-data gate.
+- HD-03 September 2026 monthly Spot/Futures pilot remains BLOCKED pending manual dispatch and report review.
