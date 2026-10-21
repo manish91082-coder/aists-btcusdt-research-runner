@@ -94,11 +94,11 @@ def main():
             csvs=[n for n in z.namelist() if n.lower().endswith(".csv")]
             if len(csvs)!=1: raise ValueError(f"expected exactly one CSV, found {csvs!r}")
             raw=z.read(csvs[0]); report["checks"]["zip_integrity"]="PASS"; (out/Path(csvs[0]).name).write_bytes(raw)
-        report.update(validate_csv(raw,a.market,a.month,a.interval,a.require_full_month))
+        details=validate_csv(raw,a.market,a.month,a.interval,a.require_full_month)\n        report.update({k:v for k,v in details.items() if k!="checks"})\n        report["checks"].update(details["checks"])
         report["status"]="PASS" if all(v=="PASS" for v in report["checks"].values()) else "FAIL"
     except Exception as e:
         report["errors"]=[f"{type(e).__name__}: {e}"]
-        if "differs from official checksum" in str(e) or "expected exactly one CSV" in str(e): report["status"]="FAIL"
+        if any(x in str(e) for x in ("differs from official checksum","expected exactly one CSV","BadZipFile","Unrecognised official .CHECKSUM format")): report["status"]="FAIL"
         else: report["status"]="BLOCKED"
         report["checks"].setdefault("archive_download","BLOCKED")
     (out/f"{a.market}-{symbol}-{a.interval}-{a.month}.report.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
