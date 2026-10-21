@@ -125,3 +125,10 @@ Newest first. Repository change log is not a performance claim.
 - Monthly archive validator now rejects any candle with a zero or negative OHLC price even if OHLC ordering is otherwise valid; regression tests cover both cases.
 - Smoke CI run 39584538161 passed on test commit 0200cf024c0b4db0e3add7d696db19391ce1b1b2. This does not pass the real-data gate.
 - HD-03 September 2026 monthly Spot/Futures pilot remains BLOCKED pending manual dispatch and report review.
+
+
+## 2026-10-21 — September 2026 monthly archive pilot accepted
+- Run [39594637570](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39594637570) passed the archive audit workflow; both Spot and USDⓈ-M Futures JSON reports were independently inspected.
+- Each report has 8,640 complete 5m candles for September 2026, official publisher checksum matched, and zero malformed rows, duplicates or gaps. Spot timestamps are microseconds; USDⓈ-M timestamps are milliseconds.
+- Artifact digest independently verified: `sha256:b951e65f8d35ae2a79eb8afbaec78a1923b7362bb814d9bb0d7e99e6e557f7e5`.
+- This passes only the bounded HD-03 monthly archive pilot; full historical coverage/cost gates remain open. No backtest or trading activity is authorised.
