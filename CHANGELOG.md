@@ -114,3 +114,9 @@ Newest first. Repository change log is not a performance claim.
 
 ## 2026-10-21 — Workflow safety smoke CI
 - Smoke run 39567909921 succeeded on workflow-fix commit 7b8a21ea4759fa381e8847a3ae9a0657ba522df1. This is offline CI evidence only; the real monthly archive pilot remains unrun/unreviewed.
+
+
+## 2026-10-21 — Prior Phase 2 artifact independently reviewed
+- Downloaded and verified the retained artifact digest for run 39496937998. Prior Spot daily archive report passed, including bounded Spot API sample; Futures archive integrity and daily candle checks passed while API sampling remained BLOCKED.
+- Both markets' 2026-09-15 daily-vs-monthly archive diagnostics matched row-for-row with valid publisher checksums. Same-publisher consistency is not independent-source validation.
+- Active HD-03 September full-month monthly pilot remains BLOCKED and separate; no backtest or execution stage is unlocked.
