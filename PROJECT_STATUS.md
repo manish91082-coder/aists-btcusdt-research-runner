@@ -164,3 +164,8 @@ Added GitHub Actions smoke checks for Python compilation, CLI help, and malforme
 - One bounded official-documentation review did not establish a separate documented public USDⓈ-M Futures REST base for klines beyond the documented `fapi.binance.com` base. No endpoint cycling or repeat audit was launched because neither code nor environment had materially changed.
 - Added `EFFICIENCY_NO_DRIFT_PROTOCOL.md`; added R-035 to R-037 in `RULES_AND_LOCKS.md`; added G10 to `PLAN_AND_PHASE_LOCK.md`. This requires one decision-focused evidence pass, limits reruns to material reasons, and prohibits bypassing HTTP 451/access restrictions.
 - Current gate: Phase 2 BLOCKED. Next action: if needed, make one explicit protocol decision on whether official USDⓈ-M Futures WebSocket market-data verification can satisfy the existing REST comparison requirement; until approved, do not change the verifier or waive the gate. No backtest, training, paper trading, live order or deployment has occurred.
+
+## 2026-10-21 — WebSocket alternative check closed; no rerun
+- One bounded official-doc search did not establish a documented historical USDⓈ-M Futures WebSocket kline request that reproduces the audit's 2026-10-15 samples. The REST gate is unchanged; no speculative substitute was implemented.
+- Phase 2 remains BLOCKED: Spot official API check passes; Futures official API verification remains blocked (HTTP 451 primary, HTTP 202 numbered hosts).
+- Next action is event-driven, not another loop: resume only if new official documentation for a permitted historical candle endpoint or a compliant runtime/environment becomes available. Then run one targeted verification. No backtest, training, paper trading, live order or deployment.
