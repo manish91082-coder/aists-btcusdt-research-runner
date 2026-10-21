@@ -194,3 +194,10 @@ Added `.github/workflows/audit-runner-smoke.yml`. On relevant pushes/pull reques
 - The archived 2026-10-15 BTCUSDT USDⓈ-M Futures 5m report is `BLOCKED`, not a data-quality failure: archive download, publisher checksum, ZIP, schema, 288-row UTC-day coverage and candle-quality checks passed, but the bounded official API sample check is `BLOCKED`. Source ZIP SHA-256: `def03b137860740b184bb113fce1149e3a1e77f70fcd2153a3715bef787b2b65`.
 - A separate 2026-09-15 daily-vs-monthly archive diagnostic passed for both Spot and USDⓈ-M Futures: each daily archive had 288 rows; each matched the corresponding monthly archive row-for-row with zero missing/extra opens and zero value mismatches, and both publisher checksums matched. This is consistency evidence from the same publisher, not independent-source validation.
 - Scope boundary: these findings are from the prior daily/API diagnostic workflow and do not substitute for the active HD-03 monthly pilot for the full month `2026-09` (8,640 5m candles per market). HD-03 remains BLOCKED until that workflow is run and both monthly reports are reviewed. No backtest or trading stage is unlocked.
+
+
+## 2026-10-21 — Monthly validator positive-price invariant
+- Code review found the monthly candle validator enforced OHLC ordering but allowed a mathematically ordered candle with zero or negative OHLC prices to pass. Added a required `positive_prices` check (all OHLC values strictly greater than zero) and a regression test covering negative-price and zero-price candles.
+- Code commit: `ed3272c951b1fe9b9f5e2559d2ebef05fbfd0d30`; regression-test commit: `0200cf024c0b4db0e3add7d696db19391ce1b1b2`.
+- Smoke CI run [39584538161](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39584538161) succeeded on the test commit, including Python compilation, unittest discovery, CLI help and invalid-date rejection. This validates code/tests only, not market data.
+- HD-03 remains BLOCKED pending the full September 2026 Spot and USDⓈ-M Futures monthly reports and evidence artifact. No backtest or trading stage is unlocked.
