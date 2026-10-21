@@ -65,6 +65,7 @@ def validate_csv(raw,market,month,interval,full):
       "timestamp_alignment":"PASS" if all((t-start)%step==0 for t in ts) else "FAIL",
       "close_time_semantics":"PASS" if all(r[1]==r[0]+step-1 for r in rows) else "FAIL",
       "ohlc_invariants":"PASS" if all(r[4]<=r[2]<=r[3] and r[4]<=r[5]<=r[3] and r[4]<=r[3] for r in rows) else "FAIL",
+      "positive_prices":"PASS" if all(min(r[2],r[3],r[4],r[5])>0 for r in rows) else "FAIL",
       "nonnegative_volume_counts":"PASS" if all(min(r[6],r[7],r[9],r[10])>=0 and r[8]>=0 for r in rows) else "FAIL"})
     expected=(end-start)//step
     observed=set(ts)
