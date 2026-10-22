@@ -118,3 +118,13 @@ Official starting points:
 ## Change control
 
 Research status और claims केवल verified evidence के आधार पर बदलें। Repo cleanup या unit-test pass को market-data validation, profitable edge, या ₹10 करोड़ तक पहुँचने का प्रमाण न मानें।
+
+
+## 11. दस्तावेज़ एवं सुरक्षा-जाँच refresh — 22 अक्टूबर 2026
+- README पुनः बनाया गया और detailed project charter `CRYPTO_10CR_PROJECT_DETAILS.md` जोड़ा गया।
+- Project Status को current evidence के अनुसार संक्षिप्त और अद्यतन किया गया; इस master log का version 1.5 है।
+- `CURRENT_PROJECT_KEEP_PATHS.txt` अब cleanup utility की वास्तविक allowlist है। Utility required paths जाँचती है और invalid/missing allowlist पर fail-closed होती है।
+- Cleanup workflow को manual, read-only preview में सीमित किया गया; सामान्य pushes अब auto-delete/auto-commit नहीं करते।
+- Smoke workflow अब Python compilation, required docs/target consistency, allowlist-based cleanup preview में zero deletion candidates और deterministic unit tests जाँचता है।
+- Expanded smoke run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Log update के समय status queued था; final pass/fail को GitHub के final conclusion के बिना घोषित नहीं किया जाएगा।
+- यह documentation/governance update है; market data download या trading backtest नहीं।
