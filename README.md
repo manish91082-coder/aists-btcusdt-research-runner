@@ -5,7 +5,7 @@
 ## Current state
 
 - **Repository cleanup:** completed; current-thread research files retained and verified.
-- **Math helpers and unit tests:** implemented. The earlier GitHub Actions smoke run passed: [run details](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39793473617).
+- **Math helpers and unit tests:** implemented. The earlier unit-test smoke run passed: [run details](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39793473617). The expanded documentation/allowlist CI run is currently pending: [latest run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873).
 - **Real market-data validation for this target project:** not yet completed.
 - **Cost-aware strategy backtest:** not yet completed.
 - **Profitable strategy / time to target:** not established / unknown.
