@@ -1,6 +1,6 @@
 # 1,000 USDT → ₹10 करोड़-समतुल्य USDT: मास्टर शोध लॉग
-**Version:** 1.1  
-**Updated:** 2026-10-22 (v1.1)  
+**Version:** 1.2  
+**Updated:** 2026-10-22 (v1.2)  
 **Repository:** https://github.com/manish91082-coder/aists-btcusdt-research-runner  
 **Scope:** शोध, market data, backtesting, reproducibility. Tax/TDS अभी स्थगित।
 
@@ -75,3 +75,11 @@
 - These are math/helper unit tests only, not market-data validation or strategy backtests.
 - The prior AISTS repository includes an official Binance archive audit pipeline, tests, workflows and locked governance. Bulk deletion has not been performed without a complete tracked-tree inventory and dependency review; removing those files blindly could destroy the existing audit path and invalidate continuity. Git history/other branches remain untouched.
 - Next: verify the Actions run result; then add a real-data acquisition + checksum manifest and test strategy baselines with multi-timeframe execution and costs.
+
+
+## 9. Cleanup script added — 2026-10-22
+- Guarded cleanup script: [scripts/cleanup_current_project.py](https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/main/scripts/cleanup_current_project.py)
+- Commit: https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/1bd521dfa8bb2739b78846c16985e103908d51e9
+- Default is preview-only; explicit `--apply --confirm-repository manish91082-coder/aists-btcusdt-research-runner` is required to stage deletions.
+- Script checks the repository remote, prints tracked paths to keep/delete, stages deletions only, and writes a separate cleanup log. It does not commit/push or erase history/branches.
+- Status: script committed and readback verified; **cleanup not run**. The preview output must be reviewed before applying because the allowlist defines which current-project paths survive.
