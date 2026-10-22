@@ -1,6 +1,6 @@
 # Current Project Status — 1,000 USDT to Target USDT
-**Updated:** 2026-10-22 (cleanup-script checkpoint)  
-**Status:** RESEARCH HARNESS ADDED; CLEANUP SCRIPT COMMITTED; CLEANUP NOT RUN; NO PROFITABLE STRATEGY VERIFIED
+**Updated:** 2026-10-22 (cleanup complete and verified)  
+**Status:** LEGACY REPOSITORY CLEANUP COMPLETE; CRYPTO-TARGET FILES PRESERVED; NO PROFITABLE STRATEGY VERIFIED
 
 ## Goal
 Turn 1,000 USDT into **1,061,120.54 USDT** (approximate ₹10 crore equivalent at the 2026-10-22 reference snapshot ₹94.24/USDT). Hourly means reinvest each realized net profit into account equity; it does not constrain the strategy to 1-hour candles.
@@ -20,9 +20,9 @@ Turn 1,000 USDT into **1,061,120.54 USDT** (approximate ₹10 crore equivalent a
 
 ## Work in this checkpoint
 - Added a dedicated USDT-target research dossier and status file.
-- Added new baseline code/tests and CI workflow are planned as the next implementation checkpoint; not yet verified until GitHub Actions run is observed.
+- Added baseline math helpers/tests and CI workflow. GitHub Actions smoke run passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39793473617.
 - No historical market data downloaded or backtest run for the 1,000 USDT target project in this checkpoint.
-- Existing code has not yet been deleted. A safe complete file inventory and impact review are required before mass deletion, because that could remove the existing archive audit, tests and workflow used by the prior project. Git history must remain intact.
+- Later verified cleanup removed 30 legacy tracked paths (old audit documentation, tests, scripts and obsolete workflows). The active crypto-target allowlist was preserved. Git history and other branches remain intact.
 
 ## Evidence gates
 1. Code/unit tests pass in GitHub Actions.
@@ -37,13 +37,13 @@ Turn 1,000 USDT into **1,061,120.54 USDT** (approximate ₹10 crore equivalent a
 **No strategy is proven profitable; time to target is unknown.** Do not turn a hypothetical compound-growth curve into a forecast.
 
 ## Next action
-Create and test a small baseline harness, confirm the actual CI run, then build the data pipeline and multi-horizon strategy comparisons. Record every execution as a separate append-only log file and update this status on each substantive response.
+Next: build the real market-data manifest/acquisition validation, then run cost-aware multi-horizon baselines. Cleanup was repository housekeeping only; no market-data backtest was performed. Record every substantive execution as a separate append-only log file.
 
 
 ## Latest checkpoint — 2026-10-22
 - Current research workstream: 1,000 USDT → 1,061,120.54 USDT target snapshot; compounding means reinvesting realized profits, not trading only on 1h candles.
 - GitHub files created: `CRYPTO_10CR_RESEARCH_LOG_HI.md`, `CRYPTO_10CR_PROJECT_STATUS.md`, `crypto_target/research_math.py`, `crypto_target/__init__.py`, `tests_crypto_target/test_research_math.py`, `.github/workflows/crypto-target-smoke.yml`, and an append-only execution log under `execution_logs/`.
-- Code readback verified; automated workflow result still pending verification. No market-data or strategy performance result claimed.
+- Code readback verified; the crypto-target smoke-test workflow succeeded (run link above). This verifies helper/unit tests only, not market-data validation or strategy profitability.
 - Next action: verify GitHub Actions run, record result in a new execution-log file, then build real data manifest and baseline backtests.
 
 
@@ -53,5 +53,14 @@ Create and test a small baseline harness, confirm the actual CI run, then build 
 - Direct script link: https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/main/scripts/cleanup_current_project.py
 - Readback verified from GitHub after commit.
 - Default mode is dry-run. Applying requires `--apply` and the exact repository confirmation; it stages tracked-file deletions but does not commit/push. It preserves only the explicit allowlist and named prefixes; user must inspect preview before applying.
-- Cleanup has **not** been executed. No old files were deleted by this step.
+- At the time this script-addition checkpoint, cleanup had not yet run. The later final cleanup execution is recorded below.
 - Important scope note: the script intentionally does not erase Git history or other branches and does not touch untracked/ignored files.
+
+
+## Final cleanup verification — 2026-10-22
+- GitHub Actions cleanup run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39806484233 (conclusion: success).
+- Cleanup commit: https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/0042c045702efa91a2a50d2672c6079c67edbb62; follow-up cleanup-transcript removal: https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/f06eb8bb296d3e4e934bb9e40b395fac93bf352a.
+- GitHub recursive tree verified 30 legacy tracked paths removed; active crypto-target files remained present.
+- Final outcome log: `execution_logs/2026-10-22-cleanup-final-verification.md`. The ephemeral run transcript was removed from repository root after report artifact generation.
+- Git history/other branches unchanged; no live trading and no market-data backtest performed.
+- Next research step: real official market-data provenance/checksum/schema/gap validation, then cost-aware baseline tests.
