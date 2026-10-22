@@ -17,3 +17,6 @@ execution_logs/
 .github/workflows/hd03-data-integrity.yml
 scripts/acquire_validate_hd03.py
 tests_crypto_target/test_hd03_data.py
+.github/workflows/hd04-universe-snapshot.yml
+scripts/build_hd04_universe_snapshot.py
+tests_crypto_target/test_hd04_universe.py
