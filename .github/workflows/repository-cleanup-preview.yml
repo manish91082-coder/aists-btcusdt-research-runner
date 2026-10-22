@@ -1,38 +1,60 @@
-name: Repository Cleanup Preview
+name: Repository Cleanup
 
 on:
   push:
     paths:
-      - ".github/workflows/repository-cleanup-preview.yml"
-      - "scripts/cleanup_current_project.py"
+      - "scripts/EXECUTE_CLEANUP_NOW"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  cleanup-preview:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Run cleanup script in DRY-RUN mode
+      - name: Preview only when manually dispatched
+        if: github.event_name == 'workflow_dispatch'
         run: |
           set -o pipefail
           python scripts/cleanup_current_project.py 2>&1 | tee cleanup-preview.txt
 
-      - name: Upload cleanup preview
+      - name: Apply cleanup after the one-time trigger file is pushed
+        if: github.event_name == 'push'
+        run: |
+          set -o pipefail
+          python scripts/cleanup_current_project.py --apply --confirm-repository "manish91082-coder/aists-btcusdt-research-runner" 2>&1 | tee cleanup-apply.txt
+
+      - name: Commit and push staged cleanup
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No staged cleanup changes to commit."
+          else
+            git commit -m "chore: remove legacy audit code and data"
+            git push origin HEAD:main
+          fi
+
+      - name: Upload cleanup report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: repository-cleanup-preview
-          path: cleanup-preview.txt
-          if-no-files-found: error
-          retention-days: 14
+          name: repository-cleanup-report
+          path: |
+            cleanup-preview.txt
+            cleanup-apply.txt
+          if-no-files-found: warn
+          retention-days: 30
