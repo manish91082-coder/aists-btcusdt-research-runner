@@ -62,6 +62,6 @@ The intended system autonomously evaluates market state and decides trade/no-tra
 
 ## Next milestone
 
-Implement and test the real market-data acquisition/integrity manifest for the initial BTCUSDT research universe, then establish simple cost-aware baselines across multiple holding horizons. Keep every run reproducible and create a separate execution log for each substantive run.
+Follow `END_TO_END_EXECUTION_PLAN_HI.md` without scope drift. The single next gate is HD-03: acquire and validate September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute archives with provenance, checksums and a reproducible integrity report. Do not start strategy/AI evaluation until this data gate passes.
 
 **Important:** A math unit-test pass confirms only those helper functions. It does not confirm market-data quality, AI decision quality, profitable edge, or an operational autonomous bot.
