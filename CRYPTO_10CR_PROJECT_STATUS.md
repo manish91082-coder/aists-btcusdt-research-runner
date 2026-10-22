@@ -1,6 +1,6 @@
 # Current Project Status — 1,000 USDT to Target USDT
-**Updated:** 2026-10-22 (checkpoint 2)  
-**Status:** RESEARCH HARNESS ADDED; CI RESULT PENDING; NO PROFITABLE STRATEGY VERIFIED
+**Updated:** 2026-10-22 (cleanup-script checkpoint)  
+**Status:** RESEARCH HARNESS ADDED; CLEANUP SCRIPT COMMITTED; CLEANUP NOT RUN; NO PROFITABLE STRATEGY VERIFIED
 
 ## Goal
 Turn 1,000 USDT into **1,061,120.54 USDT** (approximate ₹10 crore equivalent at the 2026-10-22 reference snapshot ₹94.24/USDT). Hourly means reinvest each realized net profit into account equity; it does not constrain the strategy to 1-hour candles.
@@ -45,3 +45,13 @@ Create and test a small baseline harness, confirm the actual CI run, then build 
 - GitHub files created: `CRYPTO_10CR_RESEARCH_LOG_HI.md`, `CRYPTO_10CR_PROJECT_STATUS.md`, `crypto_target/research_math.py`, `crypto_target/__init__.py`, `tests_crypto_target/test_research_math.py`, `.github/workflows/crypto-target-smoke.yml`, and an append-only execution log under `execution_logs/`.
 - Code readback verified; automated workflow result still pending verification. No market-data or strategy performance result claimed.
 - Next action: verify GitHub Actions run, record result in a new execution-log file, then build real data manifest and baseline backtests.
+
+
+## Cleanup-script checkpoint — 2026-10-22
+- Guarded script committed to `scripts/cleanup_current_project.py` on `main`.
+- Commit: https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/1bd521dfa8bb2739b78846c16985e103908d51e9
+- Direct script link: https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/main/scripts/cleanup_current_project.py
+- Readback verified from GitHub after commit.
+- Default mode is dry-run. Applying requires `--apply` and the exact repository confirmation; it stages tracked-file deletions but does not commit/push. It preserves only the explicit allowlist and named prefixes; user must inspect preview before applying.
+- Cleanup has **not** been executed. No old files were deleted by this step.
+- Important scope note: the script intentionally does not erase Git history or other branches and does not touch untracked/ignored files.
