@@ -41,6 +41,7 @@
 **Deliverables:** Source URLs/endpoints, retrieval timestamp, original file(s), SHA-256 checksum(s), parser/version, normalized schema, UTC timestamp convention, validation report and run log. Preserve original files and derived data separately.  
 **Checks:** Source/provenance; expected interval count; first/last timestamp and coverage; timestamp alignment/order; duplicates; missing intervals; malformed/non-finite/negative values; OHLC consistency; volume fields; Spot/Futures schema differences; product metadata and contract conventions. Distinguish genuine missing data from exchange closures or source-format differences. Do not silently fill gaps.  
 **Pass criteria:** Re-downloadable source is documented; checksum reproduces; all anomalies are counted and explained; acceptance/rejection is explicit; independent audit can reproduce the report. A file merely existing is not a pass.  
+**Result (2026-10-22): PASS** for both September 2026 BTCUSDT Spot and USDⓈ-M Futures archives: 8,640/8,640 candles each; zero gaps, duplicates, off-grid/out-of-month timestamps, numeric issues, OHLC issues or close-time issues; Binance checksum sidecars matched. See `execution_logs/2026-10-22-hd03-data-integrity-pass.md` and [run artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39823937420/artifacts/12445537564). This closes only this two-file monthly slice.  
 **Failure path:** Stop downstream experiments, fix ingestion/validation, rerun, log both failure and resolution.
 
 ### Step 2 — HD-04: Expand the research data universe
@@ -115,15 +116,15 @@ For every substantive response/action:
 
 ## 6. Immediate next action
 
-**Only next gate: HD-03.** Inspect the existing repository and available public Binance archive/download mechanism, implement a small deterministic acquisition/validation tool for September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute data, then run it and preserve the real outputs/checksums/report. Do not move to AI strategy research until this gate passes.
+**HD-03 is PASS. Only next gate: HD-04.** Build a source-verifiable Spot and USDⓈ-M market-universe snapshot/coverage matrix, separately derive eligible volume universes, record product metadata, historical funding-rate availability and fee assumptions, and assess historical membership to reduce survivorship bias. Do not rank strategies until relevant input coverage is proven.
 
 ## 7. Current gate ledger
 
 | Gate | State | Evidence / exit condition |
 |---|---|---|
 | G0 — Repository/math harness | PASS for current smoke checks | CI run #39820508068; not trading evidence |
-| HD-03 — BTCUSDT Sep-2026 5m data integrity | BLOCKED / not yet evidenced | Actual source files + checksums + reproducible validation report |
-| HD-04 — Broader product/symbol coverage | NOT STARTED | Provenance/coverage matrix passes |
+| HD-03 — BTCUSDT Sep-2026 5m data integrity | PASS (scope-limited) | Run #39823937420; both archives 8,640 rows, zero reported integrity issues, source checksums match |
+| HD-04 — Broader product/symbol coverage | NEXT / NOT STARTED | Provenance/coverage matrix, product metadata, historical funding and universe snapshot |
 | Simulator + cost model | NOT STARTED | Accounting/fill/cost tests pass |
 | Baselines + preregistered experiments | NOT STARTED | Reproducible walk-forward/holdout evidence |
 | AI decision layer | NOT STARTED | Incremental out-of-sample net benefit |
