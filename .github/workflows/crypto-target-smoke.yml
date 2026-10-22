@@ -51,6 +51,13 @@ jobs:
           grep -q "1,061,120.54 USDT" CRYPTO_10CR_RESEARCH_LOG_HI.md
           grep -q "NOT ESTABLISHED" CRYPTO_10CR_PROJECT_STATUS.md
           grep -q "UNKNOWN" CRYPTO_10CR_PROJECT_STATUS.md
+          if grep -Eiq "expanded.*(currently )?pending" README.md CRYPTO_10CR_PROJECT_DETAILS.md CRYPTO_10CR_PROJECT_STATUS.md; then
+            echo "A core project document still labels the expanded CI result as pending."
+            exit 1
+          fi
+          grep -q "39815232873" README.md
+          grep -q "39815232873" CRYPTO_10CR_PROJECT_DETAILS.md
+          grep -q "39815232873" CRYPTO_10CR_PROJECT_STATUS.md
       - name: Verify repository has no files outside the committed keep-list
         run: |
           set -euo pipefail
