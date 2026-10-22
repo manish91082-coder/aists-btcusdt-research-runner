@@ -136,7 +136,7 @@ Research status और claims केवल verified evidence के आधार
 - Project Details में current verification log और अगला evidence gate link किया गया; Project Status में final tree audit व pending CI की स्थिति दर्ज है।
 - Final audit record: `execution_logs/2026-10-22-docs-final-verification.md`.
 - Latest tree audit में 19 tracked files थीं; हर path `CURRENT_PROJECT_KEEP_PATHS.txt` में exact path या protected directory prefix से covered था। Unexpected files: 0.
-- Expanded CI run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873 अभी GitHub API के अनुसार queued है। इसे PASS नहीं कहा गया। Earlier helper/unit-test run passed, पर यह expanded documentation/allowlist run अलग है.
+- इस tree audit के समय run queued था; बाद में final conclusion `success` और सभी steps के pass होने की पुष्टि हुई। अंतिम परिणाम section 13 में दर्ज है।
 - Next gate remains real market-data provenance/integrity checks. No market data acquisition, trading backtest, or profitability conclusion was produced by this documentation refresh.
 
 
