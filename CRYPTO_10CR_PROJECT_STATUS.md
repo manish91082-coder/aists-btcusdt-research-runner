@@ -53,13 +53,14 @@ Execution records:
 
 ## Next step
 
-Implement a small, auditable market-data acquisition and integrity manifest for a clearly specified BTCUSDT product and interval. First validate files and timestamps; only then build cost-aware baselines across multiple holding periods. Save each substantive run to a separate execution-log file and update the research record with exact evidence, not assumptions.
+**Current gate: HD-03 (BLOCKED / not yet evidenced).** Implement and run a reproducible acquisition/integrity check for September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute archives. Require source provenance, original files, SHA-256 checksums, UTC coverage, expected intervals, duplicate/gap/OHLC/schema checks and a reproducible report. No strategy/AI backtest until HD-03 passes. See `END_TO_END_EXECUTION_PLAN_HI.md`.
 
 **Decision today:** Strategy edge is **NOT ESTABLISHED**. Time to target is **UNKNOWN**. No market-data backtest is claimed.
 
 
 ## Latest continuity checkpoint — 22 October 2026
 - Current core documents, AI architecture, keep-list, cleanup script, workflows and research helpers are linked from `README.md`.
+- End-to-end evidence-gated roadmap: `END_TO_END_EXECUTION_PLAN_HI.md`; its current single next gate is HD-03.
 - Final tree audit: `execution_logs/2026-10-22-docs-final-verification.md`. The latest post-refresh `main` inventory now contains 22 tracked files; all 22 are covered by the current committed keep-list and unexpected paths are 0. The latest CI run tested its pinned commit (`67c08f8d9c370e8d1f3171f5f7175ce6db41c016`), where 21 tracked files were all protected and there were 0 deletion candidates. The newest current-tree check log is `execution_logs/2026-10-22-final-current-thread-ci-success.md`.
 - Expanded documentation/allowlist smoke run passed in GitHub Actions: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Detailed step results: `execution_logs/2026-10-22-expanded-smoke-ci-success.md`.
 - Follow-up final-document validation passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817044689 (20 protected files, zero deletion candidates, 5/5 unit tests); details: `execution_logs/2026-10-22-final-docs-ci-success.md`.
