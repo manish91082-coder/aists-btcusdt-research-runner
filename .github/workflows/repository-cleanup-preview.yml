@@ -3,7 +3,7 @@ name: Repository Cleanup
 on:
   push:
     paths:
-      - "scripts/EXECUTE_CLEANUP_NOW"
+      - "CURRENT_PROJECT_KEEP_PATHS.txt"
   workflow_dispatch:
 
 permissions:
@@ -29,11 +29,51 @@ jobs:
           set -o pipefail
           python scripts/cleanup_current_project.py 2>&1 | tee cleanup-preview.txt
 
-      - name: Apply cleanup after the one-time trigger file is pushed
+      - name: Apply cleanup after allowlist update is pushed
         if: github.event_name == 'push'
         run: |
           set -o pipefail
           python scripts/cleanup_current_project.py --apply --confirm-repository "manish91082-coder/aists-btcusdt-research-runner" 2>&1 | tee cleanup-apply.txt
+
+      - name: Restore workflow to preview-only mode
+        if: github.event_name == 'push'
+        run: |
+          cat > .github/workflows/repository-cleanup-preview.yml <<'YAML'
+          name: Repository Cleanup Preview
+
+          on:
+            workflow_dispatch:
+
+          permissions:
+            contents: read
+
+          jobs:
+            cleanup-preview:
+              runs-on: ubuntu-latest
+              steps:
+                - name: Check out repository
+                  uses: actions/checkout@v4
+                  with:
+                    fetch-depth: 1
+
+                - name: Set up Python
+                  uses: actions/setup-python@v5
+                  with:
+                    python-version: "3.12"
+
+                - name: Run cleanup script in DRY-RUN mode
+                  run: |
+                    set -o pipefail
+                    python scripts/cleanup_current_project.py 2>&1 | tee cleanup-preview.txt
+
+                - name: Upload cleanup preview
+                  uses: actions/upload-artifact@v4
+                  with:
+                    name: repository-cleanup-preview
+                    path: cleanup-preview.txt
+                    if-no-files-found: error
+                    retention-days: 14
+          YAML
 
       - name: Commit and push staged cleanup
         if: github.event_name == 'push'
