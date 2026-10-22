@@ -12,7 +12,7 @@
 | Current-thread repository cleanup | **Complete** | Old tracked project files removed from current `main`; the intended current research files remain. Git history and other branches were not erased. |
 | README, project details and status | **Updated** | Core project documents have a common scope and research status. |
 | Compounding/target math helpers | **Implemented** | Deterministic arithmetic helpers exist; they are not a trade signal or strategy. |
-| Helper unit tests | **Previously passed** | [GitHub Actions smoke run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39793473617). Latest documentation/maintenance check is to be verified after this refresh. |
+| Helper unit tests | **Previously passed** | [Earlier GitHub Actions smoke run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39793473617). The expanded docs/allowlist CI run is currently pending: [latest run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873). |
 | Real market data for this target project | **Not yet acquired/validated** | No validated dataset or data-integrity manifest is claimed. |
 | Cost-aware strategy backtest | **Not run** | No market-data performance result exists for this workstream. |
 | Profitable strategy / time to target | **Not established / unknown** | No forecast or profit guarantee is justified. |
