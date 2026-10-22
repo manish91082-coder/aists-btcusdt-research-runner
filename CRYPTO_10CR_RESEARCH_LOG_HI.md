@@ -207,3 +207,11 @@ Research status और claims केवल verified evidence के आधार
 - **Current single next gate: HD-03** — September 2026 BTCUSDT Spot और USDⓈ-M Futures 5-minute data के वास्तविक source, files, SHA-256, UTC coverage, missing/duplicate/schema/OHLC checks और reproducible report का प्रमाण। इसके पास होने से पहले strategy/AI backtest नहीं।
 - README, Project Details, Project Status और keep-list को plan से जोड़ा गया। कोई live trading/API credential/fund movement अधिकृत नहीं है।
 - CI run और उसके final result को execution log में अलग से दर्ज किया जाएगा; green CI केवल repository checks का प्रमाण है, trading edge का नहीं।
+
+
+## 20. योजना की CI जाँच — 22 अक्टूबर 2026
+- GitHub Actions: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39822482423 — `success`.
+- Tested commit: `a2450df4c76fb2e88b92a14432f50d81c7bb24a1`.
+- End-to-end plan required-doc/target/HD-03 checks: PASS; keep-list dry-run: PASS; Python compilation: PASS; deterministic tests: 5/5 PASS.
+- Execution log: `execution_logs/2026-10-22-end-to-end-plan-baseline.md`.
+- यह केवल repository/plan checks हैं। HD-03 data acquisition/integrity अभी भी अगला gate है और इसका data evidence इस run में उत्पन्न नहीं हुआ।
