@@ -73,7 +73,7 @@ Minimum performance report:
 
 | Gate | Required evidence | Current status |
 |---|---|---|
-| G0: Scope and code harness | Versioned math helpers, explicit rules, deterministic tests | **Implemented; earlier CI run passed** |
+| G0: Scope and code harness | Versioned math helpers, explicit rules, deterministic tests | **Implemented; earlier unit-test CI passed; expanded documentation/allowlist CI pending** |
 | G1: Data provenance and integrity | Actual source objects, hashes, schemas, timestamps, duplicate/gap/validity report | **Not started for this target workstream** |
 | G2: Baselines | Reproducible no-look-ahead baseline with realistic costs | **Not started** |
 | G3: Out-of-sample edge | Walk-forward, cost-adjusted evidence vs. baselines | **Not established** |
@@ -85,7 +85,7 @@ Minimum performance report:
 
 - `crypto_target/research_math.py`: target multiple, geometric hurdle, compounding path and maximum drawdown helpers.
 - `tests_crypto_target/test_research_math.py`: five deterministic unit tests.
-- `.github/workflows/crypto-target-smoke.yml`: Python compilation, helper tests and core-document checks.
+- `.github/workflows/crypto-target-smoke.yml`: Python compilation, core-document consistency checks, fail-closed allowlist dry-run, and helper tests. The expanded run is pending at https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873; do not treat it as passed until GitHub reports a final success.
 - `scripts/cleanup_current_project.py`: guarded cleanup helper; default mode is dry-run.
 - `CURRENT_PROJECT_KEEP_PATHS.txt`: protected-path inventory that must be kept aligned with the script.
 - `CRYPTO_10CR_RESEARCH_LOG_HI.md`: master record.
