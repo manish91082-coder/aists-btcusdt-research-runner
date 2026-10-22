@@ -65,3 +65,7 @@ The intended system autonomously evaluates market state and decides trade/no-tra
 Follow `END_TO_END_EXECUTION_PLAN_HI.md` without scope drift. The single next gate is HD-03: acquire and validate September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute archives with provenance, checksums and a reproducible integrity report. Do not start strategy/AI evaluation until this data gate passes.
 
 **Important:** A math unit-test pass confirms only those helper functions. It does not confirm market-data quality, AI decision quality, profitable edge, or an operational autonomous bot.
+
+
+## Latest plan verification
+- End-to-end plan baseline CI passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39822482423 (tested commit `a2450df4c76fb2e88b92a14432f50d81c7bb24a1`). This is repository/plan validation, not trading evidence.
