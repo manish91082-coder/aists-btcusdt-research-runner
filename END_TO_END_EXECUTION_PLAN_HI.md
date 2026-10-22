@@ -45,6 +45,7 @@
 **Failure path:** Stop downstream experiments, fix ingestion/validation, rerun, log both failure and resolution.
 
 ### Step 2 — HD-04: Expand the research data universe
+**Implementation entry point:** `scripts/build_hd04_universe_snapshot.py`; workflow: `.github/workflows/hd04-universe-snapshot.yml`; deterministic tests: `tests_crypto_target/test_hd04_universe.py`. The workflow preserves the point-in-time JSON snapshot as a 30-day Actions artifact. The snapshot is not a substitute for historical universe membership.
 **Deliverables:** Repeatable historical acquisition for required timeframes, a coverage matrix by symbol/product/timeframe, symbol-list snapshot and timestamp, exchange metadata, funding-rate history for Futures, and fee assumptions/sources.  
 **Universe rule:** Build the candidate universe from source-verifiable exchange listings and volume snapshots, then derive Spot and Futures Top-10 separately using a predeclared volume measure and cutoff. Avoid survivorship bias: retain delisted/ineligible symbols and historical universe membership where data permits. BTCUSDT remains the first validation instrument, not an excuse to assume every symbol has identical quality.  
 **Pass criteria:** Coverage and exclusions are measurable; each market-data partition has provenance, checksum and quality status. No strategy ranking until the relevant input data pass.
