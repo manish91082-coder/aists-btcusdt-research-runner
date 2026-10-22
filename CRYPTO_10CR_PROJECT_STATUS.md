@@ -3,7 +3,7 @@
 **Last updated:** 22 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **Branch:** `main`  
-**Current phase:** Research harness established; real market-data integrity pipeline is next.
+**Current phase:** HD-03 BTCUSDT monthly archive validation passed; HD-04 market-universe/coverage mapping is next.
 
 ## Executive status
 
@@ -13,7 +13,7 @@
 | README, project details and status | **Updated** | Core project documents have a common scope and research status. |
 | Compounding/target math helpers | **Implemented** | Deterministic arithmetic helpers exist; they are not a trade signal or strategy. |
 | Helpers, docs and allowlist checks | **Passed** | [Latest GitHub Actions run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817387843): Python compile passed, required-doc checks passed, 21/21 tracked paths protected, 0 deletion candidates, and 5 unit tests passed. |
-| Real market data for this target project | **Not yet acquired/validated** | No validated dataset or data-integrity manifest is claimed. |
+| HD-03 September 2026 BTCUSDT 5m Spot/Futures slice | **PASS, scope-limited** | 8,640 candles each, zero reported integrity anomalies, Binance sidecar checksums match; see execution log and run artifact. |
 | Cost-aware strategy backtest | **Not run** | No market-data performance result exists for this workstream. |
 | Profitable strategy / time to target | **Not established / unknown** | No forecast or profit guarantee is justified. |
 | Live exchange access, orders, funds movement | **Not authorized** | Research only. |
@@ -59,7 +59,7 @@ Execution records:
 
 ## Next step
 
-**Current gate: HD-03 (BLOCKED / not yet evidenced).** Implement and run a reproducible acquisition/integrity check for September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute archives. Require source provenance, original files, SHA-256 checksums, UTC coverage, expected intervals, duplicate/gap/OHLC/schema checks and a reproducible report. No strategy/AI backtest until HD-03 passes. See `END_TO_END_EXECUTION_PLAN_HI.md`.
+**HD-03: PASS (scope-limited).** Both September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute archives passed the current validator: 8,640 rows each; no missing/duplicate/off-grid/out-of-month timestamps or numeric/OHLC/close-time issues; Binance checksum sidecars matched. Evidence: [Actions run/artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39823937420), `execution_logs/2026-10-22-hd03-data-integrity-pass.md`. **Next gate: HD-04**, source-verifiable universe and coverage mapping. No strategy edge is established.
 
 **Decision today:** Strategy edge is **NOT ESTABLISHED**. Time to target is **UNKNOWN**. No market-data backtest is claimed.
 
