@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Safely stage deletion of tracked files outside the current crypto-target project.
+"""Safely stage removal of tracked files outside a committed keep-list.
 
-Default is DRY RUN. Nothing is removed unless --apply AND the exact repository
-confirmation are supplied. This does not erase Git history or other branches.
+Default is DRY RUN. Applying requires --apply and an exact repository
+confirmation. This utility never commits, pushes, or erases Git history/branches.
 """
 from __future__ import annotations
 
@@ -13,28 +13,20 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 EXPECTED_REPO = "manish91082-coder/aists-btcusdt-research-runner"
-
-KEEP_EXACT = {
-    "CRYPTO_10CR_RESEARCH_LOG_HI.md",
+KEEP_LIST_NAME = "CURRENT_PROJECT_KEEP_PATHS.txt"
+REQUIRED_PATHS = {
+    "README.md",
+    "CRYPTO_10CR_PROJECT_DETAILS.md",
     "CRYPTO_10CR_PROJECT_STATUS.md",
+    "CRYPTO_10CR_RESEARCH_LOG_HI.md",
+    KEEP_LIST_NAME,
+    "scripts/cleanup_current_project.py",
+    ".github/workflows/crypto-target-smoke.yml",
+    ".github/workflows/repository-cleanup-preview.yml",
     "crypto_target/__init__.py",
     "crypto_target/research_math.py",
     "tests_crypto_target/test_research_math.py",
-    ".github/workflows/crypto-target-smoke.yml",
-    ".github/workflows/repository-cleanup-preview.yml",
-    "scripts/cleanup_current_project.py",
-    "scripts/EXECUTE_CLEANUP_NOW",
-    "CURRENT_PROJECT_KEEP_PATHS.txt",
-    "execution_logs/2026-10-22-repo-discovery.md",
-    "execution_logs/2026-10-22-research-harness-bootstrap.md",
-    "execution_logs/2026-10-22-cleanup-script-push.md",
 }
-
-KEEP_PREFIXES = (
-    "crypto_target/",
-    "tests_crypto_target/",
-    "execution_logs/crypto-target/",
-)
 
 
 def run_git(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -47,14 +39,34 @@ def run_git(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
     )
 
 
+def load_keep_rules(root: Path) -> tuple[set[str], tuple[str, ...]]:
+    keep_file = root / KEEP_LIST_NAME
+    if not keep_file.is_file():
+        raise ValueError(f"Required allowlist is missing: {KEEP_LIST_NAME}")
+
+    entries = [
+        line.strip().replace("\\", "/")
+        for line in keep_file.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    if KEEP_LIST_NAME not in entries:
+        raise ValueError(f"{KEEP_LIST_NAME} must protect itself in its own allowlist.")
+
+    exact = {entry for entry in entries if not entry.endswith("/")}
+    prefixes = tuple(entry for entry in entries if entry.endswith("/"))
+    if not exact and not prefixes:
+        raise ValueError("The keep-list is empty; refusing to risk deleting the project.")
+    return exact, prefixes
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Dry-run or stage removal of tracked files outside the current project allowlist."
+        description="Preview or stage removal of tracked files outside CURRENT_PROJECT_KEEP_PATHS.txt."
     )
     parser.add_argument(
         "--apply",
         action="store_true",
-        help="Actually stage deletion of tracked files not on the keep list. Without this, only preview.",
+        help="Stage tracked-file deletions. Without this flag, the script only previews.",
     )
     parser.add_argument(
         "--confirm-repository",
@@ -77,19 +89,31 @@ def main() -> int:
         print(f"Detected origin: {remote_url or '(missing)'}", file=sys.stderr)
         return 2
 
-    tracked = run_git("ls-files", "-z").stdout.split("\0")
-    tracked = sorted(p for p in tracked if p)
+    try:
+        keep_exact, keep_prefixes = load_keep_rules(root)
+    except (OSError, UnicodeError, ValueError) as exc:
+        print(f"ERROR: invalid or unavailable keep-list; refusing cleanup. {exc}", file=sys.stderr)
+        return 2
 
     def keep(path: str) -> bool:
-        return path in KEEP_EXACT or any(path.startswith(prefix) for prefix in KEEP_PREFIXES)
+        return path in keep_exact or any(path.startswith(prefix) for prefix in keep_prefixes)
 
-    removals = [p for p in tracked if not keep(p)]
-    protected = [p for p in tracked if keep(p)]
+    unprotected_required = sorted(path for path in REQUIRED_PATHS if not keep(path))
+    if unprotected_required:
+        print("ERROR: required current-project paths are not protected; refusing cleanup:", file=sys.stderr)
+        for path in unprotected_required:
+            print(f"  {path}", file=sys.stderr)
+        return 2
+
+    tracked = sorted(path for path in run_git("ls-files", "-z").stdout.split("\0") if path)
+    protected = [path for path in tracked if keep(path)]
+    removals = [path for path in tracked if not keep(path)]
 
     print(f"Repository: {EXPECTED_REPO}")
     print(f"Tracked files found: {len(tracked)}")
     print(f"Protected current-project files: {len(protected)}")
     print(f"Tracked files to stage for deletion: {len(removals)}")
+    print(f"Allowlist source: {KEEP_LIST_NAME}")
     print("NOTE: untracked/ignored files are not touched; Git history and other branches are not erased.")
     print("\n--- KEEP ---")
     for path in protected:
@@ -100,8 +124,7 @@ def main() -> int:
 
     if not args.apply:
         print("\nDRY RUN ONLY. No files changed.")
-        print("Review the list, then rerun with --apply --confirm-repository "
-              f"{EXPECTED_REPO!r} to stage the listed deletions.")
+        print("Review the list before applying. Applying stages deletions; this script does not commit or push.")
         return 0
 
     if args.confirm_repository != EXPECTED_REPO:
@@ -123,17 +146,18 @@ def main() -> int:
         f"# Repository cleanup log — {stamp}",
         "",
         f"- Repository: {EXPECTED_REPO}",
-        f"- Protected files: {len(protected)}",
+        f"- Protected tracked files: {len(protected)}",
         f"- Tracked paths staged for deletion: {len(removals)}",
+        f"- Allowlist source: `{KEEP_LIST_NAME}`",
         "- Scope: tracked files only; untracked/ignored files untouched.",
         "- Git history and other branches are not erased.",
         "- Deletions are staged for review; this script does not commit or push.",
         "",
-        "## Protected files",
-        *[f"- `{p}`" for p in protected],
+        "## Protected tracked files",
+        *[f"- `{path}`" for path in protected],
         "",
         "## Paths staged for deletion",
-        *[f"- `{p}`" for p in removals],
+        *[f"- `{path}`" for path in removals],
         "",
         "## Required follow-up",
         "Review `git status --short` and this log. Commit and push only if the staged deletion list is correct.",
