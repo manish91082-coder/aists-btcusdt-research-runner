@@ -73,7 +73,7 @@ Minimum performance report:
 
 | Gate | Required evidence | Current status |
 |---|---|---|
-| G0: Scope and code harness | Versioned math helpers, explicit rules, deterministic tests | **Implemented; earlier unit-test CI passed; expanded documentation/allowlist CI pending** |
+| G0: Scope and code harness | Versioned math helpers, explicit rules, deterministic tests | **Passed in expanded GitHub Actions run** |
 | G1: Data provenance and integrity | Actual source objects, hashes, schemas, timestamps, duplicate/gap/validity report | **Not started for this target workstream** |
 | G2: Baselines | Reproducible no-look-ahead baseline with realistic costs | **Not started** |
 | G3: Out-of-sample edge | Walk-forward, cost-adjusted evidence vs. baselines | **Not established** |
@@ -105,7 +105,7 @@ Minimum performance report:
 
 ## 9. Current repository verification
 
-The current-thread file inventory was checked against the committed keep-list. The most recent audit record is [execution_logs/2026-10-22-docs-final-verification.md](execution_logs/2026-10-22-docs-final-verification.md). The expanded GitHub Actions run is pending and is not recorded as passed until a final successful conclusion appears: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873.
+The current-thread file inventory was checked against the committed keep-list. The most recent audit record is [execution_logs/2026-10-22-docs-final-verification.md](execution_logs/2026-10-22-docs-final-verification.md). The expanded checks passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Detailed result: [expanded smoke-test execution log](execution_logs/2026-10-22-expanded-smoke-ci-success.md).
 
 ## 10. Immediate next step
 
