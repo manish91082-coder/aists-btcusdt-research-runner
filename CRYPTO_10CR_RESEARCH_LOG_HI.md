@@ -215,3 +215,14 @@ Research status और claims केवल verified evidence के आधार
 - End-to-end plan required-doc/target/HD-03 checks: PASS; keep-list dry-run: PASS; Python compilation: PASS; deterministic tests: 5/5 PASS.
 - Execution log: `execution_logs/2026-10-22-end-to-end-plan-baseline.md`.
 - यह केवल repository/plan checks हैं। HD-03 data acquisition/integrity अभी भी अगला gate है और इसका data evidence इस run में उत्पन्न नहीं हुआ।
+
+
+## 21. HD-03 data gate का वास्तविक परिणाम — 22 अक्टूबर 2026
+- GitHub Actions run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39823937420 — acquisition/validation step और job `success`.
+- Tested commit: `95bdf820f783e0423911243c2a466b71af410966`.
+- Binance Spot और USDⓈ-M Futures, दोनों के सितंबर 2026 BTCUSDT 5m archives डाउनलोड हुए। प्रत्येक में अपेक्षित 8,640/8,640 candles; पहली candle 2026-09-01 00:00 UTC, अंतिम 2026-09-30 23:55 UTC.
+- दोनों Binance `.CHECKSUM` sidecars उपलब्ध और SHA-256 match: Spot `4106fc73698fd1851b1821cd0293adc6304f86f0c2e72244e15c41f63c2bde08`; USDⓈ-M Futures `3a2d163a2bd28ca614fa0840a92ecbcde0d9c4962b278dd619d5bf81a9918e26`.
+- दोनों में missing intervals, duplicates, off-grid/out-of-month timestamps, numeric/trade-count, OHLC और close-time issues: सभी 0. Synthetic validator tests: 2/2 PASS (valid month accepted, injected duplicate/gap rejected).
+- Artifact (original ZIPs + JSON report, 30-day retention): https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39823937420/artifacts/12445537564. विस्तृत log: `execution_logs/2026-10-22-hd03-data-integrity-pass.md`.
+- सीमा: यह केवल एक महीने, एक symbol, एक interval और दो product archives की validation है; strategy edge या व्यापक universe की पुष्टि नहीं।
+- निर्णय: **HD-03 PASS (scope-limited)**. अगला एकमात्र gate **HD-04**: source-verifiable universe snapshot, Spot/Futures eligibility, volume universe, product metadata, historical funding availability, fee assumptions और survivorship-bias controls.
