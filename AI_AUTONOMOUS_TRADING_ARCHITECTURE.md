@@ -6,9 +6,9 @@
 
 ## 1. Mission and target hierarchy
 
-The user's explicit primary target for this workstream is **1,000 USDT initial equity → 10,000,000 USDT**. This is a 10,000× increase, or a 999,900% gain over starting equity, before considering the uncertainty of future market returns. It is an objective for research and planning, not a promise or forecast.
+The user's corrected primary target is **1,000 USDT initial equity → 1,061,120.54 USDT**, the approximate USDT equivalent of **₹10 crore** at the recorded ₹94.24/USDT snapshot dated 22 October 2026. This is a dated conversion reference, not a guarantee or permanent FX rate.
 
-A previously tracked goal was the USDT equivalent of ₹10 crore, approximately 1,061,120.54 USDT at a dated ₹94.24/USDT snapshot. That is a distinct, lower reference target and must not be silently conflated with the now-explicit **10M USDT primary target**. Keep it as a historical/secondary milestone unless the user explicitly changes the target hierarchy.
+The 10,000,000 USDT target was entered by mistake and is not the project goal. All current planning and target-progress reporting must use 1,061,120.54 USDT unless the user explicitly changes it.
 
 “Compounding” means adding realized net profits to equity before subsequent risk sizing. It does not prescribe hourly bars or mandatory hourly trading.
 
@@ -129,7 +129,7 @@ Track initial/current equity, target multiple, net and gross returns, geometric 
 
 ## 9. Immediate implementation roadmap
 
-1. Confirm this architecture in the repository and preserve the 10M USDT target as the primary goal.
+1. Confirm this architecture in the repository and preserve 1,061,120.54 USDT as the primary target for the ₹10 crore equivalent.
 2. Build a source-traceable BTCUSDT data acquisition/integrity manifest.
 3. Implement deterministic fee-aware backtesting and order/fill simulation before advanced AI.
 4. Establish no-trade, buy-and-hold where appropriate, trend and simple rule baselines.
@@ -140,4 +140,4 @@ Track initial/current equity, target multiple, net and gross returns, geometric 
 
 ## 10. Non-negotiable truth statement
 
-The architecture above is a design plan, not an already functioning autonomous trading bot. Current code does not yet fetch/validate market data, generate AI signals, simulate realistic fills, manage exchange orders or prove a profitable edge. The 10M USDT target is aspirational and highly uncertain; no timeline or return is guaranteed.
+The architecture above is a design plan, not an already functioning autonomous trading bot. Current code does not yet fetch/validate market data, generate AI signals, simulate realistic fills, manage exchange orders or prove a profitable edge. The 1,061,120.54 USDT target is aspirational and highly uncertain; no timeline or return is guaranteed.
