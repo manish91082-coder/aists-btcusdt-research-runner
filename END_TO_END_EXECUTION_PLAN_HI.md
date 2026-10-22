@@ -45,7 +45,7 @@
 **Failure path:** Stop downstream experiments, fix ingestion/validation, rerun, log both failure and resolution.
 
 ### Step 2 — HD-04: Expand the research data universe
-**Implementation entry point:** `scripts/build_hd04_universe_snapshot.py`; workflow: `.github/workflows/hd04-universe-snapshot.yml`; deterministic tests: `tests_crypto_target/test_hd04_universe.py`. The workflow preserves the point-in-time JSON snapshot as a 30-day Actions artifact. The snapshot is not a substitute for historical universe membership.
+**Implementation entry point:** `scripts/build_hd04_universe_snapshot.py`; workflow: `.github/workflows/hd04-universe-snapshot.yml`; deterministic tests: `tests_crypto_target/test_hd04_universe.py`. The workflow preserves the point-in-time JSON snapshot as a 30-day Actions artifact. The snapshot is not a substitute for historical universe membership. **Current result: BLOCKED** because GitHub Actions received HTTP 451 from the official public Spot exchange-info endpoint; no complete universe snapshot has been accepted. See `execution_logs/2026-10-22-hd04-initial-attempt.md`.
 **Deliverables:** Repeatable historical acquisition for required timeframes, a coverage matrix by symbol/product/timeframe, symbol-list snapshot and timestamp, exchange metadata, funding-rate history for Futures, and fee assumptions/sources.  
 **Universe rule:** Build the candidate universe from source-verifiable exchange listings and volume snapshots, then derive Spot and Futures Top-10 separately using a predeclared volume measure and cutoff. Avoid survivorship bias: retain delisted/ineligible symbols and historical universe membership where data permits. BTCUSDT remains the first validation instrument, not an excuse to assume every symbol has identical quality.  
 **Pass criteria:** Coverage and exclusions are measurable; each market-data partition has provenance, checksum and quality status. No strategy ranking until the relevant input data pass.
@@ -117,7 +117,7 @@ For every substantive response/action:
 
 ## 6. Immediate next action
 
-**HD-03 is PASS. Only next gate: HD-04.** Build a source-verifiable Spot and USDⓈ-M market-universe snapshot/coverage matrix, separately derive eligible volume universes, record product metadata, historical funding-rate availability and fee assumptions, and assess historical membership to reduce survivorship bias. Do not rank strategies until relevant input coverage is proven.
+**HD-03 is PASS. Current gate: HD-04 is BLOCKED on official endpoint access.** Resolve the HTTP 451 source-access issue using an official alternate API edge or independently verifiable official source, rerun the snapshot and require complete timestamped listing/volume evidence before closing HD-04. Do not rank strategies until relevant input coverage is proven.
 
 ## 7. Current gate ledger
 
@@ -125,7 +125,7 @@ For every substantive response/action:
 |---|---|---|
 | G0 — Repository/math harness | PASS for current smoke checks | CI run #39820508068; not trading evidence |
 | HD-03 — BTCUSDT Sep-2026 5m data integrity | PASS (scope-limited) | Run #39823937420; both archives 8,640 rows, zero reported integrity issues, source checksums match |
-| HD-04 — Broader product/symbol coverage | NEXT / NOT STARTED | Provenance/coverage matrix, product metadata, historical funding and universe snapshot |
+| HD-04 — Broader product/symbol coverage | BLOCKED | HTTP 451 on public Spot exchange-info endpoint; resolve source access and produce complete snapshot |
 | Simulator + cost model | NOT STARTED | Accounting/fill/cost tests pass |
 | Baselines + preregistered experiments | NOT STARTED | Reproducible walk-forward/holdout evidence |
 | AI decision layer | NOT STARTED | Incremental out-of-sample net benefit |
