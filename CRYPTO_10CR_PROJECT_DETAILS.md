@@ -7,19 +7,20 @@
 
 ## 1. Mission
 
-Conduct reproducible, evidence-first research into whether a strategy or portfolio of strategies can grow an initial 1,000 USDT toward a USDT amount equivalent to ₹10 crore. The research must optimize for a defensible opportunity, not promise a return or a deadline.
+Build a reproducible, evidence-first, fully AI-driven autonomous trading ecosystem to research whether initial equity of 1,000 USDT can grow toward **10,000,000 USDT (10M USDT)** through net-of-cost, risk-controlled compounding. The AI is intended to decide trade/no-trade, market/direction, strategy/timeframe, entries, exits, initial and trailing stop-loss, take-profit/trailing-profit, position sizing, portfolio risk and regime adaptation dynamically. This is a design objective, not a currently implemented bot or guaranteed return.
 
 ## 2. Target and terminology
 
 - Initial equity assumption: **1,000 USDT**.
-- Working target: **1,061,120.54 USDT**, the approximate equivalent of ₹100,000,000 at the recorded snapshot of ₹94.24/USDT dated 22 October 2026.
-- Required growth multiple: approximately **1,061.12×**. The INR/USDT conversion may change, so the target amount is a reference that must be refreshed deliberately rather than silently.
+- **Primary goal: 10,000,000 USDT (10M USDT)**, a **10,000×** equity multiple. This is aspirational, uncertain and not a return forecast.
+- Historical/secondary milestone: **1,061,120.54 USDT**, the approximate equivalent of ₹10 crore at the recorded snapshot of ₹94.24/USDT dated 22 October 2026. It is not interchangeable with the primary 10M USDT target.
 - Realized-profit compounding: realized net P&L is added to equity and may inform later position sizing. It does not mandate hourly bars or hourly trades.
 - Starting equity and target are research assumptions, not evidence that the target can be reached.
 
 ## 3. Scope
 
 Included:
+- Fully AI-driven decisioning as the target architecture: dynamic trade/no-trade, direction, market/strategy/timeframe, entry/exit, initial and trailing stop-loss, take-profit/trailing-profit, sizing, risk-budget allocation and regime adaptation, all evaluated after costs and inside hard safety limits.
 - Multiple timeframes and holding periods, including intraday, multi-hour, daily and multi-day methods.
 - Simple baselines first, then trend/momentum, breakout, regime-filtered mean reversion, volatility/event methods, and carefully modeled spot/perpetual carry or basis strategies when data supports them.
 - Realistic transaction costs and execution constraints.
@@ -81,7 +82,11 @@ Minimum performance report:
 | G5: Forward validation | Paper/forward results with known execution assumptions | **Not started** |
 | G6: Live stage | Explicit user approval plus separate safety/compliance review | **Not authorized** |
 
-## 7. Current repository components
+## 7. AI ecosystem architecture
+
+See [AI_AUTONOMOUS_TRADING_ARCHITECTURE.md](AI_AUTONOMOUS_TRADING_ARCHITECTURE.md). The planned architecture separates source-traceable data, market-state features, AI model/ensemble, portfolio decisioning, execution, deterministic risk controls and evaluation/learning. AI is not allowed to bypass hard limits, kill switches, stale-data checks or order-state reconciliation. The trading loop is intended to be autonomous after a future separately authorized release, but deployment and capital permissions remain explicit governance gates.
+
+## 8. Current repository components
 
 - `crypto_target/research_math.py`: target multiple, geometric hurdle, compounding path and maximum drawdown helpers.
 - `tests_crypto_target/test_research_math.py`: five deterministic unit tests.
@@ -92,7 +97,7 @@ Minimum performance report:
 - `CRYPTO_10CR_PROJECT_STATUS.md`: concise verified checkpoint.
 - `execution_logs/`: append-only historical records.
 
-## 8. Current truth state
+## 9. Current truth state
 
 - Target arithmetic is a defined planning reference.
 - The helper code does not implement a trade signal, execution simulator, or profitable strategy.
@@ -103,10 +108,10 @@ Minimum performance report:
 - Live trading: **NOT AUTHORIZED**.
 - Tax/TDS: **DEFERRED**.
 
-## 9. Current repository verification
+## 10. Current repository verification
 
 The current-thread file inventory was checked against the committed keep-list. The most recent audit record is [execution_logs/2026-10-22-docs-final-verification.md](execution_logs/2026-10-22-docs-final-verification.md). The expanded checks passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Detailed result: [expanded smoke-test execution log](execution_logs/2026-10-22-expanded-smoke-ci-success.md). The follow-up that checked the final-document status and 20-file allowlist passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817044689 ([execution log](execution_logs/2026-10-22-final-docs-ci-success.md)). The latest smoke run also passed on commit `67c08f8d9c370e8d1f3171f5f7175ce6db41c016`: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817387843, with 21/21 paths protected, zero deletion candidates and 5/5 tests passing ([log](execution_logs/2026-10-22-final-current-thread-ci-success.md)).
 
-## 10. Immediate next step
+## 11. Immediate next step
 
 Build a small, auditable data-acquisition and integrity pipeline for an explicitly chosen BTCUSDT product/interval. It must save a manifest with provenance, checksum, schema and integrity outcomes and fail closed on unexplained data defects. Only after its tests pass should the project run simple, cost-aware baseline strategies across multiple horizons.
