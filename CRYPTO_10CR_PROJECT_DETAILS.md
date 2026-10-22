@@ -105,7 +105,7 @@ Minimum performance report:
 
 ## 9. Current repository verification
 
-The current-thread file inventory was checked against the committed keep-list. The most recent audit record is [execution_logs/2026-10-22-docs-final-verification.md](execution_logs/2026-10-22-docs-final-verification.md). The expanded checks passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Detailed result: [expanded smoke-test execution log](execution_logs/2026-10-22-expanded-smoke-ci-success.md).
+The current-thread file inventory was checked against the committed keep-list. The most recent audit record is [execution_logs/2026-10-22-docs-final-verification.md](execution_logs/2026-10-22-docs-final-verification.md). The expanded checks passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Detailed result: [expanded smoke-test execution log](execution_logs/2026-10-22-expanded-smoke-ci-success.md). The follow-up that checked the final-document status and 20-file allowlist also passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817044689 ([execution log](execution_logs/2026-10-22-final-docs-ci-success.md)).
 
 ## 10. Immediate next step
 
