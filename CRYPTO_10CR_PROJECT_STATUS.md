@@ -1,6 +1,6 @@
 # Current Project Status — 1,000 USDT to Target USDT
-**Updated:** 2026-10-22  
-**Status:** RESEARCH BOOTSTRAP IN PROGRESS; NO PROFITABLE STRATEGY VERIFIED
+**Updated:** 2026-10-22 (checkpoint 2)  
+**Status:** RESEARCH HARNESS ADDED; CI RESULT PENDING; NO PROFITABLE STRATEGY VERIFIED
 
 ## Goal
 Turn 1,000 USDT into **1,061,120.54 USDT** (approximate ₹10 crore equivalent at the 2026-10-22 reference snapshot ₹94.24/USDT). Hourly means reinvest each realized net profit into account equity; it does not constrain the strategy to 1-hour candles.
@@ -38,3 +38,10 @@ Turn 1,000 USDT into **1,061,120.54 USDT** (approximate ₹10 crore equivalent a
 
 ## Next action
 Create and test a small baseline harness, confirm the actual CI run, then build the data pipeline and multi-horizon strategy comparisons. Record every execution as a separate append-only log file and update this status on each substantive response.
+
+
+## Latest checkpoint — 2026-10-22
+- Current research workstream: 1,000 USDT → 1,061,120.54 USDT target snapshot; compounding means reinvesting realized profits, not trading only on 1h candles.
+- GitHub files created: `CRYPTO_10CR_RESEARCH_LOG_HI.md`, `CRYPTO_10CR_PROJECT_STATUS.md`, `crypto_target/research_math.py`, `crypto_target/__init__.py`, `tests_crypto_target/test_research_math.py`, `.github/workflows/crypto-target-smoke.yml`, and an append-only execution log under `execution_logs/`.
+- Code readback verified; automated workflow result still pending verification. No market-data or strategy performance result claimed.
+- Next action: verify GitHub Actions run, record result in a new execution-log file, then build real data manifest and baseline backtests.
