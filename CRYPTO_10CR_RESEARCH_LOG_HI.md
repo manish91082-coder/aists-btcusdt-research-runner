@@ -33,7 +33,7 @@
 
 - `crypto_target/research_math.py`: target multiple, geometric period-return hurdle, realized-return compounding path और maximum drawdown के deterministic helpers.
 - `tests_crypto_target/test_research_math.py`: इन helpers के पाँच unit tests.
-- `.github/workflows/crypto-target-smoke.yml`: Python compilation और unit-test workflow.
+- `.github/workflows/crypto-target-smoke.yml`: Python compilation, required-document consistency, allowlist dry-run और unit-test workflow.
 - `README.md`, `CRYPTO_10CR_PROJECT_DETAILS.md`, यह master log और `CRYPTO_10CR_PROJECT_STATUS.md`: scope, governance और current state.
 - `scripts/cleanup_current_project.py` तथा `CURRENT_PROJECT_KEEP_PATHS.txt`: fail-closed, dry-run-by-default repository-cleanup utility और उसकी protected-path सूची.
 - `execution_logs/`: execution और verification records.
