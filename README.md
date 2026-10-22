@@ -11,7 +11,7 @@
 - **Profitable strategy / time to target:** not established / unknown.
 - **Live trading:** not authorized.
 
-Read [Project Status](CRYPTO_10CR_PROJECT_STATUS.md) for the current checkpoint, [Project Details](CRYPTO_10CR_PROJECT_DETAILS.md) for the scope and rules, and [Master Research Log](CRYPTO_10CR_RESEARCH_LOG_HI.md) for the research record.
+Read [Project Status](CRYPTO_10CR_PROJECT_STATUS.md) for the current checkpoint, [Project Details](CRYPTO_10CR_PROJECT_DETAILS.md) for the scope and rules, and [Master Research Log](CRYPTO_10CR_RESEARCH_LOG_HI.md) for the research record. The latest repository/document consistency audit is [here](execution_logs/2026-10-22-docs-final-verification.md).
 
 ## Goal definition
 
