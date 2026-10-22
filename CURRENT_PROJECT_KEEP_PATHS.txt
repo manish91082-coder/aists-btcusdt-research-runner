@@ -1,7 +1,6 @@
 # Current crypto-target project files protected from legacy cleanup.
 # One-time cleanup launch: update this allowlist to trigger the GitHub Actions cleanup job.
 # Retry trigger after correcting workflow push-permission handling.
-README.md
 CRYPTO_10CR_RESEARCH_LOG_HI.md
 CRYPTO_10CR_PROJECT_STATUS.md
 crypto_target/
