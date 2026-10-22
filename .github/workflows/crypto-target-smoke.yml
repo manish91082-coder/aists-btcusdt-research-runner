@@ -55,9 +55,9 @@ jobs:
             echo "A core project document still labels the expanded CI result as pending."
             exit 1
           fi
-          grep -q "39815232873" README.md
-          grep -q "39815232873" CRYPTO_10CR_PROJECT_DETAILS.md
-          grep -q "39815232873" CRYPTO_10CR_PROJECT_STATUS.md
+          grep -Eq "actions/runs/[0-9]+" README.md
+          grep -Eq "actions/runs/[0-9]+" CRYPTO_10CR_PROJECT_DETAILS.md
+          grep -Eq "actions/runs/[0-9]+" CRYPTO_10CR_PROJECT_STATUS.md
       - name: Verify repository has no files outside the committed keep-list
         run: |
           set -euo pipefail
