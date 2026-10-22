@@ -36,6 +36,7 @@
 **Do not:** Treat CI green as market or profitability evidence.
 
 ### Step 1 — HD-03: Acquire and validate the first market-data slice
+**Implementation entry point:** `scripts/acquire_validate_hd03.py`; workflow: `.github/workflows/hd03-data-integrity.yml`; deterministic tests: `tests_crypto_target/test_hd03_data.py`. Workflow preserves the downloaded archives and JSON report as a 30-day Actions artifact, including on failed validation.
 **Scope:** September 2026, BTCUSDT Spot and BTCUSDT USDⓈ-M Futures, 5-minute candles.  
 **Deliverables:** Source URLs/endpoints, retrieval timestamp, original file(s), SHA-256 checksum(s), parser/version, normalized schema, UTC timestamp convention, validation report and run log. Preserve original files and derived data separately.  
 **Checks:** Source/provenance; expected interval count; first/last timestamp and coverage; timestamp alignment/order; duplicates; missing intervals; malformed/non-finite/negative values; OHLC consistency; volume fields; Spot/Futures schema differences; product metadata and contract conventions. Distinguish genuine missing data from exchange closures or source-format differences. Do not silently fill gaps.  
