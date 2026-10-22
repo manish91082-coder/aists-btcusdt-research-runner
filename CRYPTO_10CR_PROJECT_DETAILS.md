@@ -7,13 +7,13 @@
 
 ## 1. Mission
 
-Build a reproducible, evidence-first, fully AI-driven autonomous trading ecosystem to research whether initial equity of 1,000 USDT can grow toward **10,000,000 USDT (10M USDT)** through net-of-cost, risk-controlled compounding. The AI is intended to decide trade/no-trade, market/direction, strategy/timeframe, entries, exits, initial and trailing stop-loss, take-profit/trailing-profit, position sizing, portfolio risk and regime adaptation dynamically. This is a design objective, not a currently implemented bot or guaranteed return.
+Build a reproducible, evidence-first, fully AI-driven autonomous trading ecosystem to research whether initial equity of 1,000 USDT can grow toward **1,061,120.54 USDT**, the approximate USDT equivalent of ₹10 crore at the recorded dated conversion snapshot, through net-of-cost, risk-controlled compounding. The AI is intended to decide trade/no-trade, market/direction, strategy/timeframe, entries, exits, initial and trailing stop-loss, take-profit/trailing-profit, position sizing, portfolio risk and regime adaptation dynamically. This is a design objective, not a currently implemented bot or guaranteed return.
 
 ## 2. Target and terminology
 
 - Initial equity assumption: **1,000 USDT**.
-- **Primary goal: 10,000,000 USDT (10M USDT)**, a **10,000×** equity multiple. This is aspirational, uncertain and not a return forecast.
-- Historical/secondary milestone: **1,061,120.54 USDT**, the approximate equivalent of ₹10 crore at the recorded snapshot of ₹94.24/USDT dated 22 October 2026. It is not interchangeable with the primary 10M USDT target.
+- **Primary goal: 1,061,120.54 USDT**, the approximate equivalent of **₹10 crore** at the recorded snapshot of ₹94.24/USDT dated 22 October 2026. This is a dated conversion reference, not a permanent exchange rate or guaranteed outcome.
+- The 10,000,000 USDT target was an accidental entry and is explicitly not the project goal.
 - Realized-profit compounding: realized net P&L is added to equity and may inform later position sizing. It does not mandate hourly bars or hourly trades.
 - Starting equity and target are research assumptions, not evidence that the target can be reached.
 
