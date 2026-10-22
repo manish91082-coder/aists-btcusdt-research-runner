@@ -1,6 +1,6 @@
 # मास्टर शोध लॉग: 1,000 USDT से ₹10 करोड़-समतुल्य लक्ष्य
 
-**Version:** 1.6  
+**Version:** 1.7  
 **Last updated:** 22 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **अभी का चरण:** Data integrity pipeline से पहले research harness और project governance को व्यवस्थित करना।
@@ -138,3 +138,14 @@ Research status और claims केवल verified evidence के आधार
 - Latest tree audit में 19 tracked files थीं; हर path `CURRENT_PROJECT_KEEP_PATHS.txt` में exact path या protected directory prefix से covered था। Unexpected files: 0.
 - Expanded CI run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873 अभी GitHub API के अनुसार queued है। इसे PASS नहीं कहा गया। Earlier helper/unit-test run passed, पर यह expanded documentation/allowlist run अलग है.
 - Next gate remains real market-data provenance/integrity checks. No market data acquisition, trading backtest, or profitability conclusion was produced by this documentation refresh.
+
+
+## 13. Expanded smoke checks का अंतिम परिणाम — 22 अक्टूबर 2026
+- GitHub Actions run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873 — final conclusion `success`.
+- Python compilation: PASS.
+- Required documents exist, target amount consistent across README, Project Details, Project Status और Master Research Log, तथा truth-state markers present: PASS.
+- Allowlist dry-run: PASS; **17 tracked files, 17 protected, 0 deletion candidates**. Dry-run ने कोई file नहीं बदली।
+- Unit tests: **5/5 PASS**.
+- Detailed execution record: `execution_logs/2026-10-22-expanded-smoke-ci-success.md`.
+- Earlier sections 11–12 ने run को queue में दर्ज किया था क्योंकि उस समय final conclusion उपलब्ध नहीं था; section 13 वह historical status स्पष्ट रूप से close करता है।
+- ये checks helper code, documents और repository protections को validate करते हैं; market-data acquisition या strategy edge को नहीं।
