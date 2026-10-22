@@ -1,6 +1,6 @@
 # Crypto Target Research
 
-**Purpose:** Evidence-first research into whether a reproducible, cost-aware trading approach can grow 1,000 USDT toward the USDT amount equivalent to ₹10 crore. This repository is a research workspace, not a proven trading system.
+**Purpose:** Build an evidence-first, fully AI-driven autonomous trading ecosystem researching whether 1,000 USDT can grow toward **10,000,000 USDT (10M USDT)** through net-of-cost, risk-controlled compounding. This repository is a research workspace, not a proven trading system.
 
 ## Current state
 
@@ -14,11 +14,11 @@
 - **Profitable strategy / time to target:** not established / unknown.
 - **Live trading:** not authorized.
 
-Read [Project Status](CRYPTO_10CR_PROJECT_STATUS.md) for the current checkpoint, [Project Details](CRYPTO_10CR_PROJECT_DETAILS.md) for the scope and rules, and [Master Research Log](CRYPTO_10CR_RESEARCH_LOG_HI.md) for the research record. The latest repository/document consistency audit is [here](execution_logs/2026-10-22-docs-final-verification.md).
+Read [Project Status](CRYPTO_10CR_PROJECT_STATUS.md) for the current checkpoint, [Project Details](CRYPTO_10CR_PROJECT_DETAILS.md) for the scope and rules, [Master Research Log](CRYPTO_10CR_RESEARCH_LOG_HI.md) for the research record, and [AI Autonomous Trading Architecture](AI_AUTONOMOUS_TRADING_ARCHITECTURE.md) for the AI decision, risk and execution design. The latest repository/document consistency audit is [here](execution_logs/2026-10-22-docs-final-verification.md).
 
-## Goal definition
+## Primary goal definition
 
-The working reference is 1,000 USDT initial equity and **1,061,120.54 USDT** as the approximate ₹10 crore equivalent using the recorded 22 October 2026 snapshot of ₹94.24 per USDT. The conversion is a dated reference, not a permanent exchange rate.
+The explicit primary target is **1,000 USDT → 10,000,000 USDT (10M USDT)**, a 10,000× increase. The earlier **1,061,120.54 USDT** value was a dated estimate of ₹10 crore at ₹94.24/USDT on 22 October 2026; it is a separate historical/secondary milestone, not the 10M target.
 
 “Compounding” means adding realized net trading profit to equity before subsequent position sizing. It does **not** require trading only on a one-hour chart or placing a trade every hour. Strategy timeframe and trading frequency must be determined by evidence.
 
@@ -46,6 +46,10 @@ python -m unittest discover -s tests_crypto_target -v
 
 The same smoke checks run in GitHub Actions on relevant code/workflow changes. See [the verified run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873) or [all workflow runs](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions).
 
+## AI autonomy goal
+
+The intended system autonomously evaluates market state and decides trade/no-trade, eligible markets, direction, strategy/timeframe, entries, exits, initial/trailing stop-loss, take-profit/trailing-profit, position sizing, portfolio allocation and risk-aware adaptation. AI decisions must stay inside deterministic risk limits, data-integrity gates, execution controls and kill switches. Live trading is not authorized. The design plan is in [AI_AUTONOMOUS_TRADING_ARCHITECTURE.md](AI_AUTONOMOUS_TRADING_ARCHITECTURE.md).
+
 ## Research rules
 
 1. Do not claim edge or forecast time-to-target without reproducible evidence.
@@ -60,4 +64,4 @@ The same smoke checks run in GitHub Actions on relevant code/workflow changes. S
 
 Implement and test the real market-data acquisition/integrity manifest for the initial BTCUSDT research universe, then establish simple cost-aware baselines across multiple holding horizons. Keep every run reproducible and create a separate execution log for each substantive run.
 
-**Important:** A math unit-test pass confirms only those helper functions. It does not confirm market-data quality or profitability.
+**Important:** A math unit-test pass confirms only those helper functions. It does not confirm market-data quality, AI decision quality, profitable edge, or an operational autonomous bot.
