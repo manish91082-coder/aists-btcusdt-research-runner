@@ -131,6 +131,7 @@ Research status और claims केवल verified evidence के आधार
 
 
 ## 12. अंतिम tree और document-map audit — 22 अक्टूबर 2026
+- पुराने pre-existing README को cleanup checkpoint पर हटाया गया था; इस वर्तमान documentation request पर उसे नए current-thread project README के रूप में फिर बनाया और allowlist में फिर शामिल किया गया। Section 11 उस पहले cleanup checkpoint का ऐतिहासिक रिकॉर्ड है।
 - README में Project Status, Project Details, Master Research Log और final verification log के links दिए गए।
 - Project Details में current verification log और अगला evidence gate link किया गया; Project Status में final tree audit व pending CI की स्थिति दर्ज है।
 - Final audit record: `execution_logs/2026-10-22-docs-final-verification.md`.
