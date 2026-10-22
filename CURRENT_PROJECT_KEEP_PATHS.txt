@@ -14,3 +14,6 @@ crypto_target/
 tests_crypto_target/
 scripts/cleanup_current_project.py
 execution_logs/
+.github/workflows/hd03-data-integrity.yml
+scripts/acquire_validate_hd03.py
+tests_crypto_target/test_hd03_data.py
