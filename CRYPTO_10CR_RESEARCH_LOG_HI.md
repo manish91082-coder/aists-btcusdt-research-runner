@@ -226,3 +226,11 @@ Research status और claims केवल verified evidence के आधार
 - Artifact (original ZIPs + JSON report, 30-day retention): https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39823937420/artifacts/12445537564. विस्तृत log: `execution_logs/2026-10-22-hd03-data-integrity-pass.md`.
 - सीमा: यह केवल एक महीने, एक symbol, एक interval और दो product archives की validation है; strategy edge या व्यापक universe की पुष्टि नहीं।
 - निर्णय: **HD-03 PASS (scope-limited)**. अगला एकमात्र gate **HD-04**: source-verifiable universe snapshot, Spot/Futures eligibility, volume universe, product metadata, historical funding availability, fee assumptions और survivorship-bias controls.
+
+
+## 22. HD-04 universe snapshot: पहला वास्तविक प्रयास — 22 अक्टूबर 2026
+- `scripts/build_hd04_universe_snapshot.py`, workflow `.github/workflows/hd04-universe-snapshot.yml` और tests `tests_crypto_target/test_hd04_universe.py` जोड़े गए। Scope: Spot USDT trading pairs और USDⓈ-M USDT perpetuals की अलग-अलग 24h quote-volume rankings, exchange filters/metadata, top-10 Futures funding endpoint checks और account-specific fee uncertainty का स्पष्ट रिकॉर्ड।
+- Run #39824506960 में GitHub Actions runner को official public Spot endpoint `https://api.binance.com/api/v3/exchangeInfo` से HTTP 451 मिला; कोई valid snapshot नहीं बना। Run #39824521991 भी completeness gate पर fail हुआ।
+- Logs: `execution_logs/2026-10-22-hd04-initial-attempt.md`. इसे listing universe खाली होने का प्रमाण न समझें; यह source-access blocker है।
+- निर्णय: **HD-04 BLOCKED**. अगला कार्य official alternate API edge या स्वतंत्र रूप से सत्यापित official public source से snapshot पुनः लेना, और पूर्ण timestamped report, hashes, Top-10 lists तथा funding coverage status सत्यापित करना है।
+- Drift check: ₹10 करोड़ का लक्ष्य अपरिवर्तित; strategy/backtest पर आगे नहीं बढ़े; कोई profitability claim नहीं।
