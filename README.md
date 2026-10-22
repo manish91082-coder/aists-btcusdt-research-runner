@@ -8,6 +8,8 @@ This repository is the durable source of truth for requirements, research, evide
 
 ## Start here
 - [Market Data Manifest Specification](MARKET_DATA_MANIFEST_SPEC.md) — schema, checksum, timestamp, gap and validation requirements before data can be used in strategy tests.
+- [₹10 करोड़-समतुल्य USDT Master Research Log](CRYPTO_10CR_RESEARCH_LOG_HI.md) — 1,000 USDT target, realized-profit compounding, multi-horizon strategy research and evidence gates.
+- [₹10 करोड़-समतुल्य USDT Project Status](CRYPTO_10CR_PROJECT_STATUS.md) — latest checkpoint, tested/untested state and next action.
 - [Strategy Research Dossier](STRATEGY_RESEARCH.md) — falsifiable strategy hypotheses, Binance data requirements, cost accounting and test protocol. None is claimed profitable until tested.
 - [Master Project Blueprint](PROJECT_BLUEPRINT.md) — full requirements, proposed ten AI roles, risk math, data, testing and staged implementation.
 - [Project Status](PROJECT_STATUS.md) — last verified state and next action.
