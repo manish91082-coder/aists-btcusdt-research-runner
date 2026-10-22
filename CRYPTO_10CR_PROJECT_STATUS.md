@@ -21,7 +21,7 @@
 
 ## Primary goal
 
-Build a fully AI-driven autonomous trading ecosystem to research whether initial equity of **1,000 USDT** can grow toward **10,000,000 USDT (10M USDT)**, a 10,000× increase. This is an aspirational research target, not a guaranteed outcome or timeline. The previous **1,061,120.54 USDT** estimate for ₹10 crore at the 22 October 2026 ₹94.24/USDT snapshot is a separate historical/secondary milestone, not the primary 10M target.
+Build a fully AI-driven autonomous trading ecosystem to research whether initial equity of **1,000 USDT** can grow toward **1,061,120.54 USDT**, the approximate USDT equivalent of **₹10 crore** at the 22 October 2026 ₹94.24/USDT snapshot. This is a dated conversion reference, not a guaranteed outcome or timeline. The 10,000,000 USDT target was entered by mistake and is not the project goal.
 
 “Compounding” means reinvesting **realized net profit** into equity for later position sizing. It does not require a one-hour chart or one trade every hour. The allowed strategy timeframe is open, subject to valid testing.
 
@@ -64,5 +64,5 @@ Implement a small, auditable market-data acquisition and integrity manifest for 
 - Expanded documentation/allowlist smoke run passed in GitHub Actions: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Detailed step results: `execution_logs/2026-10-22-expanded-smoke-ci-success.md`.
 - Follow-up final-document validation passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817044689 (20 protected files, zero deletion candidates, 5/5 unit tests); details: `execution_logs/2026-10-22-final-docs-ci-success.md`.
 - Latest smoke run passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817387843 (21 protected files, zero deletion candidates, 5/5 unit tests); details: `execution_logs/2026-10-22-final-current-thread-ci-success.md`.
-- AI architecture and primary-target consistency checks passed in [GitHub Actions run 39819921442](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39819921442); details: `execution_logs/2026-10-22-ai-architecture-ci-success.md`.
+- AI architecture and corrected ₹10 crore target consistency checks passed in [GitHub Actions run 39819921442](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39819921442); details: `execution_logs/2026-10-22-ai-architecture-ci-success.md`.
 - Research gate remains unchanged: market data not yet verified, no cost-aware backtest, AI trading loop not yet implemented end-to-end, edge NOT ESTABLISHED, target time UNKNOWN, live trading NOT AUTHORIZED, tax/TDS deferred.
