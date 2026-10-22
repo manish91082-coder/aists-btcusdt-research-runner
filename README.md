@@ -62,14 +62,14 @@ The intended system autonomously evaluates market state and decides trade/no-tra
 
 ## Next milestone
 
-Follow `END_TO_END_EXECUTION_PLAN_HI.md` without scope drift. The single next gate is HD-04: build a source-verifiable market-universe snapshot and coverage matrix, including Spot/Futures eligibility, historical funding availability, fee assumptions and survivorship-bias controls. Do not start strategy/AI evaluation until this data gate passes.
+Follow `END_TO_END_EXECUTION_PLAN_HI.md` without scope drift. The current gate is HD-04 source access: resolve the official Binance Spot exchange-info HTTP 451, rerun the reproducible universe snapshot and accept only a complete, timestamped report. Strategy research remains blocked until required data coverage passes. Do not start strategy/AI evaluation until this data gate passes.
 
 **Important:** A math unit-test pass confirms only those helper functions. It does not confirm market-data quality, AI decision quality, profitable edge, or an operational autonomous bot.
 
 
 ## Latest data gate result
 - HD-03 passed for September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute archives: 8,640 rows per product, zero reported integrity issues, and Binance checksum sidecars matched. [Run/artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39823937420); [execution log](execution_logs/2026-10-22-hd03-data-integrity-pass.md).
-- Next gate: HD-04 market-universe and historical coverage mapping. No strategy edge is established.
+- HD-04 implementation exists, but current gate is BLOCKED: GitHub Actions received HTTP 451 from the official public Spot exchange-info endpoint; no complete universe snapshot accepted. See `execution_logs/2026-10-22-hd04-initial-attempt.md`. No strategy edge is established.
 
 ## Latest plan verification
 - End-to-end plan baseline CI passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39822482423 (tested commit `a2450df4c76fb2e88b92a14432f50d81c7bb24a1`). This is repository/plan validation, not trading evidence.
