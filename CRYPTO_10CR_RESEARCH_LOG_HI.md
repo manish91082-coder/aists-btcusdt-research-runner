@@ -1,6 +1,6 @@
 # मास्टर शोध लॉग: 1,000 USDT से ₹10 करोड़-समतुल्य लक्ष्य
 
-**Version:** 1.8  
+**Version:** 1.9  
 **Last updated:** 22 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **अभी का चरण:** Data integrity pipeline से पहले research harness और project governance को व्यवस्थित करना।
@@ -159,3 +159,14 @@ Research status और claims केवल verified evidence के आधार
 - Deterministic unit tests: **5/5 PASS**.
 - Run log: `execution_logs/2026-10-22-final-docs-ci-success.md`.
 - This is a documentation/repository-integrity validation, not a market-data backtest or proof of trading profitability.
+
+
+## 15. Latest end-to-end repository smoke run — 22 अक्टूबर 2026
+- GitHub Actions: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817387843 — conclusion `success`.
+- Tested commit: `67c08f8d9c370e8d1f3171f5f7175ce6db41c016`.
+- Current summary documents: required target and truth-state checks PASS; no stale pending label; valid Actions run links found.
+- Keep-list dry-run: **21 tracked files, 21 protected, 0 deletion candidates**.
+- Python compilation: PASS; helper unit tests: **5/5 PASS**.
+- Detailed execution log: `execution_logs/2026-10-22-final-current-thread-ci-success.md`.
+- Latest `main` tree now includes 22 current-thread files because the successful run record was added afterward; all tracked paths remain covered by `CURRENT_PROJECT_KEEP_PATHS.txt`, and no legacy/unexpected files remain.
+- Research truth remains unchanged: no validated market data or strategy backtest yet; profitability not established and target time unknown.
