@@ -1,6 +1,6 @@
 # 1,000 USDT → ₹10 करोड़-समतुल्य USDT: मास्टर शोध लॉग
-**Version:** 1.3  
-**Updated:** 2026-10-22 (v1.3, cleanup execution verified)  
+**Version:** 1.4  
+**Updated:** 2026-10-22 (v1.4, strict current-thread-only cleanup verified)  
 **Repository:** https://github.com/manish91082-coder/aists-btcusdt-research-runner  
 **Scope:** शोध, market data, backtesting, reproducibility. Tax/TDS अभी स्थगित।
 
@@ -95,3 +95,16 @@
 - Detailed outcome: `execution_logs/2026-10-22-cleanup-final-verification.md`.
 - Scope guard: only tracked paths outside the explicit allowlist were removed. Git history and other branches were not erased. This was repo housekeeping, not a market-data/backtest run.
 - Current research decision unchanged: strategy edge NOT ESTABLISHED; target-hit time UNKNOWN; live trading NOT AUTHORIZED; tax/TDS deferred.
+
+
+## 11. Strict current-thread-only repository cleanup — 2026-10-22
+- User clarified the repository should contain only files created for this current crypto-target thread today. Pre-existing repository files should not be retained merely because they were edited.
+- Removed pre-existing `README.md`; removed it from `KEEP_EXACT` in `scripts/cleanup_current_project.py` and from `CURRENT_PROJECT_KEEP_PATHS.txt`.
+- Latest branch-head recursive tree was verified from GitHub API and contained exactly 14 files, all created during this thread's crypto-target research/cleanup work. No expected files were missing and no unexpected files remained.
+- Verification log: `execution_logs/2026-10-22-current-thread-only-cleanup.md`.
+- Cleanup commits:
+  - https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/c4057b62968216e239d9cc160b458d2ab5b757c2
+  - https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/582befc3e429a51aa70b67818197f50da0423703
+  - https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/1a673787c62b41305a92f3c3df5be89b552902af
+- Git history and other branches have not been erased.
+- Research status is unchanged: strategy edge NOT ESTABLISHED; target-hit time UNKNOWN; live trading NOT AUTHORIZED; tax/TDS deferred. This cleanup was not a market-data/backtest run.
