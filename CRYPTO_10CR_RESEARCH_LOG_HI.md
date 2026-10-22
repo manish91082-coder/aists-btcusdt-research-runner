@@ -1,6 +1,6 @@
 # मास्टर शोध लॉग: 1,000 USDT से ₹10 करोड़-समतुल्य लक्ष्य
 
-**Version:** 1.5  
+**Version:** 1.6  
 **Last updated:** 22 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **अभी का चरण:** Data integrity pipeline से पहले research harness और project governance को व्यवस्थित करना।
@@ -128,3 +128,12 @@ Research status और claims केवल verified evidence के आधार
 - Smoke workflow अब Python compilation, required docs/target consistency, allowlist-based cleanup preview में zero deletion candidates और deterministic unit tests जाँचता है।
 - Expanded smoke run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Log update के समय status queued था; final pass/fail को GitHub के final conclusion के बिना घोषित नहीं किया जाएगा।
 - यह documentation/governance update है; market data download या trading backtest नहीं।
+
+
+## 12. अंतिम tree और document-map audit — 22 अक्टूबर 2026
+- README में Project Status, Project Details, Master Research Log और final verification log के links दिए गए।
+- Project Details में current verification log और अगला evidence gate link किया गया; Project Status में final tree audit व pending CI की स्थिति दर्ज है।
+- Final audit record: `execution_logs/2026-10-22-docs-final-verification.md`.
+- Latest tree audit में 19 tracked files थीं; हर path `CURRENT_PROJECT_KEEP_PATHS.txt` में exact path या protected directory prefix से covered था। Unexpected files: 0.
+- Expanded CI run https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873 अभी GitHub API के अनुसार queued है। इसे PASS नहीं कहा गया। Earlier helper/unit-test run passed, पर यह expanded documentation/allowlist run अलग है.
+- Next gate remains real market-data provenance/integrity checks. No market data acquisition, trading backtest, or profitability conclusion was produced by this documentation refresh.
