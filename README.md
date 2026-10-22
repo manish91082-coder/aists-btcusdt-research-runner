@@ -1,6 +1,6 @@
 # Crypto Target Research
 
-**Purpose:** Build an evidence-first, fully AI-driven autonomous trading ecosystem researching whether 1,000 USDT can grow toward **10,000,000 USDT (10M USDT)** through net-of-cost, risk-controlled compounding. This repository is a research workspace, not a proven trading system.
+**Purpose:** Build an evidence-first, fully AI-driven autonomous trading ecosystem researching whether 1,000 USDT can grow toward **1,061,120.54 USDT**, the working USDT equivalent of ₹10 crore at the dated conversion snapshot recorded below, through net-of-cost, risk-controlled compounding. This repository is a research workspace, not a proven trading system.
 
 ## Current state
 
@@ -18,7 +18,7 @@ Read [Project Status](CRYPTO_10CR_PROJECT_STATUS.md) for the current checkpoint,
 
 ## Primary goal definition
 
-The explicit primary target is **1,000 USDT → 10,000,000 USDT (10M USDT)**, a 10,000× increase. The earlier **1,061,120.54 USDT** value was a dated estimate of ₹10 crore at ₹94.24/USDT on 22 October 2026; it is a separate historical/secondary milestone, not the 10M target.
+The corrected primary target is **1,000 USDT → 1,061,120.54 USDT**, the approximate USDT equivalent of **₹10 crore** at the recorded snapshot of ₹94.24/USDT on 22 October 2026. The 10,000,000 USDT target was entered by mistake and is not the project goal.
 
 “Compounding” means adding realized net trading profit to equity before subsequent position sizing. It does **not** require trading only on a one-hour chart or placing a trade every hour. Strategy timeframe and trading frequency must be determined by evidence.
 
