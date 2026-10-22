@@ -12,7 +12,7 @@
 | Current-thread repository cleanup | **Complete** | Old tracked project files removed from current `main`; the intended current research files remain. Git history and other branches were not erased. |
 | README, project details and status | **Updated** | Core project documents have a common scope and research status. |
 | Compounding/target math helpers | **Implemented** | Deterministic arithmetic helpers exist; they are not a trade signal or strategy. |
-| Helpers, docs and allowlist checks | **Passed** | [Expanded GitHub Actions run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873): Python compile passed, required-doc checks passed, 17/17 tracked paths protected, 0 deletion candidates, and 5 unit tests passed. |
+| Helpers, docs and allowlist checks | **Passed** | [Latest GitHub Actions run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817387843): Python compile passed, required-doc checks passed, 21/21 tracked paths protected, 0 deletion candidates, and 5 unit tests passed. |
 | Real market data for this target project | **Not yet acquired/validated** | No validated dataset or data-integrity manifest is claimed. |
 | Cost-aware strategy backtest | **Not run** | No market-data performance result exists for this workstream. |
 | Profitable strategy / time to target | **Not established / unknown** | No forecast or profit guarantee is justified. |
@@ -56,7 +56,8 @@ Implement a small, auditable market-data acquisition and integrity manifest for 
 
 ## Latest continuity checkpoint — 22 October 2026
 - Current core documents, keep-list, cleanup script, workflows and research helpers are linked from `README.md`.
-- Final tree audit: `execution_logs/2026-10-22-docs-final-verification.md`. The latest post-refresh `main` inventory contains 20 tracked files; all 20 are covered by the current committed keep-list and unexpected paths are 0. The CI run tested its pinned commit (`c1f7464f91816ebbffd614ba857b66aa5b69db24`), where 17 tracked files were all protected and there were 0 deletion candidates; later commits added only project execution logs and documentation-only status updates.
+- Final tree audit: `execution_logs/2026-10-22-docs-final-verification.md`. The latest post-refresh `main` inventory now contains 22 tracked files; all 22 are covered by the current committed keep-list and unexpected paths are 0. The latest CI run tested its pinned commit (`67c08f8d9c370e8d1f3171f5f7175ce6db41c016`), where 21 tracked files were all protected and there were 0 deletion candidates. The newest current-tree check log is `execution_logs/2026-10-22-final-current-thread-ci-success.md`.
 - Expanded documentation/allowlist smoke run passed in GitHub Actions: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Detailed step results: `execution_logs/2026-10-22-expanded-smoke-ci-success.md`.
-- Follow-up final-document validation also passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817044689. It checked the updated summary documents, 20 protected tracked files, zero deletion candidates and 5/5 unit tests; details: `execution_logs/2026-10-22-final-docs-ci-success.md`.
+- Follow-up final-document validation passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817044689 (20 protected files, zero deletion candidates, 5/5 unit tests); details: `execution_logs/2026-10-22-final-docs-ci-success.md`.
+- Latest smoke run passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817387843 (21 protected files, zero deletion candidates, 5/5 unit tests); details: `execution_logs/2026-10-22-final-current-thread-ci-success.md`.
 - Research gate remains unchanged: market data not yet verified, no cost-aware backtest, edge NOT ESTABLISHED, target time UNKNOWN, live trading NOT AUTHORIZED, tax/TDS deferred.
