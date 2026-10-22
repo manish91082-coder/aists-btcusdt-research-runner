@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **Latest full smoke-test run:** [GitHub Actions run 39817387843](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817387843) passed. Its tested commit protected 21/21 tracked files, found zero deletion candidates, confirmed no stale pending label, and passed all five unit tests. [Full run log](execution_logs/2026-10-22-final-current-thread-ci-success.md).
+- **Latest full smoke-test run:** [GitHub Actions run 39819921442](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39819921442) passed after the AI architecture and 10M target checks were added. It verified target consistency, architecture-file presence, cleanup allowlist, Python compilation and all five unit tests. [Full run log](execution_logs/2026-10-22-ai-architecture-ci-success.md).
 
 - **Repository cleanup:** completed; current-thread research files retained and verified.
 - **Math helpers, docs and cleanup allowlist smoke checks:** passed in [expanded GitHub Actions run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873). This run compiled both Python helpers, checked the core documents, found zero deletion candidates, and passed five unit tests. See the [detailed execution log](execution_logs/2026-10-22-expanded-smoke-ci-success.md).
