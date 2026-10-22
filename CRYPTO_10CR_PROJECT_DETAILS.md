@@ -103,6 +103,10 @@ Minimum performance report:
 - Live trading: **NOT AUTHORIZED**.
 - Tax/TDS: **DEFERRED**.
 
-## 9. Immediate next step
+## 9. Current repository verification
+
+The current-thread file inventory was checked against the committed keep-list. The most recent audit record is [execution_logs/2026-10-22-docs-final-verification.md](execution_logs/2026-10-22-docs-final-verification.md). The expanded GitHub Actions run is pending and is not recorded as passed until a final successful conclusion appears: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873.
+
+## 10. Immediate next step
 
 Build a small, auditable data-acquisition and integrity pipeline for an explicitly chosen BTCUSDT product/interval. It must save a manifest with provenance, checksum, schema and integrity outcomes and fail closed on unexplained data defects. Only after its tests pass should the project run simple, cost-aware baseline strategies across multiple horizons.
