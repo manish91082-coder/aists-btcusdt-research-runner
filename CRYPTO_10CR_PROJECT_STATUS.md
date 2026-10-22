@@ -56,6 +56,6 @@ Implement a small, auditable market-data acquisition and integrity manifest for 
 
 ## Latest continuity checkpoint — 22 October 2026
 - Current core documents, keep-list, cleanup script, workflows and research helpers are linked from `README.md`.
-- Final tree audit: `execution_logs/2026-10-22-docs-final-verification.md`. At the latest tree inspection before this status-only update, 19 tracked files were present and every path was covered by the committed keep-list; no unexpected paths remained.
+- Final tree audit: `execution_logs/2026-10-22-docs-final-verification.md`. The latest post-refresh `main` inventory contains 20 tracked files; all 20 are covered by the current committed keep-list and unexpected paths are 0. The CI run tested its pinned commit (`c1f7464f91816ebbffd614ba857b66aa5b69db24`), where 17 tracked files were all protected and there were 0 deletion candidates; later commits added only project execution logs and documentation-only status updates.
 - Expanded documentation/allowlist smoke run passed in GitHub Actions: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Detailed step results: `execution_logs/2026-10-22-expanded-smoke-ci-success.md`.
 - Research gate remains unchanged: market data not yet verified, no cost-aware backtest, edge NOT ESTABLISHED, target time UNKNOWN, live trading NOT AUTHORIZED, tax/TDS deferred.
