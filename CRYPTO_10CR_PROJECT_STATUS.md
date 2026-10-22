@@ -51,6 +51,12 @@ Execution records:
 5. **Forward validation:** paper/forward observations before any discussion of a live stage.
 6. **Explicit authorization:** live actions remain disabled unless separately requested and reviewed.
 
+## Latest plan/CI verification
+- End-to-end plan: `END_TO_END_EXECUTION_PLAN_HI.md`.
+- CI: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39822482423 — `success`, tested commit `a2450df4c76fb2e88b92a14432f50d81c7bb24a1`.
+- Python compilation, required plan/target checks, keep-list dry-run and 5/5 unit tests passed. This verifies repository checks only, not market data or trading edge.
+- Detailed record: `execution_logs/2026-10-22-end-to-end-plan-baseline.md`.
+
 ## Next step
 
 **Current gate: HD-03 (BLOCKED / not yet evidenced).** Implement and run a reproducible acquisition/integrity check for September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute archives. Require source provenance, original files, SHA-256 checksums, UTC coverage, expected intervals, duplicate/gap/OHLC/schema checks and a reproducible report. No strategy/AI backtest until HD-03 passes. See `END_TO_END_EXECUTION_PLAN_HI.md`.
