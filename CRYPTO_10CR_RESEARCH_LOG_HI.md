@@ -1,6 +1,6 @@
 # 1,000 USDT → ₹10 करोड़-समतुल्य USDT: मास्टर शोध लॉग
-**Version:** 1.0  
-**Updated:** 2026-10-22  
+**Version:** 1.1  
+**Updated:** 2026-10-22 (v1.1)  
 **Repository:** https://github.com/manish91082-coder/aists-btcusdt-research-runner  
 **Scope:** शोध, market data, backtesting, reproducibility. Tax/TDS अभी स्थगित।
 
@@ -66,3 +66,12 @@
 
 ## Change log
 - **v1.0 — 2026-10-22:** Added explicit USDT-denominated target, clarified realized-profit compounding versus chart timeframe, and froze evidence-first research rules.
+
+
+## 8. Repository execution checkpoint — 2026-10-22
+- Added deterministic helper module `crypto_target/research_math.py`: target multiple, required geometric period return, realized-return compounding path and maximum drawdown.
+- Added five unit tests in `tests_crypto_target/test_research_math.py` and GitHub Actions workflow `.github/workflows/crypto-target-smoke.yml`.
+- Files were read back from GitHub after writes. The workflow is configured to run on pushes to relevant paths; **a successful Actions run has not yet been independently verified**, so test status remains PENDING.
+- These are math/helper unit tests only, not market-data validation or strategy backtests.
+- The prior AISTS repository includes an official Binance archive audit pipeline, tests, workflows and locked governance. Bulk deletion has not been performed without a complete tracked-tree inventory and dependency review; removing those files blindly could destroy the existing audit path and invalidate continuity. Git history/other branches remain untouched.
+- Next: verify the Actions run result; then add a real-data acquisition + checksum manifest and test strategy baselines with multi-timeframe execution and costs.
