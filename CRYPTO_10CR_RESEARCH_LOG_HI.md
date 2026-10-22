@@ -198,3 +198,12 @@ Research status और claims केवल verified evidence के आधार
 - ₹10 करोड़ का USDT equivalent **22 अक्टूबर 2026 के दर्ज ₹94.24/USDT snapshot** पर आधारित है; conversion rate बदल सकता है। जब तक उपयोगकर्ता अलग निर्देश न दें, project target 1,061,120.54 USDT ही रहेगा।
 - AI autonomy की बाकी requirement अपरिवर्तित है: dynamic AI decisions, entry/exit, SL/trailing SL, TP/trailing profit, cost-aware sizing, risk controls और staged validation।
 - इस सुधार के बाद documentation और CI target checks को फिर से सत्यापित करना अनिवार्य है। पिछली section 16–17 में 10M USDT लिखे जाने का रिकॉर्ड ऐतिहासिक change-log है, current goal नहीं।
+
+
+## 19. End-to-end योजना और zero-drift gate lock — 22 अक्टूबर 2026
+- उपयोगकर्ता के निर्देशानुसार पूरा evidence-gated execution plan `END_TO_END_EXECUTION_PLAN_HI.md` बनाया गया।
+- सही लक्ष्य: **1,000 USDT → 1,061,120.54 USDT**, दर्ज 22-Oct-2026 ₹94.24/USDT snapshot पर लगभग ₹10 करोड़। 10M USDT accidental target नहीं है। लक्ष्य तक पहुँचने का समय और profitability अभी अज्ञात हैं।
+- योजना में governance, HD-03 data integrity, HD-04 universe coverage, leak-proof dataset building, cost-aware simulator, baselines, preregistered walk-forward experiments, AI components, independent risk engine, execution simulator, paper/forward tests और अलग live authorization gate शामिल हैं।
+- **Current single next gate: HD-03** — September 2026 BTCUSDT Spot और USDⓈ-M Futures 5-minute data के वास्तविक source, files, SHA-256, UTC coverage, missing/duplicate/schema/OHLC checks और reproducible report का प्रमाण। इसके पास होने से पहले strategy/AI backtest नहीं।
+- README, Project Details, Project Status और keep-list को plan से जोड़ा गया। कोई live trading/API credential/fund movement अधिकृत नहीं है।
+- CI run और उसके final result को execution log में अलग से दर्ज किया जाएगा; green CI केवल repository checks का प्रमाण है, trading edge का नहीं।
