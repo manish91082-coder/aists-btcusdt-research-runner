@@ -1,6 +1,6 @@
 # मास्टर शोध लॉग: 1,000 USDT से ₹10 करोड़-समतुल्य लक्ष्य
 
-**Version:** 1.9  
+**Version:** 2.0  
 **Last updated:** 22 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **अभी का चरण:** Data integrity pipeline से पहले research harness और project governance को व्यवस्थित करना।
@@ -170,3 +170,13 @@ Research status और claims केवल verified evidence के आधार
 - Detailed execution log: `execution_logs/2026-10-22-final-current-thread-ci-success.md`.
 - Latest `main` tree now includes 22 current-thread files because the successful run record was added afterward; all tracked paths remain covered by `CURRENT_PROJECT_KEEP_PATHS.txt`, and no legacy/unexpected files remain.
 - Research truth remains unchanged: no validated market data or strategy backtest yet; profitability not established and target time unknown.
+
+
+## 16. Fully AI-driven autonomous trading ecosystem और primary target — 22 अक्टूबर 2026
+- उपयोगकर्ता ने स्पष्ट किया कि लक्ष्य केवल strategy research नहीं, बल्कि पूरा **AI-driven autonomous trading ecosystem** है: current market state के अनुसार AI trade/no-trade, direction, market/strategy/timeframe, entry, exit, initial/trailing stop-loss, take-profit/trailing-profit, sizing, portfolio risk और regime adaptation तय करे।
+- प्राथमिक लक्ष्य अब स्पष्ट रूप से **1,000 USDT → 10,000,000 USDT (10M USDT)** है, यानी 10,000× equity multiple। यह लक्ष्य है, guaranteed return या timeline नहीं।
+- पहले दर्ज **1,061,120.54 USDT** ₹10 करोड़ का dated USDT-equivalent था; इसे अलग historical/secondary milestone के रूप में रखा गया है, 10M USDT से conflation नहीं करना है।
+- नई architecture: `AI_AUTONOMOUS_TRADING_ARCHITECTURE.md`. इसमें data provenance, AI ensemble, dynamic entry/exit, SL/trailing SL, TP/trailing profit, net-cost economics, deterministic risk engine, execution reconciliation, model registry, kill switches, evaluation gates और implementation roadmap परिभाषित हैं।
+- `CURRENT_PROJECT_KEEP_PATHS.txt` में architecture file को protect किया गया।
+- अभी यह design/plan है, fully implemented bot नहीं। Market data acquisition, realistic backtester, AI model evaluation और execution simulator अभी बाकी हैं। Live orders/API credentials/funds movement अधिकृत नहीं हैं।
+- अगला implementation gate: reproducible BTCUSDT data acquisition/integrity manifest; फिर cost-aware simulator और baselines; उसके बाद AI components को एक-एक करके out-of-sample evaluate करना। Hard risk controls AI से अलग और non-bypassable रहने चाहिए।
