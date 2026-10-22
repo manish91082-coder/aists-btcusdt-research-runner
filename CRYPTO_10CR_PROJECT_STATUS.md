@@ -12,7 +12,7 @@
 | Current-thread repository cleanup | **Complete** | Old tracked project files removed from current `main`; the intended current research files remain. Git history and other branches were not erased. |
 | README, project details and status | **Updated** | Core project documents have a common scope and research status. |
 | Compounding/target math helpers | **Implemented** | Deterministic arithmetic helpers exist; they are not a trade signal or strategy. |
-| Helper unit tests | **Previously passed** | [Earlier GitHub Actions smoke run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39793473617). The expanded docs/allowlist CI run is currently pending: [latest run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873). |
+| Helpers, docs and allowlist checks | **Passed** | [Expanded GitHub Actions run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873): Python compile passed, required-doc checks passed, 17/17 tracked paths protected, 0 deletion candidates, and 5 unit tests passed. |
 | Real market data for this target project | **Not yet acquired/validated** | No validated dataset or data-integrity manifest is claimed. |
 | Cost-aware strategy backtest | **Not run** | No market-data performance result exists for this workstream. |
 | Profitable strategy / time to target | **Not established / unknown** | No forecast or profit guarantee is justified. |
@@ -57,5 +57,5 @@ Implement a small, auditable market-data acquisition and integrity manifest for 
 ## Latest continuity checkpoint — 22 October 2026
 - Current core documents, keep-list, cleanup script, workflows and research helpers are linked from `README.md`.
 - Final tree audit: `execution_logs/2026-10-22-docs-final-verification.md`. At the latest tree inspection before this status-only update, 19 tracked files were present and every path was covered by the committed keep-list; no unexpected paths remained.
-- Expanded documentation/allowlist smoke run is still pending in GitHub Actions: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Earlier unit-test run passed, but pending checks are not labeled PASS.
+- Expanded documentation/allowlist smoke run passed in GitHub Actions: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Detailed step results: `execution_logs/2026-10-22-expanded-smoke-ci-success.md`.
 - Research gate remains unchanged: market data not yet verified, no cost-aware backtest, edge NOT ESTABLISHED, target time UNKNOWN, live trading NOT AUTHORIZED, tax/TDS deferred.
