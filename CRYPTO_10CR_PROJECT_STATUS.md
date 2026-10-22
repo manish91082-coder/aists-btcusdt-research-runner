@@ -52,3 +52,10 @@ Execution records:
 Implement a small, auditable market-data acquisition and integrity manifest for a clearly specified BTCUSDT product and interval. First validate files and timestamps; only then build cost-aware baselines across multiple holding periods. Save each substantive run to a separate execution-log file and update the research record with exact evidence, not assumptions.
 
 **Decision today:** Strategy edge is **NOT ESTABLISHED**. Time to target is **UNKNOWN**. No market-data backtest is claimed.
+
+
+## Latest continuity checkpoint — 22 October 2026
+- Current core documents, keep-list, cleanup script, workflows and research helpers are linked from `README.md`.
+- Final tree audit: `execution_logs/2026-10-22-docs-final-verification.md`. At the latest tree inspection before this status-only update, 19 tracked files were present and every path was covered by the committed keep-list; no unexpected paths remained.
+- Expanded documentation/allowlist smoke run is still pending in GitHub Actions: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Earlier unit-test run passed, but pending checks are not labeled PASS.
+- Research gate remains unchanged: market data not yet verified, no cost-aware backtest, edge NOT ESTABLISHED, target time UNKNOWN, live trading NOT AUTHORIZED, tax/TDS deferred.
