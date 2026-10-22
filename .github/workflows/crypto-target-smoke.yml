@@ -8,6 +8,7 @@ on:
       - "tests_crypto_target/**"
       - "scripts/cleanup_current_project.py"
       - "scripts/acquire_validate_hd03.py"
+      - "scripts/build_hd04_universe_snapshot.py"
       - "CURRENT_PROJECT_KEEP_PATHS.txt"
       - ".github/workflows/crypto-target-smoke.yml"
   pull_request:
@@ -72,5 +73,7 @@ jobs:
           grep -Fq "Tracked files to stage for deletion: 0" cleanup-preview.txt
       - name: Compile HD-03 validator
         run: python -m py_compile scripts/acquire_validate_hd03.py
+      - name: Compile HD-03 and HD-04 tools
+        run: python -m py_compile scripts/acquire_validate_hd03.py scripts/build_hd04_universe_snapshot.py
       - name: Run deterministic unit tests
         run: python -m unittest discover -s tests_crypto_target -v
