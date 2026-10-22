@@ -1,15 +1,14 @@
-# Current crypto-target project files protected from legacy cleanup.
-# One-time cleanup launch: update this allowlist to trigger the GitHub Actions cleanup job.
-# Retry trigger after correcting workflow push-permission handling.
-CRYPTO_10CR_RESEARCH_LOG_HI.md
+# Protected current-thread crypto-target research paths.
+# This file is read by scripts/cleanup_current_project.py; keep the required project files below listed.
+# Trailing slash means preserve every tracked file beneath that directory.
+README.md
+CRYPTO_10CR_PROJECT_DETAILS.md
 CRYPTO_10CR_PROJECT_STATUS.md
-crypto_target/
-tests_crypto_target/
-execution_logs/crypto-target/
-execution_logs/2026-10-22-repo-discovery.md
-execution_logs/2026-10-22-research-harness-bootstrap.md
-execution_logs/2026-10-22-cleanup-script-push.md
-scripts/cleanup_current_project.py
-scripts/EXECUTE_CLEANUP_NOW
+CRYPTO_10CR_RESEARCH_LOG_HI.md
+CURRENT_PROJECT_KEEP_PATHS.txt
 .github/workflows/crypto-target-smoke.yml
 .github/workflows/repository-cleanup-preview.yml
+crypto_target/
+tests_crypto_target/
+scripts/cleanup_current_project.py
+execution_logs/
