@@ -64,3 +64,10 @@ Next: build the real market-data manifest/acquisition validation, then run cost-
 - Final outcome log: `execution_logs/2026-10-22-cleanup-final-verification.md`. The ephemeral run transcript was removed from repository root after report artifact generation.
 - Git history/other branches unchanged; no live trading and no market-data backtest performed.
 - Next research step: real official market-data provenance/checksum/schema/gap validation, then cost-aware baseline tests.
+
+
+## Strict current-thread-only cleanup — 2026-10-22
+- User clarified that only files created for this crypto-target research thread today should remain; all pre-existing repository files should be removed.
+- Removed the pre-existing `README.md` and removed it from the cleanup script and keep-list.
+- GitHub recursive tree verification at main head `1a673787c62b41305a92f3c3df5be89b552902af` found exactly the 14 intended current-thread files; none missing and no unexpected files. The follow-up verification log is `execution_logs/2026-10-22-current-thread-only-cleanup.md`.
+- This is a repository-scope cleanup only. Market-data acquisition/backtesting remains undone, strategy edge is NOT ESTABLISHED, time to target is UNKNOWN, live trading NOT AUTHORIZED, and tax/TDS deferred.
