@@ -3,7 +3,7 @@
 **Last updated:** 22 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **Branch:** `main`  
-**Current phase:** HD-03 BTCUSDT monthly archive validation passed; HD-04 market-universe/coverage mapping is next.
+**Current phase:** HD-03 passed for the initial BTCUSDT slice; HD-04 universe snapshot implementation exists but is blocked by HTTP 451 on the public Spot exchange-info endpoint in GitHub Actions.
 
 ## Executive status
 
@@ -59,7 +59,7 @@ Execution records:
 
 ## Next step
 
-**HD-03: PASS (scope-limited).** Both September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute archives passed the current validator: 8,640 rows each; no missing/duplicate/off-grid/out-of-month timestamps or numeric/OHLC/close-time issues; Binance checksum sidecars matched. Evidence: [Actions run/artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39823937420), `execution_logs/2026-10-22-hd03-data-integrity-pass.md`. **Next gate: HD-04**, source-verifiable universe and coverage mapping. No strategy edge is established.
+**HD-03: PASS (scope-limited).** Both September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute archives passed the current validator: 8,640 rows each; no missing/duplicate/off-grid/out-of-month timestamps or numeric/OHLC/close-time issues; Binance checksum sidecars matched. Evidence: [Actions run/artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39823937420), `execution_logs/2026-10-22-hd03-data-integrity-pass.md`. **HD-04 remains BLOCKED.** The first real snapshot attempt hit HTTP 451 on `https://api.binance.com/api/v3/exchangeInfo`; a later attempt did not pass completeness. This is source-access failure, not evidence about listings. See `execution_logs/2026-10-22-hd04-initial-attempt.md`. No strategy edge is established.
 
 **Decision today:** Strategy edge is **NOT ESTABLISHED**. Time to target is **UNKNOWN**. No market-data backtest is claimed.
 
