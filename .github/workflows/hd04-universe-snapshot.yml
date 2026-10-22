@@ -1,0 +1,47 @@
+name: HD-04 market universe and coverage snapshot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/build_hd04_universe_snapshot.py"
+      - "tests_crypto_target/test_hd04_universe.py"
+      - ".github/workflows/hd04-universe-snapshot.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile snapshot builder
+        run: python -m py_compile scripts/build_hd04_universe_snapshot.py
+      - name: Run deterministic eligibility tests
+        run: python -m unittest tests_crypto_target.test_hd04_universe -v
+      - name: Capture public exchange metadata, independent Spot/Futures volume rankings and funding coverage
+        id: snapshot
+        continue-on-error: true
+        run: python scripts/build_hd04_universe_snapshot.py --output-dir artifacts/hd04 --top-n 10
+      - name: Preserve point-in-time evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hd04-market-universe-${{ github.run_id }}
+          path: artifacts/hd04/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Fail if source snapshot is incomplete
+        if: always()
+        run: |
+          set -euo pipefail
+          test "${{ steps.snapshot.outcome }}" = "success" || {
+            echo "HD-04 source snapshot incomplete. Inspect the report/artifact and record source coverage debt."
+            exit 1
+          }
