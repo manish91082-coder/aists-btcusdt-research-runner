@@ -13,7 +13,9 @@ Build a reproducible, evidence-first, fully AI-driven autonomous trading ecosyst
 
 - Initial equity assumption: **1,000 USDT**.
 - **Primary goal: 1,061,120.54 USDT**, the approximate equivalent of **₹10 crore** at the recorded snapshot of ₹94.24/USDT dated 22 October 2026. This is a dated conversion reference, not a permanent exchange rate or guaranteed outcome.
-- **Execution control:** `END_TO_END_EXECUTION_PLAN_HI.md` is the locked roadmap and gate ledger; the current next gate is HD-03 data provenance/integrity, not AI strategy work.
+- **Execution control:** `END_TO_END_EXECUTION_PLAN_HI.md` is the locked roadmap and gate ledger.
+- **HD-03 result:** PASS, limited to September 2026 BTCUSDT Spot and USDⓈ-M Futures 5-minute archives (8,640 rows each; zero reported integrity issues; Binance sidecar checksums matched). Evidence: `execution_logs/2026-10-22-hd03-data-integrity-pass.md` and [Actions artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39823937420).
+- **Next gate:** HD-04 source-verifiable market-universe and historical coverage mapping. No strategy profitability is established.
 - The 10,000,000 USDT target was an accidental entry and is explicitly not the project goal.
 - Realized-profit compounding: realized net P&L is added to equity and may inform later position sizing. It does not mandate hourly bars or hourly trades.
 - Starting equity and target are research assumptions, not evidence that the target can be reached.
