@@ -1,0 +1,49 @@
+name: HD-03 September 2026 market-data integrity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/acquire_validate_hd03.py"
+      - "tests_crypto_target/test_hd03_data.py"
+      - ".github/workflows/hd03-data-integrity.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  acquire-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile HD-03 validator
+        run: python -m py_compile scripts/acquire_validate_hd03.py
+      - name: Run deterministic validator tests
+        run: python -m unittest tests_crypto_target.test_hd03_data -v
+      - name: Download and validate September 2026 BTCUSDT Spot and USD-M Futures archives
+        id: hd03
+        continue-on-error: true
+        run: python scripts/acquire_validate_hd03.py --output-dir artifacts/hd03
+      - name: Preserve source archives and integrity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hd03-btcusdt-september-2026-${{ github.run_id }}
+          path: artifacts/hd03/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Fail the gate if acquisition or integrity validation failed
+        if: always()
+        run: |
+          set -euo pipefail
+          test "${{ steps.hd03.outcome }}" = "success" || {
+            echo "HD-03 BLOCKED: one or more source archives failed acquisition or validation. Inspect the JSON report/artifact."
+            exit 1
+          }
