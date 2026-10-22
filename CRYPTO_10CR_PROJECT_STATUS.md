@@ -19,11 +19,15 @@
 | Live exchange access, orders, funds movement | **Not authorized** | Research only. |
 | Tax/TDS analysis | **Deferred** | Outside current scope until explicitly reopened. |
 
-## Goal
+## Primary goal
 
-Research whether an evidence-supported approach can grow an assumed initial equity of **1,000 USDT** toward **1,061,120.54 USDT**, the approximate equivalent of ₹10 crore using the recorded snapshot of ₹94.24/USDT dated 22 October 2026. This is a dated conversion assumption, not a permanent exchange rate.
+Build a fully AI-driven autonomous trading ecosystem to research whether initial equity of **1,000 USDT** can grow toward **10,000,000 USDT (10M USDT)**, a 10,000× increase. This is an aspirational research target, not a guaranteed outcome or timeline. The previous **1,061,120.54 USDT** estimate for ₹10 crore at the 22 October 2026 ₹94.24/USDT snapshot is a separate historical/secondary milestone, not the primary 10M target.
 
 “Compounding” means reinvesting **realized net profit** into equity for later position sizing. It does not require a one-hour chart or one trade every hour. The allowed strategy timeframe is open, subject to valid testing.
+
+## AI ecosystem requirement
+
+The intended system must dynamically decide trade/no-trade, market/direction, strategy/timeframe, entry/exit, initial and trailing stop-loss, take-profit/trailing-profit, sizing, portfolio risk and regime adaptation, using current validated market conditions and net-of-cost evaluation. AI decisions must stay inside deterministic risk limits, data-quality gates, execution constraints and kill switches. The design is documented in [AI_AUTONOMOUS_TRADING_ARCHITECTURE.md](AI_AUTONOMOUS_TRADING_ARCHITECTURE.md). This architecture is documented but not yet implemented end-to-end; live trading remains unauthorized.
 
 ## Work completed in this thread
 
@@ -55,9 +59,9 @@ Implement a small, auditable market-data acquisition and integrity manifest for 
 
 
 ## Latest continuity checkpoint — 22 October 2026
-- Current core documents, keep-list, cleanup script, workflows and research helpers are linked from `README.md`.
+- Current core documents, AI architecture, keep-list, cleanup script, workflows and research helpers are linked from `README.md`.
 - Final tree audit: `execution_logs/2026-10-22-docs-final-verification.md`. The latest post-refresh `main` inventory now contains 22 tracked files; all 22 are covered by the current committed keep-list and unexpected paths are 0. The latest CI run tested its pinned commit (`67c08f8d9c370e8d1f3171f5f7175ce6db41c016`), where 21 tracked files were all protected and there were 0 deletion candidates. The newest current-tree check log is `execution_logs/2026-10-22-final-current-thread-ci-success.md`.
 - Expanded documentation/allowlist smoke run passed in GitHub Actions: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873. Detailed step results: `execution_logs/2026-10-22-expanded-smoke-ci-success.md`.
 - Follow-up final-document validation passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817044689 (20 protected files, zero deletion candidates, 5/5 unit tests); details: `execution_logs/2026-10-22-final-docs-ci-success.md`.
 - Latest smoke run passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817387843 (21 protected files, zero deletion candidates, 5/5 unit tests); details: `execution_logs/2026-10-22-final-current-thread-ci-success.md`.
-- Research gate remains unchanged: market data not yet verified, no cost-aware backtest, edge NOT ESTABLISHED, target time UNKNOWN, live trading NOT AUTHORIZED, tax/TDS deferred.
+- Research gate remains unchanged: market data not yet verified, no cost-aware backtest, AI trading loop not yet implemented end-to-end, edge NOT ESTABLISHED, target time UNKNOWN, live trading NOT AUTHORIZED, tax/TDS deferred.
