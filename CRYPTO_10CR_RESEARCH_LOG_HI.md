@@ -1,6 +1,6 @@
 # मास्टर शोध लॉग: 1,000 USDT से ₹10 करोड़-समतुल्य लक्ष्य
 
-**Version:** 1.7  
+**Version:** 1.8  
 **Last updated:** 22 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **अभी का चरण:** Data integrity pipeline से पहले research harness और project governance को व्यवस्थित करना।
@@ -149,3 +149,13 @@ Research status और claims केवल verified evidence के आधार
 - Detailed execution record: `execution_logs/2026-10-22-expanded-smoke-ci-success.md`.
 - Earlier sections 11–12 ने run को queue में दर्ज किया था क्योंकि उस समय final conclusion उपलब्ध नहीं था; section 13 वह historical status स्पष्ट रूप से close करता है।
 - ये checks helper code, documents और repository protections को validate करते हैं; market-data acquisition या strategy edge को नहीं।
+
+
+## 14. Final-document consistency run — 22 अक्टूबर 2026
+- GitHub Actions run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817044689 — conclusion `success`.
+- Tested commit: `038bf51cff07d1396f6a7a5d0baef25422c4c274`.
+- Required current documents and target/status consistency: PASS; stale expanded-CI pending marker in README/Project Details/Project Status: absent.
+- Committed allowlist dry-run: **20 tracked, 20 protected, 0 deletion candidates**.
+- Deterministic unit tests: **5/5 PASS**.
+- Run log: `execution_logs/2026-10-22-final-docs-ci-success.md`.
+- This is a documentation/repository-integrity validation, not a market-data backtest or proof of trading profitability.
