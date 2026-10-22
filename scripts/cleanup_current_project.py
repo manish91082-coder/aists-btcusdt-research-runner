@@ -22,10 +22,13 @@ KEEP_EXACT = {
     "crypto_target/research_math.py",
     "tests_crypto_target/test_research_math.py",
     ".github/workflows/crypto-target-smoke.yml",
+    ".github/workflows/repository-cleanup-preview.yml",
     "scripts/cleanup_current_project.py",
+    "scripts/EXECUTE_CLEANUP_NOW",
     "CURRENT_PROJECT_KEEP_PATHS.txt",
     "execution_logs/2026-10-22-repo-discovery.md",
     "execution_logs/2026-10-22-research-harness-bootstrap.md",
+    "execution_logs/2026-10-22-cleanup-script-push.md",
 }
 
 KEEP_PREFIXES = (
