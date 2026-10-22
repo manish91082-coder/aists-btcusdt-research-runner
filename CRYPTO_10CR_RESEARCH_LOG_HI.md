@@ -1,6 +1,6 @@
 # मास्टर शोध लॉग: 1,000 USDT से ₹10 करोड़-समतुल्य लक्ष्य
 
-**Version:** 2.1  
+**Version:** 2.2  
 **Last updated:** 22 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **अभी का चरण:** Data integrity pipeline से पहले research harness और project governance को व्यवस्थित करना।
@@ -190,3 +190,11 @@ Research status और claims केवल verified evidence के आधार
 - Python compilation, allowlist dry-run और 5/5 unit tests: PASS.
 - Execution record: `execution_logs/2026-10-22-ai-architecture-ci-success.md`.
 - ये repository/design checks हैं; AI trading system end-to-end अभी implemented नहीं, और कोई market-data backtest या profitability evidence उपलब्ध नहीं।
+
+
+## 18. लक्ष्य की गलती का सुधार — 22 अक्टूबर 2026
+- उपयोगकर्ता ने स्पष्ट किया कि सही और अंतिम लक्ष्य **₹10 करोड़ के बराबर लगभग 1,061,120.54 USDT** ही है।
+- `10,000,000 USDT` को primary target बनाना गलती थी। इसे current goal, status, architecture और planning से हटाया गया है।
+- ₹10 करोड़ का USDT equivalent **22 अक्टूबर 2026 के दर्ज ₹94.24/USDT snapshot** पर आधारित है; conversion rate बदल सकता है। जब तक उपयोगकर्ता अलग निर्देश न दें, project target 1,061,120.54 USDT ही रहेगा।
+- AI autonomy की बाकी requirement अपरिवर्तित है: dynamic AI decisions, entry/exit, SL/trailing SL, TP/trailing profit, cost-aware sizing, risk controls और staged validation।
+- इस सुधार के बाद documentation और CI target checks को फिर से सत्यापित करना अनिवार्य है। पिछली section 16–17 में 10M USDT लिखे जाने का रिकॉर्ड ऐतिहासिक change-log है, current goal नहीं।
