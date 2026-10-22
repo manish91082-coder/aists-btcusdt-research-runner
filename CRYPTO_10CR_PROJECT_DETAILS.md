@@ -85,7 +85,7 @@ Minimum performance report:
 
 - `crypto_target/research_math.py`: target multiple, geometric hurdle, compounding path and maximum drawdown helpers.
 - `tests_crypto_target/test_research_math.py`: five deterministic unit tests.
-- `.github/workflows/crypto-target-smoke.yml`: Python compilation, core-document consistency checks, fail-closed allowlist dry-run, and helper tests. The expanded run is pending at https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873; do not treat it as passed until GitHub reports a final success.
+- `.github/workflows/crypto-target-smoke.yml`: Python compilation, core-document consistency checks, fail-closed allowlist dry-run, and helper tests. The expanded run passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873; see `execution_logs/2026-10-22-expanded-smoke-ci-success.md` for verified step results.
 - `scripts/cleanup_current_project.py`: guarded cleanup helper; default mode is dry-run.
 - `CURRENT_PROJECT_KEEP_PATHS.txt`: protected-path inventory that must be kept aligned with the script.
 - `CRYPTO_10CR_RESEARCH_LOG_HI.md`: master record.
