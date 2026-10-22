@@ -15,7 +15,6 @@ from pathlib import Path
 EXPECTED_REPO = "manish91082-coder/aists-btcusdt-research-runner"
 
 KEEP_EXACT = {
-    "README.md",
     "CRYPTO_10CR_RESEARCH_LOG_HI.md",
     "CRYPTO_10CR_PROJECT_STATUS.md",
     "crypto_target/__init__.py",
