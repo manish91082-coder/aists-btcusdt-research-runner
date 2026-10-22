@@ -6,11 +6,15 @@ on:
     paths:
       - "crypto_target/**"
       - "tests_crypto_target/**"
+      - "scripts/cleanup_current_project.py"
+      - "CURRENT_PROJECT_KEEP_PATHS.txt"
       - ".github/workflows/crypto-target-smoke.yml"
   pull_request:
     paths:
       - "crypto_target/**"
       - "tests_crypto_target/**"
+      - "scripts/cleanup_current_project.py"
+      - "CURRENT_PROJECT_KEEP_PATHS.txt"
       - ".github/workflows/crypto-target-smoke.yml"
   workflow_dispatch:
 
@@ -22,11 +26,35 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Compile research helpers
-        run: python -m py_compile crypto_target/research_math.py
+      - name: Compile research and maintenance helpers
+        run: python -m py_compile crypto_target/research_math.py scripts/cleanup_current_project.py
+      - name: Check required project documents
+        run: |
+          set -euo pipefail
+          for file in \
+            README.md \
+            CRYPTO_10CR_PROJECT_DETAILS.md \
+            CRYPTO_10CR_PROJECT_STATUS.md \
+            CRYPTO_10CR_RESEARCH_LOG_HI.md \
+            CURRENT_PROJECT_KEEP_PATHS.txt; do
+            test -s "$file" || { echo "Missing or empty required file: $file"; exit 1; }
+          done
+          grep -q "1,061,120.54 USDT" README.md
+          grep -q "1,061,120.54 USDT" CRYPTO_10CR_PROJECT_DETAILS.md
+          grep -q "1,061,120.54 USDT" CRYPTO_10CR_PROJECT_STATUS.md
+          grep -q "1,061,120.54 USDT" CRYPTO_10CR_RESEARCH_LOG_HI.md
+          grep -q "NOT ESTABLISHED" CRYPTO_10CR_PROJECT_STATUS.md
+          grep -q "UNKNOWN" CRYPTO_10CR_PROJECT_STATUS.md
+      - name: Verify repository has no files outside the committed keep-list
+        run: |
+          set -euo pipefail
+          python scripts/cleanup_current_project.py | tee cleanup-preview.txt
+          grep -Fq "Tracked files to stage for deletion: 0" cleanup-preview.txt
       - name: Run deterministic unit tests
         run: python -m unittest discover -s tests_crypto_target -v
