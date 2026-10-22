@@ -1,6 +1,6 @@
 # 1,000 USDT → ₹10 करोड़-समतुल्य USDT: मास्टर शोध लॉग
-**Version:** 1.2  
-**Updated:** 2026-10-22 (v1.2)  
+**Version:** 1.3  
+**Updated:** 2026-10-22 (v1.3, cleanup execution verified)  
 **Repository:** https://github.com/manish91082-coder/aists-btcusdt-research-runner  
 **Scope:** शोध, market data, backtesting, reproducibility. Tax/TDS अभी स्थगित।
 
@@ -71,9 +71,9 @@
 ## 8. Repository execution checkpoint — 2026-10-22
 - Added deterministic helper module `crypto_target/research_math.py`: target multiple, required geometric period return, realized-return compounding path and maximum drawdown.
 - Added five unit tests in `tests_crypto_target/test_research_math.py` and GitHub Actions workflow `.github/workflows/crypto-target-smoke.yml`.
-- Files were read back from GitHub after writes. The workflow is configured to run on pushes to relevant paths; **a successful Actions run has not yet been independently verified**, so test status remains PENDING.
+- Files were read back from GitHub after writes. The crypto-target smoke workflow succeeded: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39793473617. This validates helper/unit tests only, not market-data quality or strategy returns.
 - These are math/helper unit tests only, not market-data validation or strategy backtests.
-- The prior AISTS repository includes an official Binance archive audit pipeline, tests, workflows and locked governance. Bulk deletion has not been performed without a complete tracked-tree inventory and dependency review; removing those files blindly could destroy the existing audit path and invalidate continuity. Git history/other branches remain untouched.
+- At this checkpoint the repository still contained the older Binance archive audit pipeline and governance files. A later explicit tracked-tree review and allowlist-based cleanup removed 30 legacy tracked paths; details and post-cleanup verification are in section 10. Git history/other branches remain untouched.
 - Next: verify the Actions run result; then add a real-data acquisition + checksum manifest and test strategy baselines with multi-timeframe execution and costs.
 
 
@@ -82,4 +82,16 @@
 - Commit: https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/1bd521dfa8bb2739b78846c16985e103908d51e9
 - Default is preview-only; explicit `--apply --confirm-repository manish91082-coder/aists-btcusdt-research-runner` is required to stage deletions.
 - Script checks the repository remote, prints tracked paths to keep/delete, stages deletions only, and writes a separate cleanup log. It does not commit/push or erase history/branches.
-- Status: script committed and readback verified; **cleanup not run**. The preview output must be reviewed before applying because the allowlist defines which current-project paths survive.
+- At the moment this script-addition checkpoint, cleanup had not yet run. The final cleanup execution was completed later and is documented in section 10.
+
+
+## 10. Final legacy cleanup execution — 2026-10-22
+- GitHub Actions run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39806484233 — conclusion verified as `success`.
+- Cleanup commit: https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/0042c045702efa91a2a50d2672c6079c67edbb62.
+- Removed 30 legacy tracked paths after a preview enumerated 43 tracked files, 13 protected active-project paths, and 30 deletion candidates. The exact candidate list and timestamp are retained in `execution_logs/crypto-target/cleanup-20261022T153658Z.md`.
+- A post-cleanup recursive GitHub tree confirmed the target research dossier, project status, allowlist, Python math helpers, tests, cleanup script, research workflows and execution logs remained present.
+- The first automated push was rejected because that attempt also modified the active workflow YAML. The workflow was corrected, then the explicit one-time trigger was rerun without changing the active YAML in the cleanup commit. The retry committed and pushed successfully.
+- The root-level generated `cleanup-apply.txt` transcript was removed in follow-up commit https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/f06eb8bb296d3e4e934bb9e40b395fac93bf352a; the Actions artifact remains accessible from the run.
+- Detailed outcome: `execution_logs/2026-10-22-cleanup-final-verification.md`.
+- Scope guard: only tracked paths outside the explicit allowlist were removed. Git history and other branches were not erased. This was repo housekeeping, not a market-data/backtest run.
+- Current research decision unchanged: strategy edge NOT ESTABLISHED; target-hit time UNKNOWN; live trading NOT AUTHORIZED; tax/TDS deferred.
