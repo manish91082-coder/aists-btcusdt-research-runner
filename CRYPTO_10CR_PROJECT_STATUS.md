@@ -1,73 +1,54 @@
-# Current Project Status — 1,000 USDT to Target USDT
-**Updated:** 2026-10-22 (cleanup complete and verified)  
-**Status:** LEGACY REPOSITORY CLEANUP COMPLETE; CRYPTO-TARGET FILES PRESERVED; NO PROFITABLE STRATEGY VERIFIED
+# Crypto Target Research — Current Project Status
+
+**Last updated:** 22 October 2026  
+**Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
+**Branch:** `main`  
+**Current phase:** Research harness established; real market-data integrity pipeline is next.
+
+## Executive status
+
+| Workstream | Status | Verified meaning |
+|---|---|---|
+| Current-thread repository cleanup | **Complete** | Old tracked project files removed from current `main`; the intended current research files remain. Git history and other branches were not erased. |
+| README, project details and status | **Updated** | Core project documents have a common scope and research status. |
+| Compounding/target math helpers | **Implemented** | Deterministic arithmetic helpers exist; they are not a trade signal or strategy. |
+| Helper unit tests | **Previously passed** | [GitHub Actions smoke run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39793473617). Latest documentation/maintenance check is to be verified after this refresh. |
+| Real market data for this target project | **Not yet acquired/validated** | No validated dataset or data-integrity manifest is claimed. |
+| Cost-aware strategy backtest | **Not run** | No market-data performance result exists for this workstream. |
+| Profitable strategy / time to target | **Not established / unknown** | No forecast or profit guarantee is justified. |
+| Live exchange access, orders, funds movement | **Not authorized** | Research only. |
+| Tax/TDS analysis | **Deferred** | Outside current scope until explicitly reopened. |
 
 ## Goal
-Turn 1,000 USDT into **1,061,120.54 USDT** (approximate ₹10 crore equivalent at the 2026-10-22 reference snapshot ₹94.24/USDT). Hourly means reinvest each realized net profit into account equity; it does not constrain the strategy to 1-hour candles.
 
-## Active scope
-- Focus on the fastest *defensible* route supported by evidence.
-- Explore multiple timeframes and strategy families, not just one-hour candles.
-- Include actual transaction costs and risk of ruin.
-- Tax/TDS analysis deferred.
-- No credentials, live orders, funds movement or production deployment.
+Research whether an evidence-supported approach can grow an assumed initial equity of **1,000 USDT** toward **1,061,120.54 USDT**, the approximate equivalent of ₹10 crore using the recorded snapshot of ₹94.24/USDT dated 22 October 2026. This is a dated conversion assumption, not a permanent exchange rate.
 
-## Repository discovery
-- Public repository: https://github.com/manish91082-coder/aists-btcusdt-research-runner
-- Default branch: main
-- Repository already contained an established research/data-audit project with governance files, scripts, tests and GitHub Actions workflows. Existing governance explicitly requires preserving history/branches, verified writes and fail-closed research gates.
-- Current verified project record before this new work: HD-03 accepted for one September 2026 BTCUSDT 5m monthly archive pilot; HD-04 older-month check was next. This is not strategy-performance evidence.
+“Compounding” means reinvesting **realized net profit** into equity for later position sizing. It does not require a one-hour chart or one trade every hour. The allowed strategy timeframe is open, subject to valid testing.
 
-## Work in this checkpoint
-- Added a dedicated USDT-target research dossier and status file.
-- Added baseline math helpers/tests and CI workflow. GitHub Actions smoke run passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39793473617.
-- No historical market data downloaded or backtest run for the 1,000 USDT target project in this checkpoint.
-- Later verified cleanup removed 30 legacy tracked paths (old audit documentation, tests, scripts and obsolete workflows). The active crypto-target allowlist was preserved. Git history and other branches remain intact.
+## Work completed in this thread
+
+- Created the crypto-target math helper package and deterministic unit tests.
+- Added a GitHub Actions smoke-test workflow.
+- Added guarded repository-cleanup tooling, then completed and verified the current-thread-only cleanup.
+- Recreated a current README, added the detailed project charter, and aligned the master research log, status, keep-list and cleanup utility.
+- Preserved the current research source, tests, workflow and execution records. The cleanup did not erase Git history or other branches.
+
+Execution records:
+- [Cleanup outcome and verification](execution_logs/2026-10-22-cleanup-final-verification.md)
+- [Current-thread-only cleanup](execution_logs/2026-10-22-current-thread-only-cleanup.md)
+- [Research harness bootstrap](execution_logs/2026-10-22-research-harness-bootstrap.md)
 
 ## Evidence gates
-1. Code/unit tests pass in GitHub Actions.
-2. Real market data provenance/checksum/schema/gap validation.
-3. No-look-ahead strategy implementation.
-4. Cost-adjusted walk-forward out-of-sample edge.
-5. Drawdown/ruin-risk and parameter-sensitivity analysis.
-6. Paper forward validation.
-7. Explicitly approved live stage only, if ever.
 
-## Current decision
-**No strategy is proven profitable; time to target is unknown.** Do not turn a hypothetical compound-growth curve into a forecast.
+1. **Data integrity:** source, product type, symbol, interval, timestamps, checksum, schema, duplicates, OHLCV validity and missing intervals are audited.
+2. **Baseline correctness:** explicit signal time, executable fill assumption, no look-ahead, and realistic costs.
+3. **Out-of-sample edge:** chronological validation/walk-forward tests versus simple baselines after costs.
+4. **Risk robustness:** drawdown, tail losses, leverage/liquidation where relevant, sensitivity and ruin-risk analysis.
+5. **Forward validation:** paper/forward observations before any discussion of a live stage.
+6. **Explicit authorization:** live actions remain disabled unless separately requested and reviewed.
 
-## Next action
-Next: build the real market-data manifest/acquisition validation, then run cost-aware multi-horizon baselines. Cleanup was repository housekeeping only; no market-data backtest was performed. Record every substantive execution as a separate append-only log file.
+## Next step
 
+Implement a small, auditable market-data acquisition and integrity manifest for a clearly specified BTCUSDT product and interval. First validate files and timestamps; only then build cost-aware baselines across multiple holding periods. Save each substantive run to a separate execution-log file and update the research record with exact evidence, not assumptions.
 
-## Latest checkpoint — 2026-10-22
-- Current research workstream: 1,000 USDT → 1,061,120.54 USDT target snapshot; compounding means reinvesting realized profits, not trading only on 1h candles.
-- GitHub files created: `CRYPTO_10CR_RESEARCH_LOG_HI.md`, `CRYPTO_10CR_PROJECT_STATUS.md`, `crypto_target/research_math.py`, `crypto_target/__init__.py`, `tests_crypto_target/test_research_math.py`, `.github/workflows/crypto-target-smoke.yml`, and an append-only execution log under `execution_logs/`.
-- Code readback verified; the crypto-target smoke-test workflow succeeded (run link above). This verifies helper/unit tests only, not market-data validation or strategy profitability.
-- Next action: verify GitHub Actions run, record result in a new execution-log file, then build real data manifest and baseline backtests.
-
-
-## Cleanup-script checkpoint — 2026-10-22
-- Guarded script committed to `scripts/cleanup_current_project.py` on `main`.
-- Commit: https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/1bd521dfa8bb2739b78846c16985e103908d51e9
-- Direct script link: https://github.com/manish91082-coder/aists-btcusdt-research-runner/blob/main/scripts/cleanup_current_project.py
-- Readback verified from GitHub after commit.
-- Default mode is dry-run. Applying requires `--apply` and the exact repository confirmation; it stages tracked-file deletions but does not commit/push. It preserves only the explicit allowlist and named prefixes; user must inspect preview before applying.
-- At the time this script-addition checkpoint, cleanup had not yet run. The later final cleanup execution is recorded below.
-- Important scope note: the script intentionally does not erase Git history or other branches and does not touch untracked/ignored files.
-
-
-## Final cleanup verification — 2026-10-22
-- GitHub Actions cleanup run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39806484233 (conclusion: success).
-- Cleanup commit: https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/0042c045702efa91a2a50d2672c6079c67edbb62; follow-up cleanup-transcript removal: https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/f06eb8bb296d3e4e934bb9e40b395fac93bf352a.
-- GitHub recursive tree verified 30 legacy tracked paths removed; active crypto-target files remained present.
-- Final outcome log: `execution_logs/2026-10-22-cleanup-final-verification.md`. The ephemeral run transcript was removed from repository root after report artifact generation.
-- Git history/other branches unchanged; no live trading and no market-data backtest performed.
-- Next research step: real official market-data provenance/checksum/schema/gap validation, then cost-aware baseline tests.
-
-
-## Strict current-thread-only cleanup — 2026-10-22
-- User clarified that only files created for this crypto-target research thread today should remain; all pre-existing repository files should be removed.
-- Removed the pre-existing `README.md` and removed it from the cleanup script and keep-list.
-- GitHub recursive tree verification at main head `1a673787c62b41305a92f3c3df5be89b552902af` found exactly the 14 intended current-thread files; none missing and no unexpected files. The follow-up verification log is `execution_logs/2026-10-22-current-thread-only-cleanup.md`.
-- This is a repository-scope cleanup only. Market-data acquisition/backtesting remains undone, strategy edge is NOT ESTABLISHED, time to target is UNKNOWN, live trading NOT AUTHORIZED, and tax/TDS deferred.
+**Decision today:** Strategy edge is **NOT ESTABLISHED**. Time to target is **UNKNOWN**. No market-data backtest is claimed.
