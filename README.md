@@ -5,7 +5,7 @@
 ## Current state
 
 - **Repository cleanup:** completed; current-thread research files retained and verified.
-- **Math helpers and unit tests:** implemented. The earlier unit-test smoke run passed: [run details](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39793473617). The expanded documentation/allowlist CI run is currently pending: [latest run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873).
+- **Math helpers, docs and cleanup allowlist smoke checks:** passed in [expanded GitHub Actions run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873). This run compiled both Python helpers, checked the core documents, found zero deletion candidates, and passed five unit tests.
 - **Real market-data validation for this target project:** not yet completed.
 - **Cost-aware strategy backtest:** not yet completed.
 - **Profitable strategy / time to target:** not established / unknown.
@@ -41,7 +41,7 @@ python -m py_compile crypto_target/research_math.py scripts/cleanup_current_proj
 python -m unittest discover -s tests_crypto_target -v
 ```
 
-The same smoke checks run in GitHub Actions on relevant code/workflow changes. See [all workflow runs](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions).
+The same smoke checks run in GitHub Actions on relevant code/workflow changes. See [the verified run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873) or [all workflow runs](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions).
 
 ## Research rules
 
