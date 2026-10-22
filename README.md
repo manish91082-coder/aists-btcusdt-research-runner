@@ -5,7 +5,7 @@
 ## Current state
 
 - **Repository cleanup:** completed; current-thread research files retained and verified.
-- **Math helpers, docs and cleanup allowlist smoke checks:** passed in [expanded GitHub Actions run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873). This run compiled both Python helpers, checked the core documents, found zero deletion candidates, and passed five unit tests.
+- **Math helpers, docs and cleanup allowlist smoke checks:** passed in [expanded GitHub Actions run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39815232873). This run compiled both Python helpers, checked the core documents, found zero deletion candidates, and passed five unit tests. See the [detailed execution log](execution_logs/2026-10-22-expanded-smoke-ci-success.md).
 - **Real market-data validation for this target project:** not yet completed.
 - **Cost-aware strategy backtest:** not yet completed.
 - **Profitable strategy / time to target:** not established / unknown.
