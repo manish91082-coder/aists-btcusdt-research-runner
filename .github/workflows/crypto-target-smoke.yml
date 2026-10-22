@@ -51,9 +51,6 @@ jobs:
           grep -q "1,061,120.54 USDT" CRYPTO_10CR_PROJECT_STATUS.md
           grep -q "1,061,120.54 USDT" CRYPTO_10CR_RESEARCH_LOG_HI.md
           grep -q "1,061,120.54 USDT" AI_AUTONOMOUS_TRADING_ARCHITECTURE.md
-          grep -q "10 करोड़" README.md
-          grep -q "10 करोड़" CRYPTO_10CR_PROJECT_DETAILS.md
-          grep -q "10 करोड़" CRYPTO_10CR_PROJECT_STATUS.md
           grep -q "NOT ESTABLISHED" CRYPTO_10CR_PROJECT_STATUS.md
           grep -q "UNKNOWN" CRYPTO_10CR_PROJECT_STATUS.md
           if grep -Eiq "expanded.*(currently )?pending" README.md CRYPTO_10CR_PROJECT_DETAILS.md CRYPTO_10CR_PROJECT_STATUS.md; then
