@@ -43,6 +43,7 @@ jobs:
             CRYPTO_10CR_PROJECT_STATUS.md \
             CRYPTO_10CR_RESEARCH_LOG_HI.md \
             AI_AUTONOMOUS_TRADING_ARCHITECTURE.md \
+            END_TO_END_EXECUTION_PLAN_HI.md \
             CURRENT_PROJECT_KEEP_PATHS.txt; do
             test -s "$file" || { echo "Missing or empty required file: $file"; exit 1; }
           done
@@ -51,6 +52,9 @@ jobs:
           grep -q "1,061,120.54 USDT" CRYPTO_10CR_PROJECT_STATUS.md
           grep -q "1,061,120.54 USDT" CRYPTO_10CR_RESEARCH_LOG_HI.md
           grep -q "1,061,120.54 USDT" AI_AUTONOMOUS_TRADING_ARCHITECTURE.md
+          grep -q "1,061,120.54 USDT" END_TO_END_EXECUTION_PLAN_HI.md
+          grep -q "HD-03" END_TO_END_EXECUTION_PLAN_HI.md
+          grep -q "END_TO_END_EXECUTION_PLAN_HI.md" README.md
           grep -q "NOT ESTABLISHED" CRYPTO_10CR_PROJECT_STATUS.md
           grep -q "UNKNOWN" CRYPTO_10CR_PROJECT_STATUS.md
           if grep -Eiq "expanded.*(currently )?pending" README.md CRYPTO_10CR_PROJECT_DETAILS.md CRYPTO_10CR_PROJECT_STATUS.md; then
