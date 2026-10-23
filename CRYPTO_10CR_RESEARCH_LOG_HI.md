@@ -486,3 +486,11 @@ Research status और claims केवल verified evidence के आधार
 - Split plan: training 2020-2022, validation 2023-2024, historical test 2025, recent-regime diagnostics Jan-Sep 2026, and forward holdout from 2026-10-24 onward. Historical data for Jan 2020-Sep 2026 must be downloaded and content-validated month by month before walk-forward metrics are accepted.
 - Costs: base 10 bps fee/fill, 2 bps full spread, 5 bps slippage/fill; sensitivity 0.5x, 1.0x, 1.5x, 2.0x. No tuning on the forward holdout.
 - **Next action:** expand and validate official monthly BTCUSDT Spot, UM Futures and funding archives for Jan 2020-Sep 2026, with per-month checksum/schema/grid coverage manifest. Do not treat HTTP HEAD availability as archive validation.
+
+
+## 2026-10-23 — Full-history validation outcome and 1m audit
+
+- Full official archive run [39954840075](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39954840075): 81 months, 243 expected Spot 5m / UM Futures 5m / UM funding archive checks; 231 pass, 12 fail. The normalized aggregate was correctly withheld.
+- Reporting fix was applied: manifest newline is valid JSON and checksum-matching raw archive filenames are counted even if content validation fails. Smoke CI [39954846287](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39954846287) passed.
+- Added a dedicated official Spot 1m archive audit for the 12 failed Spot 5m months. It checks official SHA-256 sidecars, row counts, minute-grid continuity, OHLC and close-time validity. It never fills gaps or reconstructs 5m data automatically.
+- Current result: 1m audit code added, runtime report pending. The 12 failed 5m archives remain unresolved; no strategy evaluation or profitability inference is permitted from the incomplete long-history dataset.
