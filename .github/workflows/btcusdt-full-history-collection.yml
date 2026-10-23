@@ -36,11 +36,30 @@ jobs:
         run: |
           ARGS=""
           if [ "$INCLUDE_FUNDING" = "true" ]; then ARGS="--include-funding"; fi
-          python scripts/collect_btcusdt_full_history.py \
+          mkdir -p artifacts/btcusdt-full-history
+          LOG_FILE="artifacts/btcusdt-full-history/execution.log"
+          {
+            echo "=== COLLECTION START ==="
+            echo "started_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "repository=$GITHUB_REPOSITORY"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+            echo "commit=$GITHUB_SHA"
+            echo "start_month=$START_MONTH"
+            echo "end_month=$END_MONTH"
+            echo "include_funding=$INCLUDE_FUNDING"
+            echo "python_version=$(python --version 2>&1)"
+          } | tee -a "$LOG_FILE"
+          set +e
+          python -u scripts/collect_btcusdt_full_history.py \
             --start-month "$START_MONTH" \
             --end-month "$END_MONTH" \
             --output-dir artifacts/btcusdt-full-history \
-            $ARGS
+            $ARGS 2>&1 | tee -a "$LOG_FILE"
+          rc=${PIPESTATUS[0]}
+          echo "collector_exit_code=$rc" | tee -a "$LOG_FILE"
+          echo "finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$LOG_FILE"
+          exit "$rc"
       - name: Upload to private Supabase Storage and index metadata
         if: success()
         env:
@@ -48,14 +67,53 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_BUCKET: ${{ vars.SUPABASE_BUCKET }}
         run: |
+          LOG_FILE="artifacts/btcusdt-full-history/execution.log"
           if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "supabase_status=SKIPPED_MISSING_SECRETS" | tee -a "$LOG_FILE"
             echo "::warning::Supabase upload skipped. Configure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY repository secrets, create the private bucket, and apply docs/supabase_btcusdt_history_schema.sql."
             exit 0
           fi
-          python scripts/upload_btcusdt_history_to_supabase.py \
+          echo "=== SUPABASE UPLOAD START ===" | tee -a "$LOG_FILE"
+          set +e
+          python -u scripts/upload_btcusdt_history_to_supabase.py \
             --input-dir artifacts/btcusdt-full-history \
-            --prefix "btc-usdt-history/${START_MONTH:-${{ inputs.start_month }}}-${END_MONTH:-${{ inputs.end_month }}}"
-      - name: Upload temporary GitHub artifact as secondary copy
+            --prefix "btc-usdt-history/${{ inputs.start_month }}-${{ inputs.end_month }}" 2>&1 | tee -a "$LOG_FILE"
+          rc=${PIPESTATUS[0]}
+          echo "supabase_uploader_exit_code=$rc" | tee -a "$LOG_FILE"
+          echo "supabase_upload_finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$LOG_FILE"
+          exit "$rc"
+      - name: Write final run record and GitHub step summary
+        if: always()
+        env:
+          START_MONTH: ${{ inputs.start_month }}
+          END_MONTH: ${{ inputs.end_month }}
+          INCLUDE_FUNDING: ${{ inputs.include_funding }}
+        run: |
+          mkdir -p artifacts/btcusdt-full-history
+          LOG_FILE="artifacts/btcusdt-full-history/execution.log"
+          echo "workflow_job_status=${{ job.status }}" | tee -a "$LOG_FILE"
+          echo "workflow_finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$LOG_FILE"
+          if [ -f artifacts/btcusdt-full-history/btc-usdt-archive-collection-manifest.json ]; then
+            python - <<'PY' | tee -a "$LOG_FILE"
+          import json
+          from pathlib import Path
+          p = Path("artifacts/btcusdt-full-history/btc-usdt-archive-collection-manifest.json")
+          d = json.loads(p.read_text())
+          print("=== MANIFEST SUMMARY ===")
+          print(json.dumps({"counts": d.get("counts"), "periods_requested": d.get("periods_requested"), "archive_count": len(d.get("archives", [])), "total_bytes_passed": sum(x.get("bytes", 0) for x in d.get("archives", []) if x.get("status") == "PASS")}, indent=2))
+          PY
+          fi
+          {
+            echo "## BTCUSDT full-history collection execution record"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Requested months: $START_MONTH through $END_MONTH"
+            echo "- Funding requested: $INCLUDE_FUNDING"
+            echo "- Job status: ${{ job.status }}"
+            echo "- Detailed console log: artifact file `execution.log`"
+            echo "- Machine-readable manifest: `btc-usdt-archive-collection-manifest.json`"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload logs, manifest and collected archives as GitHub artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
