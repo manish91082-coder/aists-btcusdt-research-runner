@@ -62,6 +62,7 @@ def inspect(month: str) -> dict:
             rows_seen = 0
             timestamps_seen = 0
             previous_t = None
+            first_t = None
             hourly_counts = [0] * 24
             day_lo = ms(day + "T00:00:00Z")
             day_hi = day_lo + 86_400_000
@@ -76,6 +77,8 @@ def inspect(month: str) -> dict:
                     raise ValueError(f"timestamp outside expected UTC day on {day}, row {row_number}: {t}")
                 if previous_t is not None and t < previous_t:
                     raise ValueError(f"non-monotonic timestamps on {day}, row {row_number}")
+                if first_t is None:
+                    first_t = t
                 previous_t = t
                 rows_seen += 1
                 timestamps_seen += 1
@@ -94,7 +97,7 @@ def inspect(month: str) -> dict:
         zero_trade_hours = [i for i, count in enumerate(hourly_counts) if count == 0]
         checks.append({"date_utc":day,"url":url,"sha256":digest,"checksum_matches":True,
                        "rows_parsed":rows_seen,"timestamp_rows_validated":timestamps_seen,
-                       "first_timestamp_ms":day_lo if rows_seen else None,
+                       "first_timestamp_ms":first_t,
                        "last_timestamp_ms":previous_t if rows_seen else None,
                        "hourly_row_counts_utc":hourly_counts,
                        "zero_trade_hours_utc":zero_trade_hours})
