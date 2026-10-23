@@ -83,7 +83,6 @@ def simulate(rows: list[dict], signals: list[int], initial_equity: float,
     impact = (spread_bps / 2.0 + slippage_bps) / 10000.0
     cash = initial_equity
     quantity = 0.0
-    entry_fees = 0.0
     fees_paid = 0.0
     turnover = 0.0
     trades = 0
@@ -103,7 +102,6 @@ def simulate(rows: list[dict], signals: list[int], initial_equity: float,
                 fee = notional * fee_rate
                 cash -= notional + fee
                 quantity = qty
-                entry_fees += fee
                 fees_paid += fee
                 turnover += notional
                 trades += 1
@@ -152,7 +150,7 @@ def simulate(rows: list[dict], signals: list[int], initial_equity: float,
         "final_equity_after_final_liquidation": final_equity,
         "net_return_pct": (final_equity / initial_equity - 1.0) * 100.0,
         "max_drawdown_pct_mark_to_market": max_drawdown(equity_values) * 100.0,
-        "round_trip_trades_counted_as_fills": trades,
+        "fills": trades,
         "total_fees_quote": fees_paid,
         "turnover_quote": turnover,
         "assumptions": {
