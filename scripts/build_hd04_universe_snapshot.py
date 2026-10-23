@@ -11,24 +11,33 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-SPOT = "https://api.binance.com"
-UM = "https://fapi.binance.com"
+SPOT_HOSTS = ["https://data-api.binance.vision", "https://api-gcp.binance.com", "https://api.binance.com", "https://api1.binance.com", "https://api2.binance.com", "https://api3.binance.com", "https://api4.binance.com"]
+UM_HOSTS = ["https://fapi.binance.com", "https://fapi1.binance.com", "https://fapi2.binance.com", "https://fapi3.binance.com", "https://fapi4.binance.com"]
 UA = "aists-btcusdt-research-runner/1.0"
 
 
-def fetch_json(url: str, attempts: int = 3):
+def fetch_json(url: str, attempts: int = 1):
     last = None
-    for i in range(attempts):
-        try:
-            req = Request(url, headers={"User-Agent": UA})
-            with urlopen(req, timeout=30) as response:
-                return json.loads(response.read().decode("utf-8"))
-        except Exception as exc:
-            last = exc
-            if i + 1 < attempts:
-                time.sleep(2 ** i)
-    raise RuntimeError(f"GET failed: {url}: {last}")
-
+    from urllib.parse import urlsplit, urlunsplit
+    parts = urlsplit(url)
+    spot_hosts = {h.split("//", 1)[1] for h in SPOT_HOSTS}
+    host_group = SPOT_HOSTS if parts.netloc in spot_hosts else UM_HOSTS
+    candidates = []
+    for host in host_group:
+        candidate = urlunsplit((parts.scheme, host.split("//", 1)[1], parts.path, parts.query, parts.fragment))
+        if candidate not in candidates:
+            candidates.append(candidate)
+    for candidate in candidates:
+        for i in range(attempts):
+            try:
+                req = Request(candidate, headers={"User-Agent": UA})
+                with urlopen(req, timeout=30) as response:
+                    return json.loads(response.read().decode("utf-8"))
+            except Exception as exc:
+                last = exc
+                if i + 1 < attempts:
+                    time.sleep(2 ** i)
+    raise RuntimeError(f"GET failed across official Binance market-data hosts: {url}: {last}")
 
 def digest(payload) -> str:
     data = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
@@ -81,13 +90,13 @@ def main():
     }
     endpoints = {
         "spot": {
-            "info": f"{SPOT}/api/v3/exchangeInfo",
-            "ticker": f"{SPOT}/api/v3/ticker/24hr",
+            "info": f"{SPOT_HOSTS[0]}/api/v3/exchangeInfo",
+            "ticker": f"{SPOT_HOSTS[0]}/api/v3/ticker/24hr",
             "market": "spot",
         },
         "um_futures": {
-            "info": f"{UM}/fapi/v1/exchangeInfo",
-            "ticker": f"{UM}/fapi/v1/ticker/24hr",
+            "info": f"{UM_HOSTS[0]}/fapi/v1/exchangeInfo",
+            "ticker": f"{UM_HOSTS[0]}/fapi/v1/ticker/24hr",
             "market": "um_futures",
         },
     }
@@ -138,7 +147,7 @@ def main():
     futures_top = report["markets"]["um_futures"]["top_n"]
     for item in futures_top:
         symbol = item["symbol"]
-        url = f"{UM}/fapi/v1/fundingRate?symbol={symbol}&limit=2"
+        url = f"{UM_HOSTS[0]}/fapi/v1/fundingRate?symbol={symbol}&limit=2"
         check = {"symbol": symbol, "source_url": url}
         try:
             data = fetch_json(url)
