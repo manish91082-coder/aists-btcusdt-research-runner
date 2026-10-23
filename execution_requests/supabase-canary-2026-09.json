@@ -1,0 +1,8 @@
+{
+  "workflow": ".github/workflows/btcusdt-supabase-upload-canary.yml",
+  "ref": "main",
+  "inputs": {
+    "month": "2026-09",
+    "include_funding": true
+  }
+}
