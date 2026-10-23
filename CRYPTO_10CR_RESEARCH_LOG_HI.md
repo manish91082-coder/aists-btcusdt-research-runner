@@ -455,7 +455,7 @@ Research status और claims केवल verified evidence के आधार
 
 ## BTCUSDT candidate baselines: पहला वास्तविक बहु-महीना run (23 अक्टूबर 2026)
 
-- Draft PR #16: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/16
+- PR #16 merged to main (merge commit `581c97978d0845036c9cff8f2be71d7018f84aa5`): https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/16
 - Candidate run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681
 - Smoke CI: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947549808
 - Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681/artifacts/12498179453
