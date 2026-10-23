@@ -541,3 +541,10 @@ Research status और claims केवल verified evidence के आधार
 - The diagnostic spot-1m-gap-audit job was skipped, not failed: its if condition only matched specific commit-message phrases and did not match Add raw candle context around Spot 1m 5m gaps. Thus the boundary-context instrumentation has **not yet run**. This is a workflow gating defect, not evidence about the market data itself.
 - Corrected the condition to contains(github.event.head_commit.message, 'gap') in commit d2c083e74a43fe7a9e2f49f19aea42ae7d588e7f; next run must verify the audit job executes and publishes its artifact.
 - Keep data policy fail-closed. No gap filling/reconstruction, no walk-forward, no PR merge, no live trading. Tax/TDS remains deferred.
+
+
+## 11. Gap reconciliation result and next diagnostic (23 October 2026)
+- Run 39960237333 completed: diagnostic job PASS and artifact upload succeeded; long-history validation still failed closed with 231/243 archive checks passing and 12 Spot 5m monthly failures. No full normalized dataset was emitted.
+- Across all 12 failed months, official Spot 1m and Spot 5m archive scans report timestamp discontinuities in both intervals and the same count of gap/order anomalies per month. Counts match, but the exact intervals and bucket alignment still need boundary-candle inspection. This supports shared time-span discontinuities, not a proven explanation of why the candles are absent.
+- Connector logs expose gap spans but not boundary OHLCV rows, and the binary artifact ZIP is not readable through the available GitHub fetch action. Modified the diagnostic script to include `boundary_context` in its JSON log output; commit f93b385225d9384c8060d727f0df9a5773788e82. Next run must compile and print the boundary rows before interpretation.
+- December 2020 has two timestamp gaps and one close-time anomaly in the strict 1m audit. That anomaly remains unresolved. No fill/reconstruction, no validator weakening, no walk-forward, no PR merge, no live trading; tax/TDS stays out of scope.
