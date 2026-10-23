@@ -59,10 +59,25 @@ def inspect(month: str) -> dict:
             if len(members)!=1:
                 raise ValueError(f"expected one CSV member for {day}, got {len(members)}")
             rows=csv.reader(io.StringIO(z.read(members[0]).decode("utf-8-sig")))
-            for row in rows:
-                if len(row)<6: continue
-                try: t=int(row[5])
-                except (ValueError,TypeError): continue
+            rows_seen = 0
+            timestamps_seen = 0
+            previous_t = None
+            day_lo = ms(day + "T00:00:00Z")
+            day_hi = day_lo + 86_400_000
+            for row_number, row in enumerate(rows, start=1):
+                if len(row) != 8:
+                    raise ValueError(f"unexpected aggTrades CSV column count on {day}, row {row_number}: {len(row)}")
+                try:
+                    t = int(row[5])
+                except (ValueError, TypeError) as exc:
+                    raise ValueError(f"invalid timestamp on {day}, row {row_number}: {row[5]!r}") from exc
+                if not (day_lo <= t < day_hi):
+                    raise ValueError(f"timestamp outside expected UTC day on {day}, row {row_number}: {t}")
+                if previous_t is not None and t < previous_t:
+                    raise ValueError(f"non-monotonic timestamps on {day}, row {row_number}")
+                previous_t = t
+                rows_seen += 1
+                timestamps_seen += 1
                 for g,(a,b) in zip(per_gap,windows):
                     lo,hi=ms(a),ms(b)
                     if lo <= t < hi:
@@ -72,7 +87,10 @@ def inspect(month: str) -> dict:
                             g["first_trade_utc"]=stamp
                         if g["last_trade_utc"] is None or stamp > g["last_trade_utc"]:
                             g["last_trade_utc"]=stamp
-        checks.append({"date_utc":day,"url":url,"sha256":digest,"checksum_matches":True})
+        if rows_seen == 0 or timestamps_seen != rows_seen:
+            raise ValueError(f"empty or incompletely parsed aggTrades archive for {day}: rows={rows_seen}, timestamps={timestamps_seen}")
+        checks.append({"date_utc":day,"url":url,"sha256":digest,"checksum_matches":True,
+                       "rows_parsed":rows_seen,"timestamp_rows_validated":timestamps_seen})
     return {"month":month,"status":"PASS","daily_archives_checked":checks,
             "gaps":per_gap,
             "interpretation_limit":"A positive trade count proves trades occurred inside the interval. Zero counts require checking archive coverage and boundary semantics; they do not by themselves authorize candle reconstruction."}
