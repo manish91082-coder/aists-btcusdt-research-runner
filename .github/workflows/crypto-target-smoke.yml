@@ -10,6 +10,7 @@ on:
       - "scripts/acquire_validate_hd03.py"
       - "scripts/build_hd04_universe_snapshot.py"
       - "scripts/probe_hd04_archive_sources.py"
+      - "scripts/probe_hd04_alternate_sources.py"
       - "CURRENT_PROJECT_KEEP_PATHS.txt"
       - ".github/workflows/crypto-target-smoke.yml"
   pull_request:
@@ -18,6 +19,7 @@ on:
       - "tests_crypto_target/**"
       - "scripts/cleanup_current_project.py"
       - "CURRENT_PROJECT_KEEP_PATHS.txt"
+      - "scripts/probe_hd04_alternate_sources.py"
       - ".github/workflows/crypto-target-smoke.yml"
   workflow_dispatch:
 
@@ -75,6 +77,6 @@ jobs:
       - name: Compile HD-03 validator
         run: python -m py_compile scripts/acquire_validate_hd03.py
       - name: Compile HD-03 and HD-04 tools
-        run: python -m py_compile scripts/acquire_validate_hd03.py scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py
+        run: python -m py_compile scripts/acquire_validate_hd03.py scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py scripts/probe_hd04_alternate_sources.py
       - name: Run deterministic unit tests
         run: python -m unittest discover -s tests_crypto_target -v
