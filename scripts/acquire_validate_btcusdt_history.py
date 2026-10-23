@@ -103,8 +103,9 @@ def validate_klines(rows: list[list[str]], period: str, header: bool, venue: str
         finite_float(row[10], "taker buy quote volume")
     if len(rows) != expected:
         raise ValueError(f"expected {expected} monthly 5m candles, found {len(rows)}")
-    return {"rows": len(rows), "first_open_time_ms": int(rows[0][0]),
-            "last_open_time_ms": int(rows[-1][0]), "continuous_5m_grid": True,
+    normalize_ms = lambda value: int(value) // 1000 if int(value) >= 100_000_000_000_000 else int(value)
+    return {"rows": len(rows), "first_open_time_ms": normalize_ms(rows[0][0]),
+            "last_open_time_ms": normalize_ms(rows[-1][0]), "continuous_5m_grid": True,
             "numeric_ohlcv_and_ohlc_relations_valid": True, "venue": venue}
 
 
@@ -125,7 +126,8 @@ def validate_funding(rows: list[list[str]], period: str) -> dict:
     for i, row in enumerate(data, 1):
         if len(row) < 3:
             raise ValueError(f"funding row {i}: expected at least 3 columns")
-        ts = int(row[0])
+        raw_ts = int(row[0])
+        ts = raw_ts // 1000 if raw_ts >= 100_000_000_000_000 else raw_ts
         if not start_ms <= ts <= end_ms:
             raise ValueError(f"funding row {i}: timestamp outside month")
         if previous is not None and ts <= previous:
@@ -141,8 +143,9 @@ def validate_funding(rows: list[list[str]], period: str) -> dict:
             if interval_hours <= 0 or interval_hours > 24:
                 raise ValueError(f"funding row {i}: invalid funding interval hours {interval_hours}")
         previous = ts
-    return {"rows": len(data), "first_calc_time_ms": int(data[0][0]),
-            "last_calc_time_ms": int(data[-1][0]), "timestamps_unique_ascending": True,
+    normalize_ms = lambda value: int(value) // 1000 if int(value) >= 100_000_000_000_000 else int(value)
+    return {"rows": len(data), "first_calc_time_ms": normalize_ms(data[0][0]),
+            "last_calc_time_ms": normalize_ms(data[-1][0]), "timestamps_unique_ascending": True,
             "numeric_rates_finite": True}
 
 
