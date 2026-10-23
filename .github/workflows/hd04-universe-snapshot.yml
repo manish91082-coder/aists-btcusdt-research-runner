@@ -21,10 +21,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Compile snapshot builder
-        run: python -m py_compile scripts/build_hd04_universe_snapshot.py
+      - name: Compile snapshot builders
+        run: python -m py_compile scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py
       - name: Run deterministic eligibility tests
         run: python -m unittest tests_crypto_target.test_hd04_universe -v
+      - name: Probe official Spot/Futures monthly archives and funding-rate history
+        id: archive_probe
+        continue-on-error: true
+        run: python scripts/probe_hd04_archive_sources.py
       - name: Capture public exchange metadata, independent Spot/Futures volume rankings and funding coverage
         id: snapshot
         continue-on-error: true
