@@ -64,11 +64,18 @@ def finite_float(value: str, field: str) -> float:
 def validate_klines(rows: list[list[str]], period: str, header: bool, venue: str) -> dict:
     if not rows:
         raise ValueError("empty kline CSV")
-    if header:
-        expected_header = ["open_time", "open", "high", "low", "close", "volume"]
-        if [x.strip().lower() for x in rows[0][:6]] != expected_header:
-            raise ValueError(f"unexpected header: {rows[0][:6]}")
+    expected_header = ["open_time", "open", "high", "low", "close", "volume"]
+    actual_header = [x.strip().lower() for x in rows[0][:6]] == expected_header
+    # Binance archive schema changed over time: some UM kline months include
+    # a header while older monthly files start directly with candle data.
+    # Detect the actual file shape instead of trusting a date-wide assumption.
+    if actual_header:
         rows = rows[1:]
+    elif header:
+        try:
+            int(rows[0][0])
+        except (ValueError, IndexError) as exc:
+            raise ValueError(f"unexpected kline header/data row: {rows[0][:6]}") from exc
     if not rows:
         raise ValueError("no data rows after header")
     start_ms, end_ms = month_bounds_ms(period)
@@ -106,7 +113,7 @@ def validate_klines(rows: list[list[str]], period: str, header: bool, venue: str
     normalize_ms = lambda value: int(value) // 1000 if int(value) >= 100_000_000_000_000 else int(value)
     return {"rows": len(rows), "first_open_time_ms": normalize_ms(rows[0][0]),
             "last_open_time_ms": normalize_ms(rows[-1][0]), "continuous_5m_grid": True,
-            "numeric_ohlcv_and_ohlc_relations_valid": True, "venue": venue}
+            "numeric_ohlcv_and_ohlc_relations_valid": True, "venue": venue, "header_present": actual_header}
 
 
 def validate_funding(rows: list[list[str]], period: str) -> dict:
