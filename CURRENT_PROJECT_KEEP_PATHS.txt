@@ -39,3 +39,6 @@ docs/SUPABASE_BTCUSDT_HISTORY_SETUP.md
 .github/workflows/btcusdt-archive-canary.yml
 .github/workflows/btcusdt-2019-history-canary.yml
 .github/workflows/btcusdt-2020-history-canary.yml
+.github/workflows/btcusdt-archive-coverage-inventory.yml
+scripts/probe_btcusdt_archive_coverage.py
+tests_crypto_target/test_btcusdt_archive_coverage.py
