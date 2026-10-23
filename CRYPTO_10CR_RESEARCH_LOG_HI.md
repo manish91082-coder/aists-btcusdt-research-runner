@@ -243,3 +243,11 @@ Research status और claims केवल verified evidence के आधार
 - इसी commit पर smoke tests सफल: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39885872012
 - HD-04 source capture में Spot access path आगे बढ़ा, लेकिन USDⓈ-M Futures `/fapi/v1/exchangeInfo` response JSON parse नहीं हो सका (खाली/अमान्य response)। Snapshot और artifact नहीं बने; HD-04 अभी भी BLOCKED: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39885872160
 - अगला कार्य: Futures metadata के लिए आधिकारिक Futures API host/response troubleshooting और Binance Public Data के उपलब्ध fundingRate/kline archives का bounded coverage probe; फिर स्वतंत्र प्रदाता का cross-check केवल उन metrics के लिए जोड़ना जिनकी परिभाषा/market scope वास्तव में तुलनीय हो। कोई काल्पनिक Top-10 सूची नहीं, कोई रणनीति/backtest शुरू नहीं।
+
+
+## 24. HD-04 archive-first acquisition — 23 अक्टूबर 2026
+- आधिकारिक Binance Public Data README में Spot और USD-M Futures klines के downloadable monthly/daily archives तथा ZIP `.CHECKSUM` सत्यापन documented हैं: https://github.com/binance/binance-public-data/blob/master/README.md. USDⓈ-M Futures funding-rate monthly archive path pattern को अलग से जाँचना आवश्यक है; इसे public REST funding endpoint से अलग dataset मानें।
+- नया `scripts/probe_hd04_archive_sources.py` BTCUSDT सितंबर 2026 Spot 5m, USD-M Futures 5m और USD-M funding-rate monthly archives डाउनलोड/जाँचने, SHA-256 sidecar match और CSV row coverage दर्ज करने के लिए जोड़ा। Workflow `.github/workflows/hd04-universe-snapshot.yml` में यह probe API-based universe snapshot से पहले चलेगा।
+- Commit path: `scripts/probe_hd04_archive_sources.py`, workflow और keep-list/smoke test updates. अभी इस probe का सफल runtime परिणाम सत्यापित नहीं है; अगला action उसके GitHub Actions run का report/artifact देखना है।
+- Universe API snapshot अब भी अलग requirement है: historical archive probe pass होने से वर्तमान Spot/Futures listings या volume ranking अपने-आप प्रमाणित नहीं होंगे। HD-04 तब तक BLOCKED रहेगा जब तक listing/volume snapshot पूरा न हो।
+- Drift check: लक्ष्य 1,000 USDT → 1,061,120.54 USDT अपरिवर्तित; कोई strategy/backtest या profitability claim नहीं।
