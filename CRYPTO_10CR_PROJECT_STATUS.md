@@ -1,6 +1,6 @@
 # Crypto Target Research — Current Project Status
 
-**Last updated:** 22 October 2026  
+**Last updated:** 23 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **Branch:** `main`  
 **Current phase:** HD-03 passed for the initial BTCUSDT slice; HD-04 universe snapshot remains blocked by current Futures API response issues. The official archive probe verified three historical files; its validation now explicitly checks expected CSV header shape and data-row counts. Smoke CI passed on commit `1197e7592c79b0f4cf8440af5bf8f59a74690bdc`.
@@ -168,3 +168,12 @@ Three candidates beyond Binance and Tardis have been reviewed for bounded evalua
 3. **CryptoDataDownload free CSVs** — documented no-login free OHLCV downloads at daily/hourly/1-minute granularity across several Spot venues, useful as an independent Spot cross-check; not selected as a full Futures/funding source. Source: https://www.cryptodatadownload.com/ .
 
 Zero-cost scope means public endpoints/downloads without a paid plan or key where supported; it does not mean unlimited requests, guaranteed historical depth, or all symbols/data types. The next step is a small read-only probe of Bybit and OKX for the same UTC window: BTCUSDT Spot and perpetual contract candles, instrument metadata, and funding history. Validate HTTP/JSON success, symbol/instrument mapping, timestamps, interval continuity, OHLCV numeric rules and funding schema. CryptoDataDownload will be considered only for Spot cross-check where an exact comparable file exists. No API keys, account actions or trading endpoints are required.
+
+
+## Alternate zero-cost source probe implementation — 23 October 2026
+
+- Branch: `research/hd04-alternate-source-probe`.
+- Added `scripts/probe_hd04_alternate_sources.py` for bounded read-only public endpoint checks against Bybit V5 and OKX V5: BTCUSDT Spot and linear perpetual candles, instrument metadata and funding history; OKX BTC-USDT Spot and BTC-USDT-SWAP candles, instrument metadata and funding history.
+- Fixed UTC probe window: 2026-09-01 00:00–01:00 UTC. Responses and errors are written to `artifacts/hd04/hd04-alternate-sources.json`; no API keys or trading endpoints are used.
+- HD-04 workflow now compiles and runs the probe, and the script is protected in `CURRENT_PROJECT_KEEP_PATHS.txt`.
+- This is an implementation change only. The probe has not yet been executed in GitHub Actions, so no provider reachability, schema, or candle-validation result is claimed. The Binance authoritative current-universe gate remains BLOCKED; strategy/backtest and live-trading authorization remain closed.
