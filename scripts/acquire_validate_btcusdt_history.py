@@ -171,7 +171,7 @@ def check_one(out_dir: Path, period: str, dataset: str, url: str, header: bool) 
             payload = zf.read(member)
         decoded = payload.decode("utf-8-sig")
         rows = list(csv.reader(io.StringIO(decoded)))
-        if dataset == "funding":
+        if dataset.endswith("funding"):
             validation = validate_funding(rows, period)
         else:
             validation = validate_klines(rows, period, header, dataset)
