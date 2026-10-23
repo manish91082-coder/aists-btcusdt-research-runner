@@ -234,3 +234,12 @@ Research status और claims केवल verified evidence के आधार
 - Logs: `execution_logs/2026-10-22-hd04-initial-attempt.md`. इसे listing universe खाली होने का प्रमाण न समझें; यह source-access blocker है।
 - निर्णय: **HD-04 BLOCKED**. अगला कार्य official alternate API edge या स्वतंत्र रूप से सत्यापित official public source से snapshot पुनः लेना, और पूर्ण timestamped report, hashes, Top-10 lists तथा funding coverage status सत्यापित करना है।
 - Drift check: ₹10 करोड़ का लक्ष्य अपरिवर्तित; strategy/backtest पर आगे नहीं बढ़े; कोई profitability claim नहीं।
+
+
+## 23. HD-04 fallback-source verification — 23 अक्टूबर 2026
+- आधिकारिक Binance Spot market-data-only documentation पुष्टि करती है कि `data-api.binance.vision` पर `/api/v3/exchangeInfo` और `/api/v3/ticker/24hr` जैसे सार्वजनिक endpoints बिना API key उपलब्ध हैं: https://github.com/binance/binance-spot-api-docs/blob/master/faqs/market_data_only.md
+- Binance Public Data repository पुष्टि करती है कि `data.binance.vision` पर Spot और USDⓈ-M Futures की daily/monthly archives उपलब्ध हैं, और ZIP के साथ `.CHECKSUM` दिया जाता है: https://github.com/binance/binance-public-data/blob/master/README.md
+- `scripts/build_hd04_universe_snapshot.py` को आधिकारिक Spot market-data-only host, GCP endpoint और API alternate hosts पर fallback की कोशिश करने के लिए अपडेट किया गया। Commit: `392e3a6e24c1babcabb5a2181fcd3bc398a3b69e`.
+- इसी commit पर smoke tests सफल: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39885872012
+- HD-04 source capture में Spot access path आगे बढ़ा, लेकिन USDⓈ-M Futures `/fapi/v1/exchangeInfo` response JSON parse नहीं हो सका (खाली/अमान्य response)। Snapshot और artifact नहीं बने; HD-04 अभी भी BLOCKED: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39885872160
+- अगला कार्य: Futures metadata के लिए आधिकारिक Futures API host/response troubleshooting और Binance Public Data के उपलब्ध fundingRate/kline archives का bounded coverage probe; फिर स्वतंत्र प्रदाता का cross-check केवल उन metrics के लिए जोड़ना जिनकी परिभाषा/market scope वास्तव में तुलनीय हो। कोई काल्पनिक Top-10 सूची नहीं, कोई रणनीति/backtest शुरू नहीं।
