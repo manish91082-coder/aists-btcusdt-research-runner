@@ -35,3 +35,4 @@ scripts/backtest_btcusdt_baseline.py
 scripts/collect_btcusdt_full_history.py
 docs/supabase_btcusdt_history_schema.sql
 scripts/upload_btcusdt_history_to_supabase.py
+docs/SUPABASE_BTCUSDT_HISTORY_SETUP.md
