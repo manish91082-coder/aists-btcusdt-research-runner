@@ -517,3 +517,12 @@ Research status और claims केवल verified evidence के आधार
 - Script को `CURRENT_PROJECT_KEEP_PATHS.txt` में सुरक्षित किया और workflow से जोड़ा। 1m audit के known gaps पर fail होने के बावजूद workflow अब reconciliation चलाएगा और दोनों reports artifact में रखेगा।
 - YAML review के दौरान artifact path में formatting गलती मिली और ठीक की गई। अंतिम workflow commit: `d6d2237067d9fd693eae6decade6fdcc733f0187`; runtime verification अभी pending है।
 - **Gate BLOCKED है:** कोई candle fill/reconstruct नहीं हुई, कोई failed month चुपचाप omit नहीं हुआ, full-history walk-forward नहीं चला और PR #17 merge नहीं हुआ। अगला निर्णय exact 1m बनाम 5m gap evidence के बाद होगा।
+
+
+## Spot 1m/5m reconciliation runtime result (23 अक्टूबर 2026)
+
+- Workflow run [39957820308](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39957820308), tested workflow commit `d6d2237067d9fd693eae6decade6fdcc733f0187`: `spot-1m-gap-audit` job SUCCESS; compile PASS; known-failing 1m audit step completed and correctly continued; 1m/5m reconciliation completed for 12/12 months with 0 script errors; artifact [12502189825](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39957820308/artifacts/12502189825) uploaded (26,780,461 bytes; 30-day retention).
+- सभी 12 महीनों में 5m archive में भी timestamp gaps मिले। प्रत्येक महीने के diagnostic summary में 1m और 5m gap counts समान हैं; missing-row deltas भी 5 के गुणज के करीब/अनुरूप हैं, जैसे 2020-02: 414 1m rows बनाम 82 5m rows; 2020-11: 60 बनाम 12। इससे 1m-only समस्या होने की संभावना कम लगती है, लेकिन अभी root cause सिद्ध नहीं हुआ।
+- सभी month statuses `INSPECT` हैं, PASS नहीं। रिपोर्ट descriptive span comparison है; candles synthesize या exclude नहीं हुईं। 2020-12 का close-time anomaly अलग से unresolved है।
+- उसी workflow का `long-history-validation` job इस status update के समय अभी `in_progress` था; उसके अंतिम परिणाम का दावा नहीं किया जा रहा।
+- **अगला gate:** exact gap boundaries पर raw 1m/5m rows और validator assumptions को official Binance kline semantics के विरुद्ध जाँचना। जब तक कारण समझ में न आए, reconstruction/interpolation, silent omission, incomplete aggregate पर walk-forward, PR #17 merge और live trading नहीं।
