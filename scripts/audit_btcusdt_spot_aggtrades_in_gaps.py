@@ -35,34 +35,48 @@ def get(url: str) -> bytes:
         if r.status != 200: raise ValueError(f"HTTP {r.status}: {url}")
         return r.read()
 def inspect(month: str) -> dict:
-    url=f"{BASE}/data/spot/monthly/aggTrades/{SYMBOL}/{SYMBOL}-aggTrades-{month}.zip"
-    body=get(url)
-    sidecar=get(url+".CHECKSUM").decode("utf-8").strip().split()[0].lower()
-    digest=hashlib.sha256(body).hexdigest()
-    if digest != sidecar: raise ValueError("aggTrades checksum mismatch")
-    with zipfile.ZipFile(io.BytesIO(body)) as z:
-        members=[n for n in z.namelist() if not n.endswith("/")]
-        if len(members)!=1: raise ValueError(f"expected one CSV member, got {len(members)}")
-        rows=csv.reader(io.StringIO(z.read(members[0]).decode("utf-8-sig")))
-        count=0; first=None; last=None; per_gap=[{"start_utc":a,"end_utc":b,"trade_rows":0,"first_trade_utc":None,"last_trade_utc":None} for a,b in GAPS[month]]
-        start_ends=[(ms(a),ms(b)) for a,b in GAPS[month]]
-        for row in rows:
-            if len(row)<6: continue
-            try: t=int(row[5])
-            except (ValueError,TypeError): continue
-            # Archive timestamps are milliseconds for these historical months.
-            count+=1; first=t if first is None else first; last=t
-            for g,(a,b) in zip(per_gap,start_ends):
-                if a <= t < b:
-                    g["trade_rows"]+=1
-                    if g["first_trade_utc"] is None: g["first_trade_utc"]=datetime.fromtimestamp(t/1000,timezone.utc).isoformat()
-                    g["last_trade_utc"]=datetime.fromtimestamp(t/1000,timezone.utc).isoformat()
-    return {"month":month,"status":"PASS","url":url,"sha256":digest,"checksum_matches":True,
-            "aggregate_trade_rows":count,
-            "first_trade_utc":datetime.fromtimestamp(first/1000,timezone.utc).isoformat() if first is not None else None,
-            "last_trade_utc":datetime.fromtimestamp(last/1000,timezone.utc).isoformat() if last is not None else None,
+    """Audit only daily archives overlapping known windows, rather than huge monthly files."""
+    windows = GAPS[month]
+    by_day = {}
+    for a, b in windows:
+        day = datetime.fromtimestamp(ms(a)/1000, timezone.utc).date()
+        end_day = datetime.fromtimestamp((ms(b)-1)/1000, timezone.utc).date()
+        while day <= end_day:
+            by_day.setdefault(day.isoformat(), [])
+            day = day.fromordinal(day.toordinal()+1)
+    per_gap = [{"start_utc":a,"end_utc":b,"trade_rows":0,
+                "first_trade_utc":None,"last_trade_utc":None} for a,b in windows]
+    checks = []
+    for day in sorted(by_day):
+        url=f"{BASE}/data/spot/daily/aggTrades/{SYMBOL}/{SYMBOL}-aggTrades-{day}.zip"
+        body=get(url)
+        sidecar=get(url+".CHECKSUM").decode("utf-8").strip().split()[0].lower()
+        digest=hashlib.sha256(body).hexdigest()
+        if digest != sidecar:
+            raise ValueError(f"aggTrades checksum mismatch for {day}")
+        with zipfile.ZipFile(io.BytesIO(body)) as z:
+            members=[n for n in z.namelist() if not n.endswith("/")]
+            if len(members)!=1:
+                raise ValueError(f"expected one CSV member for {day}, got {len(members)}")
+            rows=csv.reader(io.StringIO(z.read(members[0]).decode("utf-8-sig")))
+            for row in rows:
+                if len(row)<6: continue
+                try: t=int(row[5])
+                except (ValueError,TypeError): continue
+                for g,(a,b) in zip(per_gap,windows):
+                    lo,hi=ms(a),ms(b)
+                    if lo <= t < hi:
+                        stamp=datetime.fromtimestamp(t/1000,timezone.utc).isoformat()
+                        g["trade_rows"]+=1
+                        if g["first_trade_utc"] is None or stamp < g["first_trade_utc"]:
+                            g["first_trade_utc"]=stamp
+                        if g["last_trade_utc"] is None or stamp > g["last_trade_utc"]:
+                            g["last_trade_utc"]=stamp
+        checks.append({"date_utc":day,"url":url,"sha256":digest,"checksum_matches":True})
+    return {"month":month,"status":"PASS","daily_archives_checked":checks,
             "gaps":per_gap,
             "interpretation_limit":"A positive trade count proves trades occurred inside the interval. Zero counts require checking archive coverage and boundary semantics; they do not by themselves authorize candle reconstruction."}
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--output-dir",default="artifacts/btcusdt-spot-aggtrade-gap-audit")
