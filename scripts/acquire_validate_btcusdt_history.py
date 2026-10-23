@@ -64,11 +64,18 @@ def finite_float(value: str, field: str) -> float:
 def validate_klines(rows: list[list[str]], period: str, header: bool, venue: str) -> dict:
     if not rows:
         raise ValueError("empty kline CSV")
-    if header:
-        expected_header = ["open_time", "open", "high", "low", "close", "volume"]
-        if [x.strip().lower() for x in rows[0][:6]] != expected_header:
-            raise ValueError(f"unexpected header: {rows[0][:6]}")
+    expected_header = ["open_time", "open", "high", "low", "close", "volume"]
+    actual_header = [x.strip().lower() for x in rows[0][:6]] == expected_header
+    # Binance archive schema changed over time: some UM kline months include
+    # a header while older monthly files start directly with candle data.
+    # Detect the actual file shape instead of trusting a date-wide assumption.
+    if actual_header:
         rows = rows[1:]
+    elif header:
+        try:
+            int(rows[0][0])
+        except (ValueError, IndexError) as exc:
+            raise ValueError(f"unexpected kline header/data row: {rows[0][:6]}") from exc
     if not rows:
         raise ValueError("no data rows after header")
     start_ms, end_ms = month_bounds_ms(period)
@@ -106,7 +113,7 @@ def validate_klines(rows: list[list[str]], period: str, header: bool, venue: str
     normalize_ms = lambda value: int(value) // 1000 if int(value) >= 100_000_000_000_000 else int(value)
     return {"rows": len(rows), "first_open_time_ms": normalize_ms(rows[0][0]),
             "last_open_time_ms": normalize_ms(rows[-1][0]), "continuous_5m_grid": True,
-            "numeric_ohlcv_and_ohlc_relations_valid": True, "venue": venue}
+            "numeric_ohlcv_and_ohlc_relations_valid": True, "venue": venue, "header_present": actual_header}
 
 
 def validate_funding(rows: list[list[str]], period: str) -> dict:
@@ -163,6 +170,11 @@ def check_one(out_dir: Path, period: str, dataset: str, url: str, header: bool) 
                      "checksum_sidecar_url": url + ".CHECKSUM"})
         if not item["checksum_matches"]:
             raise ValueError("official SHA-256 sidecar mismatch")
+        safe_name = f"{period}_{dataset}.zip"
+        # Preserve checksum-matching raw bytes even when content validation
+        # fails, so anomalies can be independently investigated.
+        (out_dir / safe_name).write_bytes(archive)
+        item["saved_archive"] = safe_name
         with zipfile.ZipFile(io.BytesIO(archive)) as zf:
             members = [n for n in zf.namelist() if not n.endswith("/")]
             if len(members) != 1:
@@ -175,8 +187,6 @@ def check_one(out_dir: Path, period: str, dataset: str, url: str, header: bool) 
             validation = validate_funding(rows, period)
         else:
             validation = validate_klines(rows, period, header, dataset)
-        safe_name = f"{period}_{dataset}.zip"
-        (out_dir / safe_name).write_bytes(archive)
         item.update({"status": "PASS", "member_name": member, "saved_archive": safe_name,
                      "csv_content_sha256": hashlib.sha256(payload).hexdigest(),
                      "validation": validation})

@@ -486,3 +486,99 @@ Research status और claims केवल verified evidence के आधार
 - Split plan: training 2020-2022, validation 2023-2024, historical test 2025, recent-regime diagnostics Jan-Sep 2026, and forward holdout from 2026-10-24 onward. Historical data for Jan 2020-Sep 2026 must be downloaded and content-validated month by month before walk-forward metrics are accepted.
 - Costs: base 10 bps fee/fill, 2 bps full spread, 5 bps slippage/fill; sensitivity 0.5x, 1.0x, 1.5x, 2.0x. No tuning on the forward holdout.
 - **Next action:** expand and validate official monthly BTCUSDT Spot, UM Futures and funding archives for Jan 2020-Sep 2026, with per-month checksum/schema/grid coverage manifest. Do not treat HTTP HEAD availability as archive validation.
+
+
+## 2026-10-23 — Full-history validation outcome and 1m audit
+
+- Full official archive run [39954840075](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39954840075): 81 months, 243 expected Spot 5m / UM Futures 5m / UM funding archive checks; 231 pass, 12 fail. The normalized aggregate was correctly withheld.
+- Reporting fix was applied: manifest newline is valid JSON and checksum-matching raw archive filenames are counted even if content validation fails. Smoke CI [39954846287](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39954846287) passed.
+- Added a dedicated official Spot 1m archive audit for the 12 failed Spot 5m months. It checks official SHA-256 sidecars, row counts, minute-grid continuity, OHLC and close-time validity. It never fills gaps or reconstructs 5m data automatically.
+- Current result: 1m audit code added, runtime report pending. The 12 failed 5m archives remain unresolved; no strategy evaluation or profitability inference is permitted from the incomplete long-history dataset.
+
+- CI caught a missing keep-list entry for the newly added audit script; added it to `CURRENT_PROJECT_KEEP_PATHS.txt`. Awaiting the next smoke CI result.
+
+
+## लक्ष्य-प्रगति और डेटा-गुणवत्ता की स्वतंत्र समीक्षा — 23 अक्टूबर 2026
+
+**निर्णय:** शोध का क्रम सही है; अभी data gate BLOCKED है। इस workflow failure को strategy failure या strategy success न समझें। यह historical-data integrity की समस्या है, और validator assumptions की स्वतंत्र समीक्षा भी आवश्यक है।
+
+- Full-history run [39956450372](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956450372): 81 महीनों में 243 archive checks में 231 PASS, 12 FAIL; aggregate normalized dataset नहीं बना। Raw archives और reports artifact [12502203715](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956450372/artifacts/12502203715) में हैं।
+- उन्हीं 12 महीनों का official Spot 1m audit: **0/12 PASS**। सभी ZIP के SHA-256 official .CHECKSUM से match हुए, पर सभी में row-count कमी और timestamp gaps मिले; 2020-12 में एक close-time anomaly भी मिला। Logs/artifact [12501649832](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956450372/artifacts/12501649832) में विवरण है।
+- महीनेवार rows: 2020-02 41,346/41,760 (2 gaps); 2020-03 44,512/44,640 (1); 2020-04 43,050/43,200 (1); 2020-06 42,990/43,200 (1); 2020-11 43,140/43,200 (1); 2020-12 44,350/44,640 (2 gaps, 1 close-time anomaly); 2021-02 40,241/40,320 (1); 2021-03 44,550/44,640 (1); 2021-04 42,766/43,200 (2); 2021-08 44,370/44,640 (1); 2021-09 43,080/43,200 (1); 2023-03 44,560/44,640 (1)।
+- Keep-list fix के बाद smoke CI [39956536485](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956536485) PASS हुआ। यह repository checks का प्रमाण है, market-data integrity या trading edge का नहीं।
+- Goal-alignment audit: सही लक्ष्य 1,000 USDT से लगभग 1,061,120.54 USDT (dated ₹10 करोड़ equivalent) है; hourly compounding realized net profit को पुनर्निवेश करने का अर्थ रखता है, हर घंटे trade करना नहीं। प्रारंभिक candidates के negative परिणाम ईमानदारी से दर्ज हैं। Profitable edge और लक्ष्य तक समय अभी **UNKNOWN** हैं; tax/TDS scope से बाहर है।
+- अगला कदम: validator assumptions और failed source rows/gaps की समीक्षा। अभी कोई reconstruction, interpolation, silent omission, PR #17 merge या walk-forward नहीं। बाद में reconstruction तभी जब सभी constituent 1m bars मौजूद, consecutive और valid हों; provenance अलग रखी जाए और जहाँ संभव हो official 5m source से तुलना हो।
+
+
+## अगला क्रमबद्ध कदम शुरू — official Spot 1m/5m gap reconciliation (23 अक्टूबर 2026)
+
+- निर्णय: अभी candles reconstruct नहीं करनी हैं। 12 checksum-valid Spot 1m archives में strict one-row-per-minute नियम के अनुसार gaps हैं; इससे अकेले यह साबित नहीं होता कि archive में bars छूटे हैं या validator की continuity assumption गलत है।
+- `scripts/reconcile_btcusdt_spot_1m_5m_gaps.py` जोड़ी गई। यह 12 प्रभावित महीनों के official Spot 1m और 5m ZIP अलग-अलग डाउनलोड करती है, official SHA-256 sidecar verify करती है, row counts और timestamp discontinuities निकालती है तथा exact gap spans तुलना के लिए दर्ज करती है।
+- Script को `CURRENT_PROJECT_KEEP_PATHS.txt` में सुरक्षित किया और workflow से जोड़ा। 1m audit के known gaps पर fail होने के बावजूद workflow अब reconciliation चलाएगा और दोनों reports artifact में रखेगा।
+- YAML review के दौरान artifact path में formatting गलती मिली और ठीक की गई। अंतिम workflow commit: `d6d2237067d9fd693eae6decade6fdcc733f0187`; runtime verification अभी pending है।
+- **Gate BLOCKED है:** कोई candle fill/reconstruct नहीं हुई, कोई failed month चुपचाप omit नहीं हुआ, full-history walk-forward नहीं चला और PR #17 merge नहीं हुआ। अगला निर्णय exact 1m बनाम 5m gap evidence के बाद होगा।
+
+
+## Spot 1m/5m reconciliation runtime result (23 अक्टूबर 2026)
+
+- Workflow run [39957820308](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39957820308), tested workflow commit `d6d2237067d9fd693eae6decade6fdcc733f0187`: `spot-1m-gap-audit` job SUCCESS; compile PASS; known-failing 1m audit step completed and correctly continued; 1m/5m reconciliation completed for 12/12 months with 0 script errors; artifact [12502189825](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39957820308/artifacts/12502189825) uploaded (26,780,461 bytes; 30-day retention).
+- सभी 12 महीनों में 5m archive में भी timestamp gaps मिले। प्रत्येक महीने के diagnostic summary में 1m और 5m gap counts समान हैं; missing-row deltas भी 5 के गुणज के करीब/अनुरूप हैं, जैसे 2020-02: 414 1m rows बनाम 82 5m rows; 2020-11: 60 बनाम 12। इससे 1m-only समस्या होने की संभावना कम लगती है, लेकिन अभी root cause सिद्ध नहीं हुआ।
+- सभी month statuses `INSPECT` हैं, PASS नहीं। रिपोर्ट descriptive span comparison है; candles synthesize या exclude नहीं हुईं। 2020-12 का close-time anomaly अलग से unresolved है।
+- उसी workflow का `long-history-validation` job इस status update के समय अभी `in_progress` था; उसके अंतिम परिणाम का दावा नहीं किया जा रहा।
+- **अगला gate:** exact gap boundaries पर raw 1m/5m rows और validator assumptions को official Binance kline semantics के विरुद्ध जाँचना। जब तक कारण समझ में न आए, reconstruction/interpolation, silent omission, incomplete aggregate पर walk-forward, PR #17 merge और live trading नहीं।
+
+
+## Raw gap-boundary inspection instrumentation (23 अक्टूबर 2026)
+
+- Reconciliation run [39957820308](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39957820308) का diagnostic job SUCCESS हुआ, लेकिन उसी run का अलग `long-history-validation` job अंततः FAILURE हुआ। Data gate BLOCKED ही है; aggregate या backtest को मंजूरी नहीं मिली।
+- `scripts/reconcile_btcusdt_spot_1m_5m_gaps.py` को बदला ताकि detected discontinuities के आसपास Spot 1m और Spot 5m की raw OHLCV boundary rows report में आएँ। यह diagnostic ही है; कोई candle reconstruct नहीं होती और root cause अभी सिद्ध नहीं होता।
+- नया commit `397f2aa8a5d78dc5dd6fa061e82f45275b540058`; Actions run [39959416562](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39959416562) update के समय QUEUED था; runtime evidence pending है।
+- अगला निर्णय नई report में boundary timestamps और validator assumptions की जाँच के बाद होगा। कोई reconstruction/interpolation, silent omission या incomplete history पर walk-forward नहीं; PR #17 unmerged और live trading unauthorized है।
+
+
+## 10. Gap-boundary inspection: workflow condition defect (23 October 2026)
+- Run 39959416562: [GitHub Actions](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39959416562). Python compile passed. The long-history acquisition/validation step failed closed with 231/243 expected archive checks passing and 12 failures; no normalized full-history dataset was produced.
+- The diagnostic spot-1m-gap-audit job was skipped, not failed: its if condition only matched specific commit-message phrases and did not match Add raw candle context around Spot 1m 5m gaps. Thus the boundary-context instrumentation has **not yet run**. This is a workflow gating defect, not evidence about the market data itself.
+- Corrected the condition to contains(github.event.head_commit.message, 'gap') in commit d2c083e74a43fe7a9e2f49f19aea42ae7d588e7f; next run must verify the audit job executes and publishes its artifact.
+- Keep data policy fail-closed. No gap filling/reconstruction, no walk-forward, no PR merge, no live trading. Tax/TDS remains deferred.
+
+
+## 11. Gap reconciliation result and next diagnostic (23 October 2026)
+- Run 39960237333 completed: diagnostic job PASS and artifact upload succeeded; long-history validation still failed closed with 231/243 archive checks passing and 12 Spot 5m monthly failures. No full normalized dataset was emitted.
+- Across all 12 failed months, official Spot 1m and Spot 5m archive scans report timestamp discontinuities in both intervals and the same count of gap/order anomalies per month. Counts match, but the exact intervals and bucket alignment still need boundary-candle inspection. This supports shared time-span discontinuities, not a proven explanation of why the candles are absent.
+- Connector logs expose gap spans but not boundary OHLCV rows, and the binary artifact ZIP is not readable through the available GitHub fetch action. Modified the diagnostic script to include `boundary_context` in its JSON log output; commit f93b385225d9384c8060d727f0df9a5773788e82. Next run must compile and print the boundary rows before interpretation.
+- December 2020 has two timestamp gaps and one close-time anomaly in the strict 1m audit. That anomaly remains unresolved. No fill/reconstruction, no validator weakening, no walk-forward, no PR merge, no live trading; tax/TDS stays out of scope.
+
+
+## 12. Diagnostic trigger correction (23 October 2026)
+- Run 39968362479 compiled the validator code, but its `spot-1m-gap-audit` job was skipped again because the boundary-output commit message did not match the conditional trigger. Thus no boundary rows were printed in that run.
+- Removed the conditional entirely so any push that triggers this history workflow also executes the diagnostic job. Workflow commit: ea717f631404a4b372ec36e3848e9ae133c68813. Verify job execution and logged boundary rows on the new run.
+- No data policy change. Full-history gate remains failed; no synthetic data, no walk-forward, no merge, no live trading. Tax/TDS deferred.
+
+
+## 23 अक्टूबर 2026: gap-boundary evidence review
+
+GitHub Actions run [39968448783](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39968448783) में `spot-1m-gap-audit` सफल हुआ और `long-history-validation` विफल हुआ। Diagnostic job ने boundary context सहित artifact upload किया। Long-history परिणाम अब भी 243 अपेक्षित archive checks में 231 PASS और 12 FAIL है; इसलिए fail-closed aggregate उपलब्ध नहीं है।
+
+सभी 12 प्रभावित महीनों के job logs में Spot 1m और Spot 5m gaps की संख्या और समय-सीमा परस्पर मेल खाती है। लेकिन यह केवल दोनों archive intervals में समान discontinuity का प्रमाण है, कारण का नहीं। कुछ gaps से पहले flat, zero-volume candles दिखती हैं; कुछ सीमाओं पर सक्रिय volume है; कई raw close-time values अपेक्षित interval end से मेल नहीं खाते। विशेष रूप से 2020-12 का close-time anomaly अभी unresolved है। इसलिए सभी missing bars को “no trade” कहना प्रमाणित नहीं है।
+
+**निर्णय:** validator को अभी न बदलें, candles न बनाएँ, और missing intervals को चुपचाप exclude न करें। अगला चरण exact UTC gap windows और anomalous rows को स्वतंत्र official Spot trade/aggregate-trade records से जाँचना है, जहाँ वे उपलब्ध हों। जब तक कारण का स्वतंत्र प्रमाण न मिले, full-history gate बंद रहेगा और walk-forward शुरू नहीं होगा। PR #17 merge नहीं करना है; live trading निषिद्ध/unauthorized है; tax scope deferred है।
+
+
+## 23 अक्टूबर 2026: official Spot aggTrades cross-check जोड़ा गया
+
+आगे की जाँच के लिए `scripts/audit_btcusdt_spot_aggtrades_in_gaps.py` बनाया गया। यह Binance के official monthly Spot BTCUSDT aggTrades ZIP और उसके SHA256 sidecar को जाँचकर 12 प्रभावित महीनों की पहले से ज्ञात exact UTC gap windows के भीतर aggregate-trade records गिनता है। यह diagnostic है; candles reconstruct/fill/drop नहीं करता। Workflow में अलग `spot-aggtrade-gap-audit` job जोड़ा गया और script को repository keep-list में सुरक्षित किया गया।
+
+Run [39970944134](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39970944134) दस्तावेज़ अपडेट के समय चल रहा था। इसलिए अभी कोई trade-count निष्कर्ष दर्ज नहीं किया जा रहा। बीच के workflow commits में escaped newline के कारण YAML/workflow failure और keep-list omission के कारण smoke failure हुए; workflow newline और keep-list को सुधारा गया। अंतिम CI status की पुष्टि बाकी है।
+
+अगला gate: नवीनतम workflow और smoke checks का परिणाम verify करना, फिर artifact/log में हर gap के trade counts पढ़ना। Zero trade count अकेले continuity validator बदलने का पर्याप्त प्रमाण नहीं है।
+
+
+## 13. 23 अक्टूबर 2026: daily Spot aggTrades cross-check पूरा
+Run [39997643479](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39997643479) में `spot-aggtrade-gap-audit` सफल हुआ। बड़े monthly archives के बजाय अब केवल उन दिनों के official daily Spot BTCUSDT aggTrades archives डाउनलोड किए गए जो ज्ञात gaps को overlap करते हैं। प्रत्येक archive का SHA256 official `.CHECKSUM` sidecar से match हुआ। सभी 12 प्रभावित महीनों के कुल 15 gap windows में parsed aggTrades rows की संख्या **0** रही। JSON report artifact `btcusdt-spot-aggtrade-gap-audit` अपलोड हुआ。
+
+इसका सीमित अर्थ है कि checksum-matching डाउनलोड किए गए daily archives में इन exact half-open UTC intervals के भीतर कोई parsed trade row नहीं मिली। इससे यह सिद्ध नहीं होता कि कोई trade हुआ ही नहीं, archive पूर्ण है, kline gaps का कारण समझ आ गया है, या 2020-12 close-time anomaly हल हो गया है। इसलिए validator fail-closed रहेगा。
+
+उसी run में full-history gate फिर विफल रहा: 243 अपेक्षित checks में 231 PASS और 12 Spot 5m monthly checks FAIL; normalized full-history dataset नहीं बना। Spot 1m diagnostic सफल हुआ। कोई candle reconstruction/filling, silent exclusion, walk-forward, PR #17 merge या live trading नहीं। Tax scope deferred है。
+
+अगला कदम: aggTrades CSV schema/row parsing को स्वतंत्र रूप से validate करना और 2020-12 के anomalous raw close-time row की जाँच करना। Validator policy को ढीला नहीं करना है।

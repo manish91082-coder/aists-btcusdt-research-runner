@@ -1,0 +1,121 @@
+name: BTCUSDT long-history archive validation
+on:
+  push:
+    branches:
+      - research/full-history-validation
+    paths:
+      - ".github/workflows/btcusdt-long-history-validation.yml"
+      - "scripts/run_btcusdt_long_history_validation.py"
+      - "scripts/audit_btcusdt_spot_1m_gap_months.py"
+      - "scripts/reconcile_btcusdt_spot_1m_5m_gaps.py"
+      - "scripts/audit_btcusdt_spot_aggtrades_in_gaps.py"
+      - "scripts/acquire_validate_btcusdt_history.py"
+      - "scripts/prepare_btcusdt_research_dataset.py"
+  workflow_dispatch:
+    inputs:
+      start_month:
+        description: Inclusive UTC month (YYYY-MM)
+        required: true
+        default: "2020-01"
+        type: string
+      end_month:
+        description: Inclusive UTC month (YYYY-MM)
+        required: true
+        default: "2026-09"
+        type: string
+permissions:
+  contents: read
+jobs:
+  long-history-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile history validators
+        run: >-
+          python -m py_compile
+          scripts/acquire_validate_btcusdt_history.py
+          scripts/prepare_btcusdt_research_dataset.py
+          scripts/run_btcusdt_long_history_validation.py
+      - name: Acquire, validate, normalize, and aggregate monthly history
+        env:
+          START_MONTH: ${{ inputs.start_month || '2020-01' }}
+          END_MONTH: ${{ inputs.end_month || '2026-09' }}
+        run: >-
+          python scripts/run_btcusdt_long_history_validation.py
+          --start-month "$START_MONTH"
+          --end-month "$END_MONTH"
+          --output-dir artifacts/btcusdt-long-history
+      - name: Publish summary
+        if: always()
+        run: |
+          if test -s artifacts/btcusdt-long-history/btc-usdt-long-history-manifest.json; then
+            python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          report = json.loads(Path("artifacts/btcusdt-long-history/btc-usdt-long-history-manifest.json").read_text())
+          print("# BTCUSDT long-history validation")
+          print(json.dumps(report["summary"], indent=2))
+          print("\nFull per-month provenance and archive hashes are in the artifact.")
+          PY
+          else
+            echo "Long-history manifest not produced. Inspect the batch report files in the artifact." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload raw archives, batch reports, combined dataset and manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btcusdt-long-history-validation
+          path: artifacts/btcusdt-long-history/
+          if-no-files-found: warn
+          retention-days: 30
+
+  spot-aggtrade-gap-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile trade-level audit
+        run: python -m py_compile scripts/audit_btcusdt_spot_aggtrades_in_gaps.py
+      - name: Cross-check official Spot aggTrades inside known gaps
+        run: python scripts/audit_btcusdt_spot_aggtrades_in_gaps.py --output-dir artifacts/btcusdt-spot-aggtrade-gap-audit
+      - name: Upload trade-level gap audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btcusdt-spot-aggtrade-gap-audit
+          path: artifacts/btcusdt-spot-aggtrade-gap-audit/
+          if-no-files-found: warn
+          retention-days: 30
+
+  spot-1m-gap-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile audit tools
+        run: python -m py_compile scripts/audit_btcusdt_spot_1m_gap_months.py scripts/reconcile_btcusdt_spot_1m_5m_gaps.py
+      - name: Audit official Spot 1m archives
+        continue-on-error: true
+        run: python scripts/audit_btcusdt_spot_1m_gap_months.py --output-dir artifacts/btcusdt-spot-1m-gap-audit
+      - name: Reconcile official Spot 1m and 5m gaps
+        run: python scripts/reconcile_btcusdt_spot_1m_5m_gaps.py --output-dir artifacts/btcusdt-spot-gap-reconciliation
+      - name: Upload raw archives and reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btcusdt-spot-1m-gap-audit
+          path: |
+            artifacts/btcusdt-spot-1m-gap-audit/
+            artifacts/btcusdt-spot-gap-reconciliation/
+          if-no-files-found: warn
+          retention-days: 30

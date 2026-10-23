@@ -33,12 +33,14 @@ scripts/probe_hd04_coingecko_source.py
 scripts/probe_hd04_candidate_archive_coverage.py
 scripts/probe_hd04_alternate_sources.py
 .github/workflows/btcusdt-multimonth-history-integrity.yml
+.github/workflows/btcusdt-long-history-validation.yml
 .github/workflows/btcusdt-full-history-collection.yml
 .github/workflows/btcusdt-supabase-upload-canary.yml
 scripts/acquire_validate_btcusdt_history.py
 scripts/prepare_btcusdt_research_dataset.py
 scripts/backtest_btcusdt_baseline.py
 scripts/backtest_btcusdt_candidate_baselines.py
+scripts/run_btcusdt_long_history_validation.py
 scripts/collect_btcusdt_full_history.py
 docs/supabase_btcusdt_history_schema.sql
 scripts/upload_btcusdt_history_to_supabase.py
@@ -55,3 +57,6 @@ execution_logs/2026-10-23-btcusdt-2020-history-canary.md
 execution_logs/2026-10-23-btcusdt-archive-coverage-inventory.md
 tests_crypto_target/test_btcusdt_supabase_uploader.py
 tests_crypto_target/test_execution_receipt.py
+scripts/audit_btcusdt_spot_1m_gap_months.py
+scripts/reconcile_btcusdt_spot_1m_5m_gaps.py
+scripts/audit_btcusdt_spot_aggtrades_in_gaps.py

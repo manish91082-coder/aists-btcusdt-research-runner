@@ -17,6 +17,8 @@ on:
       - "scripts/prepare_btcusdt_research_dataset.py"
       - "scripts/backtest_btcusdt_baseline.py"
       - "scripts/backtest_btcusdt_candidate_baselines.py"
+      - "scripts/run_btcusdt_long_history_validation.py"
+      - ".github/workflows/btcusdt-long-history-validation.yml"
       - "scripts/collect_btcusdt_full_history.py"
       - "scripts/upload_btcusdt_history_to_supabase.py"
       - "scripts/probe_btcusdt_archive_coverage.py"
@@ -38,6 +40,11 @@ on:
       - "scripts/probe_hd04_alternate_sources.py"
       - "scripts/backtest_btcusdt_candidate_baselines.py"
       - "tests_crypto_target/test_btcusdt_candidate_baselines.py"
+      - "tests_crypto_target/test_btcusdt_long_history_validation.py"
+      - "tests_crypto_target/test_btcusdt_spot_aggtrades_gap_audit.py"
+      - "scripts/audit_btcusdt_spot_aggtrades_in_gaps.py"
+      - "scripts/run_btcusdt_long_history_validation.py"
+      - ".github/workflows/btcusdt-long-history-validation.yml"
       - "scripts/acquire_validate_btcusdt_history.py"
       - "scripts/collect_btcusdt_full_history.py"
       - ".github/workflows/btcusdt-full-history-collection.yml"
@@ -101,7 +108,7 @@ jobs:
       - name: Compile HD-03 validator
         run: python -m py_compile scripts/acquire_validate_hd03.py
       - name: Compile HD-03 and HD-04 tools
-        run: python -m py_compile scripts/acquire_validate_hd03.py scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py scripts/probe_hd04_alternate_sources.py scripts/acquire_validate_btcusdt_history.py scripts/prepare_btcusdt_research_dataset.py scripts/backtest_btcusdt_baseline.py scripts/backtest_btcusdt_candidate_baselines.py scripts/collect_btcusdt_full_history.py scripts/upload_btcusdt_history_to_supabase.py scripts/probe_btcusdt_archive_coverage.py
+        run: python -m py_compile scripts/acquire_validate_hd03.py scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py scripts/probe_hd04_alternate_sources.py scripts/acquire_validate_btcusdt_history.py scripts/prepare_btcusdt_research_dataset.py scripts/backtest_btcusdt_baseline.py scripts/backtest_btcusdt_candidate_baselines.py scripts/run_btcusdt_long_history_validation.py scripts/collect_btcusdt_full_history.py scripts/upload_btcusdt_history_to_supabase.py scripts/probe_btcusdt_archive_coverage.py
       - name: Run deterministic unit tests
         run: python -m unittest discover -s tests_crypto_target -v
       - name: Write execution receipt even when checks fail
