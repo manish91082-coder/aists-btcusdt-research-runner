@@ -86,6 +86,24 @@ def main() -> int:
                 {**headers, "Content-Type": content_type, "x-upsert": "true"},
                 path.read_bytes(),
             )
+            # Read the uploaded object back before cataloging it. A successful POST alone
+            # does not prove that the durable object matches the local validated file.
+            remote_bytes = request(
+                f"{base}/storage/v1/object/{encoded_bucket}/{encoded_path}",
+                "GET",
+                headers,
+            )
+            remote_digest = hashlib.sha256(remote_bytes).hexdigest()
+            if len(remote_bytes) != size or remote_digest != digest:
+                raise RuntimeError(
+                    "read-back verification mismatch: "
+                    f"local_bytes={size} remote_bytes={len(remote_bytes)} "
+                    f"local_sha256={digest} remote_sha256={remote_digest}"
+                )
+            print(
+                f"VERIFIED {object_path} remote_bytes={len(remote_bytes)} "
+                f"sha256={remote_digest}"
+            )
             record = {
                 "object_path": object_path,
                 "file_name": path.name,
