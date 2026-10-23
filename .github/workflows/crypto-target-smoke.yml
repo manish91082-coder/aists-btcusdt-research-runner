@@ -38,6 +38,7 @@ on:
       - "scripts/probe_hd04_alternate_sources.py"
       - "scripts/backtest_btcusdt_candidate_baselines.py"
       - "tests_crypto_target/test_btcusdt_candidate_baselines.py"
+      - "CURRENT_PROJECT_KEEP_PATHS.txt"
       - "scripts/acquire_validate_btcusdt_history.py"
       - "scripts/collect_btcusdt_full_history.py"
       - ".github/workflows/btcusdt-full-history-collection.yml"
