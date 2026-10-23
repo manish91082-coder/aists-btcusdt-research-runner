@@ -27,3 +27,4 @@ scripts/probe_hd04_candidate_archive_coverage.py
 scripts/probe_hd04_alternate_sources.py
 .github/workflows/btcusdt-multimonth-history-integrity.yml
 scripts/acquire_validate_btcusdt_history.py
+scripts/prepare_btcusdt_research_dataset.py
