@@ -23,6 +23,13 @@ class TestBtcusdtHistoryValidator(unittest.TestCase):
         with self.assertRaises(ValueError):
             MODULE.month_range("2025-01", "2025-07")
 
+    def test_headerless_historical_um_archive_is_detected(self):
+        start, _ = MODULE.month_bounds_ms("2026-07")
+        rows = [candle(start + i * 300000) for i in range(8928)]
+        result = MODULE.validate_klines(rows, "2026-07", True, "um_klines")
+        self.assertFalse(result["header_present"])
+        self.assertEqual(result["rows"], 8928)
+
     def test_valid_month_grid_rejects_incomplete_month(self):
         # Validation intentionally requires a complete month, not a hand-picked sample.
         with self.assertRaisesRegex(ValueError, "expected 8928 monthly 5m candles"):
