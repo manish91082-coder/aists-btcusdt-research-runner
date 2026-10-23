@@ -39,6 +39,7 @@ def load_archive(month: str, interval: str, interval_ms: int) -> dict:
     if rows and rows[0][0].strip().lower() in ("open_time", "open_time_ms"):
         rows = rows[1:]
     times = []
+    candle_rows = []
     malformed = []
     for idx, row in enumerate(rows, 1):
         if len(row) != 12:
@@ -46,6 +47,7 @@ def load_archive(month: str, interval: str, interval_ms: int) -> dict:
             continue
         raw = int(row[0]); ts = raw // 1000 if raw >= 100_000_000_000_000 else raw
         times.append(ts)
+        candle_rows.append({"open_time_ms": ts, "open": row[1], "high": row[2], "low": row[3], "close": row[4], "volume": row[5], "close_time_raw": row[6]})
     anomalies = []
     for prev, cur in zip(times, times[1:]):
         if cur - prev != interval_ms:
@@ -59,7 +61,7 @@ def load_archive(month: str, interval: str, interval_ms: int) -> dict:
             "first_open_time_ms":times[0] if times else None,
             "last_open_time_ms":times[-1] if times else None,
             "gap_or_order_anomaly_count":len(anomalies),"first_anomalies":anomalies[:100],
-            "malformed_rows":malformed[:10]}
+            "malformed_rows":malformed[:10], "candle_rows":candle_rows}
 
 def main():
     p=argparse.ArgumentParser()
@@ -83,7 +85,19 @@ def main():
                                      "aligned_5m_bucket_start_ms":first_bucket,
                                      "aligned_5m_bucket_end_ms":last_bucket,
                                      "possible_5m_buckets_touched":max(1,(last_bucket-first_bucket)//300000+1)})
-            item.update({"spot_1m":one,"spot_5m":five,
+            def context(rows, gaps, radius=3):
+                selected = {}
+                for gap in gaps:
+                    before = gap["after_ms"]; after = gap["before_ms"]
+                    left = [r for r in rows if r["open_time_ms"] <= before][-radius:]
+                    right = [r for r in rows if r["open_time_ms"] >= after][:radius]
+                    selected[f"{before}->{after}"] = {"before_rows":left,"after_rows":right}
+                return selected
+            one_context = context(one["candle_rows"], one["first_anomalies"])
+            five_context = context(five["candle_rows"], five["first_anomalies"])
+            # Keep the report compact: retain boundary rows only, not full monthly candles.
+            one.pop("candle_rows", None); five.pop("candle_rows", None)
+            item.update({"spot_1m":one,"spot_5m":five, "boundary_context":{"spot_1m":one_context,"spot_5m":five_context},
                          "comparison":{"one_minute_gap_count":one["gap_or_order_anomaly_count"],
                                        "five_minute_gap_count":five["gap_or_order_anomaly_count"],
                                        "one_minute_row_delta":one["row_count_delta"],
