@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Probe CoinGecko exchange endpoints as independent corroboration, not exchange authority."""
 from __future__ import annotations
-import hashlib, json, os
+import hashlib, json, os, re
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
@@ -40,6 +40,20 @@ def summarize_exchange(payload: dict, name: str, url: str, sha256: str) -> dict:
     }
 
 
+def conservative_candidate_symbol(raw_symbol):
+    """Return a candidate only when an alphanumeric symbol has a recognized quote suffix."""
+    if not isinstance(raw_symbol, str):
+        return None
+    symbol = raw_symbol.strip().upper()
+    if not symbol or not re.fullmatch(r"[A-Z0-9]+", symbol):
+        return None
+    for quote in ("USDT", "USDC", "BUSD", "USD"):
+        if len(symbol) > len(quote) and symbol.endswith(quote):
+            return {"candidate_symbol": symbol, "candidate_quote_asset": quote,
+                    "mapping_rule": f"raw symbol ends with {quote}; candidate only, not exchange-verified"}
+    return None
+
+
 def summarize_derivatives_list(payload, url: str, sha256: str) -> dict:
     if not isinstance(payload, list):
         raise ValueError(f"Expected list from /derivatives, got {type(payload).__name__}")
@@ -48,21 +62,34 @@ def summarize_derivatives_list(payload, url: str, sha256: str) -> dict:
         market = str(item.get("market", ""))
         if "binance" not in market.lower() or "futures" not in market.lower():
             continue
+        raw_symbol = item.get("symbol")
+        mapping = conservative_candidate_symbol(raw_symbol)
         matches.append({
-            "market": market, "symbol": item.get("symbol"), "index_id": item.get("index_id"),
-            "price": item.get("price"), "contract_type": item.get("contract_type"),
-            "funding_rate": item.get("funding_rate"), "open_interest": item.get("open_interest"),
-            "volume_24h": item.get("volume_24h"), "last_traded_at": item.get("last_traded_at"),
-            "expired": item.get("expired"), "url": item.get("url"),
+            "market": market, "raw_symbol": raw_symbol,
+            "candidate_symbol": mapping.get("candidate_symbol") if mapping else None,
+            "candidate_quote_asset": mapping.get("candidate_quote_asset") if mapping else None,
+            "mapping_rule": mapping.get("mapping_rule") if mapping else "unmapped; preserve raw symbol and do not infer",
+            "index_id": item.get("index_id"), "price": item.get("price"),
+            "contract_type": item.get("contract_type"), "funding_rate": item.get("funding_rate"),
+            "open_interest": item.get("open_interest"), "volume_24h": item.get("volume_24h"),
+            "last_traded_at": item.get("last_traded_at"), "expired": item.get("expired"), "url": item.get("url"),
         })
+    normalized = [x["candidate_symbol"] for x in matches if x["candidate_symbol"]]
+    counts = {}
+    for symbol in normalized:
+        counts[symbol] = counts.get(symbol, 0) + 1
     return {
         "name": "all_derivatives_filtered_to_binance_futures",
         "url": url, "retrieved_utc": datetime.now(timezone.utc).isoformat(),
         "response_sha256": sha256, "total_derivative_tickers_returned": len(payload),
-        "binance_futures_matches": len(matches), "tickers": matches,
-        "coverage_note": "Filtered from CoinGecko global derivatives ticker list; aggregator coverage is not authoritative Binance contract metadata."
+        "binance_futures_matches": len(matches),
+        "candidate_symbols_unique": len(counts),
+        "candidate_symbol_duplicates": {k: v for k, v in counts.items() if v > 1},
+        "unmapped_symbol_count": sum(x["candidate_symbol"] is None for x in matches),
+        "candidate_overlap_with_verified_archive_probe": sorted(set(counts) & {"BTCUSDT"}),
+        "tickers": matches,
+        "coverage_note": "Symbol candidates are conservatively parsed from explicit quote suffixes. They are not verified Binance contract IDs; duplicate and unmapped records are retained for reconciliation."
     }
-
 
 def main() -> int:
     out = Path("artifacts/hd04")
