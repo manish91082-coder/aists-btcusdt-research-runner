@@ -247,3 +247,15 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - Next action: run the 1m audit; inspect monthly row counts, exact timestamp gaps, OHLC/close-time anomalies and checksum evidence; then decide whether a deterministic 5m reconstruction is supportable for each month.
 
 - CI maintenance note: the first smoke run after adding the 1m audit correctly caught that the new script had not yet been added to the cleanup keep-list. The script is now protected in `CURRENT_PROJECT_KEEP_PATHS.txt`; the subsequent smoke run is pending verification.
+
+
+## Independent goal-alignment audit and Spot 1m result — 23 October 2026
+
+**Decision: project direction is sound, but the historical-data gate is blocked.** Do not interpret workflow failure as a profitable-strategy failure; it is a data-integrity gate, and the validator itself still needs review.
+
+- Long-history run [39956450372](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956450372): 81 months, 243 Spot 5m / UM Futures 5m / funding checks; 231 pass, 12 fail; no full normalized dataset emitted. Raw archives/reports were uploaded as artifact [12502203715](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956450372/artifacts/12502203715).
+- Official Spot 1m audit within the same run: **0/12 passed**. All 12 monthly ZIP hashes matched their official .CHECKSUM sidecars, but all had incomplete row counts and timestamp gaps; 2020-12 additionally had one close-time anomaly. Exact row counts and gap timestamps are in the run log and artifact [12501649832](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956450372/artifacts/12501649832).
+- The 12 audited months: 2020-02 (41,346/41,760 rows, 2 gaps), 2020-03 (44,512/44,640, 1 gap), 2020-04 (43,050/43,200, 1), 2020-06 (42,990/43,200, 1), 2020-11 (43,140/43,200, 1), 2020-12 (44,350/44,640, 2 gaps + 1 close-time anomaly), 2021-02 (40,241/40,320, 1), 2021-03 (44,550/44,640, 1), 2021-04 (42,766/43,200, 2), 2021-08 (44,370/44,640, 1), 2021-09 (43,080/43,200, 1), 2023-03 (44,560/44,640, 1).
+- Smoke CI after keep-list fix [39956536485](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956536485) passed. This verifies repository checks, not archive integrity or strategy edge.
+- **Goal alignment review:** the target arithmetic/scope is consistent (1,000 USDT toward ~1,061,120.54 USDT, the dated ₹10 crore equivalent), realized-net-profit compounding is correctly defined, candidate results are honestly negative/limited, and tax remains out of scope. However, there is no demonstrated profitable edge or defensible time-to-target yet.
+- **Next action:** audit validator assumptions and inspect the exact failed source rows/gaps. Do not reconstruct, interpolate, silently omit, merge PR #17, or run walk-forward until the discrepancy is explained. Any later reconstruction must use only complete, consecutive valid 1m bars, be separately labeled/provenanced, and be reconciled against the official 5m source where available.
