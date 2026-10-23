@@ -72,6 +72,27 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+  spot-aggtrade-gap-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile trade-level audit
+        run: python -m py_compile scripts/audit_btcusdt_spot_aggtrades_in_gaps.py
+      - name: Cross-check official Spot aggTrades inside known gaps
+        run: python scripts/audit_btcusdt_spot_aggtrades_in_gaps.py --output-dir artifacts/btcusdt-spot-aggtrade-gap-audit
+      - name: Upload trade-level gap audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btcusdt-spot-aggtrade-gap-audit
+          path: artifacts/btcusdt-spot-aggtrade-gap-audit/
+          if-no-files-found: warn
+          retention-days: 30
+
   spot-1m-gap-audit:
     runs-on: ubuntu-latest
     timeout-minutes: 30
