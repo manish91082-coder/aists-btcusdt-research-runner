@@ -368,3 +368,15 @@ Research status और claims केवल verified evidence के आधार
 - सुधार के बाद run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39902158479 ; artifact id `12479226388`। कुल 10 checks में 5 PASS, 5 FAIL। OKX Spot और Swap दोनों में निश्चित एक घंटे के भीतर 12 unique, continuous 5-minute candles मिलीं। दोनों instrument metadata checks PASS हुए और Swap funding endpoint से एक row मिली। Bybit के पाँच checks पर HTTP 403 अब भी है।
 - यह केवल एक सीमित OKX BTC sample का प्रमाण है, पूरे exchange universe या पूरे historical coverage का नहीं। Bybit access issue अलग से unresolved है। Binance का authoritative HD-04 universe gate BLOCKED रहेगा। PR #13 अभी merge नहीं करना; strategy/backtest तथा live trading शुरू नहीं करना।
 - अगला कदम: OKX candle/funding fields की schema-level checks जोड़ना और Bybit 403 के लिए आधिकारिक alternate host/region/network behavior का सीमित diagnosis करना। कोई credentials या trading endpoint उपयोग नहीं होगा।
+
+
+## 38. Critical-path सुधार: broad-universe HD-04 को BTCUSDT research से अलग किया — 23 अक्टूबर 2026
+
+तुम्हारी चिंता सही थी: BTCUSDT-केंद्रित लक्ष्य में सभी Binance symbols की universe discovery पर अटकना scope drift बन सकता था। इसे स्पष्ट रूप से अलग किया गया है।
+
+- Binance `exchangeInfo` access failure वास्तविक है; इसे PASS नहीं कहेंगे। Full universe, top-N ranking और दूसरे symbols की current eligibility अभी सिद्ध नहीं हैं।
+- लेकिन इस failure को BTCUSDT historical research रोकने नहीं देंगे। `HD-04-BROAD-UNIVERSE` को DEFERRED/BLOCKED रखा जाएगा, और critical path को fixed BTCUSDT पर वापस लाया जाएगा।
+- नया अगला काम: कई महीनों/वर्षों का Binance official Spot तथा USD-M Futures monthly archive + checksum + funding history इकट्ठा करना; हर file की provenance, checksum, schema, timestamp grid, missing/duplicate bars, OHLCV integrity और coverage manifest सत्यापित करना।
+- Sep-2026 का 8,640-candle slice केवल एक महीने का है; robust strategy/backtest के लिए यह पर्याप्त नहीं। इसलिए अभी strategy ranking शुरू नहीं होगी, लेकिन data acquisition आगे बढ़ेगा।
+- OKX sample को केवल cross-check evidence मानेंगे, Binance universe का विकल्प नहीं। Bybit HTTP 403 को access failure माना जाएगा, data absence नहीं।
+- Live trading/keys/funds movement बंद हैं; profitability और target तक समय अज्ञात हैं। यह scope correction project को रोकने के बजाय measurable data coverage की ओर ले जाती है।
