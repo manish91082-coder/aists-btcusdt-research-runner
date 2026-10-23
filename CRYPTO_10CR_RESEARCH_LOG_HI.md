@@ -496,3 +496,15 @@ Research status और claims केवल verified evidence के आधार
 - Current result: 1m audit code added, runtime report pending. The 12 failed 5m archives remain unresolved; no strategy evaluation or profitability inference is permitted from the incomplete long-history dataset.
 
 - CI caught a missing keep-list entry for the newly added audit script; added it to `CURRENT_PROJECT_KEEP_PATHS.txt`. Awaiting the next smoke CI result.
+
+
+## लक्ष्य-प्रगति और डेटा-गुणवत्ता की स्वतंत्र समीक्षा — 23 अक्टूबर 2026
+
+**निर्णय:** शोध का क्रम सही है; अभी data gate BLOCKED है। इस workflow failure को strategy failure या strategy success न समझें। यह historical-data integrity की समस्या है, और validator assumptions की स्वतंत्र समीक्षा भी आवश्यक है।
+
+- Full-history run [39956450372](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956450372): 81 महीनों में 243 archive checks में 231 PASS, 12 FAIL; aggregate normalized dataset नहीं बना। Raw archives और reports artifact [12502203715](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956450372/artifacts/12502203715) में हैं।
+- उन्हीं 12 महीनों का official Spot 1m audit: **0/12 PASS**। सभी ZIP के SHA-256 official .CHECKSUM से match हुए, पर सभी में row-count कमी और timestamp gaps मिले; 2020-12 में एक close-time anomaly भी मिला। Logs/artifact [12501649832](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956450372/artifacts/12501649832) में विवरण है।
+- महीनेवार rows: 2020-02 41,346/41,760 (2 gaps); 2020-03 44,512/44,640 (1); 2020-04 43,050/43,200 (1); 2020-06 42,990/43,200 (1); 2020-11 43,140/43,200 (1); 2020-12 44,350/44,640 (2 gaps, 1 close-time anomaly); 2021-02 40,241/40,320 (1); 2021-03 44,550/44,640 (1); 2021-04 42,766/43,200 (2); 2021-08 44,370/44,640 (1); 2021-09 43,080/43,200 (1); 2023-03 44,560/44,640 (1)।
+- Keep-list fix के बाद smoke CI [39956536485](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956536485) PASS हुआ। यह repository checks का प्रमाण है, market-data integrity या trading edge का नहीं।
+- Goal-alignment audit: सही लक्ष्य 1,000 USDT से लगभग 1,061,120.54 USDT (dated ₹10 करोड़ equivalent) है; hourly compounding realized net profit को पुनर्निवेश करने का अर्थ रखता है, हर घंटे trade करना नहीं। प्रारंभिक candidates के negative परिणाम ईमानदारी से दर्ज हैं। Profitable edge और लक्ष्य तक समय अभी **UNKNOWN** हैं; tax/TDS scope से बाहर है।
+- अगला कदम: validator assumptions और failed source rows/gaps की समीक्षा। अभी कोई reconstruction, interpolation, silent omission, PR #17 merge या walk-forward नहीं। बाद में reconstruction तभी जब सभी constituent 1m bars मौजूद, consecutive और valid हों; provenance अलग रखी जाए और जहाँ संभव हो official 5m source से तुलना हो।
