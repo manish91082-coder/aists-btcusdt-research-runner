@@ -563,3 +563,12 @@ GitHub Actions run [39968448783](https://github.com/manish91082-coder/aists-btcu
 सभी 12 प्रभावित महीनों के job logs में Spot 1m और Spot 5m gaps की संख्या और समय-सीमा परस्पर मेल खाती है। लेकिन यह केवल दोनों archive intervals में समान discontinuity का प्रमाण है, कारण का नहीं। कुछ gaps से पहले flat, zero-volume candles दिखती हैं; कुछ सीमाओं पर सक्रिय volume है; कई raw close-time values अपेक्षित interval end से मेल नहीं खाते। विशेष रूप से 2020-12 का close-time anomaly अभी unresolved है। इसलिए सभी missing bars को “no trade” कहना प्रमाणित नहीं है।
 
 **निर्णय:** validator को अभी न बदलें, candles न बनाएँ, और missing intervals को चुपचाप exclude न करें। अगला चरण exact UTC gap windows और anomalous rows को स्वतंत्र official Spot trade/aggregate-trade records से जाँचना है, जहाँ वे उपलब्ध हों। जब तक कारण का स्वतंत्र प्रमाण न मिले, full-history gate बंद रहेगा और walk-forward शुरू नहीं होगा। PR #17 merge नहीं करना है; live trading निषिद्ध/unauthorized है; tax scope deferred है।
+
+
+## 23 अक्टूबर 2026: official Spot aggTrades cross-check जोड़ा गया
+
+आगे की जाँच के लिए `scripts/audit_btcusdt_spot_aggtrades_in_gaps.py` बनाया गया। यह Binance के official monthly Spot BTCUSDT aggTrades ZIP और उसके SHA256 sidecar को जाँचकर 12 प्रभावित महीनों की पहले से ज्ञात exact UTC gap windows के भीतर aggregate-trade records गिनता है। यह diagnostic है; candles reconstruct/fill/drop नहीं करता। Workflow में अलग `spot-aggtrade-gap-audit` job जोड़ा गया और script को repository keep-list में सुरक्षित किया गया।
+
+Run [39970944134](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39970944134) दस्तावेज़ अपडेट के समय चल रहा था। इसलिए अभी कोई trade-count निष्कर्ष दर्ज नहीं किया जा रहा। बीच के workflow commits में escaped newline के कारण YAML/workflow failure और keep-list omission के कारण smoke failure हुए; workflow newline और keep-list को सुधारा गया। अंतिम CI status की पुष्टि बाकी है।
+
+अगला gate: नवीनतम workflow और smoke checks का परिणाम verify करना, फिर artifact/log में हर gap के trade counts पढ़ना। Zero trade count अकेले continuity validator बदलने का पर्याप्त प्रमाण नहीं है।
