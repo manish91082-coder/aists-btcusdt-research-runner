@@ -526,3 +526,11 @@ Research status और claims केवल verified evidence के आधार
 - सभी month statuses `INSPECT` हैं, PASS नहीं। रिपोर्ट descriptive span comparison है; candles synthesize या exclude नहीं हुईं। 2020-12 का close-time anomaly अलग से unresolved है।
 - उसी workflow का `long-history-validation` job इस status update के समय अभी `in_progress` था; उसके अंतिम परिणाम का दावा नहीं किया जा रहा।
 - **अगला gate:** exact gap boundaries पर raw 1m/5m rows और validator assumptions को official Binance kline semantics के विरुद्ध जाँचना। जब तक कारण समझ में न आए, reconstruction/interpolation, silent omission, incomplete aggregate पर walk-forward, PR #17 merge और live trading नहीं।
+
+
+## Raw gap-boundary inspection instrumentation (23 अक्टूबर 2026)
+
+- Reconciliation run [39957820308](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39957820308) का diagnostic job SUCCESS हुआ, लेकिन उसी run का अलग `long-history-validation` job अंततः FAILURE हुआ। Data gate BLOCKED ही है; aggregate या backtest को मंजूरी नहीं मिली।
+- `scripts/reconcile_btcusdt_spot_1m_5m_gaps.py` को बदला ताकि detected discontinuities के आसपास Spot 1m और Spot 5m की raw OHLCV boundary rows report में आएँ। यह diagnostic ही है; कोई candle reconstruct नहीं होती और root cause अभी सिद्ध नहीं होता।
+- नया commit `397f2aa8a5d78dc5dd6fa061e82f45275b540058`; Actions run [39959416562](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39959416562) update के समय QUEUED था; runtime evidence pending है।
+- अगला निर्णय नई report में boundary timestamps और validator assumptions की जाँच के बाद होगा। कोई reconstruction/interpolation, silent omission या incomplete history पर walk-forward नहीं; PR #17 unmerged और live trading unauthorized है।
