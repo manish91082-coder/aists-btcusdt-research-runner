@@ -508,3 +508,12 @@ Research status और claims केवल verified evidence के आधार
 - Keep-list fix के बाद smoke CI [39956536485](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956536485) PASS हुआ। यह repository checks का प्रमाण है, market-data integrity या trading edge का नहीं।
 - Goal-alignment audit: सही लक्ष्य 1,000 USDT से लगभग 1,061,120.54 USDT (dated ₹10 करोड़ equivalent) है; hourly compounding realized net profit को पुनर्निवेश करने का अर्थ रखता है, हर घंटे trade करना नहीं। प्रारंभिक candidates के negative परिणाम ईमानदारी से दर्ज हैं। Profitable edge और लक्ष्य तक समय अभी **UNKNOWN** हैं; tax/TDS scope से बाहर है।
 - अगला कदम: validator assumptions और failed source rows/gaps की समीक्षा। अभी कोई reconstruction, interpolation, silent omission, PR #17 merge या walk-forward नहीं। बाद में reconstruction तभी जब सभी constituent 1m bars मौजूद, consecutive और valid हों; provenance अलग रखी जाए और जहाँ संभव हो official 5m source से तुलना हो।
+
+
+## अगला क्रमबद्ध कदम शुरू — official Spot 1m/5m gap reconciliation (23 अक्टूबर 2026)
+
+- निर्णय: अभी candles reconstruct नहीं करनी हैं। 12 checksum-valid Spot 1m archives में strict one-row-per-minute नियम के अनुसार gaps हैं; इससे अकेले यह साबित नहीं होता कि archive में bars छूटे हैं या validator की continuity assumption गलत है।
+- `scripts/reconcile_btcusdt_spot_1m_5m_gaps.py` जोड़ी गई। यह 12 प्रभावित महीनों के official Spot 1m और 5m ZIP अलग-अलग डाउनलोड करती है, official SHA-256 sidecar verify करती है, row counts और timestamp discontinuities निकालती है तथा exact gap spans तुलना के लिए दर्ज करती है।
+- Script को `CURRENT_PROJECT_KEEP_PATHS.txt` में सुरक्षित किया और workflow से जोड़ा। 1m audit के known gaps पर fail होने के बावजूद workflow अब reconciliation चलाएगा और दोनों reports artifact में रखेगा।
+- YAML review के दौरान artifact path में formatting गलती मिली और ठीक की गई। अंतिम workflow commit: `d6d2237067d9fd693eae6decade6fdcc733f0187`; runtime verification अभी pending है।
+- **Gate BLOCKED है:** कोई candle fill/reconstruct नहीं हुई, कोई failed month चुपचाप omit नहीं हुआ, full-history walk-forward नहीं चला और PR #17 merge नहीं हुआ। अगला निर्णय exact 1m बनाम 5m gap evidence के बाद होगा।
