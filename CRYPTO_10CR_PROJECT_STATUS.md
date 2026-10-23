@@ -277,3 +277,11 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - The diagnostic output labels all months `INSPECT`; it does not certify data integrity. It is a descriptive span comparison and does not synthesize or exclude candles. 2020-12 still has the previously observed 1m close-time anomaly.
 - The separate `long-history-validation` job in run 39957820308 was still in progress at the time this update was written; no final full-history result is claimed from that run.
 - **Next gate:** inspect raw 1m/5m rows around exact gap boundaries and audit validator assumptions against official Binance kline semantics. No reconstruction/interpolation, no silent omission, no walk-forward on incomplete aggregates, no PR #17 merge, no live trading.
+
+
+## Raw gap-boundary inspection instrumentation (23 October 2026)
+
+- The completed reconciliation run [39957820308](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39957820308) confirms the diagnostic completed, but the separate `long-history-validation` job ultimately failed again. This preserves the blocked data gate; no aggregate/backtest approval follows.
+- Updated `scripts/reconcile_btcusdt_spot_1m_5m_gaps.py` to include raw OHLCV rows immediately around detected timestamp discontinuities for both Spot 1m and Spot 5m, while retaining the descriptive-only policy. The report is intended to expose boundary context, not reconstruct candles or prove root cause.
+- New commit: `397f2aa8a5d78dc5dd6fa061e82f45275b540058`. GitHub Actions run [39959416562](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39959416562) was queued when recorded; runtime output is pending.
+- Next decision depends on reviewing the new report, checking 1m/5m boundary timestamps and auditing validator assumptions. No reconstruction/interpolation, no silent omission, no walk-forward on incomplete history, PR #17 remains unmerged, and live trading remains unauthorized.
