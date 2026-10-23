@@ -79,3 +79,13 @@ Execution records:
 - Hardened `scripts/probe_hd04_archive_sources.py` to distinguish header rows from data rows and require exactly 8,640 Spot candles, 8,640 USD-M Futures candles, and 90 funding rows for the September 2026 probe, in addition to official ZIP checksum matches.
 - Smoke CI passed on the exact commit: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39887371687.
 - This change has not yet been rerun through the HD-04 workflow. Next: run the updated archive probe through HD-04 and confirm row-count assertions, then focus solely on a verifiable source for current product listings and separate Spot/Futures volume rankings. HD-04 remains BLOCKED until those are evidenced.
+
+
+## HD-04 rerun after archive-row validation hardening (23 October 2026)
+
+- Run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39887437784
+- Exact tested commit: `986479a2bea5f5ae645b17cfb5feda3ceebcec07`.
+- Archive probe: PASS; all 3 expected checksum, header-shape and data-row-count assertions passed (Spot 8,640; USD-M Futures 8,640; funding 90).
+- Compile and deterministic eligibility tests: PASS.
+- Current universe snapshot: FAIL at official USD-M Futures `/fapi/v1/exchangeInfo`; response was not parseable JSON across the configured official hosts. Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39887437784/artifacts/12473615465.
+- HD-04 remains BLOCKED. Next research task: test an independent venue-pair discovery source (e.g. CoinGecko exchange/derivatives listings) as a corroborating cross-check, while preserving Binance's own listing/status metadata as the required exchange-specific authority. Do not treat an aggregated source as a replacement for exact Binance tradability or Futures contract metadata.
