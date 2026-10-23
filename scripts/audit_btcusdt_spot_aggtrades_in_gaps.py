@@ -62,6 +62,7 @@ def inspect(month: str) -> dict:
             rows_seen = 0
             timestamps_seen = 0
             previous_t = None
+            hourly_counts = [0] * 24
             day_lo = ms(day + "T00:00:00Z")
             day_hi = day_lo + 86_400_000
             for row_number, row in enumerate(rows, start=1):
@@ -78,6 +79,7 @@ def inspect(month: str) -> dict:
                 previous_t = t
                 rows_seen += 1
                 timestamps_seen += 1
+                hourly_counts[(t - day_lo) // 3_600_000] += 1
                 for g,(a,b) in zip(per_gap,windows):
                     lo,hi=ms(a),ms(b)
                     if lo <= t < hi:
@@ -89,8 +91,13 @@ def inspect(month: str) -> dict:
                             g["last_trade_utc"]=stamp
         if rows_seen == 0 or timestamps_seen != rows_seen:
             raise ValueError(f"empty or incompletely parsed aggTrades archive for {day}: rows={rows_seen}, timestamps={timestamps_seen}")
+        zero_trade_hours = [i for i, count in enumerate(hourly_counts) if count == 0]
         checks.append({"date_utc":day,"url":url,"sha256":digest,"checksum_matches":True,
-                       "rows_parsed":rows_seen,"timestamp_rows_validated":timestamps_seen})
+                       "rows_parsed":rows_seen,"timestamp_rows_validated":timestamps_seen,
+                       "first_timestamp_ms":day_lo if rows_seen else None,
+                       "last_timestamp_ms":previous_t if rows_seen else None,
+                       "hourly_row_counts_utc":hourly_counts,
+                       "zero_trade_hours_utc":zero_trade_hours})
     return {"month":month,"status":"PASS","daily_archives_checked":checks,
             "gaps":per_gap,
             "interpretation_limit":"A positive trade count proves trades occurred inside the interval. Zero counts require checking archive coverage and boundary semantics; they do not by themselves authorize candle reconstruction."}
