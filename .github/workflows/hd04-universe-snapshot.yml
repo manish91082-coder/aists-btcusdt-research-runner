@@ -6,6 +6,7 @@ on:
     paths:
       - "scripts/build_hd04_universe_snapshot.py"
       - "scripts/probe_hd04_archive_sources.py"
+      - "scripts/probe_hd04_coingecko_source.py"
       - "tests_crypto_target/test_hd04_universe.py"
       - ".github/workflows/hd04-universe-snapshot.yml"
   workflow_dispatch:
@@ -23,13 +24,17 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile snapshot builders
-        run: python -m py_compile scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py
+        run: python -m py_compile scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py scripts/probe_hd04_coingecko_source.py
       - name: Run deterministic eligibility tests
         run: python -m unittest tests_crypto_target.test_hd04_universe -v
       - name: Probe official Spot/Futures monthly archives and funding-rate history
         id: archive_probe
         continue-on-error: true
         run: python scripts/probe_hd04_archive_sources.py
+      - name: Probe independent CoinGecko Spot and derivatives exchange data
+        id: coingecko_probe
+        continue-on-error: true
+        run: python scripts/probe_hd04_coingecko_source.py
       - name: Capture public exchange metadata, independent Spot/Futures volume rankings and funding coverage
         id: snapshot
         continue-on-error: true
