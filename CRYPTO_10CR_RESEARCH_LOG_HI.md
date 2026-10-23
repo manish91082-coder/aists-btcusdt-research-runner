@@ -294,3 +294,11 @@ Research status और claims केवल verified evidence के आधार
 - Spot reported volume BTC में है और ticker sample में USDC/USDT सहित अलग-अलग quote pairs आते हैं। इसे Binance per-symbol USDT quoteVolume ranking समझना गलत होगा।
 - अगला छोटा सुधार: script commit `385d3dd7437ce9516f9e1a2168bac9e20db8a117` में global `/derivatives` endpoint से सभी returned derivative tickers लेकर Binance Futures label से filter करना जोड़ा है। इसका परिणाम नए workflow run के बाद ही माना जाएगा।
 - उसी run में official Binance Futures `exchangeInfo` snapshot फिर विफल हुआ। HD-04 BLOCKED; कोई strategy/backtest या profitability claim नहीं।
+
+
+## 30. CoinGecko global derivatives list से 823 Binance Futures candidate records — 23 अक्टूबर 2026
+- Workflow run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39888143324; tested commit `385d3dd7437ce9516f9e1a2168bac9e20db8a117`.
+- CoinGecko probe के 3/3 endpoints सफल हुए। Spot exchange endpoint ने 100 tickers दिए; Binance Futures exchange-detail endpoint ने 0 pair tickers दिए; global `/derivatives` endpoint ने 27,951 records दिए, जिनमें market label में Binance और Futures दोनों आने वाले 823 records मिले।
+- 823 को अभी **candidate records** ही माना जाएगा, verified full Binance contract universe नहीं। Aggregator coverage incomplete हो सकती है; contract status और official listing के लिए Binance authority अलग से चाहिए।
+- इसी workflow में primary official Binance USD-M Futures `exchangeInfo` snapshot फिर विफल रहा, इसलिए HD-04 BLOCKED है।
+- अगला कदम: CoinGecko candidate records को timestamp/hash के साथ अलग slice के रूप में संरक्षित करना, symbol mapping को conservative रखना, historical archive symbol coverage से overlap निकालना और primary exchange-status source को अलग resolve करना। कोई strategy/backtest निष्कर्ष नहीं।
