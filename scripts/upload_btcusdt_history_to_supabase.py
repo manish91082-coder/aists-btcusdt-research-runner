@@ -32,7 +32,8 @@ def request(url: str, method: str, headers: dict[str, str], data: bytes | None =
 
 def classify(path: Path) -> tuple[str, str | None]:
     name = path.name
-    # Month must come from the filename, never from a parent directory/prefix.\n    match = re.search(r"(20\d{2}-\d{2})", name)
+    # Month must come from the filename, never from a parent directory/prefix.
+    match = re.search(r"(20\d{2}-\d{2})", name)
     month = match.group(1) if match else None
     if "funding" in name.lower():
         dataset = "um_funding_rate"
