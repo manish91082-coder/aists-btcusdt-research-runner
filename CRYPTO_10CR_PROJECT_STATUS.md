@@ -2,8 +2,8 @@
 
 **Last updated:** 23 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
-**Branch:** `main`  
-**Current phase:** HD-03 passed for the initial BTCUSDT slice; HD-04 universe snapshot remains blocked by current Futures API response issues. The official archive probe verified three historical files; its validation now explicitly checks expected CSV header shape and data-row counts. Smoke CI passed on commit `1197e7592c79b0f4cf8440af5bf8f59a74690bdc`.
+**Working branch:** `research/candidate-baselines-clean` (draft [PR #16](https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/16); not merged)  
+**Current phase:** HD-03 initial slice passed; HD-04 broad-universe snapshot remains blocked. Multi-month BTCUSDT history for July-September 2026 passed integrity/normalization. Initial cost-aware Spot candidate baselines have been run and both produced negative net returns under illustrative costs. Smoke CI passed on [run 39947277912](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947277912); candidate run [39947263184](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184).
 
 ## Executive status
 
@@ -14,7 +14,7 @@
 | Compounding/target math helpers | **Implemented** | Deterministic arithmetic helpers exist; they are not a trade signal or strategy. |
 | Helpers, docs and allowlist checks | **Passed** | [Latest GitHub Actions run](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817387843): Python compile passed, required-doc checks passed, 21/21 tracked paths protected, 0 deletion candidates, and 5 unit tests passed. |
 | HD-03 September 2026 BTCUSDT 5m Spot/Futures slice | **PASS, scope-limited** | 8,640 candles each, zero reported integrity anomalies, Binance sidecar checksums match; see execution log and run artifact. |
-| Cost-aware strategy backtest | **Not run** | No market-data performance result exists for this workstream. |
+| Cost-aware baseline and initial candidates | **Run; no edge established** | Jul-Sep 2026, 26,496 aligned 5m rows. Buy-and-hold benchmark +42.19%; SMA 12/48 candidate -68.03%, mean-reversion z48 candidate -58.94% under illustrative costs. Same sample is not an untouched holdout. |
 | Profitable strategy / time to target | **Not established / unknown** | No forecast or profit guarantee is justified. |
 | Live exchange access, orders, funds movement | **Not authorized** | Research only. |
 | Tax/TDS analysis | **Deferred** | Outside current scope until explicitly reopened. |
@@ -35,7 +35,7 @@ The intended system must dynamically decide trade/no-trade, market/direction, st
 - Added a GitHub Actions smoke-test workflow.
 - Added guarded repository-cleanup tooling, then completed and verified the current-thread-only cleanup.
 - Recreated a current README, added the detailed project charter, and aligned the master research log, status, keep-list and cleanup utility.
-- Preserved the current research source, tests, workflow and execution records. The cleanup did not erase Git history or other branches.
+- Preserved the current research source, tests, workflow and execution records. The cleanup did not erase Git history or other branches.\n- Added deterministic long/flat Spot candidate baselines (SMA trend and trailing z-score mean reversion), explicit next-open fills/cost assumptions, output verification, and unit tests. The work remains in draft PR #16 pending review/merge.
 
 Execution records:
 - [Cleanup outcome and verification](execution_logs/2026-10-22-cleanup-final-verification.md)
@@ -51,7 +51,7 @@ Execution records:
 5. **Forward validation:** paper/forward observations before any discussion of a live stage.
 6. **Explicit authorization:** live actions remain disabled unless separately requested and reviewed.
 
-## Latest plan/CI verification
+## Latest candidate-baseline evidence (23 October 2026)\n- Multi-month run [39947263184](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184) succeeded on 26,496 aligned BTCUSDT 5m rows (July-September 2026); 276 funding events were retained in the normalized dataset. Candidate output verifier passed and both equity curves contain 26,496 rows. [Artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184/artifacts/12498676912).\n- Under illustrative fee 10 bps/fill, full spread 2 bps, and slippage 5 bps/fill: SMA 12/48 net return -68.03%, max drawdown -68.52%, 742 fills; mean-reversion z48 net return -58.94%, max drawdown -59.48%, 652 fills. These are in-sample initial candidate results, not out-of-sample evidence or recommendations.\n- Smoke CI [39947277912](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947277912) passed after fixing and testing final-equity curve consistency. Detailed log: [candidate-baseline execution record](execution_logs/2026-10-23-btcusdt-candidate-baselines-initial.md).\n\n## Latest plan/CI verification
 - End-to-end plan: `END_TO_END_EXECUTION_PLAN_HI.md`.
 - CI: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39822482423 — `success`, tested commit `a2450df4c76fb2e88b92a14432f50d81c7bb24a1`.
 - Python compilation, required plan/target checks, keep-list dry-run and 5/5 unit tests passed. This verifies repository checks only, not market data or trading edge.
