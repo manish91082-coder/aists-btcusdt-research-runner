@@ -325,3 +325,11 @@ Research status और claims केवल verified evidence के आधार
 - HTTP 404 को केवल `NOT_AVAILABLE_OR_NOT_LISTED` दर्ज किया जाता है। इससे यह निष्कर्ष नहीं निकलेगा कि symbol कभी listed नहीं था या वर्तमान में inactive है। Checksum match archive-object integrity बताता है, candle schema/continuity नहीं।
 - Unit tests में unique USDT filtering, volume ranking और deterministic tie-break जोड़े; script को keep-list और HD-04 Actions workflow में जोड़ा।
 - अगली कार्रवाई: workflow artifact में परिणाम और logs देखना। HD-04 तब तक BLOCKED है जब तक आधिकारिक Binance Futures `exchangeInfo` snapshot सफल व पर्याप्त न हो। कोई strategy backtest, profitability claim या live trade इस probe से अधिकृत नहीं होता।
+
+
+## 33. Candidate archive probe सफल; आधिकारिक current-universe gate अब भी BLOCKED — 23 अक्टूबर 2026
+- HD-04 workflow run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39890523651; tested commit `c14041b7398b40e9406c8857493d1c3e59067c69`.
+- Compile, deterministic eligibility tests, official monthly archive probe, CoinGecko corroboration और bounded candidate archive coverage probe सभी सफल हुए। Coverage report artifact `hd04-market-universe-39890523651` में सुरक्षित है: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39890523651/artifacts/12474726467 (SHA-256: `d1898d7fe5530346380dff22497118fc0623a7339a520f0c36b1c131efb00f28`).
+- 10 candidates × Spot/Futures = 20 archive checks: 14 ZIP और official `.CHECKSUM` matches; 6 HTTP 404 को `NOT_AVAILABLE_OR_NOT_LISTED` दर्ज किया गया; network/other errors 0। Candidates: BTCUSDT, ETHUSDT, SOXLUSDT, XAUUSDT, SNDKUSDT, ZECUSDT, SKHYNIXUSDT, KORUUSDT, SPCXUSDT, SOLUSDT। ये CoinGecko-derived candidates हैं, आधिकारिक active Binance listing का प्रमाण नहीं।
+- पूरा workflow फिर भी FAILURE है, क्योंकि `https://fapi.binance.com/fapi/v1/exchangeInfo` से valid JSON नहीं मिला। विफलता `scripts/build_hd04_universe_snapshot.py` में primary metadata fetch पर हुई। इसे candidate archive probe की विफलता न समझें; primary current-universe source अभी unresolved है।
+- अगला कदम: official current-contract metadata source/access को अलग से diagnose करना। Completeness gate ढीला नहीं करना, CoinGecko candidates को official listings नहीं मानना, और HD-04 पास घोषित नहीं करना। Strategy/backtest, profitability claim तथा live trading gate बंद हैं।
