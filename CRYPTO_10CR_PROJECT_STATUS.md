@@ -197,3 +197,17 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - The existing September 2026 slice proves only one month of 5-minute BTCUSDT data and is insufficient by itself for a robust backtest. Expand history before strategy evaluation.
 - OKX probe evidence is a data-source cross-check only; it cannot establish Binance's current universe. Bybit HTTP 403 is an access failure from the runner, not evidence of missing data.
 - No live trading, credentials, or funds movement. No profitability/time-to-target claim. Strategy evaluation begins only after a sufficiently broad, integrity-checked BTCUSDT history and explicit cost model exist.
+
+
+## Execution logging rule (standing requirement)
+
+- Every script/workflow action that reads, validates, transforms, uploads, or writes research data must leave a traceable execution record in GitHub.
+- Each run record must identify UTC start/end, repository, commit SHA, Actions run ID/attempt, requested inputs, per-step status, exit code, counts/bytes/checksums where applicable, skipped steps and reasons, and output/manifest paths.
+- Store detailed console output and machine-readable manifests in the run artifact; write a concise summary to the GitHub Actions Step Summary. Read these logs before reporting a run result. Never log API keys, service-role keys, tokens, or other secrets.
+- For BTCUSDT full-history collection, this is implemented in commit [bbabd2c1e1e1302c389d8e75ee95205341724b7c](https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/bbabd2c1e1e1302c389d8e75ee95205341724b7c): execution.log plus btc-usdt-archive-collection-manifest.json are retained with the GitHub artifact for 30 days; the Actions Step Summary links to the run and names the outputs. This logging change is committed but not yet runtime-verified. Durable logs must later be retained in private Supabase Storage only after a canary confirms configuration and upload success.
+
+## Immediate verification status
+
+- Binance connector is available in this conversation and can help with live market snapshots, klines, order book, funding and secondary cross-checks. For long-range reproducible historical acquisition, continue to treat official Binance archive ZIPs and their .CHECKSUM sidecars as the primary source; connector availability does not itself verify archive history.
+- The full-history collection workflow remains manual-dispatch only on the research branch. Do not claim that it has executed or that Supabase persistence is active until an actual Actions run log and uploaded object/catalog evidence are inspected.
+- Live trading, order placement and funds movement remain unauthorized.
