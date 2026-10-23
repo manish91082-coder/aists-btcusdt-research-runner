@@ -572,3 +572,13 @@ GitHub Actions run [39968448783](https://github.com/manish91082-coder/aists-btcu
 Run [39970944134](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39970944134) दस्तावेज़ अपडेट के समय चल रहा था। इसलिए अभी कोई trade-count निष्कर्ष दर्ज नहीं किया जा रहा। बीच के workflow commits में escaped newline के कारण YAML/workflow failure और keep-list omission के कारण smoke failure हुए; workflow newline और keep-list को सुधारा गया। अंतिम CI status की पुष्टि बाकी है।
 
 अगला gate: नवीनतम workflow और smoke checks का परिणाम verify करना, फिर artifact/log में हर gap के trade counts पढ़ना। Zero trade count अकेले continuity validator बदलने का पर्याप्त प्रमाण नहीं है।
+
+
+## 13. 23 अक्टूबर 2026: daily Spot aggTrades cross-check पूरा
+Run [39997643479](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39997643479) में `spot-aggtrade-gap-audit` सफल हुआ। बड़े monthly archives के बजाय अब केवल उन दिनों के official daily Spot BTCUSDT aggTrades archives डाउनलोड किए गए जो ज्ञात gaps को overlap करते हैं। प्रत्येक archive का SHA256 official `.CHECKSUM` sidecar से match हुआ। सभी 12 प्रभावित महीनों के कुल 15 gap windows में parsed aggTrades rows की संख्या **0** रही। JSON report artifact `btcusdt-spot-aggtrade-gap-audit` अपलोड हुआ。
+
+इसका सीमित अर्थ है कि checksum-matching डाउनलोड किए गए daily archives में इन exact half-open UTC intervals के भीतर कोई parsed trade row नहीं मिली। इससे यह सिद्ध नहीं होता कि कोई trade हुआ ही नहीं, archive पूर्ण है, kline gaps का कारण समझ आ गया है, या 2020-12 close-time anomaly हल हो गया है। इसलिए validator fail-closed रहेगा。
+
+उसी run में full-history gate फिर विफल रहा: 243 अपेक्षित checks में 231 PASS और 12 Spot 5m monthly checks FAIL; normalized full-history dataset नहीं बना। Spot 1m diagnostic सफल हुआ। कोई candle reconstruction/filling, silent exclusion, walk-forward, PR #17 merge या live trading नहीं। Tax scope deferred है。
+
+अगला कदम: aggTrades CSV schema/row parsing को स्वतंत्र रूप से validate करना और 2020-12 के anomalous raw close-time row की जाँच करना। Validator policy को ढीला नहीं करना है।
