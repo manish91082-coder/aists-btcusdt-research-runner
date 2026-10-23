@@ -18,6 +18,7 @@ execution_logs/
 .github/workflows/hd03-data-integrity.yml
 scripts/acquire_validate_hd03.py
 tests_crypto_target/test_hd03_data.py
+tests_crypto_target/test_btcusdt_full_history_collector.py
 .github/workflows/hd04-universe-snapshot.yml
 .github/workflows/hd04-alternate-source-probe.yml
 scripts/build_hd04_universe_snapshot.py
