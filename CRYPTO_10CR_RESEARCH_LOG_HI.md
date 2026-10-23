@@ -410,3 +410,14 @@ Research status और claims केवल verified evidence के आधार
 - Corrected the keep-list in commit [159f593a6052e31b06042e7217437e9637a03752](https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/159f593a6052e31b06042e7217437e9637a03752). Rerun [39920787299](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39920787299) passed: 59 tracked files, 59 protected, zero deletion candidates, 34 tests passed in 0.360 seconds.
 - The run records and inspected logs are preserved in `execution_logs/2026-10-23-archive-canary-workflow-allowlist-ci.md`.
 - Important: the commit-associated successful run was smoke CI, not the archive canary. Actual archive acquisition remains UNVERIFIED. Workflow dispatch availability is not confirmed because this workflow is only on the feature branch; do not merge PR #13 or write to Supabase to bypass the gate.
+
+
+## BTCUSDT one-month archive canary: first end-to-end source validation (23 October 2026)
+
+- Successful GitHub Actions run: [39921734599](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921734599), job archive-canary completed SUCCESS on commit e99f9a5ca905fc146a3a14e31f47c553461b068c.
+- UTC runtime observed in job log: 08:01:34–08:01:40. Python 3.12.15. Requested only 2026-09.
+- Actual outcome: 3 archives PASS, 0 UNAVAILABLE, 0 FAIL; total archive bytes 3,852,025. Spot 1m: 2,054,117 bytes, SHA-256 7a021fb5981cfdb1a56457d68fa81360ab27350c981ddfe63112b2322df44b56. USDⓈ-M Futures 1m: 1,796,984 bytes, SHA-256 e1a821b5bf6b48d57da01c3e390b8a467a698155def5c18c2c63c0eb044a3247. UM funding: 924 bytes, SHA-256 913cd31b8f924a06717a2fac17f3df6132c24ccded209eb3e4ae7d83e1b247f2.
+- The first canary run [39921614983](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921614983) failed because the Futures CSV contains an open_time header. The log exposed the exact issue. Collector fix at e99f9a5ca905fc146a3a14e31f47c553461b068c now handles a valid 12-column header; a regression test was added in 5a6441b7c45e287bba891f0f4172fc76023f775f. Smoke CI [39921757171](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921757171) passed.
+- Artifact: [canary logs, manifest and raw archives](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921734599/artifacts/12487337672), artifact ID 12487337672, 3,855,719 bytes, retention 30 days.
+- Detailed execution record: execution_logs/2026-10-23-btcusdt-one-month-archive-canary.md.
+- Scope boundary: this is a real PASS for the three requested September 2026 archives only. Supabase writes were explicitly NOT ATTEMPTED. Long-history coverage, permanent storage and trading strategy performance remain unverified.
