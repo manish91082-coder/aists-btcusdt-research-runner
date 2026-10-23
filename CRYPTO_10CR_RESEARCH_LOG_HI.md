@@ -278,3 +278,11 @@ Research status और claims केवल verified evidence के आधार
 - Universe snapshot: FAIL। `https://fapi.binance.com/fapi/v1/exchangeInfo` सहित configured official hosts से response JSON parse नहीं हुआ। Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39887437784/artifacts/12473615465.
 - निर्णय: HD-04 BLOCKED रहेगा। अगला शोध कार्य CoinGecko के exchange/derivatives pair listings को independent corroboration के रूप में जाँचना है; यह aggregated listing Binance के अपने current tradability status, contract metadata या volume ranking का स्वतः विकल्प नहीं है। इन स्रोतों के अर्थ और coverage अलग रखनी है।
 - कोई backtest, strategy edge, profitability, live execution या लक्ष्य तक पहुँचने का समय प्रमाणित नहीं हुआ। Live trading और credentials का gate बंद है।
+
+
+## 28. Independent exchange-source probe को workflow में जोड़ा — 23 अक्टूबर 2026
+- नई script: `scripts/probe_hd04_coingecko_source.py` (commits `7b8e7a116c95d5afa4e5c21d41bca2b6db9d7331` और newline fix `585b2d22d6e6ab6a9e39754265fcfbfd3780fc5c`).
+- यह CoinGecko के Binance Spot `/exchanges/binance` और Binance Futures `/derivatives/exchanges/binance_futures` endpoints को जाँचती है; सफलता/विफलता, response SHA-256, उपलब्ध tickers और सीमित sample को JSON artifact में दर्ज करती है।
+- Workflow में compile और probe step जोड़े; keep-list में script सुरक्षित की। Workflow commit `2665814b9eb56fc0ffe1462f3e5def377922997f`; keep-list commit `e79e5f9118f73874f580a4ea4734955cd84c0509`.
+- CoinGecko data केवल independent corroboration है। यह Binance `exchangeInfo`, complete current symbols, exact tradability/contract metadata या official per-symbol USDT quoteVolume का विकल्प नहीं है। API key source में नहीं रखी; जरूरत होने पर केवल GitHub Actions secret `COINGECKO_DEMO_API_KEY` से दी जा सकती है।
+- Workflow verification अभी pending है। HD-04 BLOCKED रहेगा; कोई strategy/backtest निष्कर्ष नहीं।
