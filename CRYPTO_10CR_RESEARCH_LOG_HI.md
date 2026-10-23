@@ -554,3 +554,12 @@ Research status और claims केवल verified evidence के आधार
 - Run 39968362479 compiled the validator code, but its `spot-1m-gap-audit` job was skipped again because the boundary-output commit message did not match the conditional trigger. Thus no boundary rows were printed in that run.
 - Removed the conditional entirely so any push that triggers this history workflow also executes the diagnostic job. Workflow commit: ea717f631404a4b372ec36e3848e9ae133c68813. Verify job execution and logged boundary rows on the new run.
 - No data policy change. Full-history gate remains failed; no synthetic data, no walk-forward, no merge, no live trading. Tax/TDS deferred.
+
+
+## 23 अक्टूबर 2026: gap-boundary evidence review
+
+GitHub Actions run [39968448783](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39968448783) में `spot-1m-gap-audit` सफल हुआ और `long-history-validation` विफल हुआ। Diagnostic job ने boundary context सहित artifact upload किया। Long-history परिणाम अब भी 243 अपेक्षित archive checks में 231 PASS और 12 FAIL है; इसलिए fail-closed aggregate उपलब्ध नहीं है।
+
+सभी 12 प्रभावित महीनों के job logs में Spot 1m और Spot 5m gaps की संख्या और समय-सीमा परस्पर मेल खाती है। लेकिन यह केवल दोनों archive intervals में समान discontinuity का प्रमाण है, कारण का नहीं। कुछ gaps से पहले flat, zero-volume candles दिखती हैं; कुछ सीमाओं पर सक्रिय volume है; कई raw close-time values अपेक्षित interval end से मेल नहीं खाते। विशेष रूप से 2020-12 का close-time anomaly अभी unresolved है। इसलिए सभी missing bars को “no trade” कहना प्रमाणित नहीं है।
+
+**निर्णय:** validator को अभी न बदलें, candles न बनाएँ, और missing intervals को चुपचाप exclude न करें। अगला चरण exact UTC gap windows और anomalous rows को स्वतंत्र official Spot trade/aggregate-trade records से जाँचना है, जहाँ वे उपलब्ध हों। जब तक कारण का स्वतंत्र प्रमाण न मिले, full-history gate बंद रहेगा और walk-forward शुरू नहीं होगा। PR #17 merge नहीं करना है; live trading निषिद्ध/unauthorized है; tax scope deferred है।
