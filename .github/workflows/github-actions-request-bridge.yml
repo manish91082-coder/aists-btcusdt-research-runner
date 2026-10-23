@@ -1,0 +1,149 @@
+name: GitHub Actions request bridge
+on:
+  push:
+    branches: [main]
+    paths:
+      - "execution_requests/*.json"
+      - ".github/workflows/github-actions-request-bridge.yml"
+  pull_request:
+    paths:
+      - ".github/workflows/github-actions-request-bridge.yml"
+permissions:
+  contents: read
+  actions: write
+jobs:
+  validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate bridge workflow shape
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path(".github/workflows/github-actions-request-bridge.yml").read_text()
+          required = [
+              "execution_requests/*.json",
+              "actions: write",
+              "workflow_dispatch",
+              "btc-usdt-history",
+              "SUPABASE_SERVICE_ROLE_KEY",
+          ]
+          missing = [item for item in required if item not in text]
+          if missing:
+              raise SystemExit(f"Bridge workflow missing required guardrails: {missing}")
+          print("bridge_static_validation=PASS")
+          PY
+  dispatch:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Create secret-safe request receipt
+        run: |
+          mkdir -p artifacts/workflow-request-bridge
+          {
+            echo "started_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "repository=$GITHUB_REPOSITORY"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "commit=$GITHUB_SHA"
+            echo "event=$GITHUB_EVENT_NAME"
+          } | tee artifacts/workflow-request-bridge/execution.log
+      - name: Find and strictly validate the single dispatch request
+        id: request
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(git diff --name-only HEAD^ HEAD -- 'execution_requests/*.json')
+          if [ "${#files[@]}" -ne 1 ]; then
+            echo "request_status=FAIL_EXPECTED_EXACTLY_ONE_JSON" | tee -a artifacts/workflow-request-bridge/execution.log
+            printf 'Changed request files: %s\n' "${#files[@]}" | tee -a artifacts/workflow-request-bridge/execution.log
+            exit 2
+          fi
+          python - "${files[0]}" "$GITHUB_OUTPUT" <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          path, output = sys.argv[1], sys.argv[2]
+          if not re.fullmatch(r"execution_requests/[A-Za-z0-9_-]+\.json", path):
+              raise SystemExit("Request path is not an allowed JSON filename.")
+          request = json.loads(Path(path).read_text(encoding="utf-8"))
+          if set(request) != {"workflow", "ref", "inputs"}:
+              raise SystemExit("Request must contain exactly workflow, ref, inputs.")
+          if request["workflow"] != ".github/workflows/btcusdt-supabase-upload-canary.yml":
+              raise SystemExit("Workflow is not on the dispatch allowlist.")
+          if request["ref"] != "main":
+              raise SystemExit("Only the default branch ref 'main' is allowed.")
+          inputs = request["inputs"]
+          if not isinstance(inputs, dict) or set(inputs) != {"month", "include_funding"}:
+              raise SystemExit("Inputs must contain exactly month and include_funding.")
+          if not isinstance(inputs["month"], str) or not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", inputs["month"]):
+              raise SystemExit("month must be a valid YYYY-MM value.")
+          if not isinstance(inputs["include_funding"], bool):
+              raise SystemExit("include_funding must be a JSON boolean.")
+          with open(output, "a", encoding="utf-8") as f:
+              f.write(f"month={inputs['month']}\n")
+              f.write(f"include_funding={'true' if inputs['include_funding'] else 'false'}\n")
+              f.write(f"request_file={path}\n")
+          print(f"request_validation=PASS file={path} month={inputs['month']} include_funding={inputs['include_funding']}")
+          PY
+          echo "request_status=PASS" | tee -a artifacts/workflow-request-bridge/execution.log
+      - name: Dispatch allowlisted workflow using GitHub Actions API
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MONTH: ${{ steps.request.outputs.month }}
+          INCLUDE_FUNDING: ${{ steps.request.outputs.include_funding }}
+        run: |
+          set -euo pipefail
+          body=$(python - <<'PY'
+          import json, os
+          print(json.dumps({
+              "ref": "main",
+              "inputs": {
+                  "month": os.environ["MONTH"],
+                  "include_funding": os.environ["INCLUDE_FUNDING"]
+              }
+          }))
+          PY
+          )
+          status=$(curl --silent --show-error --output /tmp/dispatch-response.txt --write-out '%{http_code}' \
+            --request POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --header "Content-Type: application/json" \
+            --data "$body" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/btcusdt-supabase-upload-canary.yml/dispatches")
+          echo "dispatch_http_status=$status" | tee -a artifacts/workflow-request-bridge/execution.log
+          if [ "$status" != "204" ]; then
+            echo "dispatch_status=FAIL" | tee -a artifacts/workflow-request-bridge/execution.log
+            # Log only the response body, never headers or token.
+            cat /tmp/dispatch-response.txt | tee -a artifacts/workflow-request-bridge/execution.log
+            exit 1
+          fi
+          echo "dispatch_status=PASS" | tee -a artifacts/workflow-request-bridge/execution.log
+          echo "dispatched_month=$MONTH" | tee -a artifacts/workflow-request-bridge/execution.log
+          echo "dispatched_include_funding=$INCLUDE_FUNDING" | tee -a artifacts/workflow-request-bridge/execution.log
+          {
+            echo "## GitHub Actions request bridge"
+            echo "- Dispatch status: PASS (HTTP 204)"
+            echo "- Target workflow: BTCUSDT Supabase one-month upload canary"
+            echo "- Month: $MONTH"
+            echo "- Funding requested: $INCLUDE_FUNDING"
+            echo "- Request file: ${{ steps.request.outputs.request_file }}"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Finalize bridge receipt
+        if: always()
+        run: |
+          echo "finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a artifacts/workflow-request-bridge/execution.log
+          echo "job_status=${{ job.status }}" | tee -a artifacts/workflow-request-bridge/execution.log
+      - name: Upload bridge execution record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-request-bridge-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/workflow-request-bridge/
+          if-no-files-found: error
+          retention-days: 30
