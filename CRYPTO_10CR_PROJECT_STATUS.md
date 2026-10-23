@@ -177,3 +177,12 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - Fixed UTC probe window: 2026-09-01 00:00–01:00 UTC. Responses and errors are written to `artifacts/hd04/hd04-alternate-sources.json`; no API keys or trading endpoints are used.
 - HD-04 workflow now compiles and runs the probe, and the script is protected in `CURRENT_PROJECT_KEEP_PATHS.txt`.
 - This is an implementation change only. The probe has not yet been executed in GitHub Actions, so no provider reachability, schema, or candle-validation result is claimed. The Binance authoritative current-universe gate remains BLOCKED; strategy/backtest and live-trading authorization remain closed.
+
+
+## Alternate-source probe: first live result and boundary fix (23 October 2026)
+
+- Initial bounded run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39901520198 ; artifact id 12479136008. Bybit's five public endpoint checks returned HTTP 403 from this runner. This is an access/reachability failure, not proof that Bybit lacks the data.
+- OKX Spot and Swap instrument metadata passed. Both candle endpoints returned 11 rows because the lower time boundary excluded the exact start candle; funding history also returned an empty list with the initial boundary.
+- Corrected the OKX history query to use `before=START-1ms` on branch commit `e8998d20d761bf8fc6c4a1fbe088a9744afebdff`.
+- Re-run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39902158479 ; artifact id 12479226388. Report summary: 5/10 checks passed. OKX Spot candles and Swap candles each returned exactly 12 unique, continuous 5-minute candles inside the fixed hour; Spot/Swap instrument metadata passed; Swap funding returned one row. Bybit's five checks remain HTTP 403.
+- This verifies a narrow OKX sample only. It does not establish full historical depth, universe coverage, or Binance listing authority. Bybit remains unresolved due to HTTP 403; investigate alternate official host / network restrictions only as a separate bounded task. Keep Binance HD-04 authoritative-universe gate BLOCKED, do not merge PR #13 yet, and do not begin strategy/backtesting or live trading.
