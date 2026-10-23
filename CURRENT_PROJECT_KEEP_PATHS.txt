@@ -14,6 +14,7 @@ CURRENT_PROJECT_KEEP_PATHS.txt
 crypto_target/
 tests_crypto_target/
 scripts/cleanup_current_project.py
+scripts/write_execution_receipt.py
 execution_logs/
 .github/workflows/hd03-data-integrity.yml
 scripts/acquire_validate_hd03.py
@@ -48,3 +49,4 @@ execution_logs/2026-10-23-btcusdt-2019-history-canary.md
 execution_logs/2026-10-23-btcusdt-2020-history-canary.md
 execution_logs/2026-10-23-btcusdt-archive-coverage-inventory.md
 tests_crypto_target/test_btcusdt_supabase_uploader.py
+tests_crypto_target/test_execution_receipt.py
