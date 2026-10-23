@@ -194,7 +194,7 @@ def main() -> int:
             ],
         }
         failed_path = root / "btc-usdt-long-history-manifest.json"
-        failed_path.write_text(json.dumps(failed_manifest, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+        failed_path.write_text(json.dumps(failed_manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         print(json.dumps({"manifest": str(failed_path), **failed_manifest["summary"],
                           "failed_batches": failed_batches}, indent=2), flush=True)
         return 1
