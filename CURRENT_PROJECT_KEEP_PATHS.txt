@@ -42,3 +42,6 @@ docs/SUPABASE_BTCUSDT_HISTORY_SETUP.md
 .github/workflows/btcusdt-archive-coverage-inventory.yml
 scripts/probe_btcusdt_archive_coverage.py
 tests_crypto_target/test_btcusdt_archive_coverage.py
+execution_logs/2026-10-23-btcusdt-one-month-archive-canary.md
+execution_logs/2026-10-23-btcusdt-2019-history-canary.md
+execution_logs/2026-10-23-btcusdt-2020-history-canary.md
