@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bounded read-only Bybit/OKX public API reachability and schema probe."""
 from __future__ import annotations
-import hashlib, json
+import hashlib, json, math
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlencode
@@ -32,18 +32,41 @@ def fetch(name, base, path, params, provider):
             rows = payload.get("data", [])
         if not isinstance(rows, list):
             raise ValueError("Expected list data")
-        item.update({"status": "PASS", "rows": len(rows), "sample": rows[:2]})
+        if not rows:
+            raise ValueError("API returned an empty data list")
+        item.update({"rows": len(rows), "sample": rows[:2]})
         if "kline" in name or "candles" in name:
             timestamps = []
-            for row in rows:
-                ts = int(row[0])
-                if ts % 300000:
-                    raise ValueError("Candle timestamp off 5-minute grid")
-                timestamps.append(ts)
-            if len(timestamps) != len(set(timestamps)):
-                raise ValueError("Duplicate candle timestamps")
-            item["timestamps_ms_sorted"] = sorted(timestamps)
-            item["window_rows"] = sum(START <= ts < END for ts in timestamps)
+            anomalies = []
+            for index, row in enumerate(rows):
+                try:
+                    ts = int(row[0])
+                    values = [float(row[i]) for i in range(1, 6)]
+                    opn, high, low, close, volume = values
+                    if not all(math.isfinite(value) for value in values):
+                        anomalies.append("row " + str(index) + ": non-finite OHLCV")
+                    if min(opn, high, low, close) <= 0 or high < max(opn, low, close) or low > min(opn, close):
+                        anomalies.append("row " + str(index) + ": invalid OHLC relationship")
+                    if volume < 0:
+                        anomalies.append("row " + str(index) + ": negative volume")
+                    if ts % 300000:
+                        anomalies.append("row " + str(index) + ": timestamp off 5-minute grid")
+                    if not START <= ts < END:
+                        anomalies.append("row " + str(index) + ": timestamp outside requested window")
+                    timestamps.append(ts)
+                except (ValueError, TypeError, IndexError) as exc:
+                    anomalies.append("row " + str(index) + ": malformed candle " + type(exc).__name__)
+            ordered = sorted(timestamps)
+            unique = sorted(set(ordered))
+            duplicates = len(ordered) - len(unique)
+            gaps = sum(1 for left, right in zip(unique, unique[1:]) if right - left != 300000)
+            item.update({"timestamps_ms_sorted": ordered, "duplicate_timestamps": duplicates,
+                         "non_5m_steps": gaps, "candle_anomalies": anomalies[:30]})
+            if anomalies or duplicates or gaps or not ordered:
+                raise ValueError("Candle validation failed: anomalies=" + str(len(anomalies)) +
+                                 ", duplicates=" + str(duplicates) + ", gaps=" + str(gaps))
+            item["window_rows"] = len(ordered)
+        item["status"] = "PASS"
     except Exception as exc:
         item.update({"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"})
     return item
