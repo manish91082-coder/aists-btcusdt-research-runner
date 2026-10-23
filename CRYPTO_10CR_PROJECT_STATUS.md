@@ -186,3 +186,14 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - Corrected the OKX history query to use `before=START-1ms` on branch commit `e8998d20d761bf8fc6c4a1fbe088a9744afebdff`.
 - Re-run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39902158479 ; artifact id 12479226388. Report summary: 5/10 checks passed. OKX Spot candles and Swap candles each returned exactly 12 unique, continuous 5-minute candles inside the fixed hour; Spot/Swap instrument metadata passed; Swap funding returned one row. Bybit's five checks remain HTTP 403.
 - This verifies a narrow OKX sample only. It does not establish full historical depth, universe coverage, or Binance listing authority. Bybit remains unresolved due to HTTP 403; investigate alternate official host / network restrictions only as a separate bounded task. Keep Binance HD-04 authoritative-universe gate BLOCKED, do not merge PR #13 yet, and do not begin strategy/backtesting or live trading.
+
+
+## Scope decision to prevent HD-04 from stalling the project (23 October 2026)
+
+**Decision:** Do not let broad-universe discovery block the stated BTCUSDT-focused research objective. The blocked endpoint problem is real, but it is only critical for claims about the full current Binance symbol universe, ranking, or expanding to other symbols. It is not a prerequisite for historical research on the explicitly fixed BTCUSDT instrument.
+
+- Rename the unresolved scope conceptually as `HD-04-BROAD-UNIVERSE = DEFERRED/BLOCKED`. Do not claim it passed.
+- Resume the critical path with multi-month BTCUSDT historical data: official Binance monthly Spot and USD-M Futures archives, official checksum sidecars, funding history, strict schema/time-grid/gap/duplicate/finite-OHLCV validation, provenance manifest and reproducible coverage report.
+- The existing September 2026 slice proves only one month of 5-minute BTCUSDT data and is insufficient by itself for a robust backtest. Expand history before strategy evaluation.
+- OKX probe evidence is a data-source cross-check only; it cannot establish Binance's current universe. Bybit HTTP 403 is an access failure from the runner, not evidence of missing data.
+- No live trading, credentials, or funds movement. No profitability/time-to-target claim. Strategy evaluation begins only after a sufficiently broad, integrity-checked BTCUSDT history and explicit cost model exist.
