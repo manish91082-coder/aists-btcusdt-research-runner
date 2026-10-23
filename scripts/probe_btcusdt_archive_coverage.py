@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import time
 import urllib.error
@@ -38,7 +39,7 @@ def month_range(start: str, end: str) -> list[str]:
     return [f"{i // 12:04d}-{i % 12 + 1:02d}" for i in range(a, b + 1)]
 
 
-def head(url: str, timeout: int = 20) -> dict:
+def head(url: str, timeout: int = 8) -> dict:
     req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": UA})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as response:
@@ -62,23 +63,29 @@ def main() -> int:
     months = month_range(args.start_month, args.end_month)
     records = []
     total = len(months) * len(DATASETS)
-    index = 0
-    for month in months:
-        for dataset, url_for in DATASETS.items():
-            url = url_for(month)
-            archive = head(url)
-            time.sleep(max(0, args.sleep_seconds))
-            checksum = head(url + ".CHECKSUM")
-            time.sleep(max(0, args.sleep_seconds))
-            records.append({"month": month, "dataset": dataset, "url": url,
-                            "archive": archive, "checksum_sidecar": checksum,
-                            "status": "AVAILABLE" if archive["status"] == "AVAILABLE" and checksum["status"] == "AVAILABLE"
-                                      else "UNAVAILABLE" if archive["status"] == "UNAVAILABLE"
-                                      else "FAIL"})
-            index += 1
+    tasks = [(month, dataset, url_for(month))
+             for month in months for dataset, url_for in DATASETS.items()]
+
+    def probe(item: tuple[str, str, str]) -> dict:
+        month, dataset, url = item
+        archive = head(url)
+        time.sleep(max(0, args.sleep_seconds))
+        checksum = head(url + ".CHECKSUM")
+        status = ("AVAILABLE" if archive["status"] == "AVAILABLE" and checksum["status"] == "AVAILABLE"
+                  else "UNAVAILABLE" if archive["status"] == "UNAVAILABLE"
+                  else "FAIL")
+        return {"month": month, "dataset": dataset, "url": url,
+                "archive": archive, "checksum_sidecar": checksum, "status": status}
+
+    with ThreadPoolExecutor(max_workers=12) as pool:
+        futures = [pool.submit(probe, item) for item in tasks]
+        for index, future in enumerate(as_completed(futures), 1):
+            record = future.result()
+            records.append(record)
             if index % 25 == 0:
                 print(json.dumps({"checks_completed": index, "checks_total": total,
-                                  "last": records[-1]}, ensure_ascii=False))
+                                  "last": record}, ensure_ascii=False))
+    records.sort(key=lambda r: (r["month"], list(DATASETS).index(r["dataset"])))
     counts = {state: sum(r["status"] == state for r in records)
               for state in ("AVAILABLE", "UNAVAILABLE", "FAIL")}
     report = {
