@@ -30,6 +30,10 @@ GAPS = {
 }
 def ms(s: str) -> int:
     return int(datetime.fromisoformat(s.replace("Z","+00:00")).timestamp()*1000)
+
+def in_half_open_interval(timestamp_ms: int, start_ms: int, end_ms: int) -> bool:
+    """Return whether a timestamp is in [start_ms, end_ms); end is excluded."""
+    return start_ms <= timestamp_ms < end_ms
 def get(url: str) -> bytes:
     with urlopen(Request(url, headers={"User-Agent":"aists-btcusdt-research-runner/1.0"}), timeout=120) as r:
         if r.status != 200: raise ValueError(f"HTTP {r.status}: {url}")
@@ -85,7 +89,7 @@ def inspect(month: str) -> dict:
                 hourly_counts[(t - day_lo) // 3_600_000] += 1
                 for g,(a,b) in zip(per_gap,windows):
                     lo,hi=ms(a),ms(b)
-                    if lo <= t < hi:
+                    if in_half_open_interval(t, lo, hi):
                         stamp=datetime.fromtimestamp(t/1000,timezone.utc).isoformat()
                         g["trade_rows"]+=1
                         if g["first_trade_utc"] is None or stamp < g["first_trade_utc"]:
