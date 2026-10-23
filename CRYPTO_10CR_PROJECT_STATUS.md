@@ -2,7 +2,8 @@
 
 **Last updated:** 23 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
-**Working branch:** `research/candidate-baselines-clean` (draft [PR #16](https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/16); not merged)  
+**Branch:** `main`  
+**Latest implementation:** [PR #16 merged](https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/16) at merge commit `581c97978d0845036c9cff8f2be71d7018f84aa5`  
 **Current phase:** HD-03 initial slice passed; HD-04 broad-universe snapshot remains blocked. Multi-month BTCUSDT history for July-September 2026 passed integrity/normalization. Initial cost-aware Spot candidate baselines have been run and both produced negative net returns under illustrative costs. Smoke CI passed on [run 39947549808](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947549808); candidate run [39947542681](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681).
 
 ## Executive status
@@ -36,7 +37,7 @@ The intended system must dynamically decide trade/no-trade, market/direction, st
 - Added guarded repository-cleanup tooling, then completed and verified the current-thread-only cleanup.
 - Recreated a current README, added the detailed project charter, and aligned the master research log, status, keep-list and cleanup utility.
 - Preserved the current research source, tests, workflow and execution records. The cleanup did not erase Git history or other branches.
-- Added deterministic long/flat Spot candidate baselines (SMA trend and trailing z-score mean reversion), explicit next-open fills/cost assumptions, output verification, and unit tests. The work remains in draft PR #16 pending review/merge.
+- Added deterministic long/flat Spot candidate baselines (SMA trend and trailing z-score mean reversion), explicit next-open fills/cost assumptions, output verification, and unit tests. The candidate-baseline implementation and its records are merged in PR #16.
 
 Execution records:
 - [Cleanup outcome and verification](execution_logs/2026-10-22-cleanup-final-verification.md)
