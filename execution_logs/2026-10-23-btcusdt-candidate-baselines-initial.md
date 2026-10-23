@@ -3,10 +3,10 @@
 - Date: 2026-10-23
 - Branch: `research/candidate-baselines-clean`
 - Pull request: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/16
-- Multi-month run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184
-- Smoke/unit test run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947277912
-- Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184/artifacts/12498676912
-- Artifact ID: `12498676912`; size 5,839,681 bytes; artifact ZIP SHA-256 `cd4dd3b560fe70a95aa273b2ffb7bdbeaf7d8af1d638c6cb2d70082f65b93da5`.
+- Multi-month run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681
+- Smoke/unit test run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947549808
+- Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184/artifacts/12498179453
+- Artifact ID: `12498676912`; size 5,839,663 bytes; artifact ZIP SHA-256 `7322d2df6398871dd798ee240b46d04c15e3b7342505baae8f210f7213fd4592`.
 
 ## Verified inputs and checks
 
