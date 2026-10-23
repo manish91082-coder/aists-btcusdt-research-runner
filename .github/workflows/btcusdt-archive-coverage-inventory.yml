@@ -1,0 +1,87 @@
+name: BTCUSDT official archive coverage inventory
+
+on:
+  push:
+    branches:
+      - research/hd04-alternate-source-probe
+    paths:
+      - ".github/workflows/btcusdt-archive-coverage-inventory.yml"
+      - "scripts/probe_btcusdt_archive_coverage.py"
+  workflow_dispatch:
+    inputs:
+      start_month:
+        description: First month to check (YYYY-MM)
+        required: true
+        default: "2017-08"
+        type: string
+      end_month:
+        description: Last month to check (YYYY-MM)
+        required: true
+        default: "2026-09"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Probe monthly archive and checksum URL availability without downloading bodies
+        env:
+          START_MONTH: ${{ inputs.start_month || '2017-08' }}
+          END_MONTH: ${{ inputs.end_month || '2026-09' }}
+        run: |
+          mkdir -p artifacts/btcusdt-archive-coverage
+          LOG_FILE="artifacts/btcusdt-archive-coverage/execution.log"
+          {
+            echo "=== BTCUSDT ARCHIVE COVERAGE INVENTORY START ==="
+            echo "started_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "repository=$GITHUB_REPOSITORY"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+            echo "commit=$GITHUB_SHA"
+            echo "start_month=$START_MONTH"
+            echo "end_month=$END_MONTH"
+            python --version
+          } | tee -a "$LOG_FILE"
+          set +e
+          python -u scripts/probe_btcusdt_archive_coverage.py \
+            --start-month "$START_MONTH" \
+            --end-month "$END_MONTH" \
+            --output-dir artifacts/btcusdt-archive-coverage 2>&1 | tee -a "$LOG_FILE"
+          rc=${PIPESTATUS[0]}
+          echo "inventory_exit_code=$rc" | tee -a "$LOG_FILE"
+          if [ -f artifacts/btcusdt-archive-coverage/btc-usdt-archive-coverage-inventory.json ]; then
+            python -c 'import json; from pathlib import Path; d=json.loads(Path("artifacts/btcusdt-archive-coverage/btc-usdt-archive-coverage-inventory.json").read_text()); print("=== INVENTORY SUMMARY ==="); print(json.dumps({"counts":d["counts"],"checks_requested":d["checks_requested"],"start_month":d["start_month"],"end_month":d["end_month"]},indent=2))' 2>&1 | tee -a "$LOG_FILE"
+          fi
+          echo "finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$LOG_FILE"
+          exit "$rc"
+      - name: Publish coverage summary
+        if: always()
+        env:
+          START_MONTH: ${{ inputs.start_month || '2017-08' }}
+          END_MONTH: ${{ inputs.end_month || '2026-09' }}
+        run: |
+          {
+            echo "## BTCUSDT official archive URL coverage inventory"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Month range: $START_MONTH through $END_MONTH"
+            echo "- Method: HEAD only; archive bodies not downloaded"
+            echo "- Detailed log: artifact file execution.log"
+            echo "- Full URL-level results: btc-usdt-archive-coverage-inventory.json"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload coverage inventory and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btcusdt-archive-coverage-inventory
+          path: artifacts/btcusdt-archive-coverage/
+          if-no-files-found: warn
+          retention-days: 30
