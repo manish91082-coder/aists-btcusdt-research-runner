@@ -157,3 +157,14 @@ Execution records:
 - Docs: https://docs.tardis.dev/downloadable-csv-files ; https://docs.tardis.dev/faq/data ; https://docs.tardis.dev/downloadable-csv-files/api
 - Some first-day-of-month historical datasets are accessible without an API key, but this is not evidence of full free historical coverage. Paid plans and historical retention/coverage must be checked before selecting it as a durable dependency.
 - Next bounded test: inspect documented exchange/data-type coverage for an alternate exchange's Spot and perpetual Futures, then validate one small identical time window against a trusted candle source: timestamps, OHLCV aggregation, gaps, symbol/contract mapping and funding fields. Treat Tardis as an independent provider, not as proof of official Binance contract status. HD-04 remains BLOCKED until primary universe metadata and coverage criteria are satisfied.
+
+
+## Zero-cost independent source shortlist (23 October 2026)
+
+Three candidates beyond Binance and Tardis have been reviewed for bounded evaluation:
+
+1. **Bybit official public market API** — no account key needed for public market-data endpoints. Spot and linear/inverse contract klines share `/v5/market/kline`; response is paginated (up to 1,000 bars per request) and reverse chronological. Separate endpoints document instrument metadata and funding history. Sources: https://bybit-exchange.github.io/docs/v5/market/kline ; https://bybit-exchange.github.io/docs/v5/market/instruments-info ; https://bybit-exchange.github.io/docs/v5/market/funding/history . This is the first source to probe.
+2. **OKX official public data/API** — historical-data page offers downloads for trade history (from Sep 2021), candles (from Jul 2023), funding history (from Mar 2022), and L2 order book (from Mar 2023). Public REST API separately exposes historical candles, instruments and funding. Sources: https://www.okx.com/historical-data ; https://app.okx.com/docs-v5/en/ . Check regional availability, instrument differences and download limits before relying on it.
+3. **CryptoDataDownload free CSVs** — documented no-login free OHLCV downloads at daily/hourly/1-minute granularity across several Spot venues, useful as an independent Spot cross-check; not selected as a full Futures/funding source. Source: https://www.cryptodatadownload.com/ .
+
+Zero-cost scope means public endpoints/downloads without a paid plan or key where supported; it does not mean unlimited requests, guaranteed historical depth, or all symbols/data types. The next step is a small read-only probe of Bybit and OKX for the same UTC window: BTCUSDT Spot and perpetual contract candles, instrument metadata, and funding history. Validate HTTP/JSON success, symbol/instrument mapping, timestamps, interval continuity, OHLCV numeric rules and funding schema. CryptoDataDownload will be considered only for Spot cross-check where an exact comparable file exists. No API keys, account actions or trading endpoints are required.
