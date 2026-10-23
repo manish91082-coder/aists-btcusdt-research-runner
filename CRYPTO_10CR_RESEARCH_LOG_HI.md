@@ -380,3 +380,16 @@ Research status और claims केवल verified evidence के आधार
 - Sep-2026 का 8,640-candle slice केवल एक महीने का है; robust strategy/backtest के लिए यह पर्याप्त नहीं। इसलिए अभी strategy ranking शुरू नहीं होगी, लेकिन data acquisition आगे बढ़ेगा।
 - OKX sample को केवल cross-check evidence मानेंगे, Binance universe का विकल्प नहीं। Bybit HTTP 403 को access failure माना जाएगा, data absence नहीं।
 - Live trading/keys/funds movement बंद हैं; profitability और target तक समय अज्ञात हैं। यह scope correction project को रोकने के बजाय measurable data coverage की ओर ले जाती है।
+
+
+## 2026-10-23: GitHub execution-log rule reinforced
+
+**निर्णय:** हर code execution, workflow step, data acquisition/validation और database upload के लिए GitHub में traceable log अनिवार्य है। कोई result केवल अनुमान या बिना log के घोषित नहीं किया जाएगा।
+
+**लॉग में अनिवार्य फ़ील्ड:** UTC start/end, repository, commit SHA, Actions run ID/attempt, exact inputs, step-wise status, exit code, archive/file counts, bytes, SHA-256/checksum result, PASS/FAIL/UNAVAILABLE/SKIPPED का कारण, manifest/output paths और cloud upload/catalog result. Secrets या API keys कभी log नहीं होंगे। हर run के बाद पहले log और machine-readable manifest पढ़कर ही रिपोर्ट दी जाएगी।
+
+**इस बार किया गया काम:** [commit bbabd2c1e1e1302c389d8e75ee95205341724b7c](https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/bbabd2c1e1e1302c389d8e75ee95205341724b7c) में .github/workflows/btcusdt-full-history-collection.yml को बदला गया है। यह collection console output को execution.log में tee करता है, UTC/run/commit/input metadata जोड़ता है, collector/uploader exit codes रिकॉर्ड करता है, manifest से counts और bytes निकालता है, और GitHub Step Summary बनाता है। Artifact में detailed execution.log और btc-usdt-archive-collection-manifest.json सहित outputs 30 दिनों तक रहेंगे।
+
+**स्थिति की ईमानदार सीमा:** यह workflow change GitHub branch पर commit है, पर अभी इसका वास्तविक execution नहीं हुआ है। इसलिए runtime logging, Supabase upload, bucket या database catalog को PASS नहीं माना जाएगा। अगला सुरक्षित कदम केवल एक महीने का canary है; पहले GitHub run logs और artifact जाँचेंगे। Supabase secrets/bucket/table की उपलब्धता सिद्ध न होने पर cloud upload को साफ़ तौर पर SKIPPED/FAIL लिखना है, successful backup नहीं कहना है।
+
+**Binance connector का उपयोग:** live/near-live snapshots, klines, order book, funding और independent cross-checks में सहायक; multi-year historical research के लिए official Binance archive ZIP + official .CHECKSUM sidecar प्राथमिक evidence रहेगा। Connector जुड़ना अपने-आप historical coverage प्रमाणित नहीं करता।
