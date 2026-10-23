@@ -6,7 +6,9 @@ on:
     paths:
       - "crypto_target/**"
       - "tests_crypto_target/**"
+      - "tests_crypto_target/test_execution_receipt.py"
       - "scripts/cleanup_current_project.py"
+      - "scripts/write_execution_receipt.py"
       - "scripts/acquire_validate_hd03.py"
       - "scripts/build_hd04_universe_snapshot.py"
       - "scripts/probe_hd04_archive_sources.py"
@@ -55,7 +57,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile research and maintenance helpers
-        run: python -m py_compile crypto_target/research_math.py scripts/cleanup_current_project.py
+        run: python -m py_compile crypto_target/research_math.py scripts/cleanup_current_project.py scripts/write_execution_receipt.py
       - name: Check required project documents
         run: |
           set -euo pipefail
