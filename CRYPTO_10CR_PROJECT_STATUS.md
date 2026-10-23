@@ -3,7 +3,7 @@
 **Last updated:** 22 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **Branch:** `main`  
-**Current phase:** HD-03 passed for the initial BTCUSDT slice; HD-04 universe snapshot remains blocked by API access/response issues. An archive-first probe for official Spot/Futures klines and historical Futures funding archives is now added and will run before the universe API capture.
+**Current phase:** HD-03 passed for the initial BTCUSDT slice; HD-04 universe snapshot remains blocked by current Futures API response issues. The official archive probe verified three historical files; its validation now explicitly checks expected CSV header shape and data-row counts. Smoke CI passed on commit `1197e7592c79b0f4cf8440af5bf8f59a74690bdc`.
 
 ## Executive status
 
@@ -73,3 +73,9 @@ Execution records:
 - Latest smoke run passed: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39817387843 (21 protected files, zero deletion candidates, 5/5 unit tests); details: `execution_logs/2026-10-22-final-current-thread-ci-success.md`.
 - AI architecture and corrected ₹10 crore target consistency checks passed in [GitHub Actions run 39819921442](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39819921442); details: `execution_logs/2026-10-22-ai-architecture-ci-success.md`.
 - Research gate remains unchanged: market data not yet verified, no cost-aware backtest, AI trading loop not yet implemented end-to-end, edge NOT ESTABLISHED, target time UNKNOWN, live trading NOT AUTHORIZED, tax/TDS deferred.
+
+## Latest next action (23 October 2026)
+
+- Hardened `scripts/probe_hd04_archive_sources.py` to distinguish header rows from data rows and require exactly 8,640 Spot candles, 8,640 USD-M Futures candles, and 90 funding rows for the September 2026 probe, in addition to official ZIP checksum matches.
+- Smoke CI passed on the exact commit: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39887371687.
+- This change has not yet been rerun through the HD-04 workflow. Next: run the updated archive probe through HD-04 and confirm row-count assertions, then focus solely on a verifiable source for current product listings and separate Spot/Futures volume rankings. HD-04 remains BLOCKED until those are evidenced.
