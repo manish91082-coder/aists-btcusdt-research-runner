@@ -38,11 +38,20 @@ jobs:
           --start-month "$START_MONTH"
           --end-month "$END_MONTH"
           --output-dir artifacts/hd04-history
-      - name: Upload raw archives and integrity report
+      - name: Prepare normalized Spot/Futures dataset and funding events
+        run: >-
+          python scripts/prepare_btcusdt_research_dataset.py
+          --start-month "${{ inputs.start_month || '2026-07' }}"
+          --end-month "${{ inputs.end_month || '2026-09' }}"
+          --input-dir artifacts/hd04-history
+          --output-dir artifacts/hd04-normalized
+      - name: Upload raw archives, normalized dataset, and reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: btcusdt-multimonth-history-integrity
-          path: artifacts/hd04-history/
+          name: btcusdt-multimonth-research-dataset
+          path: |
+            artifacts/hd04-history/
+            artifacts/hd04-normalized/
           if-no-files-found: warn
           retention-days: 30
