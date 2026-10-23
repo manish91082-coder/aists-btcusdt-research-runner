@@ -299,3 +299,8 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - Evidence now confirms all 12 affected months have timestamp discontinuities in both official Spot 1m and Spot 5m archives, with matching gap counts per month. Example: 2020-02 has 2 gaps in each interval; 2020-11 has 1 in each. This is consistent with shared missing time spans, but does not establish whether these are no-trade periods, archive omissions, or an incorrect strict-continuity assumption.
 - The audit artifact is uploaded, but the connector cannot decode its binary ZIP. The workflow log currently prints gap spans but not the newly captured boundary OHLCV rows. Updated the script to print the boundary context in the next run, commit f93b385225d9384c8060d727f0df9a5773788e82.
 - 2020-12 still has one reported 1m close-time anomaly in addition to two gaps. Need boundary output and direct close-time validation before any conclusion. No reconstruction, validator weakening, walk-forward, merge, or live trading. Tax/TDS deferred.
+
+
+## Diagnostic trigger correction (23 October 2026)
+- The first boundary-output change commit triggered the long-history workflow, but the diagnostic job was skipped again because its commit message did not contain the keyword gap. The diagnostic workflow condition is now removed entirely, so any push that triggers this workflow runs the gap diagnostic job. Workflow commit: ea717f631404a4b372ec36e3848e9ae133c68813.
+- Await run evidence before concluding boundary-candle review. Full-history validation remains blocked by 12 Spot 5m archive checks; no normalized full-history aggregate, no candle reconstruction, no walk-forward, no PR merge, no live trading. Tax/TDS deferred.
