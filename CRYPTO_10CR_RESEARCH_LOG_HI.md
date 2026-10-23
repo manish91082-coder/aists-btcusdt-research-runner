@@ -393,3 +393,11 @@ Research status और claims केवल verified evidence के आधार
 **स्थिति की ईमानदार सीमा:** यह workflow change GitHub branch पर commit है, पर अभी इसका वास्तविक execution नहीं हुआ है। इसलिए runtime logging, Supabase upload, bucket या database catalog को PASS नहीं माना जाएगा। अगला सुरक्षित कदम केवल एक महीने का canary है; पहले GitHub run logs और artifact जाँचेंगे। Supabase secrets/bucket/table की उपलब्धता सिद्ध न होने पर cloud upload को साफ़ तौर पर SKIPPED/FAIL लिखना है, successful backup नहीं कहना है।
 
 **Binance connector का उपयोग:** live/near-live snapshots, klines, order book, funding और independent cross-checks में सहायक; multi-year historical research के लिए official Binance archive ZIP + official .CHECKSUM sidecar प्राथमिक evidence रहेगा। Connector जुड़ना अपने-आप historical coverage प्रमाणित नहीं करता।
+
+
+## GitHub execution logging change: CI evidence (23 October 2026)
+
+- Workflow logging change: [commit bbabd2c1e1e1302c389d8e75ee95205341724b7c](https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/bbabd2c1e1e1302c389d8e75ee95205341724b7c).
+- CI run [39920640004](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39920640004) completed SUCCESS. I fetched and read job log `120304743836`: Python 3.12.15; all listed Python scripts compiled; 34 deterministic unit tests passed in 0.576 seconds; cleanup was dry-run only and changed no files.
+- Detailed audit note: `execution_logs/2026-10-23-github-execution-logging-change.md`.
+- Scope boundary: this smoke test does not execute the full-history workflow, fetch Binance archives, or validate Supabase. Those remain UNVERIFIED, not PASS. No data collection or database write is claimed.
