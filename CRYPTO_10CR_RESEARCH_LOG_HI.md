@@ -439,3 +439,16 @@ Research status और claims केवल verified evidence के आधार
 - Artifact [12486769727](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922039878/artifacts/12486769727), 4,057,887 bytes, retained for 30 days. Detailed record: `execution_logs/2026-10-23-btcusdt-2020-history-canary.md`.
 - Compared with the September 2019 probe, this shows Spot archive availability at both tested points; UM Futures and funding returned HTTP 404 in 2019-09 but passed in 2020-01. This brackets availability between the tested months only, not exact start date. A month-by-month coverage manifest is required before stating a complete history range.
 - No Supabase write attempted. Temporary GitHub artifact only; durable storage remains unverified.
+
+
+## Full official archive URL coverage inventory (23 October 2026)
+
+- GitHub Actions [run 39922532383](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922532383) completed SUCCESS for 2017-08 through 2026-09, 110 months. It made 330 monthly archive checks and checked each archive plus its .CHECKSUM sidecar via HTTP HEAD. Summary: AVAILABLE=272, UNAVAILABLE=58, FAIL=0. Archive bodies were not downloaded by this inventory.
+- Spot 1m: 110/110 monthly URLs available, 2017-08 through 2026-09; reported Content-Length sum 234,954,793 bytes.
+- UM Futures 1m: 81/110 URLs available, 2020-01 through 2026-09; earlier 29 months returned 404; reported Content-Length sum 151,823,703 bytes.
+- UM funding: 81/110 URLs available, 2020-01 through 2026-09; earlier 29 months returned 404; reported Content-Length sum 71,993 bytes.
+- Combined reported ZIP size estimate: 386,850,489 bytes, about 386.9 MB decimal / 0.36 GiB. This excludes normalized outputs and does not establish storage/egress pricing.
+- Artifact [12488291064](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922532383/artifacts/12488291064) contains the URL-level JSON inventory and execution.log. Smoke CI [39922538810](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922538810) passed: 40 tests, 68/68 files protected, zero deletion candidates.
+- Detailed record: `execution_logs/2026-10-23-btcusdt-archive-coverage-inventory.md`.
+- Limitation: this is URL reachability via HEAD, not full archive checksum/content validation. Actual monthly content validation remains limited to the canary months already recorded. No Supabase write attempted.
+- Next gate: confirm intended Supabase project before bulk storage. Do not upload to the previously listed project named `supabase ai content creation claude antigravity` without confirmation. After confirming project/bucket/schema/secrets, do a one-month upload canary and verify object bytes/hash plus catalog row.
