@@ -83,13 +83,16 @@ def main():
             {"category":category,"symbol":"BTCUSDT","limit":"10"},"bybit"))
     checks.append(fetch("bybit_linear_funding", b, "/v5/market/funding/history",
         {"category":"linear","symbol":"BTCUSDT","startTime":str(START),"endTime":str(END),"limit":"100"},"bybit"))
+    # OKX uses exclusive time boundaries for these history endpoints in practice.
+    # Shift the lower boundary back one millisecond so the START candle/funding event is not excluded.
+    okx_before = START - 1
     for inst, label, kind in (("BTC-USDT","spot","SPOT"),("BTC-USDT-SWAP","swap","SWAP")):
         checks.append(fetch(f"okx_{label}_5m_candles", o, "/api/v5/market/history-candles",
-            {"instId":inst,"bar":"5m","after":str(END),"before":str(START),"limit":"100"},"okx"))
+            {"instId":inst,"bar":"5m","after":str(END),"before":str(okx_before),"limit":"100"},"okx"))
         checks.append(fetch(f"okx_{label}_instrument", o, "/api/v5/public/instruments",
             {"instType":kind,"instId":inst},"okx"))
     checks.append(fetch("okx_swap_funding", o, "/api/v5/public/funding-rate-history",
-        {"instId":"BTC-USDT-SWAP","after":str(END),"before":str(START),"limit":"100"},"okx"))
+        {"instId":"BTC-USDT-SWAP","after":str(END),"before":str(okx_before),"limit":"100"},"okx"))
     out = Path("artifacts/hd04")
     out.mkdir(parents=True, exist_ok=True)
     report = {"gate":"HD-04-alternate-source-probe","retrieved_utc":datetime.now(timezone.utc).isoformat(),
