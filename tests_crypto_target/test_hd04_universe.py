@@ -1,7 +1,7 @@
 import unittest
 
 from scripts.build_hd04_universe_snapshot import eligible_symbols, digest
-from scripts.probe_hd04_coingecko_source import conservative_candidate_symbol
+from scripts.probe_hd04_coingecko_source import conservative_candidate_symbol\nfrom scripts.probe_hd04_candidate_archive_coverage import select_usdt_candidates
 
 
 class HD04UniverseTests(unittest.TestCase):
