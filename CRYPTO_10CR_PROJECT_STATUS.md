@@ -245,3 +245,5 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - Added `scripts/audit_btcusdt_spot_1m_gap_months.py` to checksum-verify and content-validate official Spot 1m archives for the 12 months whose Spot 5m checks failed. It does not reconstruct or fill 5m candles. The audit is being wired into CI; results are not yet available.
 - **Current gate: FAIL / unresolved.** Do not merge PR #17, build the full normalized aggregate, run walk-forward metrics on this dataset, or claim an edge until each failed month is understood and any reconstruction has independent tests/provenance.
 - Next action: run the 1m audit; inspect monthly row counts, exact timestamp gaps, OHLC/close-time anomalies and checksum evidence; then decide whether a deterministic 5m reconstruction is supportable for each month.
+
+- CI maintenance note: the first smoke run after adding the 1m audit correctly caught that the new script had not yet been added to the cleanup keep-list. The script is now protected in `CURRENT_PROJECT_KEEP_PATHS.txt`; the subsequent smoke run is pending verification.
