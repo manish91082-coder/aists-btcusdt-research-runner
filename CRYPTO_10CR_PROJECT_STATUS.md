@@ -123,3 +123,12 @@ Execution records:
 - Report now includes unique candidate count, duplicate candidate symbols, unmapped count and an explicit overlap check against BTCUSDT, the only symbol in the current verified archive probe.
 - Added deterministic unit tests in commit `bae405f87b0148bf5e7bbdf658d6f1d3558dd4ed`. HD-04 workflow is triggered by the script and test paths; verification pending.
 - This is a candidate-reconciliation layer, not Binance listing verification. HD-04 remains BLOCKED pending workflow evidence and a primary current-contract source.
+
+
+## Candidate-symbol reconciliation verification (23 October 2026)
+
+- Workflow run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39889218198; tested commit `bae405f87b0148bf5e7bbdf658d6f1d3558dd4ed`.
+- Smoke workflow: PASS at the same commit: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39889218167.
+- CoinGecko probe results in the workflow log: 27,978 global derivatives ticker records; 824 Binance (Futures) labeled records; 779 unique conservative symbol candidates; 45 unmapped records; no duplicate normalized candidates; overlap with the only verified historical archive symbol BTCUSDT = BTCUSDT.
+- The HD-04 job still concludes FAILURE because the primary Binance Futures `exchangeInfo` request returns non-JSON. The candidate layer is evidence and a reconciliation aid only. HD-04 remains BLOCKED.
+- Next bounded step: create a historical archive availability matrix for a small, explicitly selected sample of CoinGecko USDT-quoted candidates, checking official archive existence/checksum and keeping missing archives as coverage debt. Do not probe all 779 symbols blindly or assume candidates are listed/active at Binance.
