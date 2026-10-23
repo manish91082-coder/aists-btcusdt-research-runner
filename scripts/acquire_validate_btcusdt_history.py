@@ -77,9 +77,11 @@ def validate_klines(rows: list[list[str]], period: str, header: bool, venue: str
     for i, row in enumerate(rows, 1):
         if len(row) != KLINE_FIELDS:
             raise ValueError(f"row {i}: expected 12 columns, got {len(row)}")
-        ts = int(row[0])
+        raw_ts = int(row[0])
+        # Binance Spot archives use microseconds for recent history; UM archives use milliseconds.
+        ts = raw_ts // 1000 if raw_ts >= 100_000_000_000_000 else raw_ts
         if ts < start_ms or ts > end_ms or (ts - start_ms) % 300000:
-            raise ValueError(f"row {i}: timestamp outside month or off 5m grid: {ts}")
+            raise ValueError(f"row {i}: timestamp outside month or off 5m grid: raw={raw_ts}, normalized_ms={ts}")
         if ts in seen:
             raise ValueError(f"row {i}: duplicate timestamp {ts}")
         if previous is not None and ts - previous != 300000:
@@ -91,7 +93,8 @@ def validate_klines(rows: list[list[str]], period: str, header: bool, venue: str
             raise ValueError(f"row {i}: invalid price or negative volume")
         if h < max(o, c, low) or low > min(o, c, h):
             raise ValueError(f"row {i}: inconsistent OHLC")
-        close_ts = int(row[6])
+        raw_close_ts = int(row[6])
+        close_ts = raw_close_ts // 1000 if raw_close_ts >= 100_000_000_000_000 else raw_close_ts
         if close_ts < ts or close_ts > ts + 300000:
             raise ValueError(f"row {i}: invalid close time")
         finite_float(row[7], "quote volume")
@@ -109,7 +112,10 @@ def validate_funding(rows: list[list[str]], period: str) -> dict:
     if not rows:
         raise ValueError("empty funding CSV")
     header = [x.strip().lower() for x in rows[0]]
-    if header[:3] != ["calc_time", "funding_rate", "funding_rate_timestamp"]:
+    # Binance has published both legacy and newer funding archive schemas.
+    legacy = header[:3] == ["calc_time", "funding_rate", "funding_rate_timestamp"]
+    current = header[:3] == ["calc_time", "funding_interval_hours", "last_funding_rate"]
+    if not (legacy or current):
         raise ValueError(f"unexpected funding header: {rows[0][:3]}")
     data = rows[1:]
     if not data:
@@ -124,10 +130,16 @@ def validate_funding(rows: list[list[str]], period: str) -> dict:
             raise ValueError(f"funding row {i}: timestamp outside month")
         if previous is not None and ts <= previous:
             raise ValueError(f"funding row {i}: duplicate or nonascending timestamp")
-        rate = finite_float(row[1], "funding rate")
+        rate_index = 1 if legacy else 2
+        rate = finite_float(row[rate_index], "funding rate")
         if abs(rate) > 1:
             raise ValueError(f"funding row {i}: implausible funding rate {rate}")
-        int(row[2])
+        if legacy:
+            int(row[2])
+        else:
+            interval_hours = finite_float(row[1], "funding interval hours")
+            if interval_hours <= 0 or interval_hours > 24:
+                raise ValueError(f"funding row {i}: invalid funding interval hours {interval_hours}")
         previous = ts
     return {"rows": len(data), "first_calc_time_ms": int(data[0][0]),
             "last_calc_time_ms": int(data[-1][0]), "timestamps_unique_ascending": True,
