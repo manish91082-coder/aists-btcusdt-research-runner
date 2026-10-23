@@ -1,0 +1,39 @@
+name: BTCUSDT multi-month history integrity
+on:
+  workflow_dispatch:
+    inputs:
+      start_month:
+        description: Inclusive UTC month (YYYY-MM)
+        required: true
+        default: "2026-07"
+        type: string
+      end_month:
+        description: Inclusive UTC month (YYYY-MM)
+        required: true
+        default: "2026-09"
+        type: string
+permissions:
+  contents: read
+jobs:
+  acquire-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Acquire official monthly archives and validate integrity
+        run: >-
+          python scripts/acquire_validate_btcusdt_history.py
+          --start-month "${{ inputs.start_month }}"
+          --end-month "${{ inputs.end_month }}"
+          --output-dir artifacts/hd04-history
+      - name: Upload raw archives and integrity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btcusdt-multimonth-history-integrity
+          path: artifacts/hd04-history/
+          if-no-files-found: warn
+          retention-days: 30
