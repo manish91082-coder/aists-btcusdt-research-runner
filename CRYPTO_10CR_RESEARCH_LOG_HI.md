@@ -494,3 +494,5 @@ Research status और claims केवल verified evidence के आधार
 - Reporting fix was applied: manifest newline is valid JSON and checksum-matching raw archive filenames are counted even if content validation fails. Smoke CI [39954846287](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39954846287) passed.
 - Added a dedicated official Spot 1m archive audit for the 12 failed Spot 5m months. It checks official SHA-256 sidecars, row counts, minute-grid continuity, OHLC and close-time validity. It never fills gaps or reconstructs 5m data automatically.
 - Current result: 1m audit code added, runtime report pending. The 12 failed 5m archives remain unresolved; no strategy evaluation or profitability inference is permitted from the incomplete long-history dataset.
+
+- CI caught a missing keep-list entry for the newly added audit script; added it to `CURRENT_PROJECT_KEEP_PATHS.txt`. Awaiting the next smoke CI result.
