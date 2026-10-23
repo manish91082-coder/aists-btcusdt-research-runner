@@ -358,3 +358,13 @@ Research status और claims केवल verified evidence के आधार
 - HD-04 workflow में compile तथा probe step जोड़ा गया और script को `CURRENT_PROJECT_KEEP_PATHS.txt` में सुरक्षित किया गया।
 - अभी Actions execution नहीं हुआ है। इसलिए Bybit/OKX availability, schema या historical candle correctness पर कोई PASS claim नहीं है। Binance authoritative current-universe gate BLOCKED है; strategy/backtest और live-trading gate बंद हैं।
 - अगला कदम: branch diff review और CI execution। परिणाम artifact देखने के बाद ही तय होगा कि probe validation को और मजबूत करना है या CryptoDataDownload का Spot-only cross-check जोड़ना है।
+
+
+## 37. वैकल्पिक स्रोतों का पहला live probe और OKX time-boundary सुधार — 23 अक्टूबर 2026
+
+- पहला वास्तविक run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39901520198 ; artifact id `12479136008`। Bybit के पाँचों public endpoint checks पर इस runner से `HTTP 403 Forbidden` मिला। इसे Bybit पर डेटा न होने का प्रमाण नहीं मानना है; यह अभी access/reachability failure है।
+- OKX Spot तथा Swap instrument metadata सफल रहे। दोनों candle endpoints में 11 candles आईं, क्योंकि query की lower boundary पर ठीक 00:00 वाली candle शामिल नहीं हुई। Funding history query भी खाली लौटी।
+- OKX history query की lower boundary को `before=START-1ms` करने का सुधार commit `e8998d20d761bf8fc6c4a1fbe088a9744afebdff` में किया।
+- सुधार के बाद run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39902158479 ; artifact id `12479226388`। कुल 10 checks में 5 PASS, 5 FAIL। OKX Spot और Swap दोनों में निश्चित एक घंटे के भीतर 12 unique, continuous 5-minute candles मिलीं। दोनों instrument metadata checks PASS हुए और Swap funding endpoint से एक row मिली। Bybit के पाँच checks पर HTTP 403 अब भी है।
+- यह केवल एक सीमित OKX BTC sample का प्रमाण है, पूरे exchange universe या पूरे historical coverage का नहीं। Bybit access issue अलग से unresolved है। Binance का authoritative HD-04 universe gate BLOCKED रहेगा। PR #13 अभी merge नहीं करना; strategy/backtest तथा live trading शुरू नहीं करना।
+- अगला कदम: OKX candle/funding fields की schema-level checks जोड़ना और Bybit 403 के लिए आधिकारिक alternate host/region/network behavior का सीमित diagnosis करना। कोई credentials या trading endpoint उपयोग नहीं होगा।
