@@ -3,7 +3,7 @@
 **Last updated:** 22 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **Branch:** `main`  
-**Current phase:** HD-03 passed for the initial BTCUSDT slice; HD-04 universe snapshot implementation exists but is blocked by HTTP 451 on the public Spot exchange-info endpoint in GitHub Actions.
+**Current phase:** HD-03 passed for the initial BTCUSDT slice; HD-04 universe snapshot remains blocked by API access/response issues. An archive-first probe for official Spot/Futures klines and historical Futures funding archives is now added and will run before the universe API capture.
 
 ## Executive status
 
