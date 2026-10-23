@@ -1,6 +1,6 @@
 # Crypto Target Research — Current Project Status
 
-**Last updated:** 22 October 2026  
+**Last updated:** 23 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **Branch:** `main`  
 **Current phase:** HD-03 passed for the initial BTCUSDT slice; HD-04 universe snapshot remains blocked by current Futures API response issues. The official archive probe verified three historical files; its validation now explicitly checks expected CSV header shape and data-row counts. Smoke CI passed on commit `1197e7592c79b0f4cf8440af5bf8f59a74690bdc`.
@@ -168,3 +168,56 @@ Three candidates beyond Binance and Tardis have been reviewed for bounded evalua
 3. **CryptoDataDownload free CSVs** — documented no-login free OHLCV downloads at daily/hourly/1-minute granularity across several Spot venues, useful as an independent Spot cross-check; not selected as a full Futures/funding source. Source: https://www.cryptodatadownload.com/ .
 
 Zero-cost scope means public endpoints/downloads without a paid plan or key where supported; it does not mean unlimited requests, guaranteed historical depth, or all symbols/data types. The next step is a small read-only probe of Bybit and OKX for the same UTC window: BTCUSDT Spot and perpetual contract candles, instrument metadata, and funding history. Validate HTTP/JSON success, symbol/instrument mapping, timestamps, interval continuity, OHLCV numeric rules and funding schema. CryptoDataDownload will be considered only for Spot cross-check where an exact comparable file exists. No API keys, account actions or trading endpoints are required.
+
+
+## Alternate zero-cost source probe implementation — 23 October 2026
+
+- Branch: `research/hd04-alternate-source-probe`.
+- Added `scripts/probe_hd04_alternate_sources.py` for bounded read-only public endpoint checks against Bybit V5 and OKX V5: BTCUSDT Spot and linear perpetual candles, instrument metadata and funding history; OKX BTC-USDT Spot and BTC-USDT-SWAP candles, instrument metadata and funding history.
+- Fixed UTC probe window: 2026-09-01 00:00–01:00 UTC. Responses and errors are written to `artifacts/hd04/hd04-alternate-sources.json`; no API keys or trading endpoints are used.
+- HD-04 workflow now compiles and runs the probe, and the script is protected in `CURRENT_PROJECT_KEEP_PATHS.txt`.
+- This is an implementation change only. The probe has not yet been executed in GitHub Actions, so no provider reachability, schema, or candle-validation result is claimed. The Binance authoritative current-universe gate remains BLOCKED; strategy/backtest and live-trading authorization remain closed.
+
+
+## Alternate-source probe: first live result and boundary fix (23 October 2026)
+
+- Initial bounded run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39901520198 ; artifact id 12479136008. Bybit's five public endpoint checks returned HTTP 403 from this runner. This is an access/reachability failure, not proof that Bybit lacks the data.
+- OKX Spot and Swap instrument metadata passed. Both candle endpoints returned 11 rows because the lower time boundary excluded the exact start candle; funding history also returned an empty list with the initial boundary.
+- Corrected the OKX history query to use `before=START-1ms` on branch commit `e8998d20d761bf8fc6c4a1fbe088a9744afebdff`.
+- Re-run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39902158479 ; artifact id 12479226388. Report summary: 5/10 checks passed. OKX Spot candles and Swap candles each returned exactly 12 unique, continuous 5-minute candles inside the fixed hour; Spot/Swap instrument metadata passed; Swap funding returned one row. Bybit's five checks remain HTTP 403.
+- This verifies a narrow OKX sample only. It does not establish full historical depth, universe coverage, or Binance listing authority. Bybit remains unresolved due to HTTP 403; investigate alternate official host / network restrictions only as a separate bounded task. Keep Binance HD-04 authoritative-universe gate BLOCKED, do not merge PR #13 yet, and do not begin strategy/backtesting or live trading.
+
+
+## Scope decision to prevent HD-04 from stalling the project (23 October 2026)
+
+**Decision:** Do not let broad-universe discovery block the stated BTCUSDT-focused research objective. The blocked endpoint problem is real, but it is only critical for claims about the full current Binance symbol universe, ranking, or expanding to other symbols. It is not a prerequisite for historical research on the explicitly fixed BTCUSDT instrument.
+
+- Rename the unresolved scope conceptually as `HD-04-BROAD-UNIVERSE = DEFERRED/BLOCKED`. Do not claim it passed.
+- Resume the critical path with multi-month BTCUSDT historical data: official Binance monthly Spot and USD-M Futures archives, official checksum sidecars, funding history, strict schema/time-grid/gap/duplicate/finite-OHLCV validation, provenance manifest and reproducible coverage report.
+- The existing September 2026 slice proves only one month of 5-minute BTCUSDT data and is insufficient by itself for a robust backtest. Expand history before strategy evaluation.
+- OKX probe evidence is a data-source cross-check only; it cannot establish Binance's current universe. Bybit HTTP 403 is an access failure from the runner, not evidence of missing data.
+- No live trading, credentials, or funds movement. No profitability/time-to-target claim. Strategy evaluation begins only after a sufficiently broad, integrity-checked BTCUSDT history and explicit cost model exist.
+
+
+## Execution logging rule (standing requirement)
+
+- Every script/workflow action that reads, validates, transforms, uploads, or writes research data must leave a traceable execution record in GitHub.
+- Each run record must identify UTC start/end, repository, commit SHA, Actions run ID/attempt, requested inputs, per-step status, exit code, counts/bytes/checksums where applicable, skipped steps and reasons, and output/manifest paths.
+- Store detailed console output and machine-readable manifests in the run artifact; write a concise summary to the GitHub Actions Step Summary. Read these logs before reporting a run result. Never log API keys, service-role keys, tokens, or other secrets.
+- For BTCUSDT full-history collection, this is implemented in commit [bbabd2c1e1e1302c389d8e75ee95205341724b7c](https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/bbabd2c1e1e1302c389d8e75ee95205341724b7c): execution.log plus btc-usdt-archive-collection-manifest.json are retained with the GitHub artifact for 30 days; the Actions Step Summary links to the run and names the outputs. This logging change is committed but not yet runtime-verified. Durable logs must later be retained in private Supabase Storage only after a canary confirms configuration and upload success.
+
+## Immediate verification status
+
+- Binance connector is available in this conversation and can help with live market snapshots, klines, order book, funding and secondary cross-checks. For long-range reproducible historical acquisition, continue to treat official Binance archive ZIPs and their .CHECKSUM sidecars as the primary source; connector availability does not itself verify archive history.
+- The full-history collection workflow remains manual-dispatch only on the research branch. Do not claim that it has executed or that Supabase persistence is active until an actual Actions run log and uploaded object/catalog evidence are inspected.
+- Live trading, order placement and funds movement remain unauthorized.
+
+
+## Official BTCUSDT archive coverage inventory — 23 October 2026
+
+- URL-level HEAD inventory for 2017-08 to 2026-09: 330 monthly archive records; 272 AVAILABLE, 58 UNAVAILABLE, 0 FAIL.
+- Spot 1m monthly URLs: all 110 months available from 2017-08 through 2026-09.
+- UM Futures 1m and UM funding: 81 months each available from 2020-01 through 2026-09; the earlier 29 tested months return 404 at the exact monthly archive URLs.
+- Combined reported compressed archive Content-Length estimate: 386,850,489 bytes (~386.9 MB decimal). HEAD inventory only; this is not full archive validation.
+- Verified canaries: 2026-09 all 3 datasets PASS; 2020-01 all 3 PASS; 2019-09 Spot PASS and UM Futures/funding URLs UNAVAILABLE (404).
+- Next gate: confirm intended Supabase project before any durable upload. The listed project name does not clearly match this BTCUSDT project. No Supabase data writes have occurred.

@@ -117,7 +117,7 @@ For every substantive response/action:
 
 ## 6. Immediate next action
 
-**HD-03 is PASS. Current gate: HD-04 is BLOCKED on official endpoint access.** Resolve the HTTP 451 source-access issue using an official alternate API edge or independently verifiable official source, rerun the snapshot and require complete timestamped listing/volume evidence before closing HD-04. Do not rank strategies until relevant input coverage is proven.
+**निर्णय (23-Oct-2026): परियोजना का शोध-लक्ष्य BTCUSDT-केंद्रित है, इसलिए broad-universe discovery को critical path पर रखना scope drift होगा।** Binance current-universe snapshot endpoint access blocked है; इसे छिपाकर PASS नहीं कहेंगे। इसे `HD-04-BROAD-UNIVERSE = DEFERRED/BLOCKED` में अलग रखा जाएगा। BTCUSDT-only historical research के लिए alternate path: Binance official monthly archive ZIP + official checksum + strict integrity validation, पहले से सफल Sep-2026 slice से शुरुआत करके कई वर्षों/महीनों तक data coverage बढ़ाना। यह historical research scope को unblock करता है, लेकिन current listing metadata, दूसरे symbols की eligibility या live tradability सिद्ध नहीं करता। अगला critical task अब multi-month BTCUSDT Spot/UM Futures/funding data acquisition and integrity, न कि और endpoint probing।
 
 ## 7. Current gate ledger
 
@@ -125,7 +125,7 @@ For every substantive response/action:
 |---|---|---|
 | G0 — Repository/math harness | PASS for current smoke checks | CI run #39820508068; not trading evidence |
 | HD-03 — BTCUSDT Sep-2026 5m data integrity | PASS (scope-limited) | Run #39823937420; both archives 8,640 rows, zero reported integrity issues, source checksums match |
-| HD-04 — Broader product/symbol coverage | BLOCKED | HTTP 451 on public Spot exchange-info endpoint; resolve source access and produce complete snapshot |
+| HD-04-BROAD-UNIVERSE — all eligible products/symbols | DEFERRED / BLOCKED | Binance public metadata access blocked; only reopen if scope expands beyond BTCUSDT or universe ranking is required |\n| BTCUSDT-only historical data expansion | NEXT / IN PROGRESS | Official monthly archives + checksum + schema/time-grid/gap/duplicate validation across multiple months; does not claim current listing metadata |
 | Simulator + cost model | NOT STARTED | Accounting/fill/cost tests pass |
 | Baselines + preregistered experiments | NOT STARTED | Reproducible walk-forward/holdout evidence |
 | AI decision layer | NOT STARTED | Incremental out-of-sample net benefit |

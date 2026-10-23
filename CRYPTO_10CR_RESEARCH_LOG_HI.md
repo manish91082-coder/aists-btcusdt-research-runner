@@ -348,3 +348,107 @@ Research status और claims केवल verified evidence के आधार
 - **CryptoDataDownload free CSV**: documented no-login Spot OHLCV CSVs daily/hourly/1-minute granularity में कई exchanges के लिए हैं। इसे केवल independent Spot cross-check मानेंगे, पूर्ण Futures/funding source नहीं। https://www.cryptodatadownload.com/ .
 - Zero-cost का अर्थ public endpoints/downloads बिना paid plan/API key जहाँ समर्थित हो; unlimited requests, complete history या हर symbol की guarantee नहीं।
 - अगला चरण: Bybit और OKX पर एक ही UTC window के BTCUSDT Spot तथा perpetual candles, instrument metadata और funding history का छोटा read-only probe। HTTP/JSON, symbol mapping, timestamp grid/continuity, OHLCV numeric rules और funding schema validate होंगे। CryptoDataDownload केवल exact comparable Spot file मिलने पर cross-check में शामिल होगा। कोई credentials या trading endpoints नहीं।
+
+
+## 36. Bybit और OKX के वैकल्पिक public API probe को repository में जोड़ा — 23 अक्टूबर 2026
+
+- कामचलाऊ बदलाव अलग branch `research/hd04-alternate-source-probe` पर किया गया है; अभी `main` में merge नहीं किया गया।
+- नई script `scripts/probe_hd04_alternate_sources.py` निश्चित UTC window 2026-09-01 00:00–01:00 पर Bybit V5 और OKX V5 के public Spot/perpetual candle, instrument metadata और funding-history endpoints जाँचती है। Credentials और trading endpoints उपयोग नहीं होते।
+- रिपोर्ट path: `artifacts/hd04/hd04-alternate-sources.json`; HTTP/API errors को report में दर्ज किया जाता है, ताकि स्रोत की अनुपलब्धता code exception से छिपे नहीं।
+- HD-04 workflow में compile तथा probe step जोड़ा गया और script को `CURRENT_PROJECT_KEEP_PATHS.txt` में सुरक्षित किया गया।
+- अभी Actions execution नहीं हुआ है। इसलिए Bybit/OKX availability, schema या historical candle correctness पर कोई PASS claim नहीं है। Binance authoritative current-universe gate BLOCKED है; strategy/backtest और live-trading gate बंद हैं।
+- अगला कदम: branch diff review और CI execution। परिणाम artifact देखने के बाद ही तय होगा कि probe validation को और मजबूत करना है या CryptoDataDownload का Spot-only cross-check जोड़ना है।
+
+
+## 37. वैकल्पिक स्रोतों का पहला live probe और OKX time-boundary सुधार — 23 अक्टूबर 2026
+
+- पहला वास्तविक run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39901520198 ; artifact id `12479136008`। Bybit के पाँचों public endpoint checks पर इस runner से `HTTP 403 Forbidden` मिला। इसे Bybit पर डेटा न होने का प्रमाण नहीं मानना है; यह अभी access/reachability failure है।
+- OKX Spot तथा Swap instrument metadata सफल रहे। दोनों candle endpoints में 11 candles आईं, क्योंकि query की lower boundary पर ठीक 00:00 वाली candle शामिल नहीं हुई। Funding history query भी खाली लौटी।
+- OKX history query की lower boundary को `before=START-1ms` करने का सुधार commit `e8998d20d761bf8fc6c4a1fbe088a9744afebdff` में किया।
+- सुधार के बाद run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39902158479 ; artifact id `12479226388`। कुल 10 checks में 5 PASS, 5 FAIL। OKX Spot और Swap दोनों में निश्चित एक घंटे के भीतर 12 unique, continuous 5-minute candles मिलीं। दोनों instrument metadata checks PASS हुए और Swap funding endpoint से एक row मिली। Bybit के पाँच checks पर HTTP 403 अब भी है।
+- यह केवल एक सीमित OKX BTC sample का प्रमाण है, पूरे exchange universe या पूरे historical coverage का नहीं। Bybit access issue अलग से unresolved है। Binance का authoritative HD-04 universe gate BLOCKED रहेगा। PR #13 अभी merge नहीं करना; strategy/backtest तथा live trading शुरू नहीं करना।
+- अगला कदम: OKX candle/funding fields की schema-level checks जोड़ना और Bybit 403 के लिए आधिकारिक alternate host/region/network behavior का सीमित diagnosis करना। कोई credentials या trading endpoint उपयोग नहीं होगा।
+
+
+## 38. Critical-path सुधार: broad-universe HD-04 को BTCUSDT research से अलग किया — 23 अक्टूबर 2026
+
+तुम्हारी चिंता सही थी: BTCUSDT-केंद्रित लक्ष्य में सभी Binance symbols की universe discovery पर अटकना scope drift बन सकता था। इसे स्पष्ट रूप से अलग किया गया है।
+
+- Binance `exchangeInfo` access failure वास्तविक है; इसे PASS नहीं कहेंगे। Full universe, top-N ranking और दूसरे symbols की current eligibility अभी सिद्ध नहीं हैं।
+- लेकिन इस failure को BTCUSDT historical research रोकने नहीं देंगे। `HD-04-BROAD-UNIVERSE` को DEFERRED/BLOCKED रखा जाएगा, और critical path को fixed BTCUSDT पर वापस लाया जाएगा।
+- नया अगला काम: कई महीनों/वर्षों का Binance official Spot तथा USD-M Futures monthly archive + checksum + funding history इकट्ठा करना; हर file की provenance, checksum, schema, timestamp grid, missing/duplicate bars, OHLCV integrity और coverage manifest सत्यापित करना।
+- Sep-2026 का 8,640-candle slice केवल एक महीने का है; robust strategy/backtest के लिए यह पर्याप्त नहीं। इसलिए अभी strategy ranking शुरू नहीं होगी, लेकिन data acquisition आगे बढ़ेगा।
+- OKX sample को केवल cross-check evidence मानेंगे, Binance universe का विकल्प नहीं। Bybit HTTP 403 को access failure माना जाएगा, data absence नहीं।
+- Live trading/keys/funds movement बंद हैं; profitability और target तक समय अज्ञात हैं। यह scope correction project को रोकने के बजाय measurable data coverage की ओर ले जाती है।
+
+
+## 2026-10-23: GitHub execution-log rule reinforced
+
+**निर्णय:** हर code execution, workflow step, data acquisition/validation और database upload के लिए GitHub में traceable log अनिवार्य है। कोई result केवल अनुमान या बिना log के घोषित नहीं किया जाएगा।
+
+**लॉग में अनिवार्य फ़ील्ड:** UTC start/end, repository, commit SHA, Actions run ID/attempt, exact inputs, step-wise status, exit code, archive/file counts, bytes, SHA-256/checksum result, PASS/FAIL/UNAVAILABLE/SKIPPED का कारण, manifest/output paths और cloud upload/catalog result. Secrets या API keys कभी log नहीं होंगे। हर run के बाद पहले log और machine-readable manifest पढ़कर ही रिपोर्ट दी जाएगी।
+
+**इस बार किया गया काम:** [commit bbabd2c1e1e1302c389d8e75ee95205341724b7c](https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/bbabd2c1e1e1302c389d8e75ee95205341724b7c) में .github/workflows/btcusdt-full-history-collection.yml को बदला गया है। यह collection console output को execution.log में tee करता है, UTC/run/commit/input metadata जोड़ता है, collector/uploader exit codes रिकॉर्ड करता है, manifest से counts और bytes निकालता है, और GitHub Step Summary बनाता है। Artifact में detailed execution.log और btc-usdt-archive-collection-manifest.json सहित outputs 30 दिनों तक रहेंगे।
+
+**स्थिति की ईमानदार सीमा:** यह workflow change GitHub branch पर commit है, पर अभी इसका वास्तविक execution नहीं हुआ है। इसलिए runtime logging, Supabase upload, bucket या database catalog को PASS नहीं माना जाएगा। अगला सुरक्षित कदम केवल एक महीने का canary है; पहले GitHub run logs और artifact जाँचेंगे। Supabase secrets/bucket/table की उपलब्धता सिद्ध न होने पर cloud upload को साफ़ तौर पर SKIPPED/FAIL लिखना है, successful backup नहीं कहना है।
+
+**Binance connector का उपयोग:** live/near-live snapshots, klines, order book, funding और independent cross-checks में सहायक; multi-year historical research के लिए official Binance archive ZIP + official .CHECKSUM sidecar प्राथमिक evidence रहेगा। Connector जुड़ना अपने-आप historical coverage प्रमाणित नहीं करता।
+
+
+## GitHub execution logging change: CI evidence (23 October 2026)
+
+- Workflow logging change: [commit bbabd2c1e1e1302c389d8e75ee95205341724b7c](https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/bbabd2c1e1e1302c389d8e75ee95205341724b7c).
+- CI run [39920640004](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39920640004) completed SUCCESS. I fetched and read job log `120304743836`: Python 3.12.15; all listed Python scripts compiled; 34 deterministic unit tests passed in 0.576 seconds; cleanup was dry-run only and changed no files.
+- Detailed audit note: `execution_logs/2026-10-23-github-execution-logging-change.md`.
+- Scope boundary: this smoke test does not execute the full-history workflow, fetch Binance archives, or validate Supabase. Those remain UNVERIFIED, not PASS. No data collection or database write is claimed.
+
+
+## One-month archive canary workflow and allow-list CI (23 October 2026)
+
+- Added `.github/workflows/btcusdt-archive-canary.yml`, a bounded single-month (2026-09) read-only archive canary. It requests Spot 1m, USDⓈ-M Futures 1m and funding archives, records `execution.log` plus a JSON manifest, and does not write to Supabase.
+- First CI run [39920771237](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39920771237) failed at the protected-path check because the new workflow was not yet in `CURRENT_PROJECT_KEEP_PATHS.txt`. The fetched log confirmed dry-run only and no files changed.
+- Corrected the keep-list in commit [159f593a6052e31b06042e7217437e9637a03752](https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/159f593a6052e31b06042e7217437e9637a03752). Rerun [39920787299](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39920787299) passed: 59 tracked files, 59 protected, zero deletion candidates, 34 tests passed in 0.360 seconds.
+- The run records and inspected logs are preserved in `execution_logs/2026-10-23-archive-canary-workflow-allowlist-ci.md`.
+- Important: the commit-associated successful run was smoke CI, not the archive canary. Actual archive acquisition remains UNVERIFIED. Workflow dispatch availability is not confirmed because this workflow is only on the feature branch; do not merge PR #13 or write to Supabase to bypass the gate.
+
+
+## BTCUSDT one-month archive canary: first end-to-end source validation (23 October 2026)
+
+- Successful GitHub Actions run: [39921734599](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921734599), job archive-canary completed SUCCESS on commit e99f9a5ca905fc146a3a14e31f47c553461b068c.
+- UTC runtime observed in job log: 08:01:34–08:01:40. Python 3.12.15. Requested only 2026-09.
+- Actual outcome: 3 archives PASS, 0 UNAVAILABLE, 0 FAIL; total archive bytes 3,852,025. Spot 1m: 2,054,117 bytes, SHA-256 7a021fb5981cfdb1a56457d68fa81360ab27350c981ddfe63112b2322df44b56. USDⓈ-M Futures 1m: 1,796,984 bytes, SHA-256 e1a821b5bf6b48d57da01c3e390b8a467a698155def5c18c2c63c0eb044a3247. UM funding: 924 bytes, SHA-256 913cd31b8f924a06717a2fac17f3df6132c24ccded209eb3e4ae7d83e1b247f2.
+- The first canary run [39921614983](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921614983) failed because the Futures CSV contains an open_time header. The log exposed the exact issue. Collector fix at e99f9a5ca905fc146a3a14e31f47c553461b068c now handles a valid 12-column header; a regression test was added in 5a6441b7c45e287bba891f0f4172fc76023f775f. Smoke CI [39921757171](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921757171) passed.
+- Artifact: [canary logs, manifest and raw archives](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921734599/artifacts/12487337672), artifact ID 12487337672, 3,855,719 bytes, retention 30 days.
+- Detailed execution record: execution_logs/2026-10-23-btcusdt-one-month-archive-canary.md.
+- Scope boundary: this is a real PASS for the three requested September 2026 archives only. Supabase writes were explicitly NOT ATTEMPTED. Long-history coverage, permanent storage and trading strategy performance remain unverified.
+
+
+## Historical coverage probe: September 2019 (23 October 2026)
+
+- GitHub Actions [run 39921927263](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921927263) completed; collector exit code 0; Python 3.12.15.
+- Summary for requested month 2019-09: PASS=1, UNAVAILABLE=2, FAIL=0. Spot 1m archive PASS, 2,140,033 bytes, SHA-256 `6bed8bcf250caedf243cd890cdffd93b6266e7f3007a8bb7e6d13b95a15645f1`. USDⓈ-M Futures 1m and UM funding exact monthly archive URLs returned HTTP 404 and were recorded UNAVAILABLE.
+- Artifact [12486414849](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921927263/artifacts/12486414849), 2,142,723 bytes, 30-day retention. It contains the execution log and machine-readable manifest.
+- Detailed record: `execution_logs/2026-10-23-btcusdt-2019-history-canary.md`.
+- Interpretation: 404 is archive-path availability evidence only, not proof that the contract did not exist. Spot and Futures coverage start dates must be measured independently. Next bounded probe is 2020-01 for UM Futures and funding availability. No Supabase writes were attempted.
+
+
+## Historical coverage probe: January 2020 (23 October 2026)
+
+- GitHub Actions [run 39922039878](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922039878) completed successfully. Requested 2020-01 only; collector exit code 0; PASS=3, UNAVAILABLE=0, FAIL=0.
+- Spot 1m: PASS, 2,224,194 bytes, SHA-256 `02df6da44ed8145fbb9ed819858185d9e2f15eb025c5bec8a4ea2d8738cd0d19`. UM Futures 1m: PASS, 1,829,116 bytes, SHA-256 `b4e13ea185ba96c413ac9167cfbb6e238eb5eae119a7a77f41f4c61c5e099d03`. UM funding: PASS, 825 bytes, SHA-256 `7f81b2f3694d13779e7e896b69d60cd61e9444d7b9f9e90df761935e1c1b76e2`.
+- Artifact [12486769727](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922039878/artifacts/12486769727), 4,057,887 bytes, retained for 30 days. Detailed record: `execution_logs/2026-10-23-btcusdt-2020-history-canary.md`.
+- Compared with the September 2019 probe, this shows Spot archive availability at both tested points; UM Futures and funding returned HTTP 404 in 2019-09 but passed in 2020-01. This brackets availability between the tested months only, not exact start date. A month-by-month coverage manifest is required before stating a complete history range.
+- No Supabase write attempted. Temporary GitHub artifact only; durable storage remains unverified.
+
+
+## Full official archive URL coverage inventory (23 October 2026)
+
+- GitHub Actions [run 39922532383](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922532383) completed SUCCESS for 2017-08 through 2026-09, 110 months. It made 330 monthly archive checks and checked each archive plus its .CHECKSUM sidecar via HTTP HEAD. Summary: AVAILABLE=272, UNAVAILABLE=58, FAIL=0. Archive bodies were not downloaded by this inventory.
+- Spot 1m: 110/110 monthly URLs available, 2017-08 through 2026-09; reported Content-Length sum 234,954,793 bytes.
+- UM Futures 1m: 81/110 URLs available, 2020-01 through 2026-09; earlier 29 months returned 404; reported Content-Length sum 151,823,703 bytes.
+- UM funding: 81/110 URLs available, 2020-01 through 2026-09; earlier 29 months returned 404; reported Content-Length sum 71,993 bytes.
+- Combined reported ZIP size estimate: 386,850,489 bytes, about 386.9 MB decimal / 0.36 GiB. This excludes normalized outputs and does not establish storage/egress pricing.
+- Artifact [12488291064](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922532383/artifacts/12488291064) contains the URL-level JSON inventory and execution.log. Smoke CI [39922538810](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922538810) passed: 40 tests, 68/68 files protected, zero deletion candidates.
+- Detailed record: `execution_logs/2026-10-23-btcusdt-archive-coverage-inventory.md`.
+- Limitation: this is URL reachability via HEAD, not full archive checksum/content validation. Actual monthly content validation remains limited to the canary months already recorded. No Supabase write attempted.
+- Next gate: confirm intended Supabase project before bulk storage. Do not upload to the previously listed project named `supabase ai content creation claude antigravity` without confirmation. After confirming project/bucket/schema/secrets, do a one-month upload canary and verify object bytes/hash plus catalog row.

@@ -1,0 +1,73 @@
+name: BTCUSDT one-month archive logging canary
+
+on:
+  push:
+    branches:
+      - research/hd04-alternate-source-probe
+    paths:
+      - ".github/workflows/btcusdt-archive-canary.yml"
+      - "scripts/collect_btcusdt_full_history.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  archive-canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Collect one fixed month from official Binance archives
+        run: |
+          mkdir -p artifacts/btcusdt-archive-canary
+          LOG_FILE="artifacts/btcusdt-archive-canary/execution.log"
+          {
+            echo "=== BTCUSDT ARCHIVE CANARY START ==="
+            echo "started_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "repository=$GITHUB_REPOSITORY"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+            echo "commit=$GITHUB_SHA"
+            echo "start_month=2026-09"
+            echo "end_month=2026-09"
+            echo "include_funding=true"
+            python --version
+          } | tee -a "$LOG_FILE"
+          set +e
+          python -u scripts/collect_btcusdt_full_history.py \
+            --start-month 2026-09 \
+            --end-month 2026-09 \
+            --output-dir artifacts/btcusdt-archive-canary \
+            --include-funding 2>&1 | tee -a "$LOG_FILE"
+          rc=${PIPESTATUS[0]}
+          echo "collector_exit_code=$rc" | tee -a "$LOG_FILE"
+          if [ -f artifacts/btcusdt-archive-canary/btc-usdt-archive-collection-manifest.json ]; then
+            python -c 'import json; from pathlib import Path; d=json.loads(Path("artifacts/btcusdt-archive-canary/btc-usdt-archive-collection-manifest.json").read_text()); print("=== MACHINE-READABLE RESULT SUMMARY ==="); print(json.dumps({"counts":d.get("counts"),"archive_count":len(d.get("archives",[])),"total_bytes_passed":sum(x.get("bytes",0) for x in d.get("archives",[]) if x.get("status")=="PASS"),"per_archive":[{"month":x.get("month"),"dataset":x.get("dataset"),"status":x.get("status"),"bytes":x.get("bytes"),"sha256":x.get("sha256"),"error":x.get("error")} for x in d.get("archives",[])]},indent=2))' 2>&1 | tee -a "$LOG_FILE"
+          fi
+          echo "finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$LOG_FILE"
+          exit "$rc"
+      - name: Publish run summary
+        if: always()
+        run: |
+          {
+            echo "## BTCUSDT one-month archive canary"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Requested UTC month: 2026-09"
+            echo "- Datasets: Spot 1m klines, USDⓈ-M Futures 1m klines, USDⓈ-M funding"
+            echo "- Full log: artifact file execution.log"
+            echo "- Machine-readable manifest: btc-usdt-archive-collection-manifest.json"
+            echo "- Supabase/database writes: NOT ATTEMPTED in this canary"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload canary data and execution logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btcusdt-archive-canary-2026-09
+          path: artifacts/btcusdt-archive-canary/
+          if-no-files-found: warn
+          retention-days: 30
