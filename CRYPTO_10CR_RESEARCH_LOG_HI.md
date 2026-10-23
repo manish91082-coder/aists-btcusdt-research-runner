@@ -476,3 +476,13 @@ Research status और claims केवल verified evidence के आधार
 **सीमाएँ:** Spot-only; Futures funding, leverage, liquidation, partial fills, exchange filters और fixed assumptions से आगे dynamic market impact शामिल नहीं। कोई AI decision layer, live order या funds movement नहीं। Target तक profitability/time अभी भी unknown है।
 
 **अगला gate:** candidate rules/cost assumptions freeze करें; आगे tuning से पहले chronological train/validation/holdout windows लिखित रूप से तय करें। फिर cost sensitivity, turnover, benchmark comparison और walk-forward evaluation चलाएँ। हर parameter change का अलग experiment log रखें।
+
+## अगला gate preregistered: BTCUSDT walk-forward protocol (23 अक्टूबर 2026)
+
+- Protocol: [BTCUSDT_CANDIDATE_WALK_FORWARD_PROTOCOL.md](docs/BTCUSDT_CANDIDATE_WALK_FORWARD_PROTOCOL.md)
+- Protocol commit: `7ff2d5555f334a77c9760998b5c4fa748addb3b3`; keep-list protection commit: `eecbac807b318c568e0f40d713f871561aaacb54`.
+- Candidate implementation PR #16 is merged. The final candidate run [39947542681](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681) and smoke CI [39947549808](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947549808) both passed.
+- Frozen rules: Spot long/flat SMA 12/48 trend and trailing z-score 48 mean reversion (enter <= -1.5, exit >= 0), next-candle-open execution, final costed liquidation. July-September 2026 remains a development sample, not an untouched holdout.
+- Split plan: training 2020-2022, validation 2023-2024, historical test 2025, recent-regime diagnostics Jan-Sep 2026, and forward holdout from 2026-10-24 onward. Historical data for Jan 2020-Sep 2026 must be downloaded and content-validated month by month before walk-forward metrics are accepted.
+- Costs: base 10 bps fee/fill, 2 bps full spread, 5 bps slippage/fill; sensitivity 0.5x, 1.0x, 1.5x, 2.0x. No tuning on the forward holdout.
+- **Next action:** expand and validate official monthly BTCUSDT Spot, UM Futures and funding archives for Jan 2020-Sep 2026, with per-month checksum/schema/grid coverage manifest. Do not treat HTTP HEAD availability as archive validation.
