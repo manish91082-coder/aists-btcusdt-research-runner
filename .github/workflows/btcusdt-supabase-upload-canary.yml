@@ -1,0 +1,117 @@
+name: BTCUSDT Supabase one-month upload canary
+on:
+  workflow_dispatch:
+    inputs:
+      month:
+        description: One UTC month to collect, verify, and persist
+        required: true
+        default: "2026-09"
+        type: string
+      include_funding:
+        description: Include USDⓈ-M funding archive when available
+        required: true
+        default: true
+        type: boolean
+permissions:
+  contents: read
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate bounded canary input and record run context
+        env:
+          MONTH: ${{ inputs.month }}
+          INCLUDE_FUNDING: ${{ inputs.include_funding }}
+        run: |
+          mkdir -p artifacts/btcusdt-supabase-canary
+          LOG_FILE="artifacts/btcusdt-supabase-canary/execution.log"
+          {
+            echo "=== CANARY START ==="
+            echo "started_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "repository=$GITHUB_REPOSITORY"
+            echo "run_id=$GITHUB_RUN_ID"
+            echo "run_attempt=$GITHUB_RUN_ATTEMPT"
+            echo "commit=$GITHUB_SHA"
+            echo "month=$MONTH"
+            echo "include_funding=$INCLUDE_FUNDING"
+          } | tee -a "$LOG_FILE"
+          if ! [[ "$MONTH" =~ ^[0-9]{4}-(0[1-9]|1[0-2])$ ]]; then
+            echo "input_status=FAIL_INVALID_MONTH" | tee -a "$LOG_FILE"
+            exit 2
+          fi
+      - name: Collect one month of official archives with checksum validation
+        env:
+          MONTH: ${{ inputs.month }}
+          INCLUDE_FUNDING: ${{ inputs.include_funding }}
+        run: |
+          LOG_FILE="artifacts/btcusdt-supabase-canary/execution.log"
+          ARGS=""
+          if [ "$INCLUDE_FUNDING" = "true" ]; then ARGS="--include-funding"; fi
+          set +e
+          python -u scripts/collect_btcusdt_full_history.py \
+            --start-month "$MONTH" \
+            --end-month "$MONTH" \
+            --output-dir artifacts/btcusdt-supabase-canary \
+            $ARGS 2>&1 | tee -a "$LOG_FILE"
+          rc=${PIPESTATUS[0]}
+          echo "collector_exit_code=$rc" | tee -a "$LOG_FILE"
+          echo "collector_finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$LOG_FILE"
+          exit "$rc"
+      - name: Require Supabase credentials before attempting durable upload
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          LOG_FILE="artifacts/btcusdt-supabase-canary/execution.log"
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "supabase_status=FAIL_MISSING_REQUIRED_SECRETS" | tee -a "$LOG_FILE"
+            echo "::error::Configure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY as GitHub Actions secrets. No durable upload was attempted."
+            exit 3
+          fi
+          echo "supabase_credentials_presence=PASS (values not logged)" | tee -a "$LOG_FILE"
+      - name: Upload ZIP archives, read back, verify SHA-256, and index catalog
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_BUCKET: ${{ vars.SUPABASE_BUCKET }}
+          MONTH: ${{ inputs.month }}
+        run: |
+          LOG_FILE="artifacts/btcusdt-supabase-canary/execution.log"
+          set +e
+          python -u scripts/upload_btcusdt_history_to_supabase.py \
+            --input-dir artifacts/btcusdt-supabase-canary \
+            --prefix "btc-usdt-history/canary/$MONTH" 2>&1 | tee -a "$LOG_FILE"
+          rc=${PIPESTATUS[0]}
+          echo "supabase_uploader_exit_code=$rc" | tee -a "$LOG_FILE"
+          echo "supabase_upload_finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$LOG_FILE"
+          exit "$rc"
+      - name: Finalize run record and step summary
+        if: always()
+        env:
+          MONTH: ${{ inputs.month }}
+        run: |
+          mkdir -p artifacts/btcusdt-supabase-canary
+          LOG_FILE="artifacts/btcusdt-supabase-canary/execution.log"
+          echo "job_status=${{ job.status }}" | tee -a "$LOG_FILE"
+          echo "finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$LOG_FILE"
+          {
+            echo "## BTCUSDT Supabase one-month canary"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Month: $MONTH"
+            echo "- Job status: ${{ job.status }}"
+            echo "- Log and manifest are attached as a workflow artifact."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve logs, manifest, and archives as a GitHub artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btcusdt-supabase-canary-${{ inputs.month }}
+          path: artifacts/btcusdt-supabase-canary/
+          if-no-files-found: warn
+          retention-days: 30
