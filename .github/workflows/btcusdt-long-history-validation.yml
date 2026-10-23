@@ -7,7 +7,7 @@ on:
       - ".github/workflows/btcusdt-long-history-validation.yml"
       - "scripts/run_btcusdt_long_history_validation.py"
       - "scripts/audit_btcusdt_spot_1m_gap_months.py"
-      - "scripts/reconcile_btcusdt_spot_1m_5m_gaps.py"
+      - "scripts/reconcile_btcusdt_spot_1m_5m_gaps.py"\n      - "scripts/audit_btcusdt_spot_aggtrades_in_gaps.py"
       - "scripts/acquire_validate_btcusdt_history.py"
       - "scripts/prepare_btcusdt_research_dataset.py"
   workflow_dispatch:
