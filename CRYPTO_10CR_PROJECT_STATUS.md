@@ -3,7 +3,7 @@
 **Last updated:** 23 October 2026  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **Working branch:** `research/candidate-baselines-clean` (draft [PR #16](https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/16); not merged)  
-**Current phase:** HD-03 initial slice passed; HD-04 broad-universe snapshot remains blocked. Multi-month BTCUSDT history for July-September 2026 passed integrity/normalization. Initial cost-aware Spot candidate baselines have been run and both produced negative net returns under illustrative costs. Smoke CI passed on [run 39947277912](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947277912); candidate run [39947263184](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184).
+**Current phase:** HD-03 initial slice passed; HD-04 broad-universe snapshot remains blocked. Multi-month BTCUSDT history for July-September 2026 passed integrity/normalization. Initial cost-aware Spot candidate baselines have been run and both produced negative net returns under illustrative costs. Smoke CI passed on [run 39947549808](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947549808); candidate run [39947542681](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681).
 
 ## Executive status
 
@@ -53,9 +53,9 @@ Execution records:
 6. **Explicit authorization:** live actions remain disabled unless separately requested and reviewed.
 
 ## Latest candidate-baseline evidence (23 October 2026)
-- Multi-month run [39947263184](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184) succeeded on 26,496 aligned BTCUSDT 5m rows (July-September 2026); 276 funding events were retained in the normalized dataset. Candidate output verifier passed and both equity curves contain 26,496 rows. [Artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184/artifacts/12498676912).
+- Multi-month run [39947542681](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681) succeeded on 26,496 aligned BTCUSDT 5m rows (July-September 2026); 276 funding events were retained in the normalized dataset. Candidate output verifier passed and both equity curves contain 26,496 rows. [Artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681/artifacts/12498179453).
 - Under illustrative fee 10 bps/fill, full spread 2 bps, and slippage 5 bps/fill: SMA 12/48 net return -68.03%, max drawdown -68.52%, 742 fills; mean-reversion z48 net return -58.94%, max drawdown -59.48%, 652 fills. These are in-sample initial candidate results, not out-of-sample evidence or recommendations.
-- Smoke CI [39947277912](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947277912) passed after fixing and testing final-equity curve consistency. Detailed log: [candidate-baseline execution record](execution_logs/2026-10-23-btcusdt-candidate-baselines-initial.md).
+- Smoke CI [39947549808](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947549808) passed after fixing and testing final-equity curve consistency. Detailed log: [candidate-baseline execution record](execution_logs/2026-10-23-btcusdt-candidate-baselines-initial.md).
 
 ## Latest plan/CI verification
 - End-to-end plan: `END_TO_END_EXECUTION_PLAN_HI.md`.
