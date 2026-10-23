@@ -401,3 +401,12 @@ Research status और claims केवल verified evidence के आधार
 - CI run [39920640004](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39920640004) completed SUCCESS. I fetched and read job log `120304743836`: Python 3.12.15; all listed Python scripts compiled; 34 deterministic unit tests passed in 0.576 seconds; cleanup was dry-run only and changed no files.
 - Detailed audit note: `execution_logs/2026-10-23-github-execution-logging-change.md`.
 - Scope boundary: this smoke test does not execute the full-history workflow, fetch Binance archives, or validate Supabase. Those remain UNVERIFIED, not PASS. No data collection or database write is claimed.
+
+
+## One-month archive canary workflow and allow-list CI (23 October 2026)
+
+- Added `.github/workflows/btcusdt-archive-canary.yml`, a bounded single-month (2026-09) read-only archive canary. It requests Spot 1m, USDⓈ-M Futures 1m and funding archives, records `execution.log` plus a JSON manifest, and does not write to Supabase.
+- First CI run [39920771237](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39920771237) failed at the protected-path check because the new workflow was not yet in `CURRENT_PROJECT_KEEP_PATHS.txt`. The fetched log confirmed dry-run only and no files changed.
+- Corrected the keep-list in commit [159f593a6052e31b06042e7217437e9637a03752](https://github.com/manish91082-coder/aists-btcusdt-research-runner/commit/159f593a6052e31b06042e7217437e9637a03752). Rerun [39920787299](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39920787299) passed: 59 tracked files, 59 protected, zero deletion candidates, 34 tests passed in 0.360 seconds.
+- The run records and inspected logs are preserved in `execution_logs/2026-10-23-archive-canary-workflow-allowlist-ci.md`.
+- Important: the commit-associated successful run was smoke CI, not the archive canary. Actual archive acquisition remains UNVERIFIED. Workflow dispatch availability is not confirmed because this workflow is only on the feature branch; do not merge PR #13 or write to Supabase to bypass the gate.
