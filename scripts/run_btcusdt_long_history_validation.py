@@ -117,6 +117,7 @@ def main() -> int:
     prepare_script = Path("scripts/prepare_btcusdt_research_dataset.py")
     batch_reports = []
     normalized_manifests = []
+    failed_batches = []
 
     for batch in batches:
         start, end = batch[0], batch[-1]
@@ -136,10 +137,17 @@ def main() -> int:
                 "report_sha256": sha256(report_target),
                 "summary": json.loads(report_target.read_text(encoding="utf-8")).get("summary", {}),
             })
-        if result.returncode != 0:
-            raise RuntimeError(f"archive validation failed for batch {batch_key}; inspect reports/{batch_key}")
         if not report_source.exists():
-            raise RuntimeError(f"archive validator did not produce a report for {batch_key}")
+            failed_batches.append({"batch": batch_key, "error": "archive validator did not produce a report"})
+            continue
+        report_data = json.loads(report_source.read_text(encoding="utf-8"))
+        if result.returncode != 0 or report_data.get("summary", {}).get("overall") != "PASS":
+            failed_batches.append({
+                "batch": batch_key,
+                "error": "one or more monthly archive validations failed",
+                "summary": report_data.get("summary", {}),
+            })
+            continue
 
         chunk_dir = chunks_dir / batch_key
         print(f"NORMALIZE batch={batch_key}", flush=True)
@@ -153,6 +161,43 @@ def main() -> int:
         manifest_copy = reports_dir / f"normalized-manifest-{batch_key}.json"
         shutil.copy2(manifest_path, manifest_copy)
         normalized_manifests.append(manifest)
+
+    if failed_batches:
+        archive_checks = []
+        for report_item in batch_reports:
+            report_path = reports_dir / report_item["report"]
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+            archive_checks.extend(report.get("checks", []))
+        failed_manifest = {
+            "gate": "BTCUSDT-LONG-HISTORY-VALIDATION",
+            "created_utc": datetime.now(timezone.utc).isoformat(),
+            "symbol": "BTCUSDT",
+            "interval": "5m",
+            "months": months,
+            "source": "Official Binance monthly Spot/UM Futures kline archives and UM funding archives; adjacent SHA-256 sidecars checked.",
+            "batch_archive_reports": batch_reports,
+            "archive_checks": archive_checks,
+            "failed_batches": failed_batches,
+            "summary": {
+                "months_requested": len(months),
+                "files_expected": len(months) * 3,
+                "files_passed": sum(item.get("status") == "PASS" for item in archive_checks),
+                "files_failed": sum(item.get("status") != "PASS" for item in archive_checks),
+                "raw_archives_preserved": sum(1 for item in archive_checks if item.get("saved_archive")),
+                "normalized_dataset_built": False,
+                "status": "FAIL",
+            },
+            "limitations": [
+                "Raw checksum-matching archives are preserved for failed validations when available.",
+                "No normalized aggregate is emitted while any required archive fails content validation.",
+                "A gap or schema mismatch is reported as a failure, not silently filled.",
+            ],
+        }
+        failed_path = root / "btc-usdt-long-history-manifest.json"
+        failed_path.write_text(json.dumps(failed_manifest, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+        print(json.dumps({"manifest": str(failed_path), **failed_manifest["summary"],
+                          "failed_batches": failed_batches}, indent=2), flush=True)
+        return 1
 
     candles_path = root / "btc-usdt-5m-aligned.csv"
     funding_path = root / "btc-usdt-funding-events.csv"
