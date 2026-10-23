@@ -548,3 +548,9 @@ Research status और claims केवल verified evidence के आधार
 - Across all 12 failed months, official Spot 1m and Spot 5m archive scans report timestamp discontinuities in both intervals and the same count of gap/order anomalies per month. Counts match, but the exact intervals and bucket alignment still need boundary-candle inspection. This supports shared time-span discontinuities, not a proven explanation of why the candles are absent.
 - Connector logs expose gap spans but not boundary OHLCV rows, and the binary artifact ZIP is not readable through the available GitHub fetch action. Modified the diagnostic script to include `boundary_context` in its JSON log output; commit f93b385225d9384c8060d727f0df9a5773788e82. Next run must compile and print the boundary rows before interpretation.
 - December 2020 has two timestamp gaps and one close-time anomaly in the strict 1m audit. That anomaly remains unresolved. No fill/reconstruction, no validator weakening, no walk-forward, no PR merge, no live trading; tax/TDS stays out of scope.
+
+
+## 12. Diagnostic trigger correction (23 October 2026)
+- Run 39968362479 compiled the validator code, but its `spot-1m-gap-audit` job was skipped again because the boundary-output commit message did not match the conditional trigger. Thus no boundary rows were printed in that run.
+- Removed the conditional entirely so any push that triggers this history workflow also executes the diagnostic job. Workflow commit: ea717f631404a4b372ec36e3848e9ae133c68813. Verify job execution and logged boundary rows on the new run.
+- No data policy change. Full-history gate remains failed; no synthetic data, no walk-forward, no merge, no live trading. Tax/TDS deferred.
