@@ -46,3 +46,4 @@ execution_logs/2026-10-23-btcusdt-one-month-archive-canary.md
 execution_logs/2026-10-23-btcusdt-2019-history-canary.md
 execution_logs/2026-10-23-btcusdt-2020-history-canary.md
 execution_logs/2026-10-23-btcusdt-archive-coverage-inventory.md
+tests_crypto_target/test_btcusdt_supabase_uploader.py
