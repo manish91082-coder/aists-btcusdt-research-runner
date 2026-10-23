@@ -41,7 +41,21 @@ jobs:
             --end-month "$END_MONTH" \
             --output-dir artifacts/btcusdt-full-history \
             $ARGS
-      - name: Upload archives and coverage manifest
+      - name: Upload to private Supabase Storage and index metadata
+        if: success()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_BUCKET: ${{ vars.SUPABASE_BUCKET }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::warning::Supabase upload skipped. Configure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY repository secrets, create the private bucket, and apply docs/supabase_btcusdt_history_schema.sql."
+            exit 0
+          fi
+          python scripts/upload_btcusdt_history_to_supabase.py \
+            --input-dir artifacts/btcusdt-full-history \
+            --prefix "btc-usdt-history/${START_MONTH:-${{ inputs.start_month }}}-${END_MONTH:-${{ inputs.end_month }}}"
+      - name: Upload temporary GitHub artifact as secondary copy
         if: always()
         uses: actions/upload-artifact@v4
         with:
