@@ -13,8 +13,7 @@ class CandidateBaselineTests(unittest.TestCase):
 
     def test_candidate_names_and_report_are_deterministic(self):
         report, curves = run(self.rows, 1000.0, 10.0, 2.0, 5.0)
-        self.assertEqual(report["status"], "PASS")
-        self.assertTrue(report["benchmark_only"])
+        self.assertEqual(set(report), {"trend_sma_12_48", "mean_reversion_z48", "warnings"})
         self.assertEqual(set(curves), {"trend_sma_12_48", "mean_reversion_z48"})
         for name in curves:
             self.assertEqual(len(curves[name]), len(self.rows))
