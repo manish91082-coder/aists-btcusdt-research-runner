@@ -126,8 +126,8 @@ For every substantive response/action:
 | G0 — Repository/math harness | PASS for current smoke checks | CI run #39820508068; not trading evidence |
 | HD-03 — BTCUSDT Sep-2026 5m data integrity | PASS (scope-limited) | Run #39823937420; both archives 8,640 rows, zero reported integrity issues, source checksums match |
 | HD-04-BROAD-UNIVERSE — all eligible products/symbols | DEFERRED / BLOCKED | Binance public metadata access blocked; only reopen if scope expands beyond BTCUSDT or universe ranking is required |\n| BTCUSDT-only historical data expansion | NEXT / IN PROGRESS | Official monthly archives + checksum + schema/time-grid/gap/duplicate validation across multiple months; does not claim current listing metadata |
-| Simulator + cost model | NOT STARTED | Accounting/fill/cost tests pass |
-| Baselines + preregistered experiments | NOT STARTED | Reproducible walk-forward/holdout evidence |
+| Initial Spot candidate simulator + fixed cost model | IMPLEMENTED / INITIAL RUN PASS; limitations remain | Long/flat SMA 12/48 and mean-reversion z48 on Jul-Sep 2026; curve/report verifier and unit tests pass; fixed costs only; no Futures accounting |
+| Candidate baselines | INITIAL RUN COMPLETE; no edge established | Both candidates negative after illustrative costs; untouched holdout and walk-forward evaluation still required |
 | AI decision layer | NOT STARTED | Incremental out-of-sample net benefit |
 | Risk/execution simulator | NOT STARTED | Stress tests and reconciliation pass |
 | Paper/forward testing | NOT STARTED | Predeclared forward gate passes |
