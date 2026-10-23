@@ -20,3 +20,4 @@ tests_crypto_target/test_hd03_data.py
 .github/workflows/hd04-universe-snapshot.yml
 scripts/build_hd04_universe_snapshot.py
 tests_crypto_target/test_hd04_universe.py
+scripts/probe_hd04_archive_sources.py
