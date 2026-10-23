@@ -2,9 +2,10 @@
 
 Date: 2026-10-23
 Branch: research/hd04-alternate-source-probe
-Run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39904158657
-Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39904158657/artifacts/12479684213
-Commit under test: 131123adb55e5b9100e663d1686baff27d9cba5b
+Integrity-only run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39904158657
+Integrated dataset run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39905423961
+Integrated artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39905423961/artifacts/12480611321
+Integrated workflow commit: 6c1408d3199cfd267380d3ef79d320323c92c7cc
 
 ## Verified result
 
