@@ -22,3 +22,28 @@ At the time of this record, run `39970944134` was in progress. No aggTrades coun
 
 ## Decision
 Keep the archive gate closed. A positive aggTrades count inside a gap would show that trades occurred there, but a zero count alone does not prove archive completeness or justify relaxing the kline continuity rule. No candle synthesis, silent exclusions, walk-forward research, PR merge, or live trading.
+
+
+## Follow-up: targeted daily archive run completed
+
+**Workflow run:** [39997643479](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39997643479)  
+**Head commit at run:** `f90242d73a68f473ebdf5c2fc6fd9a47784cbc5c`  
+**Audit job:** `spot-aggtrade-gap-audit`, conclusion `success`
+
+### Method adjustment
+The first monthly-archive approach was repeatedly cancelled during execution. The script was changed to fetch only official daily Spot BTCUSDT aggTrades ZIPs for dates overlapping each pre-registered gap, plus each `.CHECKSUM` sidecar. This change made the complete 12-month diagnostic finish in about 80 seconds. Script source comments and report source metadata were subsequently corrected from “monthly” to “daily.”
+
+### Results
+- 12 of 12 affected months completed; 15 of 15 configured gap windows were evaluated.
+- Every downloaded daily archive SHA256 matched its official sidecar.
+- Every configured gap reported `trade_rows: 0`; `first_trade_utc` and `last_trade_utc` were null for all gaps.
+- Artifact: [`btcusdt-spot-aggtrade-gap-audit`](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39997643479/artifacts/12520687183).
+- These results describe the downloaded archive contents and the current parser. They do not establish that no trades occurred, that the archive is complete, or why the kline gaps exist. A checksum validates bytes against the sidecar, not market-event completeness.
+
+### Parallel gate status
+The same workflow run’s full-history validator remains failed closed at 231/243 archive checks, with 12 Spot 5m monthly checks failing. It did not emit a normalized full-history dataset. The Spot 1m diagnostic completed successfully. No continuity rule was relaxed and no candles were reconstructed or excluded.
+
+### Next actions
+1. Independently verify aggTrades CSV schema and timestamp-column interpretation against official documentation/sample rows before treating zero counts as reliable.
+2. Inspect the exact raw 2020-12 anomalous close-time row (`open_time=1608559500000`, raw `close_time=1608558440521`) and its neighboring rows; preserve raw values and fail closed.
+3. Re-run only after adding a parser/schema assertion or a focused test; keep PR #17 unmerged and do not start walk-forward until the full archive gate passes.
