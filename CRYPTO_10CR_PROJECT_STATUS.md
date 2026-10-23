@@ -89,3 +89,11 @@ Execution records:
 - Compile and deterministic eligibility tests: PASS.
 - Current universe snapshot: FAIL at official USD-M Futures `/fapi/v1/exchangeInfo`; response was not parseable JSON across the configured official hosts. Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39887437784/artifacts/12473615465.
 - HD-04 remains BLOCKED. Next research task: test an independent venue-pair discovery source (e.g. CoinGecko exchange/derivatives listings) as a corroborating cross-check, while preserving Binance's own listing/status metadata as the required exchange-specific authority. Do not treat an aggregated source as a replacement for exact Binance tradability or Futures contract metadata.
+
+
+## Independent exchange-source probe added (23 October 2026)
+
+- Added `scripts/probe_hd04_coingecko_source.py` to test CoinGecko's Binance Spot and Binance Futures exchange endpoints independently, preserving endpoint-level errors, response hashes, returned ticker count, and a bounded ticker summary.
+- The probe explicitly labels CoinGecko as corroboration only. It does not replace Binance's official symbol status, complete exchangeInfo universe, contract metadata, or per-symbol USDT quote-volume ranking.
+- The HD-04 workflow now compiles and runs this probe and preserves its JSON report in the workflow artifact. An optional `COINGECKO_DEMO_API_KEY` environment variable may be configured as a GitHub Actions secret; no key is committed or required in source code.
+- Current verification status: code has been committed, but the workflow result is pending. HD-04 remains BLOCKED until evidence confirms current listing/volume coverage and the primary snapshot gate passes.
