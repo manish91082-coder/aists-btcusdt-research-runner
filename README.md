@@ -62,7 +62,7 @@ The intended system autonomously evaluates market state and decides trade/no-tra
 
 ## Next milestone
 
-Follow `END_TO_END_EXECUTION_PLAN_HI.md` without scope drift. The current gate is HD-04 source access: resolve the official Binance Spot exchange-info HTTP 451, rerun the reproducible universe snapshot and accept only a complete, timestamped report. Strategy research remains blocked until required data coverage passes. Do not start strategy/AI evaluation until this data gate passes.
+Follow `END_TO_END_EXECUTION_PLAN_HI.md` without scope drift. The current gate is HD-04 source access. An archive-first probe now checks official Binance Spot/Futures monthly kline ZIPs and the Futures monthly funding-rate archive with checksum verification before attempting the API universe snapshot. The full universe remains blocked until complete, timestamped listing and volume evidence passes. Strategy research remains blocked until required coverage passes. Do not start strategy/AI evaluation until this data gate passes.
 
 **Important:** A math unit-test pass confirms only those helper functions. It does not confirm market-data quality, AI decision quality, profitable edge, or an operational autonomous bot.
 
