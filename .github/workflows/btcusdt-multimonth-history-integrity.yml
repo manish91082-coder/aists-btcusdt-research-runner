@@ -1,5 +1,11 @@
 name: BTCUSDT multi-month history integrity
 on:
+  push:
+    branches:
+      - research/hd04-alternate-source-probe
+    paths:
+      - ".github/workflows/btcusdt-multimonth-history-integrity.yml"
+      - "scripts/acquire_validate_btcusdt_history.py"
   workflow_dispatch:
     inputs:
       start_month:
@@ -24,10 +30,13 @@ jobs:
         with:
           python-version: "3.12"
       - name: Acquire official monthly archives and validate integrity
+        env:
+          START_MONTH: ${{ inputs.start_month || '2026-07' }}
+          END_MONTH: ${{ inputs.end_month || '2026-09' }}
         run: >-
           python scripts/acquire_validate_btcusdt_history.py
-          --start-month "${{ inputs.start_month }}"
-          --end-month "${{ inputs.end_month }}"
+          --start-month "$START_MONTH"
+          --end-month "$END_MONTH"
           --output-dir artifacts/hd04-history
       - name: Upload raw archives and integrity report
         if: always()
