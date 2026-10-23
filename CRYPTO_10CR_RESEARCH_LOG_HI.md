@@ -316,3 +316,12 @@ Research status और claims केवल verified evidence के आधार
 - Script output: global derivatives 27,978 records; Binance (Futures) label वाले 824 records; 779 unique conservative symbol candidates; 45 unmapped; normalized duplicate candidates 0; verified archive slice से overlap केवल BTCUSDT।
 - Unit tests और smoke CI पास हैं। HD-04 workflow फिर भी primary Binance Futures `exchangeInfo` non-JSON response के कारण FAIL हुआ। इसलिए पूरा gate BLOCKED है।
 - अगला सीमित कदम: CoinGecko के स्पष्ट USDT-quoted candidates के छोटे चुने हुए sample पर official historical archive existence/checksum matrix बनाना। सभी 779 candidates पर अंधाधुंध requests नहीं करनी हैं; missing archive को coverage debt दर्ज करना है और candidate को active Binance listing नहीं मानना है।
+
+
+## 23 अक्टूबर 2026: सीमित candidate archive coverage जाँच
+
+- निर्णय: CoinGecko के Binance-Futures-labelled records से अधिकतम 10 अद्वितीय, conservative USDT symbol candidates चुने जाएँ; चयन source के `volume_24h` के आधार पर descending हो और बराबरी में symbol क्रम deterministic रहे। यह aggregator ranking है, Binance की आधिकारिक listing/volume ranking नहीं।
+- नया script: `scripts/probe_hd04_candidate_archive_coverage.py`. यह सितंबर 2026 के 5-minute Spot तथा USDⓈ-M Futures monthly kline ZIP URLs अलग-अलग जाँचता है, उपलब्ध ZIP का SHA-256 निकालता है और official `.CHECKSUM` sidecar से मिलान करता है। रिपोर्ट: `artifacts/hd04/hd04-candidate-archive-coverage.json`.
+- HTTP 404 को केवल `NOT_AVAILABLE_OR_NOT_LISTED` दर्ज किया जाता है। इससे यह निष्कर्ष नहीं निकलेगा कि symbol कभी listed नहीं था या वर्तमान में inactive है। Checksum match archive-object integrity बताता है, candle schema/continuity नहीं।
+- Unit tests में unique USDT filtering, volume ranking और deterministic tie-break जोड़े; script को keep-list और HD-04 Actions workflow में जोड़ा।
+- अगली कार्रवाई: workflow artifact में परिणाम और logs देखना। HD-04 तब तक BLOCKED है जब तक आधिकारिक Binance Futures `exchangeInfo` snapshot सफल व पर्याप्त न हो। कोई strategy backtest, profitability claim या live trade इस probe से अधिकृत नहीं होता।
