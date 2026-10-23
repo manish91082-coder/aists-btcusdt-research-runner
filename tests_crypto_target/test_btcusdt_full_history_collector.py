@@ -37,6 +37,18 @@ class FullHistoryCollectorTests(unittest.TestCase):
         self.assertEqual(report["rows"], 40320)
         self.assertTrue(report["continuous_1m_grid"])
 
+    def test_kline_archive_accepts_official_header_row(self):
+        month = "2026-09"
+        start = int(datetime(2026, 9, 1, tzinfo=timezone.utc).timestamp() * 1000)
+        count = calendar.monthrange(2026, 9)[1] * 1440
+        header = ["open_time", "open", "high", "low", "close", "volume",
+                  "close_time", "quote_asset_volume", "number_of_trades",
+                  "taker_buy_base_asset_volume", "taker_buy_quote_asset_volume", "ignore"]
+        rows = [header] + [kline_row(start + i * 60_000) for i in range(count)]
+        report = validate_archive(zipped_csv(rows), month, "um_klines_1m")
+        self.assertEqual(report["rows"], 43200)
+        self.assertTrue(report["continuous_1m_grid"])
+
     def test_kline_archive_rejects_missing_minute(self):
         month = "2026-02"
         start = int(datetime(2026, 2, 1, tzinfo=timezone.utc).timestamp() * 1000)
