@@ -19,6 +19,7 @@ class CandidateBaselineTests(unittest.TestCase):
             self.assertEqual(len(curves[name]), len(self.rows))
             self.assertTrue(report[name]["final_equity_after_final_liquidation"] >= 0)
             self.assertTrue(report[name]["total_fees_quote"] >= 0)
+            self.assertAlmostEqual(float(curves[name][-1]["equity"]), report[name]["final_equity_after_final_liquidation"], places=6)
 
     def test_signals_only_use_available_prefix(self):
         closes = [100.0 + i for i in range(80)]
