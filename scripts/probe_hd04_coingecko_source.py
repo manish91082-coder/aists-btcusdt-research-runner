@@ -78,7 +78,7 @@ def main() -> int:
         ],
     }
     target = out / "hd04-coingecko-source-probe.json"
-    target.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    target.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps({"report": str(target), "summary": report["summary"], "errors": errors,
                       "results": [{k: v for k, v in x.items() if k != "tickers"} | {"tickers_sample": x["tickers"][:5]} for x in results]}, indent=2))
     return 0 if results else 1
