@@ -35,7 +35,8 @@ The intended system must dynamically decide trade/no-trade, market/direction, st
 - Added a GitHub Actions smoke-test workflow.
 - Added guarded repository-cleanup tooling, then completed and verified the current-thread-only cleanup.
 - Recreated a current README, added the detailed project charter, and aligned the master research log, status, keep-list and cleanup utility.
-- Preserved the current research source, tests, workflow and execution records. The cleanup did not erase Git history or other branches.\n- Added deterministic long/flat Spot candidate baselines (SMA trend and trailing z-score mean reversion), explicit next-open fills/cost assumptions, output verification, and unit tests. The work remains in draft PR #16 pending review/merge.
+- Preserved the current research source, tests, workflow and execution records. The cleanup did not erase Git history or other branches.
+- Added deterministic long/flat Spot candidate baselines (SMA trend and trailing z-score mean reversion), explicit next-open fills/cost assumptions, output verification, and unit tests. The work remains in draft PR #16 pending review/merge.
 
 Execution records:
 - [Cleanup outcome and verification](execution_logs/2026-10-22-cleanup-final-verification.md)
@@ -51,7 +52,12 @@ Execution records:
 5. **Forward validation:** paper/forward observations before any discussion of a live stage.
 6. **Explicit authorization:** live actions remain disabled unless separately requested and reviewed.
 
-## Latest candidate-baseline evidence (23 October 2026)\n- Multi-month run [39947263184](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184) succeeded on 26,496 aligned BTCUSDT 5m rows (July-September 2026); 276 funding events were retained in the normalized dataset. Candidate output verifier passed and both equity curves contain 26,496 rows. [Artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184/artifacts/12498676912).\n- Under illustrative fee 10 bps/fill, full spread 2 bps, and slippage 5 bps/fill: SMA 12/48 net return -68.03%, max drawdown -68.52%, 742 fills; mean-reversion z48 net return -58.94%, max drawdown -59.48%, 652 fills. These are in-sample initial candidate results, not out-of-sample evidence or recommendations.\n- Smoke CI [39947277912](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947277912) passed after fixing and testing final-equity curve consistency. Detailed log: [candidate-baseline execution record](execution_logs/2026-10-23-btcusdt-candidate-baselines-initial.md).\n\n## Latest plan/CI verification
+## Latest candidate-baseline evidence (23 October 2026)
+- Multi-month run [39947263184](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184) succeeded on 26,496 aligned BTCUSDT 5m rows (July-September 2026); 276 funding events were retained in the normalized dataset. Candidate output verifier passed and both equity curves contain 26,496 rows. [Artifact](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947263184/artifacts/12498676912).
+- Under illustrative fee 10 bps/fill, full spread 2 bps, and slippage 5 bps/fill: SMA 12/48 net return -68.03%, max drawdown -68.52%, 742 fills; mean-reversion z48 net return -58.94%, max drawdown -59.48%, 652 fills. These are in-sample initial candidate results, not out-of-sample evidence or recommendations.
+- Smoke CI [39947277912](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947277912) passed after fixing and testing final-equity curve consistency. Detailed log: [candidate-baseline execution record](execution_logs/2026-10-23-btcusdt-candidate-baselines-initial.md).
+
+## Latest plan/CI verification
 - End-to-end plan: `END_TO_END_EXECUTION_PLAN_HI.md`.
 - CI: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39822482423 — `success`, tested commit `a2450df4c76fb2e88b92a14432f50d81c7bb24a1`.
 - Python compilation, required plan/target checks, keep-list dry-run and 5/5 unit tests passed. This verifies repository checks only, not market data or trading edge.
