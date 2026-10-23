@@ -26,8 +26,8 @@ jobs:
               "execution_requests/*.json",
               "actions: write",
               "workflow_dispatch",
-              "btc-usdt-history",
-              "SUPABASE_SERVICE_ROLE_KEY",
+              "include_funding",
+              "HTTP 204",
           ]
           missing = [item for item in required if item not in text]
           if missing:
