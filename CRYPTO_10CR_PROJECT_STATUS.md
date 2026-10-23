@@ -140,3 +140,12 @@ Execution records:
 - Missing archive URL (HTTP 404) is classified as `NOT_AVAILABLE_OR_NOT_LISTED`; it is not treated as proof that a symbol was never listed or is inactive. Checksum match proves object integrity only, not schema/continuity or current listing status.
 - Added deterministic unit tests for unique USDT filtering, volume ranking, and tie-breaking; added the script to `CURRENT_PROJECT_KEEP_PATHS.txt` and the HD-04 workflow.
 - **Gate state remains BLOCKED until the workflow evidence is inspected and the official Binance Futures `exchangeInfo` snapshot succeeds.** CoinGecko candidate records are not authoritative Binance listing metadata. Strategy/backtest remains prohibited before data gates pass; no trading edge or timeline is established.
+
+
+## HD-04 candidate archive probe execution verified; primary snapshot still blocked (23 October 2026)
+
+- Latest HD-04 workflow run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39890523651 (commit `c14041b7398b40e9406c8857493d1c3e59067c69`).
+- Compile and deterministic eligibility tests passed. Official monthly archive probe passed; CoinGecko corroboration passed; bounded candidate archive coverage probe passed; its report was preserved in artifact `hd04-market-universe-39890523651` (artifact ID `12474726467`, SHA-256 `d1898d7fe5530346380dff22497118fc0623a7339a520f0c36b1c131efb00f28`).
+- Bounded archive result: 20 Spot/Futures archive checks across 10 candidates; 14 ZIP/checksum matches; 6 HTTP 404s recorded as `NOT_AVAILABLE_OR_NOT_LISTED`; zero network/other errors. Candidate symbols: BTCUSDT, ETHUSDT, SOXLUSDT, XAUUSDT, SNDKUSDT, ZECUSDT, SKHYNIXUSDT, KORUUSDT, SPCXUSDT, SOLUSDT. These are aggregator-derived candidates, not proof of official active Binance listings.
+- Overall workflow correctly remains FAILURE/BLOCKED because `https://fapi.binance.com/fapi/v1/exchangeInfo` returned a non-JSON/empty response. Failure occurred in `scripts/build_hd04_universe_snapshot.py`; this is an unresolved primary-source access/response issue, not evidence that candidate archive checks failed.
+- Next action: diagnose the official current-contract metadata access separately and preserve source provenance. Do not weaken the completeness gate or promote CoinGecko candidates into official listings. No strategy/backtest, profitability, or live trading is authorized.
