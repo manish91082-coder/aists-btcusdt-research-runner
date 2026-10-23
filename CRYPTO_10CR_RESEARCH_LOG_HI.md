@@ -302,3 +302,10 @@ Research status और claims केवल verified evidence के आधार
 - 823 को अभी **candidate records** ही माना जाएगा, verified full Binance contract universe नहीं। Aggregator coverage incomplete हो सकती है; contract status और official listing के लिए Binance authority अलग से चाहिए।
 - इसी workflow में primary official Binance USD-M Futures `exchangeInfo` snapshot फिर विफल रहा, इसलिए HD-04 BLOCKED है।
 - अगला कदम: CoinGecko candidate records को timestamp/hash के साथ अलग slice के रूप में संरक्षित करना, symbol mapping को conservative रखना, historical archive symbol coverage से overlap निकालना और primary exchange-status source को अलग resolve करना। कोई strategy/backtest निष्कर्ष नहीं।
+
+
+## 31. CoinGecko candidate-symbol reconciliation और tests — 23 अक्टूबर 2026
+- Script commit: `fd0e1e75d2d33269eeac4e85796a59ffd1b1ed5f`. अब हर external raw symbol ज्यों का त्यों सुरक्षित रहता है; केवल स्पष्ट alphanumeric symbol और recognized quote suffix (USDT/USDC/BUSD/USD) मिलने पर conservative candidate बनाया जाता है। बाकी unmapped रहते हैं, अनुमान नहीं लगाया जाता।
+- Report में unique candidate count, duplicate candidate symbols, unmapped records और verified archive slice में BTCUSDT overlap शामिल किया।
+- Unit-test commit: `bae405f87b0148bf5e7bbdf658d6f1d3558dd4ed`, ambiguous/invalid symbols के लिए test जोड़े।
+- Workflow run अभी pending है। यह Binance के current contract status का प्रमाण नहीं है; HD-04 BLOCKED रहेगा।
