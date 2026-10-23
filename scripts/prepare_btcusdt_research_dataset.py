@@ -39,7 +39,7 @@ def archive_rows(path: Path) -> tuple[list[list[str]], str, str]:
 def load_klines(path: Path, period: str, header: bool, venue: str) -> tuple[list[dict], dict]:
     rows, member, digest = archive_rows(path)
     stats = validator.validate_klines(rows, period, header, venue)
-    if header:
+    if stats.get("header_present"):
         rows = rows[1:]
     normalized = []
     for row in rows:
