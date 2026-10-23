@@ -21,6 +21,7 @@ on:
       - ".github/workflows/btcusdt-archive-coverage-inventory.yml"
       - "docs/supabase_btcusdt_history_schema.sql"
       - ".github/workflows/btcusdt-full-history-collection.yml"
+      - ".github/workflows/btcusdt-supabase-upload-canary.yml"
       - ".github/workflows/btcusdt-multimonth-history-integrity.yml"
       - "CURRENT_PROJECT_KEEP_PATHS.txt"
       - ".github/workflows/crypto-target-smoke.yml"
@@ -34,6 +35,7 @@ on:
       - "scripts/acquire_validate_btcusdt_history.py"
       - "scripts/collect_btcusdt_full_history.py"
       - ".github/workflows/btcusdt-full-history-collection.yml"
+      - ".github/workflows/btcusdt-supabase-upload-canary.yml"
       - ".github/workflows/btcusdt-multimonth-history-integrity.yml"
       - ".github/workflows/crypto-target-smoke.yml"
   workflow_dispatch:
