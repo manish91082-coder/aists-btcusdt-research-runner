@@ -251,3 +251,13 @@ Research status और claims केवल verified evidence के आधार
 - Commit path: `scripts/probe_hd04_archive_sources.py`, workflow और keep-list/smoke test updates. अभी इस probe का सफल runtime परिणाम सत्यापित नहीं है; अगला action उसके GitHub Actions run का report/artifact देखना है।
 - Universe API snapshot अब भी अलग requirement है: historical archive probe pass होने से वर्तमान Spot/Futures listings या volume ranking अपने-आप प्रमाणित नहीं होंगे। HD-04 तब तक BLOCKED रहेगा जब तक listing/volume snapshot पूरा न हो।
 - Drift check: लक्ष्य 1,000 USDT → 1,061,120.54 USDT अपरिवर्तित; कोई strategy/backtest या profitability claim नहीं।
+
+
+## 25. HD-04 official archive probe का वास्तविक परिणाम — 23 अक्टूबर 2026
+- Workflow run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39886385373 (tested commit `018a840f9e18ff6948e99f1cf2af98fd9abde266`). Archive-probe step सफल; 3/3 archives download हुए, तीनों Binance `.CHECKSUM` SHA-256 matches सही।
+- Spot BTCUSDT 5m सितंबर 2026: 8,640 CSV rows, SHA-256 `4106fc73698fd1851b1821cd0293adc6304f86f0c2e72244e15c41f63c2bde08`.
+- USD-M Futures BTCUSDT 5m सितंबर 2026: 8,641 CSV rows, जिसमें पहली row header है; अर्थात 8,640 data candles. SHA-256 `3a2d163a2bd28ca614fa0840a92ecbcde0d9c4962b278dd619d5bf81a9918e26`.
+- USD-M Futures BTCUSDT funding-rate सितंबर 2026: 91 CSV rows, जिसमें पहली row header है; अर्थात 90 data rows. SHA-256 `913cd31b8f924a06717a2fac17f3df6132c24ccded209eb3e4ae7d83e1b247f2`.
+- Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39886385373/artifacts/12473175759 (30-day retention).
+- उसी workflow का overall result फिर भी FAIL रहा, क्योंकि current USDⓈ-M Futures `/fapi/v1/exchangeInfo` API response JSON नहीं था। इसलिए यह ऐतिहासिक archive/funding access का PASS है, पूरे HD-04 universe का नहीं। HD-04 अभी BLOCKED है।
+- Smoke tests archive-probe implementation के compile check सहित PASS: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39886398942 (commit `b8e94318ac7844907ec52e0dbbe3b2c1b34581cb`).
