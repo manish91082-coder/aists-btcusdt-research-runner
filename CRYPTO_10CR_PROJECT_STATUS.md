@@ -268,3 +268,12 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - Added the script to `CURRENT_PROJECT_KEEP_PATHS.txt` and wired it into the long-history workflow. The audit step is configured to continue to reconciliation even when the 1m audit reports known gaps; artifact upload retains both reports.
 - Workflow wiring was corrected after reviewing the YAML; final workflow commit: `d6d2237067d9fd693eae6decade6fdcc733f0187`. Runtime verification is pending.
 - **Gate remains BLOCKED:** no candles filled/reconstructed, no failed month silently omitted, no full-history walk-forward, and PR #17 remains unmerged. Next decision depends on exact 1m vs 5m gap evidence.
+
+
+## Spot 1m/5m reconciliation runtime result (23 October 2026)
+
+- Workflow run [39957820308](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39957820308), commit `d6d2237067d9fd693eae6decade6fdcc733f0187`: the `spot-1m-gap-audit` job completed SUCCESS; Python compilation passed; the 1m audit itself reported 0/12 PASS as expected and was allowed to continue; reconciliation completed for 12/12 months with 0 script errors; combined artifact [12502189825](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39957820308/artifacts/12502189825) uploaded successfully (26,780,461 bytes, 30-day retention).
+- Key finding: all 12 months also contain Spot 5m timestamp gaps. In the reported summaries, the 5m gap count matches the 1m gap count for each month; 1m row deficits are multiples of 5m row deficits (e.g. 2020-02: 414 missing 1m rows vs 82 missing 5m rows; 2020-11: 60 vs 12). This points to overlapping missing-data spans rather than a 1m-only discrepancy, but the diagnostic summary does not yet establish the cause or whether gaps represent absent trades, source omissions, or validator assumptions.
+- The diagnostic output labels all months `INSPECT`; it does not certify data integrity. It is a descriptive span comparison and does not synthesize or exclude candles. 2020-12 still has the previously observed 1m close-time anomaly.
+- The separate `long-history-validation` job in run 39957820308 was still in progress at the time this update was written; no final full-history result is claimed from that run.
+- **Next gate:** inspect raw 1m/5m rows around exact gap boundaries and audit validator assumptions against official Binance kline semantics. No reconstruction/interpolation, no silent omission, no walk-forward on incomplete aggregates, no PR #17 merge, no live trading.
