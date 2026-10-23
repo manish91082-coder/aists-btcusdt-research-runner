@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/btcusdt-long-history-validation.yml"
       - "scripts/run_btcusdt_long_history_validation.py"
+      - "scripts/audit_btcusdt_spot_1m_gap_months.py"
       - "scripts/acquire_validate_btcusdt_history.py"
       - "scripts/prepare_btcusdt_research_dataset.py"
   workflow_dispatch:
@@ -67,5 +68,27 @@ jobs:
         with:
           name: btcusdt-long-history-validation
           path: artifacts/btcusdt-long-history/
+          if-no-files-found: warn
+          retention-days: 30
+
+  spot-1m-gap-audit:
+    if: contains(github.event.head_commit.message, 'Spot 1m archives') || contains(github.event.head_commit.message, '1m gap audit')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile audit
+        run: python -m py_compile scripts/audit_btcusdt_spot_1m_gap_months.py
+      - name: Audit official Spot 1m archives
+        run: python scripts/audit_btcusdt_spot_1m_gap_months.py --output-dir artifacts/btcusdt-spot-1m-gap-audit
+      - name: Upload raw archives and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btcusdt-spot-1m-gap-audit
+          path: artifacts/btcusdt-spot-1m-gap-audit/
           if-no-files-found: warn
           retention-days: 30
