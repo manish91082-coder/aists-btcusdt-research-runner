@@ -12,6 +12,8 @@ on:
       - "scripts/probe_hd04_archive_sources.py"
       - "CURRENT_PROJECT_KEEP_PATHS.txt"
       - ".github/workflows/crypto-target-smoke.yml"
+      - ".github/workflows/github-actions-request-bridge.yml"
+      - ".github/workflows/github-actions-request-bridge.yml"
   pull_request:
     paths:
       - "crypto_target/**"
