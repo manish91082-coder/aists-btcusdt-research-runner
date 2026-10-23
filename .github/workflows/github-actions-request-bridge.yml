@@ -4,7 +4,6 @@ on:
     branches: [main]
     paths:
       - "execution_requests/*.json"
-      - ".github/workflows/github-actions-request-bridge.yml"
   pull_request:
     paths:
       - ".github/workflows/github-actions-request-bridge.yml"
@@ -32,6 +31,8 @@ jobs:
           missing = [item for item in required if item not in text]
           if missing:
               raise SystemExit(f"Bridge workflow missing required guardrails: {missing}")
+          if '      - ".github/workflows/github-actions-request-bridge.yml"' in text.split("  pull_request:", 1)[0]:
+              raise SystemExit("The bridge workflow itself must not trigger its dispatch job on push.")
           print("bridge_static_validation=PASS")
           PY
   dispatch:
@@ -118,7 +119,6 @@ jobs:
           echo "dispatch_http_status=$status" | tee -a artifacts/workflow-request-bridge/execution.log
           if [ "$status" != "204" ]; then
             echo "dispatch_status=FAIL" | tee -a artifacts/workflow-request-bridge/execution.log
-            # Log only the response body, never headers or token.
             cat /tmp/dispatch-response.txt | tee -a artifacts/workflow-request-bridge/execution.log
             exit 1
           fi
