@@ -211,3 +211,13 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - Binance connector is available in this conversation and can help with live market snapshots, klines, order book, funding and secondary cross-checks. For long-range reproducible historical acquisition, continue to treat official Binance archive ZIPs and their .CHECKSUM sidecars as the primary source; connector availability does not itself verify archive history.
 - The full-history collection workflow remains manual-dispatch only on the research branch. Do not claim that it has executed or that Supabase persistence is active until an actual Actions run log and uploaded object/catalog evidence are inspected.
 - Live trading, order placement and funds movement remain unauthorized.
+
+
+## Official BTCUSDT archive coverage inventory — 23 October 2026
+
+- URL-level HEAD inventory for 2017-08 to 2026-09: 330 monthly archive records; 272 AVAILABLE, 58 UNAVAILABLE, 0 FAIL.
+- Spot 1m monthly URLs: all 110 months available from 2017-08 through 2026-09.
+- UM Futures 1m and UM funding: 81 months each available from 2020-01 through 2026-09; the earlier 29 tested months return 404 at the exact monthly archive URLs.
+- Combined reported compressed archive Content-Length estimate: 386,850,489 bytes (~386.9 MB decimal). HEAD inventory only; this is not full archive validation.
+- Verified canaries: 2026-09 all 3 datasets PASS; 2020-01 all 3 PASS; 2019-09 Spot PASS and UM Futures/funding URLs UNAVAILABLE (404).
+- Next gate: confirm intended Supabase project before any durable upload. The listed project name does not clearly match this BTCUSDT project. No Supabase data writes have occurred.
