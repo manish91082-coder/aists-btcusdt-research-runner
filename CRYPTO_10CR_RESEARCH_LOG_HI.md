@@ -309,3 +309,10 @@ Research status और claims केवल verified evidence के आधार
 - Report में unique candidate count, duplicate candidate symbols, unmapped records और verified archive slice में BTCUSDT overlap शामिल किया।
 - Unit-test commit: `bae405f87b0148bf5e7bbdf658d6f1d3558dd4ed`, ambiguous/invalid symbols के लिए test जोड़े।
 - Workflow run अभी pending है। यह Binance के current contract status का प्रमाण नहीं है; HD-04 BLOCKED रहेगा।
+
+
+## 32. Candidate mapping tests passed; current-source gate still blocked — 23 अक्टूबर 2026
+- HD-04 run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39889218198; smoke run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39889218167. दोनों tested commit `bae405f87b0148bf5e7bbdf658d6f1d3558dd4ed` पर।
+- Script output: global derivatives 27,978 records; Binance (Futures) label वाले 824 records; 779 unique conservative symbol candidates; 45 unmapped; normalized duplicate candidates 0; verified archive slice से overlap केवल BTCUSDT।
+- Unit tests और smoke CI पास हैं। HD-04 workflow फिर भी primary Binance Futures `exchangeInfo` non-JSON response के कारण FAIL हुआ। इसलिए पूरा gate BLOCKED है।
+- अगला सीमित कदम: CoinGecko के स्पष्ट USDT-quoted candidates के छोटे चुने हुए sample पर official historical archive existence/checksum matrix बनाना। सभी 779 candidates पर अंधाधुंध requests नहीं करनी हैं; missing archive को coverage debt दर्ज करना है और candidate को active Binance listing नहीं मानना है।
