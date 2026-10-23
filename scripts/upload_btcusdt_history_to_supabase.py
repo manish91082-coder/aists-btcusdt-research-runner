@@ -61,7 +61,9 @@ def main() -> int:
     if not root.is_dir():
         print(f"ERROR: input directory not found: {root}", file=sys.stderr)
         return 2
-    # Upload only source archive ZIPs. Never upload execution logs, manifests,\n    # checksum sidecars, or reports as if they were validated market data.\n    files = sorted(p for p in root.rglob("*.zip") if p.is_file())
+    # Upload only source archive ZIPs. Never upload execution logs, manifests,
+    # checksum sidecars, or reports as if they were validated market data.
+    files = sorted(p for p in root.rglob("*.zip") if p.is_file())
     if not files:
         print("ERROR: no .zip archive files found to upload; refusing to upload logs/manifests/reports", file=sys.stderr)
         return 2
