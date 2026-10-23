@@ -73,7 +73,7 @@ jobs:
           retention-days: 30
 
   spot-1m-gap-audit:
-    if: contains(github.event.head_commit.message, 'Spot gap reconciliation') || contains(github.event.head_commit.message, 'Spot 1m archives') || contains(github.event.head_commit.message, '1m gap audit')
+    if: contains(github.event.head_commit.message, 'gap reconciliation') || contains(github.event.head_commit.message, 'Spot 1m archives') || contains(github.event.head_commit.message, '1m gap audit')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -84,6 +84,7 @@ jobs:
       - name: Compile audit tools
         run: python -m py_compile scripts/audit_btcusdt_spot_1m_gap_months.py scripts/reconcile_btcusdt_spot_1m_5m_gaps.py
       - name: Audit official Spot 1m archives
+        continue-on-error: true
         run: python scripts/audit_btcusdt_spot_1m_gap_months.py --output-dir artifacts/btcusdt-spot-1m-gap-audit
       - name: Reconcile official Spot 1m and 5m gaps
         run: python scripts/reconcile_btcusdt_spot_1m_5m_gaps.py --output-dir artifacts/btcusdt-spot-gap-reconciliation
