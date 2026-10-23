@@ -132,3 +132,11 @@ Execution records:
 - CoinGecko probe results in the workflow log: 27,978 global derivatives ticker records; 824 Binance (Futures) labeled records; 779 unique conservative symbol candidates; 45 unmapped records; no duplicate normalized candidates; overlap with the only verified historical archive symbol BTCUSDT = BTCUSDT.
 - The HD-04 job still concludes FAILURE because the primary Binance Futures `exchangeInfo` request returns non-JSON. The candidate layer is evidence and a reconciliation aid only. HD-04 remains BLOCKED.
 - Next bounded step: create a historical archive availability matrix for a small, explicitly selected sample of CoinGecko USDT-quoted candidates, checking official archive existence/checksum and keeping missing archives as coverage debt. Do not probe all 779 symbols blindly or assume candidates are listed/active at Binance.
+
+
+## Continuity update — 23 October 2026: bounded HD-04 candidate archive probe
+- Added `scripts/probe_hd04_candidate_archive_coverage.py` to choose at most 10 unique, conservatively mapped USDT candidates from the CoinGecko Binance-Futures-labeled aggregator records, ranked by source-reported `volume_24h` with deterministic tie-breaking.
+- The probe checks September 2026 5-minute Spot and USDⓈ-M Futures archive URLs separately and compares each available ZIP SHA-256 against the official `.CHECKSUM` sidecar. It writes `artifacts/hd04/hd04-candidate-archive-coverage.json`, which the HD-04 workflow artifact retains.
+- Missing archive URL (HTTP 404) is classified as `NOT_AVAILABLE_OR_NOT_LISTED`; it is not treated as proof that a symbol was never listed or is inactive. Checksum match proves object integrity only, not schema/continuity or current listing status.
+- Added deterministic unit tests for unique USDT filtering, volume ranking, and tie-breaking; added the script to `CURRENT_PROJECT_KEEP_PATHS.txt` and the HD-04 workflow.
+- **Gate state remains BLOCKED until the workflow evidence is inspected and the official Binance Futures `exchangeInfo` snapshot succeeds.** CoinGecko candidate records are not authoritative Binance listing metadata. Strategy/backtest remains prohibited before data gates pass; no trading edge or timeline is established.
