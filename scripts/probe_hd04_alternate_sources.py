@@ -60,6 +60,8 @@ def fetch(name, base, path, params, provider):
             unique = sorted(set(ordered))
             duplicates = len(ordered) - len(unique)
             gaps = sum(1 for left, right in zip(unique, unique[1:]) if right - left != 300000)
+            if len(unique) != 12:
+                anomalies.append("expected 12 candles in the fixed one-hour window; found " + str(len(unique)))
             item.update({"timestamps_ms_sorted": ordered, "duplicate_timestamps": duplicates,
                          "non_5m_steps": gaps, "candle_anomalies": anomalies[:30]})
             if anomalies or duplicates or gaps or not ordered:
