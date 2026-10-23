@@ -115,3 +115,11 @@ Execution records:
 - This is useful independent corroboration for a separate derivatives data slice, but does not prove all Binance contracts are represented, does not establish official Binance contract status, and does not replace exchangeInfo. The spot endpoint is also limited to 100 tickers and is not a complete universe.
 - The same run's primary snapshot still failed at official Binance USD-M Futures `exchangeInfo`. Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39888143324/artifacts (use the run's artifact section; artifact is named `hd04-market-universe-39888143324`).
 - HD-04 remains BLOCKED. Next: make the CoinGecko-derived candidate list explicit, normalize pair symbols without assuming equivalence, retain raw records and timestamp/hash, and compare any overlap against the verified historical archive set; continue investigating a primary-source path for Binance current status.
+
+
+## Candidate symbol reconciliation added (23 October 2026)
+
+- Updated `scripts/probe_hd04_coingecko_source.py` (commit `fd0e1e75d2d33269eeac4e85796a59ffd1b1ed5f`) to preserve each external raw symbol and add a conservative candidate only for alphanumeric symbols ending in recognized quote suffixes (USDT, USDC, BUSD, USD). Nonmatching symbols remain unmapped rather than guessed.
+- Report now includes unique candidate count, duplicate candidate symbols, unmapped count and an explicit overlap check against BTCUSDT, the only symbol in the current verified archive probe.
+- Added deterministic unit tests in commit `bae405f87b0148bf5e7bbdf658d6f1d3558dd4ed`. HD-04 workflow is triggered by the script and test paths; verification pending.
+- This is a candidate-reconciliation layer, not Binance listing verification. HD-04 remains BLOCKED pending workflow evidence and a primary current-contract source.
