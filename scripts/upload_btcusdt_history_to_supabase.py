@@ -82,7 +82,7 @@ def main() -> int:
         try:
             request(
                 f"{base}/storage/v1/object/{encoded_bucket}/{encoded_path}",
-                "PUT",
+                "POST",
                 {**headers, "Content-Type": content_type, "x-upsert": "true"},
                 path.read_bytes(),
             )
