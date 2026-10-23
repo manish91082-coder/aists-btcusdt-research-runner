@@ -58,3 +58,4 @@ execution_logs/2026-10-23-btcusdt-archive-coverage-inventory.md
 tests_crypto_target/test_btcusdt_supabase_uploader.py
 tests_crypto_target/test_execution_receipt.py
 scripts/audit_btcusdt_spot_1m_gap_months.py
+scripts/reconcile_btcusdt_spot_1m_5m_gaps.py
