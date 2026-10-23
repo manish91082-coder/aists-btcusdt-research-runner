@@ -51,6 +51,17 @@ def run_benchmarks(rows: list[dict], initial_equity: float, fee_bps: float,
                    spread_bps: float, slippage_bps: float) -> tuple[dict, list[dict]]:
     if not rows:
         raise ValueError("rows must not be empty")
+    previous_timestamp = None
+    for row in rows:
+        timestamp = row.get("timestamp_ms")
+        prices = (row.get("open"), row.get("close"))
+        if not isinstance(timestamp, int):
+            raise ValueError("timestamps must be integer milliseconds")
+        if previous_timestamp is not None and timestamp <= previous_timestamp:
+            raise ValueError("timestamps must be strictly increasing and unique")
+        if not all(isinstance(price, (int, float)) and math.isfinite(price) and price > 0 for price in prices):
+            raise ValueError(f"prices must be finite and positive at timestamp {timestamp}")
+        previous_timestamp = timestamp
     if not math.isfinite(initial_equity) or initial_equity <= 0:
         raise ValueError("initial equity must be finite and positive")
     for name, value in (("fee_bps", fee_bps), ("spread_bps", spread_bps),
