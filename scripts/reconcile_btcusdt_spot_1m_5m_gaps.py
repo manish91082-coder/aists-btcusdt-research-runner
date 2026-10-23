@@ -111,7 +111,9 @@ def main():
         print(json.dumps({"month":month,"status":item["status"],
                           "spot_1m":item.get("spot_1m",{}).get("rows"),
                           "spot_5m":item.get("spot_5m",{}).get("rows"),
-                          "comparison":item.get("comparison"),"error":item.get("error")},ensure_ascii=False),flush=True)
+                          "comparison":item.get("comparison"),
+                          "boundary_context":item.get("boundary_context"),
+                          "error":item.get("error")},ensure_ascii=False),flush=True)
     report={"gate":"SPOT-1M-5M-GAP-RECONCILIATION","created_utc":datetime.now(timezone.utc).isoformat(),
             "purpose":"Compare official Spot 1m and Spot 5m source timestamps for known failed months.",
             "months":MONTHS,"results":results,
