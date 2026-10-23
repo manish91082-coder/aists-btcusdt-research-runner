@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-check known Spot kline gaps against official Spot monthly aggTrades archives.
+"""Cross-check known Spot kline gaps against official Spot daily aggTrades archives.
 
 Diagnostic only. Never reconstructs, fills, or drops candles.
 """
@@ -87,7 +87,7 @@ def main():
         except Exception as e: item={"month":month,"status":"ERROR","error":f"{type(e).__name__}: {e}"}
         results.append(item); print(json.dumps(item,ensure_ascii=False),flush=True)
     report={"gate":"OFFICIAL-SPOT-AGGTRADES-GAP-CROSSCHECK","created_utc":datetime.now(timezone.utc).isoformat(),
-            "source":"Binance public monthly Spot aggTrades archives and official CHECKSUM sidecars",
+            "source":"Binance public daily Spot aggTrades archives and official CHECKSUM sidecars",
             "months":MONTHS,"results":results,
             "summary":{"months_requested":len(MONTHS),"completed":sum(x["status"]=="PASS" for x in results),"errors":sum(x["status"]=="ERROR" for x in results)},
             "limitations":["Independent trade-level cross-check only; no candle reconstruction.","Checksum confirms archive bytes against sidecar, not completeness of market events.","Zero observed trades are not sufficient evidence to relax kline continuity checks."]}
