@@ -170,6 +170,10 @@ def check_one(out_dir: Path, period: str, dataset: str, url: str, header: bool) 
                      "checksum_sidecar_url": url + ".CHECKSUM"})
         if not item["checksum_matches"]:
             raise ValueError("official SHA-256 sidecar mismatch")
+        safe_name = f"{period}_{dataset}.zip"
+        # Preserve checksum-matching raw bytes even when content validation
+        # fails, so anomalies can be independently investigated.
+        (out_dir / safe_name).write_bytes(archive)
         with zipfile.ZipFile(io.BytesIO(archive)) as zf:
             members = [n for n in zf.namelist() if not n.endswith("/")]
             if len(members) != 1:
@@ -182,8 +186,6 @@ def check_one(out_dir: Path, period: str, dataset: str, url: str, header: bool) 
             validation = validate_funding(rows, period)
         else:
             validation = validate_klines(rows, period, header, dataset)
-        safe_name = f"{period}_{dataset}.zip"
-        (out_dir / safe_name).write_bytes(archive)
         item.update({"status": "PASS", "member_name": member, "saved_archive": safe_name,
                      "csv_content_sha256": hashlib.sha256(payload).hexdigest(),
                      "validation": validation})
