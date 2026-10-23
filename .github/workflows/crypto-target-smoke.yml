@@ -16,6 +16,9 @@ on:
       - "scripts/backtest_btcusdt_baseline.py"
       - "scripts/collect_btcusdt_full_history.py"
       - "scripts/upload_btcusdt_history_to_supabase.py"
+      - "scripts/probe_btcusdt_archive_coverage.py"
+      - "tests_crypto_target/test_btcusdt_archive_coverage.py"
+      - ".github/workflows/btcusdt-archive-coverage-inventory.yml"
       - "docs/supabase_btcusdt_history_schema.sql"
       - ".github/workflows/btcusdt-full-history-collection.yml"
       - ".github/workflows/btcusdt-multimonth-history-integrity.yml"
@@ -89,6 +92,6 @@ jobs:
       - name: Compile HD-03 validator
         run: python -m py_compile scripts/acquire_validate_hd03.py
       - name: Compile HD-03 and HD-04 tools
-        run: python -m py_compile scripts/acquire_validate_hd03.py scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py scripts/probe_hd04_alternate_sources.py scripts/acquire_validate_btcusdt_history.py scripts/prepare_btcusdt_research_dataset.py scripts/backtest_btcusdt_baseline.py scripts/collect_btcusdt_full_history.py scripts/upload_btcusdt_history_to_supabase.py
+        run: python -m py_compile scripts/acquire_validate_hd03.py scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py scripts/probe_hd04_alternate_sources.py scripts/acquire_validate_btcusdt_history.py scripts/prepare_btcusdt_research_dataset.py scripts/backtest_btcusdt_baseline.py scripts/collect_btcusdt_full_history.py scripts/upload_btcusdt_history_to_supabase.py scripts/probe_btcusdt_archive_coverage.py
       - name: Run deterministic unit tests
         run: python -m unittest discover -s tests_crypto_target -v
