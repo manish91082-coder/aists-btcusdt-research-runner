@@ -97,3 +97,12 @@ Execution records:
 - The probe explicitly labels CoinGecko as corroboration only. It does not replace Binance's official symbol status, complete exchangeInfo universe, contract metadata, or per-symbol USDT quote-volume ranking.
 - The HD-04 workflow now compiles and runs this probe and preserves its JSON report in the workflow artifact. An optional `COINGECKO_DEMO_API_KEY` environment variable may be configured as a GitHub Actions secret; no key is committed or required in source code.
 - Current verification status: code has been committed, but the workflow result is pending. HD-04 remains BLOCKED until evidence confirms current listing/volume coverage and the primary snapshot gate passes.
+
+
+## CoinGecko corroboration probe result and refinement (23 October 2026)
+
+- Workflow run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39888051398. Tested workflow commit: `2665814b9eb56fc0ffe1462f3e5def377922997f`.
+- The public API probe succeeded without a configured key for both `/exchanges/binance` and `/derivatives/exchanges/binance_futures`. Spot endpoint returned 100 tickers; the derivatives exchange detail endpoint returned zero pair tickers while reporting exchange-level volume. This confirms API reachability, not complete universe coverage.
+- The Spot endpoint's reported exchange volume is denominated in BTC and its ticker sample includes non-USDT pairs. Do not use it as Binance per-symbol USDT quoteVolume ranking.
+- Probe refined in commit `385d3dd7437ce9516f9e1a2168bac9e20db8a117` to also query the global `/derivatives` ticker endpoint and filter records whose market label identifies Binance Futures. This result is pending a new workflow run.
+- Primary Binance universe snapshot still fails on non-JSON response from official USD-M Futures `exchangeInfo`. HD-04 remains BLOCKED.
