@@ -41,6 +41,8 @@ on:
       - "scripts/backtest_btcusdt_candidate_baselines.py"
       - "tests_crypto_target/test_btcusdt_candidate_baselines.py"
       - "tests_crypto_target/test_btcusdt_long_history_validation.py"
+      - "tests_crypto_target/test_btcusdt_spot_aggtrades_gap_audit.py"
+      - "scripts/audit_btcusdt_spot_aggtrades_in_gaps.py"
       - "scripts/run_btcusdt_long_history_validation.py"
       - ".github/workflows/btcusdt-long-history-validation.yml"
       - "scripts/acquire_validate_btcusdt_history.py"
