@@ -1,4 +1,4 @@
-name: BTCUSDT multi-month history integrity
+name: BTCUSDT multi-month history integrity and baseline
 on:
   push:
     branches:
@@ -6,6 +6,8 @@ on:
     paths:
       - ".github/workflows/btcusdt-multimonth-history-integrity.yml"
       - "scripts/acquire_validate_btcusdt_history.py"
+      - "scripts/prepare_btcusdt_research_dataset.py"
+      - "scripts/backtest_btcusdt_baseline.py"
   workflow_dispatch:
     inputs:
       start_month:
@@ -18,12 +20,32 @@ on:
         required: true
         default: "2026-09"
         type: string
+      initial_equity:
+        description: Illustrative starting quote-currency equity
+        required: true
+        default: "1000"
+        type: string
+      fee_bps:
+        description: Illustrative fee per fill in basis points
+        required: true
+        default: "10"
+        type: string
+      spread_bps:
+        description: Illustrative full spread in basis points
+        required: true
+        default: "2"
+        type: string
+      slippage_bps:
+        description: Illustrative slippage per fill in basis points
+        required: true
+        default: "5"
+        type: string
 permissions:
   contents: read
 jobs:
-  acquire-validate:
+  acquire-validate-and-baseline:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,19 +61,37 @@ jobs:
           --end-month "$END_MONTH"
           --output-dir artifacts/hd04-history
       - name: Prepare normalized Spot/Futures dataset and funding events
+        env:
+          START_MONTH: ${{ inputs.start_month || '2026-07' }}
+          END_MONTH: ${{ inputs.end_month || '2026-09' }}
         run: >-
           python scripts/prepare_btcusdt_research_dataset.py
-          --start-month "${{ inputs.start_month || '2026-07' }}"
-          --end-month "${{ inputs.end_month || '2026-09' }}"
+          --start-month "$START_MONTH"
+          --end-month "$END_MONTH"
           --input-dir artifacts/hd04-history
           --output-dir artifacts/hd04-normalized
-      - name: Upload raw archives, normalized dataset, and reports
+      - name: Run cost-explicit Spot benchmark
+        env:
+          INITIAL_EQUITY: ${{ inputs.initial_equity || '1000' }}
+          FEE_BPS: ${{ inputs.fee_bps || '10' }}
+          SPREAD_BPS: ${{ inputs.spread_bps || '2' }}
+          SLIPPAGE_BPS: ${{ inputs.slippage_bps || '5' }}
+        run: >-
+          python scripts/backtest_btcusdt_baseline.py
+          --input artifacts/hd04-normalized/btc-usdt-5m-aligned.csv
+          --output-dir artifacts/hd04-baseline
+          --initial-equity "$INITIAL_EQUITY"
+          --fee-bps "$FEE_BPS"
+          --spread-bps "$SPREAD_BPS"
+          --slippage-bps "$SLIPPAGE_BPS"
+      - name: Upload raw archives, normalized dataset, baseline, and reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: btcusdt-multimonth-research-dataset
+          name: btcusdt-multimonth-research-and-baseline
           path: |
             artifacts/hd04-history/
             artifacts/hd04-normalized/
+            artifacts/hd04-baseline/
           if-no-files-found: warn
           retention-days: 30
