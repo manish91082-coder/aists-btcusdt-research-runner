@@ -261,3 +261,11 @@ Research status और claims केवल verified evidence के आधार
 - Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39886385373/artifacts/12473175759 (30-day retention).
 - उसी workflow का overall result फिर भी FAIL रहा, क्योंकि current USDⓈ-M Futures `/fapi/v1/exchangeInfo` API response JSON नहीं था। इसलिए यह ऐतिहासिक archive/funding access का PASS है, पूरे HD-04 universe का नहीं। HD-04 अभी BLOCKED है।
 - Smoke tests archive-probe implementation के compile check सहित PASS: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39886398942 (commit `b8e94318ac7844907ec52e0dbbe3b2c1b34581cb`).
+
+
+## 26. HD-04 archive probe में row-count assertions मजबूत किए — 23 अक्टूबर 2026
+- Script commit: `1197e7592c79b0f4cf8440af5bf8f59a74690bdc`.
+- अब probe केवल ZIP checksum और non-empty CSV पर निर्भर नहीं है। यह header की अपेक्षित मौजूदगी/पहचान और data rows की संख्या भी जाँचता है: Spot 5m = 8,640 data rows (header नहीं), USD-M Futures 5m = 8,640 data rows (एक header), fundingRate = 90 data rows (एक header)।
+- Smoke CI उसी script commit पर PASS: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39887371687.
+- यह अभी code-level/smoke verification है; नया HD-04 archive workflow result अभी प्राप्त नहीं हुआ। पिछला archive result तीन checksum matches दिखाता है, जबकि current USD-M Futures exchangeInfo API failure के कारण पूरा HD-04 BLOCKED है।
+- अगला सीमित कदम: updated archive assertions को HD-04 workflow में वास्तविक रूप से चलाना, फिर current Spot/Futures listings और अलग-अलग volume universes के लिए प्रमाणित data source स्थापित करना। जब तक वह gate पास नहीं होता, backtest/strategy conclusions नहीं निकालने हैं।
