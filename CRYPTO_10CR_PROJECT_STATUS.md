@@ -4,7 +4,7 @@
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
 **Branch:** `main`  
 **Latest implementation:** [PR #16 merged](https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/16) at merge commit `581c97978d0845036c9cff8f2be71d7018f84aa5`  
-**Current phase:** HD-03 initial slice passed; HD-04 broad-universe snapshot remains blocked. Multi-month BTCUSDT history for July-September 2026 passed integrity/normalization. Initial cost-aware Spot candidate baselines have been run and both produced negative net returns under illustrative costs. Smoke CI passed on [run 39947549808](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947549808); candidate run [39947542681](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681).
+**Current phase:** HD-03 initial slice passed; HD-04 broad-universe snapshot remains blocked. Multi-month BTCUSDT history for July-September 2026 passed integrity/normalization. Initial cost-aware Spot candidate baselines have been run and both produced negative net returns under illustrative costs. A preregistered walk-forward protocol is now committed; the next gate is month-by-month validation of the longer 2020-2026 history. Smoke CI passed on [run 39947549808](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947549808); candidate run [39947542681](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681).
 
 ## Executive status
 
@@ -228,3 +228,10 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - Combined reported compressed archive Content-Length estimate: 386,850,489 bytes (~386.9 MB decimal). HEAD inventory only; this is not full archive validation.
 - Verified canaries: 2026-09 all 3 datasets PASS; 2020-01 all 3 PASS; 2019-09 Spot PASS and UM Futures/funding URLs UNAVAILABLE (404).
 - Next gate: confirm intended Supabase project before any durable upload. The listed project name does not clearly match this BTCUSDT project. No Supabase data writes have occurred.
+
+## Next gate: longer historical data validation
+
+- Locked protocol: [BTCUSDT candidate walk-forward protocol](docs/BTCUSDT_CANDIDATE_WALK_FORWARD_PROTOCOL.md).
+- Acquire and content-validate official BTCUSDT Spot, USDⓈ-M Futures and funding monthly archives for January 2020 through September 2026. The prior HTTP HEAD inventory is availability evidence only, not proof that archive contents validate.
+- Preserve the July-September 2026 sample as development data; do not call it an untouched holdout. Forward holdout begins 24 October 2026 under the protocol.
+- Do not tune candidates or claim out-of-sample edge until the full data manifest and chronological evaluation gates pass.
