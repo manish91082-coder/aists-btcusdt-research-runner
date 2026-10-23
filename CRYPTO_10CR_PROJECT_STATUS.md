@@ -1,8 +1,8 @@
 # Crypto Target Research — Current Project Status
 
-**Last updated:** 23 October 2026  
+**Last updated:** 23 October 2026, evening update  
 **Repository:** [aists-btcusdt-research-runner](https://github.com/manish91082-coder/aists-btcusdt-research-runner)  
-**Branch:** `main`  
+**Working branch:** `research/full-history-validation` (PR #17 remains draft; not merged)  
 **Latest implementation:** [PR #16 merged](https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/16) at merge commit `581c97978d0845036c9cff8f2be71d7018f84aa5`  
 **Current phase:** HD-03 initial slice passed; HD-04 broad-universe snapshot remains blocked. Multi-month BTCUSDT history for July-September 2026 passed integrity/normalization. Initial cost-aware Spot candidate baselines have been run and both produced negative net returns under illustrative costs. A preregistered walk-forward protocol is now committed; the next gate is month-by-month validation of the longer 2020-2026 history. Smoke CI passed on [run 39947549808](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947549808); candidate run [39947542681](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681).
 
@@ -235,3 +235,13 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - Acquire and content-validate official BTCUSDT Spot, USDⓈ-M Futures and funding monthly archives for January 2020 through September 2026. The prior HTTP HEAD inventory is availability evidence only, not proof that archive contents validate.
 - Preserve the July-September 2026 sample as development data; do not call it an untouched holdout. Forward holdout begins 24 October 2026 under the protocol.
 - Do not tune candidates or claim out-of-sample edge until the full data manifest and chronological evaluation gates pass.
+
+
+## Latest checkpoint — Spot 1m gap audit queued by implementation (23 October 2026)
+
+- Long-history run [39954840075](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39954840075) completed with **231/243 archive checks passing, 12 failed** across 81 months. No combined normalized dataset was emitted. All 243 raw archives are now recorded in the manifest after the preservation-reporting fix.
+- Smoke CI [39954846287](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39954846287) passed after the manifest/reporting fixes.
+- Fixed two workflow/report issues on `research/full-history-validation`: failed manifest JSON newline encoding and manifest omission of preserved raw archive names on content-validation failures.
+- Added `scripts/audit_btcusdt_spot_1m_gap_months.py` to checksum-verify and content-validate official Spot 1m archives for the 12 months whose Spot 5m checks failed. It does not reconstruct or fill 5m candles. The audit is being wired into CI; results are not yet available.
+- **Current gate: FAIL / unresolved.** Do not merge PR #17, build the full normalized aggregate, run walk-forward metrics on this dataset, or claim an edge until each failed month is understood and any reconstruction has independent tests/provenance.
+- Next action: run the 1m audit; inspect monthly row counts, exact timestamp gaps, OHLC/close-time anomalies and checksum evidence; then decide whether a deterministic 5m reconstruction is supportable for each month.
