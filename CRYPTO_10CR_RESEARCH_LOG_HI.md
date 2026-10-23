@@ -534,3 +534,10 @@ Research status और claims केवल verified evidence के आधार
 - `scripts/reconcile_btcusdt_spot_1m_5m_gaps.py` को बदला ताकि detected discontinuities के आसपास Spot 1m और Spot 5m की raw OHLCV boundary rows report में आएँ। यह diagnostic ही है; कोई candle reconstruct नहीं होती और root cause अभी सिद्ध नहीं होता।
 - नया commit `397f2aa8a5d78dc5dd6fa061e82f45275b540058`; Actions run [39959416562](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39959416562) update के समय QUEUED था; runtime evidence pending है।
 - अगला निर्णय नई report में boundary timestamps और validator assumptions की जाँच के बाद होगा। कोई reconstruction/interpolation, silent omission या incomplete history पर walk-forward नहीं; PR #17 unmerged और live trading unauthorized है।
+
+
+## 10. Gap-boundary inspection: workflow condition defect (23 October 2026)
+- Run 39959416562: [GitHub Actions](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39959416562). Python compile passed. The long-history acquisition/validation step failed closed with 231/243 expected archive checks passing and 12 failures; no normalized full-history dataset was produced.
+- The diagnostic spot-1m-gap-audit job was skipped, not failed: its if condition only matched specific commit-message phrases and did not match Add raw candle context around Spot 1m 5m gaps. Thus the boundary-context instrumentation has **not yet run**. This is a workflow gating defect, not evidence about the market data itself.
+- Corrected the condition to contains(github.event.head_commit.message, 'gap') in commit d2c083e74a43fe7a9e2f49f19aea42ae7d588e7f; next run must verify the audit job executes and publishes its artifact.
+- Keep data policy fail-closed. No gap filling/reconstruction, no walk-forward, no PR merge, no live trading. Tax/TDS remains deferred.
