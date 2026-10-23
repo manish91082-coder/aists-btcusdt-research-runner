@@ -84,6 +84,39 @@ jobs:
           --fee-bps "$FEE_BPS"
           --spread-bps "$SPREAD_BPS"
           --slippage-bps "$SLIPPAGE_BPS"
+      - name: Verify baseline report and benchmark outputs
+        run: |
+          python - <<'PY'
+          import csv, json
+          from pathlib import Path
+
+          report_path = Path("artifacts/hd04-baseline/btc-usdt-baseline-backtest-report.json")
+          curve_path = Path("artifacts/hd04-baseline/btc-usdt-baseline-equity-curve.csv")
+          if not report_path.is_file() or not curve_path.is_file():
+              raise SystemExit("baseline outputs missing")
+          report = json.loads(report_path.read_text(encoding="utf-8"))
+          if report.get("status") != "PASS" or report.get("benchmark_only") is not True:
+              raise SystemExit("baseline report status/benchmark_only assertion failed")
+          benchmarks = report.get("benchmarks", {})
+          if not {"flat_no_trade", "spot_buy_and_hold"}.issubset(benchmarks):
+              raise SystemExit("required baseline benchmarks missing")
+          if benchmarks["flat_no_trade"].get("net_return_pct") != 0.0:
+              raise SystemExit("flat/no-trade benchmark should return exactly zero")
+          if report.get("input_rows") != 26496:
+              raise SystemExit(f"expected 26496 aligned 5m rows for Jul-Sep 2026; got {report.get('input_rows')}")
+          with curve_path.open(newline="", encoding="utf-8") as handle:
+              rows = list(csv.DictReader(handle))
+          if len(rows) != 26496:
+              raise SystemExit(f"equity curve row count mismatch: {len(rows)}")
+          print(json.dumps({
+              "baseline_verification": "PASS",
+              "input_rows": report["input_rows"],
+              "equity_curve_rows": len(rows),
+              "benchmarks": sorted(benchmarks),
+              "net_return_pct": benchmarks["spot_buy_and_hold"]["net_return_pct"],
+              "warning": "benchmark only; does not establish a trading edge"
+          }, indent=2))
+          PY
       - name: Upload raw archives, normalized dataset, baseline, and reports
         if: always()
         uses: actions/upload-artifact@v4
