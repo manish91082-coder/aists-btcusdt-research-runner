@@ -12,6 +12,8 @@ on:
       - "scripts/probe_hd04_archive_sources.py"
       - "scripts/probe_hd04_alternate_sources.py"
       - "scripts/acquire_validate_btcusdt_history.py"
+      - "scripts/prepare_btcusdt_research_dataset.py"
+      - "scripts/backtest_btcusdt_baseline.py"
       - ".github/workflows/btcusdt-multimonth-history-integrity.yml"
       - "CURRENT_PROJECT_KEEP_PATHS.txt"
       - ".github/workflows/crypto-target-smoke.yml"
