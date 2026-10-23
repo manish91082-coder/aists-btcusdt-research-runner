@@ -90,6 +90,16 @@ jobs:
           echo "supabase_uploader_exit_code=$rc" | tee -a "$LOG_FILE"
           echo "supabase_upload_finished_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$LOG_FILE"
           exit "$rc"
+      - name: Write machine-readable execution receipt
+        if: always()
+        env:
+          RECEIPT_STATUS: ${{ job.status }}
+          INPUT_MONTH: ${{ inputs.month }}
+          INPUT_INCLUDE_FUNDING: ${{ inputs.include_funding }}
+          RECEIPT_NOTES: "Canary status only; see execution.log and collector manifest for archive-level outcomes."
+        run: |
+          python -u scripts/write_execution_receipt.py --output-dir artifacts/btcusdt-supabase-canary
+          cat artifacts/btcusdt-supabase-canary/execution-receipt.md >> "$GITHUB_STEP_SUMMARY"
       - name: Finalize run record and step summary
         if: always()
         env:
