@@ -75,6 +75,11 @@ def validate_archive(payload: bytes, month: str, dataset: str) -> dict:
         for line_no, row in enumerate(rows, 1):
             if not row:
                 continue
+            # Binance Spot archives commonly omit headers; newer UM archives may include one.
+            if line_no == 1 and row[0].strip().lower() in {"open_time", "open time", "open_time_ms"}:
+                if len(row) != COLUMNS:
+                    raise ValueError(f"row {line_no}: unexpected kline header width {len(row)}")
+                continue
             if len(row) != COLUMNS:
                 raise ValueError(f"row {line_no}: expected 12 columns, got {len(row)}")
             ts = timestamp_ms(row[0])
