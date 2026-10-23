@@ -348,3 +348,13 @@ Research status और claims केवल verified evidence के आधार
 - **CryptoDataDownload free CSV**: documented no-login Spot OHLCV CSVs daily/hourly/1-minute granularity में कई exchanges के लिए हैं। इसे केवल independent Spot cross-check मानेंगे, पूर्ण Futures/funding source नहीं। https://www.cryptodatadownload.com/ .
 - Zero-cost का अर्थ public endpoints/downloads बिना paid plan/API key जहाँ समर्थित हो; unlimited requests, complete history या हर symbol की guarantee नहीं।
 - अगला चरण: Bybit और OKX पर एक ही UTC window के BTCUSDT Spot तथा perpetual candles, instrument metadata और funding history का छोटा read-only probe। HTTP/JSON, symbol mapping, timestamp grid/continuity, OHLCV numeric rules और funding schema validate होंगे। CryptoDataDownload केवल exact comparable Spot file मिलने पर cross-check में शामिल होगा। कोई credentials या trading endpoints नहीं।
+
+
+## 36. Bybit और OKX के वैकल्पिक public API probe को repository में जोड़ा — 23 अक्टूबर 2026
+
+- कामचलाऊ बदलाव अलग branch `research/hd04-alternate-source-probe` पर किया गया है; अभी `main` में merge नहीं किया गया।
+- नई script `scripts/probe_hd04_alternate_sources.py` निश्चित UTC window 2026-09-01 00:00–01:00 पर Bybit V5 और OKX V5 के public Spot/perpetual candle, instrument metadata और funding-history endpoints जाँचती है। Credentials और trading endpoints उपयोग नहीं होते।
+- रिपोर्ट path: `artifacts/hd04/hd04-alternate-sources.json`; HTTP/API errors को report में दर्ज किया जाता है, ताकि स्रोत की अनुपलब्धता code exception से छिपे नहीं।
+- HD-04 workflow में compile तथा probe step जोड़ा गया और script को `CURRENT_PROJECT_KEEP_PATHS.txt` में सुरक्षित किया गया।
+- अभी Actions execution नहीं हुआ है। इसलिए Bybit/OKX availability, schema या historical candle correctness पर कोई PASS claim नहीं है। Binance authoritative current-universe gate BLOCKED है; strategy/backtest और live-trading gate बंद हैं।
+- अगला कदम: branch diff review और CI execution। परिणाम artifact देखने के बाद ही तय होगा कि probe validation को और मजबूत करना है या CryptoDataDownload का Spot-only cross-check जोड़ना है।
