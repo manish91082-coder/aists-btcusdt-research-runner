@@ -230,7 +230,7 @@ def main() -> int:
         "candidates": {name: {
             "net_return_pct": report["net_return_pct"],
             "max_drawdown_pct_mark_to_market": report["max_drawdown_pct_mark_to_market"],
-            "fills": report["round_trip_trades_counted_as_fills"],
+            "fills": report["fills"],
         } for name, report in reports.items() if isinstance(report, dict)},
         "warning": "initial candidate run only; out-of-sample edge not established",
     }, indent=2))
