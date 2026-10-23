@@ -37,6 +37,7 @@ scripts/probe_hd04_alternate_sources.py
 scripts/acquire_validate_btcusdt_history.py
 scripts/prepare_btcusdt_research_dataset.py
 scripts/backtest_btcusdt_baseline.py
+scripts/backtest_btcusdt_candidate_baselines.py
 scripts/collect_btcusdt_full_history.py
 docs/supabase_btcusdt_history_schema.sql
 scripts/upload_btcusdt_history_to_supabase.py

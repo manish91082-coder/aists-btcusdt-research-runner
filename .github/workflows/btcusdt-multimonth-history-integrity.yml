@@ -3,11 +3,13 @@ on:
   push:
     branches:
       - research/hd04-alternate-source-probe
+      - research/candidate-baselines-clean
     paths:
       - ".github/workflows/btcusdt-multimonth-history-integrity.yml"
       - "scripts/acquire_validate_btcusdt_history.py"
       - "scripts/prepare_btcusdt_research_dataset.py"
       - "scripts/backtest_btcusdt_baseline.py"
+      - "scripts/backtest_btcusdt_candidate_baselines.py"
   workflow_dispatch:
     inputs:
       start_month:
@@ -84,14 +86,64 @@ jobs:
           --fee-bps "$FEE_BPS"
           --spread-bps "$SPREAD_BPS"
           --slippage-bps "$SLIPPAGE_BPS"
+      - name: Run deterministic Spot candidate baselines
+        env:
+          INITIAL_EQUITY: ${{ inputs.initial_equity || '1000' }}
+          FEE_BPS: ${{ inputs.fee_bps || '10' }}
+          SPREAD_BPS: ${{ inputs.spread_bps || '2' }}
+          SLIPPAGE_BPS: ${{ inputs.slippage_bps || '5' }}
+        run: >-
+          python scripts/backtest_btcusdt_candidate_baselines.py
+          --input artifacts/hd04-normalized/btc-usdt-5m-aligned.csv
+          --output-dir artifacts/hd04-candidates
+          --initial-equity "$INITIAL_EQUITY"
+          --fee-bps "$FEE_BPS"
+          --spread-bps "$SPREAD_BPS"
+          --slippage-bps "$SLIPPAGE_BPS"
+      - name: Verify candidate baseline outputs
+        run: |
+          python - <<'PY'
+          import csv, json
+          from pathlib import Path
+
+          report_path = Path("artifacts/hd04-candidates/btc-usdt-candidate-baselines-report.json")
+          if not report_path.is_file():
+              raise SystemExit("candidate baseline report missing")
+          report = json.loads(report_path.read_text(encoding="utf-8"))
+          if report.get("status") != "PASS" or report.get("benchmark_only") is not True:
+              raise SystemExit("candidate report status/benchmark_only assertion failed")
+          expected = report.get("input_rows")
+          candidates = report.get("candidates", {})
+          required = {"trend_sma_12_48", "mean_reversion_z48"}
+          if not required.issubset(candidates):
+              raise SystemExit("required candidate reports missing")
+          for name in required:
+              item = candidates[name]
+              if item.get("status") != "PASS" or item.get("input_rows") != expected:
+                  raise SystemExit(f"candidate report invalid: {name}")
+              curve_path = Path("artifacts/hd04-candidates") / f"{name}-equity-curve.csv"
+              if not curve_path.is_file():
+                  raise SystemExit(f"equity curve missing: {name}")
+              with curve_path.open(newline="", encoding="utf-8") as handle:
+                  curve_rows = sum(1 for _ in csv.DictReader(handle))
+              if curve_rows != expected:
+                  raise SystemExit(f"equity curve row count mismatch for {name}: {curve_rows} != {expected}")
+          print(json.dumps({
+              "candidate_verification": "PASS",
+              "input_rows": expected,
+              "candidates": sorted(required),
+              "warning": "initial candidate sample only; out-of-sample edge not established"
+          }, indent=2))
+          PY
       - name: Upload raw archives, normalized dataset, baseline, and reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: btcusdt-multimonth-research-and-baseline
+          name: btcusdt-multimonth-research-baselines
           path: |
             artifacts/hd04-history/
             artifacts/hd04-normalized/
             artifacts/hd04-baseline/
+            artifacts/hd04-candidates/
           if-no-files-found: warn
           retention-days: 30

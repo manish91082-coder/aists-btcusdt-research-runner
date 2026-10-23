@@ -452,3 +452,27 @@ Research status और claims केवल verified evidence के आधार
 - Detailed record: `execution_logs/2026-10-23-btcusdt-archive-coverage-inventory.md`.
 - Limitation: this is URL reachability via HEAD, not full archive checksum/content validation. Actual monthly content validation remains limited to the canary months already recorded. No Supabase write attempted.
 - Next gate: confirm intended Supabase project before bulk storage. Do not upload to the previously listed project named `supabase ai content creation claude antigravity` without confirmation. After confirming project/bucket/schema/secrets, do a one-month upload canary and verify object bytes/hash plus catalog row.
+
+## BTCUSDT candidate baselines: पहला वास्तविक बहु-महीना run (23 अक्टूबर 2026)
+
+- Draft PR #16: https://github.com/manish91082-coder/aists-btcusdt-research-runner/pull/16
+- Candidate run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681
+- Smoke CI: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947549808
+- Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39947542681/artifacts/12498179453
+
+**Data gate:** जुलाई-सितंबर 2026 के official monthly archives validate हुए; normalized Spot/Futures aligned BTCUSDT 5-minute dataset में 26,496 candles और 276 funding events हैं। Candidate verifier PASS; दोनों equity curves में 26,496 rows। यह funding count सिर्फ normalized dataset में मौजूद है, Spot candidates funding cash flow इस्तेमाल नहीं करते।
+
+**Illustrative cost assumptions:** 1,000 USDT initial equity; fee 10 bps/fill; full spread 2 bps; slippage 5 bps/fill। Long/flat Spot; completed candle signal अगले candle open पर execute; अंतिम position last close पर cost सहित liquidate।
+
+| Candidate | Net return | Max marked-to-market drawdown | Fills |
+|---|---:|---:|---:|
+| SMA trend 12/48 | -68.0308% | -68.5169% | 742 |
+| Mean reversion, trailing z-score 48, entry <= -1.5, exit >= 0 | -58.9397% | -59.4759% | 652 |
+
+**व्याख्या:** दोनों शुरुआती candidates ने इस sample और cost assumptions पर बड़ी हानि दिखाई। यह negative initial evidence है; profitable edge नहीं। यह sample untouched holdout नहीं था, इसलिए out-of-sample performance का दावा नहीं किया जा सकता। Parameter tuning को इन परिणामों को बेहतर दिखाने के लिए hindsight में नहीं करना है।
+
+**Implementation correction:** CI में पहले candidate test ने runner के return shape को गलत assert किया था; test को actual return structure के अनुसार ठीक किया गया। Final equity curve की आखिरी row को costed liquidation के बाद report की realized final equity से match कराने का fix जोड़ा गया। Final smoke CI PASS: run 39947549808.
+
+**सीमाएँ:** Spot-only; Futures funding, leverage, liquidation, partial fills, exchange filters और fixed assumptions से आगे dynamic market impact शामिल नहीं। कोई AI decision layer, live order या funds movement नहीं। Target तक profitability/time अभी भी unknown है।
+
+**अगला gate:** candidate rules/cost assumptions freeze करें; आगे tuning से पहले chronological train/validation/holdout windows लिखित रूप से तय करें। फिर cost sensitivity, turnover, benchmark comparison और walk-forward evaluation चलाएँ। हर parameter change का अलग experiment log रखें।
