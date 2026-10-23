@@ -259,3 +259,12 @@ Zero-cost scope means public endpoints/downloads without a paid plan or key wher
 - Smoke CI after keep-list fix [39956536485](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39956536485) passed. This verifies repository checks, not archive integrity or strategy edge.
 - **Goal alignment review:** the target arithmetic/scope is consistent (1,000 USDT toward ~1,061,120.54 USDT, the dated ₹10 crore equivalent), realized-net-profit compounding is correctly defined, candidate results are honestly negative/limited, and tax remains out of scope. However, there is no demonstrated profitable edge or defensible time-to-target yet.
 - **Next action:** audit validator assumptions and inspect the exact failed source rows/gaps. Do not reconstruct, interpolate, silently omit, merge PR #17, or run walk-forward until the discrepancy is explained. Any later reconstruction must use only complete, consecutive valid 1m bars, be separately labeled/provenanced, and be reconciled against the official 5m source where available.
+
+
+## Next sequence action started — official Spot 1m/5m gap reconciliation (23 October 2026)
+
+- Decision: do not reconstruct candles yet. The 12 checksum-valid Spot 1m archives are incomplete under a strict one-row-per-minute assumption; this alone does not prove whether the source archive omitted bars or the validator's continuity assumption is inappropriate for the data.
+- Added `scripts/reconcile_btcusdt_spot_1m_5m_gaps.py`. It independently downloads official Spot 1m and Spot 5m monthly ZIPs for the 12 affected months, verifies each official SHA-256 sidecar, counts rows, extracts timestamp discontinuities, and records exact gap spans for comparison.
+- Added the script to `CURRENT_PROJECT_KEEP_PATHS.txt` and wired it into the long-history workflow. The audit step is configured to continue to reconciliation even when the 1m audit reports known gaps; artifact upload retains both reports.
+- Workflow wiring was corrected after reviewing the YAML; final workflow commit: `d6d2237067d9fd693eae6decade6fdcc733f0187`. Runtime verification is pending.
+- **Gate remains BLOCKED:** no candles filled/reconstructed, no failed month silently omitted, no full-history walk-forward, and PR #17 remains unmerged. Next decision depends on exact 1m vs 5m gap evidence.
