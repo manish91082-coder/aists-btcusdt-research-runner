@@ -23,3 +23,4 @@ tests_crypto_target/test_hd04_universe.py
 scripts/probe_hd04_archive_sources.py
 scripts/probe_hd04_coingecko_source.py
 scripts/probe_hd04_candidate_archive_coverage.py
+scripts/probe_hd04_alternate_sources.py
