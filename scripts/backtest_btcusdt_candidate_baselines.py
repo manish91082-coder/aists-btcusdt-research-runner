@@ -118,6 +118,18 @@ def simulate(rows: list[dict], signals: list[int], initial_equity: float,
                 quantity = 0.0
                 trades += 1
                 position = 0
+        # The final curve point is recorded after a costed liquidation so
+        # its equity matches the realized final equity in the report.
+        if i == len(rows) - 1 and position == 1:
+            fill = row["close"] * (1.0 - impact)
+            notional = quantity * fill
+            fee = notional * fee_rate
+            cash += notional - fee
+            fees_paid += fee
+            turnover += notional
+            trades += 1
+            quantity = 0.0
+            position = 0
         equity = cash + quantity * row["close"]
         if not math.isfinite(equity) or equity < -1e-8:
             raise ValueError("equity became non-finite or negative")
@@ -129,19 +141,6 @@ def simulate(rows: list[dict], signals: list[int], initial_equity: float,
             "position_long": position,
             "close": format(row["close"], ".12g"),
         })
-    # Liquidate at the final close, with the same explicit costs, so final
-    # net return is realized rather than mark-to-market only.
-    if position == 1:
-        reference = rows[-1]["close"]
-        fill = reference * (1.0 - impact)
-        notional = quantity * fill
-        fee = notional * fee_rate
-        cash += notional - fee
-        fees_paid += fee
-        turnover += notional
-        trades += 1
-        quantity = 0.0
-        position = 0
     final_equity = cash
     report = {
         "status": "PASS",
