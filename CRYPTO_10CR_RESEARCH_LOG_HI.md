@@ -430,3 +430,12 @@ Research status और claims केवल verified evidence के आधार
 - Artifact [12486414849](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921927263/artifacts/12486414849), 2,142,723 bytes, 30-day retention. It contains the execution log and machine-readable manifest.
 - Detailed record: `execution_logs/2026-10-23-btcusdt-2019-history-canary.md`.
 - Interpretation: 404 is archive-path availability evidence only, not proof that the contract did not exist. Spot and Futures coverage start dates must be measured independently. Next bounded probe is 2020-01 for UM Futures and funding availability. No Supabase writes were attempted.
+
+
+## Historical coverage probe: January 2020 (23 October 2026)
+
+- GitHub Actions [run 39922039878](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922039878) completed successfully. Requested 2020-01 only; collector exit code 0; PASS=3, UNAVAILABLE=0, FAIL=0.
+- Spot 1m: PASS, 2,224,194 bytes, SHA-256 `02df6da44ed8145fbb9ed819858185d9e2f15eb025c5bec8a4ea2d8738cd0d19`. UM Futures 1m: PASS, 1,829,116 bytes, SHA-256 `b4e13ea185ba96c413ac9167cfbb6e238eb5eae119a7a77f41f4c61c5e099d03`. UM funding: PASS, 825 bytes, SHA-256 `7f81b2f3694d13779e7e896b69d60cd61e9444d7b9f9e90df761935e1c1b76e2`.
+- Artifact [12486769727](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39922039878/artifacts/12486769727), 4,057,887 bytes, retained for 30 days. Detailed record: `execution_logs/2026-10-23-btcusdt-2020-history-canary.md`.
+- Compared with the September 2019 probe, this shows Spot archive availability at both tested points; UM Futures and funding returned HTTP 404 in 2019-09 but passed in 2020-01. This brackets availability between the tested months only, not exact start date. A month-by-month coverage manifest is required before stating a complete history range.
+- No Supabase write attempted. Temporary GitHub artifact only; durable storage remains unverified.
