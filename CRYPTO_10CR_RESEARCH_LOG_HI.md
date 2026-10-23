@@ -421,3 +421,12 @@ Research status और claims केवल verified evidence के आधार
 - Artifact: [canary logs, manifest and raw archives](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921734599/artifacts/12487337672), artifact ID 12487337672, 3,855,719 bytes, retention 30 days.
 - Detailed execution record: execution_logs/2026-10-23-btcusdt-one-month-archive-canary.md.
 - Scope boundary: this is a real PASS for the three requested September 2026 archives only. Supabase writes were explicitly NOT ATTEMPTED. Long-history coverage, permanent storage and trading strategy performance remain unverified.
+
+
+## Historical coverage probe: September 2019 (23 October 2026)
+
+- GitHub Actions [run 39921927263](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921927263) completed; collector exit code 0; Python 3.12.15.
+- Summary for requested month 2019-09: PASS=1, UNAVAILABLE=2, FAIL=0. Spot 1m archive PASS, 2,140,033 bytes, SHA-256 `6bed8bcf250caedf243cd890cdffd93b6266e7f3007a8bb7e6d13b95a15645f1`. USDⓈ-M Futures 1m and UM funding exact monthly archive URLs returned HTTP 404 and were recorded UNAVAILABLE.
+- Artifact [12486414849](https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39921927263/artifacts/12486414849), 2,142,723 bytes, 30-day retention. It contains the execution log and machine-readable manifest.
+- Detailed record: `execution_logs/2026-10-23-btcusdt-2019-history-canary.md`.
+- Interpretation: 404 is archive-path availability evidence only, not proof that the contract did not exist. Spot and Futures coverage start dates must be measured independently. Next bounded probe is 2020-01 for UM Futures and funding availability. No Supabase writes were attempted.
