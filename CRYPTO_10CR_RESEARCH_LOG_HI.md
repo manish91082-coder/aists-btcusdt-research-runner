@@ -269,3 +269,12 @@ Research status और claims केवल verified evidence के आधार
 - Smoke CI उसी script commit पर PASS: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39887371687.
 - यह अभी code-level/smoke verification है; नया HD-04 archive workflow result अभी प्राप्त नहीं हुआ। पिछला archive result तीन checksum matches दिखाता है, जबकि current USD-M Futures exchangeInfo API failure के कारण पूरा HD-04 BLOCKED है।
 - अगला सीमित कदम: updated archive assertions को HD-04 workflow में वास्तविक रूप से चलाना, फिर current Spot/Futures listings और अलग-अलग volume universes के लिए प्रमाणित data source स्थापित करना। जब तक वह gate पास नहीं होता, backtest/strategy conclusions नहीं निकालने हैं।
+
+
+## 27. Updated HD-04 workflow rerun — 23 अक्टूबर 2026
+- Workflow: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39887437784; tested commit `986479a2bea5f5ae645b17cfb5feda3ceebcec07`.
+- Archive probe: PASS. तीनों files में checksum match, अपेक्षित header और data-row count पास हुए: Spot candles 8,640; USD-M Futures candles 8,640; funding rows 90।
+- Compile और deterministic eligibility tests: PASS।
+- Universe snapshot: FAIL। `https://fapi.binance.com/fapi/v1/exchangeInfo` सहित configured official hosts से response JSON parse नहीं हुआ। Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39887437784/artifacts/12473615465.
+- निर्णय: HD-04 BLOCKED रहेगा। अगला शोध कार्य CoinGecko के exchange/derivatives pair listings को independent corroboration के रूप में जाँचना है; यह aggregated listing Binance के अपने current tradability status, contract metadata या volume ranking का स्वतः विकल्प नहीं है। इन स्रोतों के अर्थ और coverage अलग रखनी है।
+- कोई backtest, strategy edge, profitability, live execution या लक्ष्य तक पहुँचने का समय प्रमाणित नहीं हुआ। Live trading और credentials का gate बंद है।
