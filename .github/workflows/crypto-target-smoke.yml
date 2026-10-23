@@ -6,10 +6,25 @@ on:
     paths:
       - "crypto_target/**"
       - "tests_crypto_target/**"
+      - "tests_crypto_target/test_execution_receipt.py"
       - "scripts/cleanup_current_project.py"
+      - "scripts/write_execution_receipt.py"
       - "scripts/acquire_validate_hd03.py"
       - "scripts/build_hd04_universe_snapshot.py"
       - "scripts/probe_hd04_archive_sources.py"
+      - "scripts/probe_hd04_alternate_sources.py"
+      - "scripts/acquire_validate_btcusdt_history.py"
+      - "scripts/prepare_btcusdt_research_dataset.py"
+      - "scripts/backtest_btcusdt_baseline.py"
+      - "scripts/collect_btcusdt_full_history.py"
+      - "scripts/upload_btcusdt_history_to_supabase.py"
+      - "scripts/probe_btcusdt_archive_coverage.py"
+      - "tests_crypto_target/test_btcusdt_archive_coverage.py"
+      - ".github/workflows/btcusdt-archive-coverage-inventory.yml"
+      - "docs/supabase_btcusdt_history_schema.sql"
+      - ".github/workflows/btcusdt-full-history-collection.yml"
+      - ".github/workflows/btcusdt-supabase-upload-canary.yml"
+      - ".github/workflows/btcusdt-multimonth-history-integrity.yml"
       - "CURRENT_PROJECT_KEEP_PATHS.txt"
       - ".github/workflows/crypto-target-smoke.yml"
       - ".github/workflows/github-actions-request-bridge.yml"
@@ -19,7 +34,14 @@ on:
       - "tests_crypto_target/**"
       - "scripts/cleanup_current_project.py"
       - "CURRENT_PROJECT_KEEP_PATHS.txt"
+      - "scripts/probe_hd04_alternate_sources.py"
+      - "scripts/acquire_validate_btcusdt_history.py"
+      - "scripts/collect_btcusdt_full_history.py"
+      - ".github/workflows/btcusdt-full-history-collection.yml"
+      - ".github/workflows/btcusdt-supabase-upload-canary.yml"
+      - ".github/workflows/btcusdt-multimonth-history-integrity.yml"
       - ".github/workflows/crypto-target-smoke.yml"
+      - ".github/workflows/github-actions-request-bridge.yml"
   workflow_dispatch:
 
 permissions:
@@ -37,7 +59,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile research and maintenance helpers
-        run: python -m py_compile crypto_target/research_math.py scripts/cleanup_current_project.py
+        run: python -m py_compile crypto_target/research_math.py scripts/cleanup_current_project.py scripts/write_execution_receipt.py
       - name: Check required project documents
         run: |
           set -euo pipefail
@@ -76,6 +98,22 @@ jobs:
       - name: Compile HD-03 validator
         run: python -m py_compile scripts/acquire_validate_hd03.py
       - name: Compile HD-03 and HD-04 tools
-        run: python -m py_compile scripts/acquire_validate_hd03.py scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py
+        run: python -m py_compile scripts/acquire_validate_hd03.py scripts/build_hd04_universe_snapshot.py scripts/probe_hd04_archive_sources.py scripts/probe_hd04_alternate_sources.py scripts/acquire_validate_btcusdt_history.py scripts/prepare_btcusdt_research_dataset.py scripts/backtest_btcusdt_baseline.py scripts/collect_btcusdt_full_history.py scripts/upload_btcusdt_history_to_supabase.py scripts/probe_btcusdt_archive_coverage.py
       - name: Run deterministic unit tests
         run: python -m unittest discover -s tests_crypto_target -v
+      - name: Write execution receipt even when checks fail
+        if: always()
+        env:
+          RECEIPT_STATUS: ${{ job.status }}
+          RECEIPT_NOTES: "Smoke CI receipt; consult preceding step logs for exact failure details."
+        run: |
+          python -u scripts/write_execution_receipt.py --output-dir artifacts/execution-receipt
+          cat artifacts/execution-receipt/execution-receipt.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload execution receipt artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: execution-receipt-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/execution-receipt/
+          if-no-files-found: error
+          retention-days: 30
