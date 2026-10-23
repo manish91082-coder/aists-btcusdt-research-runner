@@ -286,3 +286,11 @@ Research status और claims केवल verified evidence के आधार
 - Workflow में compile और probe step जोड़े; keep-list में script सुरक्षित की। Workflow commit `2665814b9eb56fc0ffe1462f3e5def377922997f`; keep-list commit `e79e5f9118f73874f580a4ea4734955cd84c0509`.
 - CoinGecko data केवल independent corroboration है। यह Binance `exchangeInfo`, complete current symbols, exact tradability/contract metadata या official per-symbol USDT quoteVolume का विकल्प नहीं है। API key source में नहीं रखी; जरूरत होने पर केवल GitHub Actions secret `COINGECKO_DEMO_API_KEY` से दी जा सकती है।
 - Workflow verification अभी pending है। HD-04 BLOCKED रहेगा; कोई strategy/backtest निष्कर्ष नहीं।
+
+
+## 29. CoinGecko API reachability verified; derivatives pair coverage needs another endpoint — 23 अक्टूबर 2026
+- Run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39888051398; workflow commit `2665814b9eb56fc0ffe1462f3e5def377922997f`.
+- CoinGecko public API बिना configured key के दोनों endpoints पर सफल रहा: `/exchanges/binance` और `/derivatives/exchanges/binance_futures`। Spot exchange endpoint ने 100 tickers दिए; Futures exchange-detail endpoint ने 0 tickers लौटाए, केवल exchange-level volume उपलब्ध था।
+- Spot reported volume BTC में है और ticker sample में USDC/USDT सहित अलग-अलग quote pairs आते हैं। इसे Binance per-symbol USDT quoteVolume ranking समझना गलत होगा।
+- अगला छोटा सुधार: script commit `385d3dd7437ce9516f9e1a2168bac9e20db8a117` में global `/derivatives` endpoint से सभी returned derivative tickers लेकर Binance Futures label से filter करना जोड़ा है। इसका परिणाम नए workflow run के बाद ही माना जाएगा।
+- उसी run में official Binance Futures `exchangeInfo` snapshot फिर विफल हुआ। HD-04 BLOCKED; कोई strategy/backtest या profitability claim नहीं।
