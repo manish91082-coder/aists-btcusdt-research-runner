@@ -106,3 +106,12 @@ Execution records:
 - The Spot endpoint's reported exchange volume is denominated in BTC and its ticker sample includes non-USDT pairs. Do not use it as Binance per-symbol USDT quoteVolume ranking.
 - Probe refined in commit `385d3dd7437ce9516f9e1a2168bac9e20db8a117` to also query the global `/derivatives` ticker endpoint and filter records whose market label identifies Binance Futures. This result is pending a new workflow run.
 - Primary Binance universe snapshot still fails on non-JSON response from official USD-M Futures `exchangeInfo`. HD-04 remains BLOCKED.
+
+
+## CoinGecko expanded derivatives probe result (23 October 2026)
+
+- Run: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39888143324; tested commit `385d3dd7437ce9516f9e1a2168bac9e20db8a117`.
+- Independent-source probe: 3/3 endpoints succeeded. Spot exchange endpoint returned 100 tickers; exchange-detail endpoint for Binance Futures returned 0 pair tickers; global `/derivatives` endpoint returned 27,951 records, of which 823 had a market label containing Binance and Futures.
+- This is useful independent corroboration for a separate derivatives data slice, but does not prove all Binance contracts are represented, does not establish official Binance contract status, and does not replace exchangeInfo. The spot endpoint is also limited to 100 tickers and is not a complete universe.
+- The same run's primary snapshot still failed at official Binance USD-M Futures `exchangeInfo`. Artifact: https://github.com/manish91082-coder/aists-btcusdt-research-runner/actions/runs/39888143324/artifacts (use the run's artifact section; artifact is named `hd04-market-universe-39888143324`).
+- HD-04 remains BLOCKED. Next: make the CoinGecko-derived candidate list explicit, normalize pair symbols without assuming equivalence, retain raw records and timestamp/hash, and compare any overlap against the verified historical archive set; continue investigating a primary-source path for Binance current status.
